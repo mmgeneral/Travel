@@ -1,0 +1,46 @@
+services:
+  # The Brain: Patched vLLM for Gemma 4
+  vllm-brain:
+    build:
+      context: .
+      dockerfile: Dockerfile.vllm
+    container_name: travel_vllm
+    runtime: nvidia
+    shm_size: '2gb'
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_DISABLE_REQUIRE=true
+      - VLLM_USE_V1=0
+    volumes:
+      - /ssd/mmg/models:/root/.cache/huggingface
+    # CLI Fix: Model is positional; MM limit is key=value
+    command: >
+      google/gemma-4-31B-it
+      --gpu-memory-utilization 0.55
+      --max-model-len 4096
+      --trust-remote-code
+      --enforce-eager
+      --limit-mm-per-prompt image=2
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # The Agent: Your Travel App Logic
+  travel-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: travel_agent_logic
+    depends_on:
+      vllm-brain:
+        condition: service_started
+    volumes:
+      - .:/app
+    environment:
+      - VLLM_URL=http://vllm-brain:8000/v1
+      - GPU_COMPUTE_THRESHOLD=85
+    pid: "host"

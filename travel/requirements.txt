@@ -1,0 +1,9 @@
+openai
+nvidia-ml-py
+langgraph
+python-dotenv
+requests
+typing-extensions
+fastapi
+uvicorn[standard]
+pydantic

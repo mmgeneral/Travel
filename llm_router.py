@@ -1,0 +1,234 @@
+from __future__ import annotations
+
+import os
+import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any, Callable
+
+import requests
+from tenacity import Retrying, retry_if_exception_type, stop_after_attempt, wait_exponential
+
+from observability import record_llm_call, _get_tracer
+
+
+class TaskType(str, Enum):
+    INTENT_PARSING = "INTENT_PARSING"
+    RETRIEVAL_REASONING = "RETRIEVAL_REASONING"
+    CRITIQUE = "CRITIQUE"
+    SYNTHESIS = "SYNTHESIS"
+    EMBEDDING = "EMBEDDING"
+
+
+@dataclass
+class LLMResponse:
+    content: str
+    model_used: str
+    tokens_in: int
+    tokens_out: int
+    latency_ms: int
+    cost_usd: float
+
+
+class CircuitBreakerOpenError(RuntimeError):
+    pass
+
+
+class BackendTransientError(RuntimeError):
+    pass
+
+
+class BaseBackend:
+    def __init__(
+        self,
+        model: str,
+        *,
+        timeout: float = 20.0,
+        max_retries: int = 3,
+        circuit_breaker_threshold: int = 5,
+        circuit_breaker_cooldown_sec: float = 30.0,
+        request_fn: Callable[..., dict[str, Any]] | None = None,
+    ) -> None:
+        self.model = model
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.circuit_breaker_threshold = circuit_breaker_threshold
+        self.circuit_breaker_cooldown_sec = circuit_breaker_cooldown_sec
+        self.request_fn = request_fn
+        self._consecutive_failures = 0
+        self._circuit_open_until = 0.0
+
+    def complete(self, messages: list[dict[str, str]], **kwargs: Any) -> LLMResponse:
+        self._guard_circuit_breaker()
+        started = time.perf_counter()
+        try:
+            retryer = Retrying(
+                stop=stop_after_attempt(self.max_retries),
+                wait=wait_exponential(multiplier=0.25, min=0.1, max=2),
+                retry=retry_if_exception_type((TimeoutError, BackendTransientError)),
+                reraise=True,
+            )
+            payload: dict[str, Any] | None = None
+            for attempt in retryer:
+                with attempt:
+                    payload = self._invoke_with_timeout(messages, **kwargs)
+            assert payload is not None
+            self._consecutive_failures = 0
+            latency_ms = int((time.perf_counter() - started) * 1000)
+            content = str(payload.get("content", ""))
+            tokens_in = int(payload.get("tokens_in", self._estimate_tokens(messages)))
+            tokens_out = int(payload.get("tokens_out", self._estimate_tokens(content)))
+            cost_usd = float(payload.get("cost_usd", 0.0))
+            return LLMResponse(
+                content=content,
+                model_used=str(payload.get("model_used", self.model)),
+                tokens_in=tokens_in,
+                tokens_out=tokens_out,
+                latency_ms=latency_ms,
+                cost_usd=cost_usd,
+            )
+        except Exception:
+            self._consecutive_failures += 1
+            if self._consecutive_failures >= self.circuit_breaker_threshold:
+                self._circuit_open_until = time.monotonic() + self.circuit_breaker_cooldown_sec
+            raise
+
+    def _guard_circuit_breaker(self) -> None:
+        if time.monotonic() < self._circuit_open_until:
+            raise CircuitBreakerOpenError(f"{self.__class__.__name__} circuit breaker open")
+
+    def _invoke_with_timeout(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            fut = pool.submit(self._call_provider, messages, **kwargs)
+            try:
+                return fut.result(timeout=self.timeout)
+            except FutureTimeoutError as exc:
+                raise TimeoutError(f"{self.__class__.__name__} timed out") from exc
+
+    def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        raise NotImplementedError
+
+    @staticmethod
+    def _estimate_tokens(v: Any) -> int:
+        if isinstance(v, list):
+            text = " ".join(str(x.get("content", "")) for x in v if isinstance(x, dict))
+        else:
+            text = str(v)
+        return max(1, len(text) // 4)
+
+
+class LocalQwenBackend(BaseBackend):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(model=os.getenv("LOCAL_QWEN_MODEL", "qwen2.5:7b"), **kwargs)
+
+    def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        if self.request_fn is not None:
+            return self.request_fn(messages=messages, model=self.model, **kwargs)
+        resp = requests.post(
+            os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat"),
+            json={"model": self.model, "messages": messages, "stream": False},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        obj = resp.json()
+        msg = obj.get("message", {}) if isinstance(obj, dict) else {}
+        return {
+            "content": str(msg.get("content", "")),
+            "model_used": self.model,
+            "tokens_in": int(obj.get("prompt_eval_count", 0) or 0),
+            "tokens_out": int(obj.get("eval_count", 0) or 0),
+            "cost_usd": 0.0,
+        }
+
+
+class GeminiBackend(BaseBackend):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"), **kwargs)
+
+    def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        if self.request_fn is not None:
+            return self.request_fn(messages=messages, model=self.model, **kwargs)
+        try:
+            from google import genai  # type: ignore
+        except Exception as exc:  # pragma: no cover
+            raise BackendTransientError("google-genai not installed") from exc
+        api_key = os.getenv("GEMINI_API_KEY", "").strip()
+        if not api_key:
+            raise BackendTransientError("missing GEMINI_API_KEY")
+        client = genai.Client(api_key=api_key)
+        prompt = "\n".join(f"{m.get('role','user')}: {m.get('content','')}" for m in messages)
+        out = client.models.generate_content(model=self.model, contents=prompt)
+        text = getattr(out, "text", "") or ""
+        return {"content": str(text), "model_used": self.model, "cost_usd": 0.0}
+
+
+class ClaudeBackend(BaseBackend):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(model=os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-latest"), **kwargs)
+
+    def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        if self.request_fn is not None:
+            return self.request_fn(messages=messages, model=self.model, **kwargs)
+        try:
+            import anthropic  # type: ignore
+        except Exception as exc:  # pragma: no cover
+            raise BackendTransientError("anthropic SDK not installed") from exc
+        api_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+        if not api_key:
+            raise BackendTransientError("missing ANTHROPIC_API_KEY")
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(model=self.model, max_tokens=1024, messages=messages)
+        text = ""
+        if getattr(msg, "content", None):
+            part = msg.content[0]
+            text = str(getattr(part, "text", "") or "")
+        usage = getattr(msg, "usage", None)
+        tokens_in = int(getattr(usage, "input_tokens", 0) or 0)
+        tokens_out = int(getattr(usage, "output_tokens", 0) or 0)
+        return {
+            "content": text,
+            "model_used": self.model,
+            "tokens_in": tokens_in,
+            "tokens_out": tokens_out,
+            "cost_usd": 0.0,
+        }
+
+
+class LLMRouter:
+    def __init__(
+        self,
+        *,
+        local_backend: LocalQwenBackend | None = None,
+        gemini_backend: GeminiBackend | None = None,
+        claude_backend: ClaudeBackend | None = None,
+    ) -> None:
+        self.local_backend = local_backend or LocalQwenBackend()
+        self.gemini_backend = gemini_backend or GeminiBackend()
+        self.claude_backend = claude_backend or ClaudeBackend()
+
+    def _pick_backend(self, task: TaskType) -> BaseBackend:
+        if task == TaskType.INTENT_PARSING:
+            return self.local_backend
+        if task == TaskType.CRITIQUE:
+            return self.claude_backend
+        return self.gemini_backend
+
+    def complete(self, task: TaskType, messages: list[dict[str, str]], **kwargs: Any) -> LLMResponse:
+        backend = self._pick_backend(task)
+        tracer = _get_tracer()
+        span_name = f"llm.{task.value}"
+        if tracer is None:
+            return backend.complete(messages=messages, **kwargs)
+        with tracer.start_as_current_span(span_name) as span:
+            span.set_attribute("llm.task_type", task.value)
+            span.set_attribute("llm.backend", type(backend).__name__)
+            response = backend.complete(messages=messages, **kwargs)
+            record_llm_call(
+                model=response.model_used,
+                tokens_in=response.tokens_in,
+                tokens_out=response.tokens_out,
+                cost=response.cost_usd,
+                latency=response.latency_ms,
+            )
+            return response

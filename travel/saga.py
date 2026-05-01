@@ -24,7 +24,16 @@ Design goals
 from __future__ import annotations
 
 import json
+import sys
 import time
+from pathlib import Path
+
+_root = Path(__file__).resolve().parent.parent
+if str(_root) not in sys.path:
+    sys.path.insert(0, str(_root))
+
+from debug_json import debug_json as _dj
+
 import uuid
 from dataclasses import dataclass, field
 from enum import Enum
@@ -199,24 +208,24 @@ class SagaEngine:
 
 def demo_transactional() -> None:
     def book_shoraian(ctx: dict) -> dict:
-        print("  -> Booking Shoraian (phone)...")
+        print(_dj("demo_saga_forward", venue="Shoraian", channel="phone"))
         return {"confirmation": "SHR-2026-0424", "party": ctx["party_size"]}
 
     def cancel_shoraian(receipt: dict) -> None:
-        print(f"  <- COMPENSATE: cancel {receipt['confirmation']}")
+        print(_dj("demo_saga_compensate", action="cancel_booking", confirmation=receipt["confirmation"]))
 
     def book_harbs(ctx: dict) -> dict:
-        print("  -> Reserving Harbs table...")
+        print(_dj("demo_saga_forward", venue="Harbs", channel="table_reservation"))
         return {"confirmation": "HRB-55412"}
 
     def cancel_harbs(receipt: dict) -> None:
-        print(f"  <- COMPENSATE: cancel {receipt['confirmation']}")
+        print(_dj("demo_saga_compensate", action="cancel_booking", confirmation=receipt["confirmation"]))
 
     def queue_mensuke(ctx: dict) -> dict:
         raise RuntimeError("Mensuke: network timeout on queue registration")
 
     def cancel_mensuke(receipt: dict) -> None:
-        print(f"  <- COMPENSATE: release queue slot {receipt.get('slot')}")
+        print(_dj("demo_saga_compensate", action="release_queue_slot", slot=receipt.get("slot")))
 
     steps = [
         SagaStep("book_shoraian", book_shoraian, cancel_shoraian),
@@ -227,9 +236,9 @@ def demo_transactional() -> None:
     engine = SagaEngine(kind="transactional", persist_path="/tmp/saga_txn.json")
     ok, log = engine.run(steps, context={"party_size": 2, "date": "2026-04-24"})
 
-    print(f"\n[transactional] saga_id={log.saga_id}  success={ok}")
+    print(_dj("demo_transactional_done", saga_id=log.saga_id, success=ok))
     for s in log.steps:
-        print(f"  {s.name:20s} {s.status.value:12s} {s.error or ''}")
+        print(_dj("demo_transactional_step", name=s.name, status=s.status.value, error=s.error or None))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -246,19 +255,24 @@ def demo_conversational() -> None:
         "itinerary":   ["Shoraian", "Harbs", "Mensuke"],
     }
     snap0 = engine.snapshot(state)
-    print(f"Turn 0  snap#{snap0}: {state['itinerary']}")
+    print(_dj("demo_conversational_turn", turn=0, snap=snap0, itinerary=state["itinerary"]))
 
     # Turn 1: user says "swap dinner to Du Xiao Yue"
     state["itinerary"][-1] = "Du Xiao Yue"
     state["preferences"]["cuisine"] = "taiwanese"
     snap1 = engine.snapshot(state)
-    print(f"Turn 1  snap#{snap1}: {state['itinerary']}")
+    print(_dj("demo_conversational_turn", turn=1, snap=snap1, itinerary=state["itinerary"]))
 
     # Turn 2: user says "actually keep Mensuke"
-    print("\n[user: undo last change]")
+    print(_dj("demo_conversational_user", message="undo_last_change"))
     restored = engine.rollback_to(snap0)
-    print(f"Restored:  {restored['itinerary']}")
-    print(f"Snapshots remaining: {len(engine.log.state_snapshots)}")
+    print(
+        _dj(
+            "demo_conversational_restored",
+            itinerary=restored["itinerary"],
+            snapshots_remaining=len(engine.log.state_snapshots),
+        )
+    )
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -283,12 +297,8 @@ def demo_conversational() -> None:
 
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("DEMO 1 — Transactional saga with auto-compensation")
-    print("=" * 60)
+    print(_dj("cli_demo_banner", demo=1, title="transactional_saga_auto_compensation", width=60))
     demo_transactional()
 
-    print("\n" + "=" * 60)
-    print("DEMO 2 — Conversational saga with dialog rollback")
-    print("=" * 60)
+    print(_dj("cli_demo_banner", demo=2, title="conversational_saga_dialog_rollback", width=60))
     demo_conversational()

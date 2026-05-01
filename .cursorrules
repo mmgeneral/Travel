@@ -1,0 +1,26 @@
+# Travel Agent System - Core Development Contracts
+
+## 1. Design by Contract (DbC) - 強制合約
+所有關鍵邏輯 Function 必須實施「失敗即崩潰 (Fail-fast)」原則：
+- **Pre-conditions**: 進入 Function 前必須使用 `assert` 或 `raise ValueError` 檢查輸入有效性（如：時間格式 HH:MM、座標範圍）。
+- **Invariant**: 在排程計算中，`ready_at` 絕對必須大於 `prev_node.end_time`。
+- **Post-conditions**: 輸出的行程表長度不能為負，且 `eat_end` 嚴禁超過 `last_call_at`。
+- **禁止行為**: AI 禁止在解析失敗時自動回傳「模擬的正確結果」，必須拋出錯誤讓系統知道物理邊界已毀損。
+
+## 2. Neuro-Symbolic Architecture - 神經符號架構規範
+- **LLM (Neural)**: 僅負責意圖提取與語義歸一化（如：將「七點」轉為 "07:00"）。
+- **Engine (Symbolic)**: 所有的物理校驗（營業時間、消化冷卻、交通緩衝）必須由 `decision_engine.py` 的 Python 代碼執行。
+- **邊界原則**: 物理真實性（店家有沒有開）永遠大於語義偏好（這家店好不好吃）。
+
+## 3. Single Responsibility Principle (SRP) - 節點拆分規範
+- `node_flight_search` 專職處理 Duffel 航班 API。
+- `node_food_search` 專職處理餐廳檢索與 Seed Catalog 載入。
+- **嚴禁行為**: 禁止在處理純台北美食請求時調用航班搜尋邏輯。
+
+## 4. Data Governance - 資料驅動規範
+- **No Hardcoding**: 禁止將新的店家資料（Seed）寫死在 `agent.py` 中。
+- **JSON First**: 所有店家資料必須存放於 `data/shop_catalogs/` 下的 JSON 檔案，並透過 `_load_shop_catalog` 讀取。
+- **Field Integrity**: 每家店必須包含 `latitude`, `longitude`, `closed_weekdays`, 與 `flavor_vector`。
+
+## 5. Locality Awareness - 地域感知規範
+- 城市判定優先序：1. 使用者明確意圖 > 2. 使用者傳入的 Locale (lat/lng) > 3. 環境變數 `DEFAULT_LOCALE_CITY` > 4. 預設京都。

@@ -1,0 +1,6 @@
+{
+  "shops": [
+    {"name":"風雲兒 新宿本店","close_time":"21:30","open_time":"11:00","booking_type":"NONE","queue_strategy":"PHYSICAL_LINE","last_call_offset":30,"is_cash_only":false,"sns_handle":"fuunji_shinjuku","avg_eat_minutes":45,"is_famous":true,"base_wait_minutes":40,"google_rating":4.52,"flavor_intensity":0.84,"flavor_category":"HEAVY","flavor_vector":{"salt":0.7,"fat":0.62,"umami":0.86,"acid":0.2,"spice":0.28},"source_scores":{"google":0.79,"tabelog":0.84},"occasion_tags":["ramen","tsukemen","main_meal"],"tags":["つけ麺","新宿"],"allowed_dietary_preferences":["regular"],"neighborhood":"Shinjuku","region":"jp","closed_weekdays":[0],"latitude":35.69363,"longitude":139.69941},
+    {"name":"つじ半 日本橋本店","close_time":"22:30","open_time":"11:00","booking_type":"NONE","queue_strategy":"PHYSICAL_LINE","last_call_offset":25,"is_cash_only":false,"sns_handle":"tsujihan_nihonbashi","avg_eat_minutes":42,"is_famous":true,"base_wait_minutes":35,"google_rating":4.41,"flavor_intensity":0.72,"flavor_category":"HEAVY","flavor_vector":{"salt":0.62,"fat":0.58,"umami":0.82,"acid":0.18,"spice":0.15},"source_scores":{"google":0.74,"tabelog":0.76},"occasion_tags":["donburi","seafood","main_meal"],"tags":["つじ半","日本橋"],"allowed_dietary_preferences":["regular","pescatarian"],"neighborhood":"Nihonbashi","region":"jp","closed_weekdays":[],"latitude":35.68294,"longitude":139.77472}
+  ]
+}

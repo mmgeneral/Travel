@@ -1,12 +1,20 @@
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import dataclass
+from pathlib import Path
+
+# Allow `python travel/agent.py` to import project-root `debug_json`.
+_root = Path(__file__).resolve().parent.parent
+if str(_root) not in sys.path:
+    sys.path.insert(0, str(_root))
 from datetime import datetime
 from langgraph.graph import END, StateGraph
 from typing_extensions import TypedDict
 
 # ── Import the standalone Saga engine ─────────────────────────────────────────
+from debug_json import audit_json_line_as_text, debug_json as _dj
 from saga import SagaEngine, SagaStep
 
 # --- TYPES ---
@@ -60,53 +68,66 @@ class TransactionManager:
 
     def reserve(self, leg: TripLeg):
         """Simulates a soft-lock on a seat with race condition detection."""
-        print(f"[RESERVE] Attempting to lock seat on {leg.origin} -> {leg.destination}...")
-        
+        print(_dj("debug_print", step="txn_reserve_attempt", origin=leg.origin, destination=leg.destination))
+
         # Simulate a race condition where another process grabs the last seat between search and reserve
         if leg.race_condition and leg.seats <= 1:
-            print(f"  ❌ RACE CONDITION: Process B snatched the last seat on {leg.destination} before we could lock it!")
+            print(
+                _dj(
+                    "debug_print",
+                    step="txn_race_condition",
+                    destination=leg.destination,
+                    detail="last_seat_taken_before_lock",
+                )
+            )
             raise AtomicCommitFailure(f"Last Seat Race Condition on {leg.destination}")
-        
+
         self.reserved_legs.append(leg)
-        print(f"  ✅ Soft-lock acquired for {leg.origin} -> {leg.destination}.")
+        print(_dj("debug_print", step="txn_soft_lock_ok", origin=leg.origin, destination=leg.destination))
 
     def rollback(self):
         """Explicitly releases the hold on previously reserved legs (Compensating Transaction)."""
-        print("[ROLLBACK] Transaction Failure. Initiating compensating transactions...")
+        print(_dj("debug_print", step="txn_rollback_start", legs=len(self.reserved_legs)))
         for leg in reversed(self.reserved_legs):
-            print(f"  🔓 RELEASE: Freeing hold on {leg.origin} -> {leg.destination}")
+            print(_dj("debug_print", step="txn_release_leg", origin=leg.origin, destination=leg.destination))
         self.reserved_legs = []
 
 # --- NODES ---
 def node_search(state: AgentState) -> AgentState:
-    print("\n[SEARCH] Finding flights TPE → NRT → SFO ...")
+    print(_dj("debug_print", node="node_search", route="TPE→NRT→SFO"))
 
     # Conversational snapshot BEFORE any mutation — enables undo later
     snap = _conv_saga.snapshot(dict(state))
     state["saga_snapshot_idx"] = snap
 
     state["research_log"].append(
-        "Found TPE-NRT (available) and UA838 NRT-SFO (1 seat left, high contention)."
+        _dj(
+            "research_flight_snapshot",
+            leg1="TPE-NRT available",
+            leg2="UA838 NRT-SFO",
+            leg2_seats=1,
+            contention="high",
+        )
     )
     return state
 
 def node_audit(state: AgentState) -> AgentState:
-    print("\n[AUDIT] Coordinating atomic reservation via saga.py ...")
+    print(_dj("debug_print", node="node_audit", message="saga_transactional_reservation"))
 
     flights = SearchTool.get_flights()
     state["rollback_occurred"] = False
 
     def reserve_tpe_nrt(ctx: dict) -> dict:
         leg = flights["TPE-NRT"]
-        print(f"  [RESERVE] {leg.origin} → {leg.destination} ...")
+        print(_dj("debug_print", step="reserve_tpe_nrt", origin=leg.origin, destination=leg.destination))
         return {"leg": f"{leg.origin}-{leg.destination}", "price": leg.price}
 
     def cancel_tpe_nrt(receipt: dict) -> None:
-        print(f"  [RELEASE] Freeing hold on {receipt['leg']}")
+        print(_dj("debug_print", step="cancel_tpe_nrt", leg=receipt["leg"]))
 
     def reserve_nrt_sfo(ctx: dict) -> dict:
         leg = flights["NRT-SFO"]
-        print(f"  [RESERVE] {leg.origin} → {leg.destination} ...")
+        print(_dj("debug_print", step="reserve_nrt_sfo", origin=leg.origin, destination=leg.destination))
         if leg.race_condition and leg.seats <= 1:
             raise AtomicCommitFailure(
                 f"Last-seat race condition on {leg.destination}: "
@@ -115,7 +136,7 @@ def node_audit(state: AgentState) -> AgentState:
         return {"leg": f"{leg.origin}-{leg.destination}", "price": leg.price}
 
     def cancel_nrt_sfo(receipt: dict) -> None:
-        print(f"  [RELEASE] Freeing hold on {receipt.get('leg', 'NRT-SFO')}")
+        print(_dj("debug_print", step="cancel_nrt_sfo", leg=receipt.get("leg", "NRT-SFO")))
 
     steps = [
         SagaStep("reserve_tpe_nrt", reserve_tpe_nrt, cancel_tpe_nrt),
@@ -127,23 +148,24 @@ def node_audit(state: AgentState) -> AgentState:
     if not ok:
         failed = next((s for s in log.steps if s.error), None)
         reason = failed.error if failed else "unknown"
-        print(f"\n[CRITICAL] Saga failed: {reason}")
+        print(_dj("debug_print", level="critical", saga_failed=True, detail=str(reason)))
         state["rollback_occurred"] = True
-        state["transit_audit"].append(reason)
+        state["transit_audit"].append(_dj("saga_audit_failure", detail=str(reason)))
     else:
-        print("[SUCCESS] All legs reserved atomically.")
+        print(_dj("debug_print", saga_success=True, message="all_legs_reserved"))
 
     return state
 
 def node_plan(state: AgentState) -> AgentState:
-    print("\n[PLAN] Generating outcome report ...")
+    print(_dj("debug_print", node="node_plan", message="generating_outcome_report"))
 
     report  = "## 🏁 SAGA PATTERN DEMO — Last-Seat Race Condition (TPE → NRT → SFO)\n\n"
     report += f"**Conversational snapshot index:** `{state['saga_snapshot_idx']}` "
     report += "(call `rollback_to(idx)` to undo this entire planning turn)\n\n"
 
     if state["rollback_occurred"]:
-        reason = state["transit_audit"][0] if state["transit_audit"] else "unknown"
+        raw_audit = state["transit_audit"][0] if state["transit_audit"] else ""
+        reason = audit_json_line_as_text(raw_audit) if raw_audit else "unknown"
         report += "### ❌ TRANSACTION STATUS: ABORTED\n"
         report += f"**Reason:** {reason}\n\n"
         report += "| | Naive outcome | Saga outcome |\n"
@@ -195,19 +217,20 @@ if __name__ == "__main__":
 
     result = build_graph().invoke(initial_state)
 
-    print("\n" + "=" * 70)
-    print("  FINAL AGENT RESPONSE")
-    print("=" * 70)
+    print(_dj("cli_demo_banner", phase="final_response", width=70))
     print(result["final_itinerary"])
 
     # Demo: conversational rollback
-    print("=" * 70)
-    print("  DEMO — undo the planning turn (conversational rollback)")
-    print("=" * 70)
+    print(_dj("cli_demo_banner", phase="conversational_rollback_demo", width=70))
     snap_idx = result["saga_snapshot_idx"]
     if snap_idx >= 0:
         restored = _conv_saga.rollback_to(snap_idx)
-        print(f"  Restored keys:          {list(restored.keys())}")
-        print(f"  research_log cleared:   {restored['research_log'] == []}")
-        print(f"  Snapshots remaining:    {len(_conv_saga.log.state_snapshots)}")
-    print("=" * 70)
+        print(
+            _dj(
+                "cli_rollback_demo",
+                restored_keys=list(restored.keys()),
+                research_log_cleared=restored["research_log"] == [],
+                snapshots_remaining=len(_conv_saga.log.state_snapshots),
+            )
+        )
+    print(_dj("cli_demo_banner", phase="done", width=70))

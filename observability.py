@@ -177,6 +177,8 @@ def _attach_langfuse_exporter(provider: Any) -> None:
     langfuse_host = os.getenv("LANGFUSE_HOST", "http://localhost:3000")
     public_key = os.getenv("LANGFUSE_PUBLIC_KEY", "")
     secret_key = os.getenv("LANGFUSE_SECRET_KEY", "")
+    if not public_key or not secret_key or not langfuse_host:
+        return  # 沒設 key 就不建立 exporter
     credentials = base64.b64encode(f"{public_key}:{secret_key}".encode()).decode()
 
     otlp_exporter = OTLPSpanExporter(

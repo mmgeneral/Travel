@@ -2,7 +2,8 @@
   "shops": [
     {
       "name": "燃えよ麺助",
-      "close_time": "20:30",
+      "open_time": "11:00",
+      "close_time": "21:30",
       "booking_type": "NONE",
       "queue_strategy": "PHYSICAL_LINE",
       "last_call_offset": 30,
@@ -31,16 +32,17 @@
       ],
       "tags": [
         "ramen",
-        "豚骨"
+        "豚骨",
+        "lunch"
       ],
       "allowed_dietary_preferences": [
         "regular"
       ],
-      "neighborhood": "Umeda",
+      "neighborhood": "Karasuma Kawaramachi",
       "region": "jp",
       "closed_weekdays": [],
-      "latitude": 34.7049,
-      "longitude": 135.495
+      "latitude": 35.00335,
+      "longitude": 135.76894
     },
     {
       "name": "松籟庵",
@@ -70,7 +72,8 @@
       },
       "occasion_tags": [
         "kaiseki",
-        "course"
+        "course",
+        "lunch"
       ],
       "allowed_dietary_preferences": [
         "regular",
@@ -81,10 +84,18 @@
       "region": "jp",
       "closed_weekdays": [],
       "latitude": 35.0142,
-      "longitude": 135.673
+      "longitude": 135.673,
+      "tags": [
+        "kaiseki",
+        "vegetable_forward",
+        "lunch",
+        "dinner",
+        "course"
+      ]
     },
     {
       "name": "喫茶ソワレ",
+      "open_time": "09:00",
       "close_time": "19:00",
       "booking_type": "NONE",
       "queue_strategy": "PHYSICAL_LINE",
@@ -109,6 +120,7 @@
         "google": 0.59
       },
       "occasion_tags": [
+        "tea",
         "dessert",
         "cafe"
       ],
@@ -120,7 +132,12 @@
       "region": "jp",
       "closed_weekdays": [],
       "latitude": 35.0039,
-      "longitude": 135.7709
+      "longitude": 135.7709,
+      "tags": [
+        "cafe",
+        "dessert",
+        "afternoon_tea"
+      ]
     },
     {
       "name": "朝拉麵",
@@ -186,6 +203,383 @@
       "closed_weekdays": [],
       "latitude": 35.0048,
       "longitude": 135.7664
+    },
+    {
+      "name": "イノダコーヒ 三条本店",
+      "open_time": "07:00",
+      "close_time": "18:30",
+      "booking_type": "NONE",
+      "queue_strategy": "SIGN_UP_SHEET",
+      "last_call_offset": 25,
+      "is_cash_only": false,
+      "sns_handle": "inoda_coffee_sanjo",
+      "avg_eat_minutes": 45,
+      "is_famous": true,
+      "base_wait_minutes": 22,
+      "flavor_intensity": 0.32,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.18,
+        "fat": 0.42,
+        "umami": 0.44,
+        "acid": 0.35,
+        "spice": 0.06
+      },
+      "source_scores": {
+        "tablelog": 0.74,
+        "google": 0.71,
+        "sns": 0.58
+      },
+      "occasion_tags": [
+        "breakfast",
+        "tea",
+        "morning",
+        "cafe"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian"
+      ],
+      "neighborhood": "Sanjo Kawaramachi",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00922,
+      "longitude": 135.76438,
+      "tags": [
+        "cafe",
+        "breakfast",
+        "coffee",
+        "morning_set"
+      ]
+    },
+    {
+      "name": "尾張屋 本店",
+      "open_time": "11:00",
+      "close_time": "15:45",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 15,
+      "is_cash_only": true,
+      "sns_handle": "owariya_honten",
+      "avg_eat_minutes": 55,
+      "is_famous": true,
+      "base_wait_minutes": 34,
+      "flavor_intensity": 0.44,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.38,
+        "fat": 0.35,
+        "umami": 0.62,
+        "acid": 0.25,
+        "spice": 0.06
+      },
+      "source_scores": {
+        "tablelog": 0.86,
+        "google": 0.73,
+        "sns": 0.65
+      },
+      "occasion_tags": [
+        "lunch",
+        "quick_meal",
+        "main_meal"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "pescatarian",
+        "vegetarian"
+      ],
+      "neighborhood": "Kamigyo",
+      "region": "jp",
+      "closed_weekdays": [3],
+      "latitude": 35.02978,
+      "longitude": 135.74316,
+      "tags": [
+        "soba",
+        "traditional",
+        "lunch",
+        "nishin"
+      ]
+    },
+    {
+      "name": "小川珈琲 堺町錦店",
+      "open_time": "10:30",
+      "close_time": "19:30",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 20,
+      "is_cash_only": false,
+      "sns_handle": "ogawa_coffee_sakaimachi",
+      "avg_eat_minutes": 40,
+      "is_famous": false,
+      "base_wait_minutes": 14,
+      "flavor_intensity": 0.36,
+      "flavor_category": "SWEET",
+      "flavor_vector": {
+        "salt": 0.08,
+        "fat": 0.32,
+        "umami": 0.38,
+        "acid": 0.35,
+        "spice": 0.03
+      },
+      "source_scores": {
+        "google": 0.68,
+        "tablelog": 0.72
+      },
+      "occasion_tags": [
+        "tea",
+        "cafe",
+        "refresh"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian"
+      ],
+      "neighborhood": "Nishiki Sakaimachi",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00506,
+      "longitude": 135.76452,
+      "tags": [
+        "cafe",
+        "coffee",
+        "afternoon_tea",
+        "dessert"
+      ]
+    },
+    {
+      "name": "肉のはせ川 先斗町別邸",
+      "open_time": "17:00",
+      "close_time": "22:30",
+      "booking_type": "PHONE",
+      "queue_strategy": "SIGN_UP_SHEET",
+      "last_call_offset": 30,
+      "is_cash_only": false,
+      "sns_handle": "nis_hase_kawa_kyoto",
+      "avg_eat_minutes": 75,
+      "is_famous": true,
+      "base_wait_minutes": 24,
+      "flavor_intensity": 0.78,
+      "flavor_category": "HEAVY",
+      "flavor_vector": {
+        "salt": 0.55,
+        "fat": 0.76,
+        "umami": 0.88,
+        "acid": 0.18,
+        "spice": 0.42
+      },
+      "source_scores": {
+        "tablelog": 0.92,
+        "google": 0.79,
+        "sns": 0.71
+      },
+      "occasion_tags": [
+        "dinner",
+        "social",
+        "main_meal"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "pescatarian"
+      ],
+      "neighborhood": "Pontocho",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00565,
+      "longitude": 135.77164,
+      "tags": [
+        "yakiniku",
+        "beef",
+        "dinner",
+        "course"
+      ],
+      "is_sharing_friendly": true,
+      "portion_strictness": 0.62
+    },
+    {
+      "name": "お好み焼き きじ 京都駅ビルPorta店",
+      "open_time": "11:00",
+      "close_time": "21:45",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 25,
+      "is_cash_only": true,
+      "sns_handle": "kiji_porta_kyoto",
+      "avg_eat_minutes": 50,
+      "is_famous": true,
+      "base_wait_minutes": 30,
+      "flavor_intensity": 0.68,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.48,
+        "fat": 0.62,
+        "umami": 0.71,
+        "acid": 0.22,
+        "spice": 0.42
+      },
+      "source_scores": {
+        "tablelog": 0.76,
+        "google": 0.74,
+        "sns": 0.7
+      },
+      "occasion_tags": [
+        "lunch",
+        "main_meal",
+        "social",
+        "dinner"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian"
+      ],
+      "neighborhood": "Kyoto Station",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 34.98611,
+      "longitude": 135.75993,
+      "tags": [
+        "okonomiyaki",
+        "teppan",
+        "lunch",
+        "quick_meal"
+      ]
+    },
+    {
+      "name": "京の焼肉処 弘 京都駅前ハチ公口店",
+      "open_time": "11:30",
+      "close_time": "23:30",
+      "booking_type": "PHONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 30,
+      "is_cash_only": false,
+      "sns_handle": "hiro_hachiko_kyoto",
+      "avg_eat_minutes": 68,
+      "is_famous": true,
+      "base_wait_minutes": 38,
+      "flavor_intensity": 0.81,
+      "flavor_category": "HEAVY",
+      "flavor_vector": {
+        "salt": 0.62,
+        "fat": 0.79,
+        "umami": 0.9,
+        "acid": 0.16,
+        "spice": 0.52
+      },
+      "source_scores": {
+        "tablelog": 0.82,
+        "google": 0.77,
+        "sns": 0.72
+      },
+      "occasion_tags": [
+        "dinner",
+        "social",
+        "main_meal"
+      ],
+      "allowed_dietary_preferences": [
+        "regular"
+      ],
+      "neighborhood": "Kyoto Station Hachijo",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 34.98785,
+      "longitude": 135.75918,
+      "tags": [
+        "bbq_yakiniku",
+        "beef",
+        "dinner",
+        "late_night"
+      ],
+      "is_sharing_friendly": true
+    },
+    {
+      "name": "天下一品 河原町三条店",
+      "open_time": "10:30",
+      "close_time": "23:45",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 20,
+      "is_cash_only": false,
+      "sns_handle": "tenichi_kawasanjo_kyoto",
+      "avg_eat_minutes": 42,
+      "is_famous": false,
+      "base_wait_minutes": 22,
+      "flavor_intensity": 0.62,
+      "flavor_category": "HEAVY",
+      "flavor_vector": {
+        "salt": 0.7,
+        "fat": 0.68,
+        "umami": 0.86,
+        "acid": 0.2,
+        "spice": 0.4
+      },
+      "source_scores": {
+        "google": 0.71,
+        "sns": 0.65
+      },
+      "occasion_tags": [
+        "late_night",
+        "ramen",
+        "night_food"
+      ],
+      "allowed_dietary_preferences": [
+        "regular"
+      ],
+      "neighborhood": "Kawaramachi Sanjo",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00689,
+      "longitude": 135.76642,
+      "tags": [
+        "ramen",
+        "late_night",
+        "kotteri"
+      ]
+    },
+    {
+      "name": "鳥貴族 四条河原町店",
+      "open_time": "17:00",
+      "close_time": "23:59",
+      "booking_type": "NONE",
+      "queue_strategy": "SIGN_UP_SHEET",
+      "last_call_offset": 30,
+      "is_cash_only": true,
+      "sns_handle": "torikichi_shijo_kara",
+      "avg_eat_minutes": 62,
+      "is_famous": false,
+      "base_wait_minutes": 26,
+      "flavor_intensity": 0.58,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.52,
+        "fat": 0.54,
+        "umami": 0.74,
+        "acid": 0.24,
+        "spice": 0.62
+      },
+      "source_scores": {
+        "google": 0.62,
+        "sns": 0.58
+      },
+      "occasion_tags": [
+        "social",
+        "late_night",
+        "beer_garden"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "pescatarian"
+      ],
+      "neighborhood": "Shijo Kawaramachi",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00393,
+      "longitude": 135.76971,
+      "tags": [
+        "izakaya",
+        "skewers",
+        "late_night",
+        "beer"
+      ],
+      "is_sharing_friendly": true
     }
   ]
 }

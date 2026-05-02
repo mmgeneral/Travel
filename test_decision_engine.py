@@ -242,6 +242,54 @@ def test_last_call_does_not_roll_to_next_day():
     assert any("CONSTRAINT_LAST_CALL_EXCEEDED" in w and "LateClosed" in w for w in result.warnings)
 
 
+def test_respect_slot_order_keeps_dp_binding_per_slot_index():
+    """ranked[i] maps to normalized meal_slots[i]; bypasses preferred_shop + candidate sort."""
+    traffic = MockTrafficProvider()
+    pref = UserPreference()
+    start = datetime(2026, 4, 27, 11, 0, 0)
+    # Café scores higher — without respect_slot_order, candidate sort would prefer it first
+    # among leftovers, but synthesize still injects GRAPH_OPTIMAL hints that can dominate.
+    tea_cafe = _minimal_shop(
+        name="TeaCafeScoresHigh",
+        open_time="08:00",
+        close_time="22:00",
+        tags=["cafe", "tea"],
+        occasion_tags={"tea", "lunch"},
+        avg_eat_minutes=35,
+    )
+    dp_lunch = _minimal_shop(
+        name="DpLunchRamen",
+        open_time="10:00",
+        close_time="22:00",
+        tags=["ramen", "main_meal"],
+        occasion_tags={"lunch"},
+        avg_eat_minutes=40,
+    )
+    ranked = [
+        RankedShop(shop=dp_lunch, final_score=50.0),
+        RankedShop(shop=tea_cafe, final_score=99.0),
+    ]
+    locked = ItinerarySynthesizer.synthesize(
+        ranked,
+        traffic,
+        pref,
+        start_time=start,
+        meal_slots=["lunch", "tea"],
+        mode=OptimizationMode.TASTE_MAX,
+        respect_slot_order=True,
+    )
+
+    def meals(res):
+        return [n.title for n in res.nodes if "·" in n.title and "Backup" not in n.title]
+
+    m = meals(locked)
+    assert len(m) >= 2
+    assert m[0].startswith("lunch · ")
+    assert "DpLunchRamen" in m[0]
+    assert m[1].startswith("tea · ")
+    assert "TeaCafeScoresHigh" in m[1]
+
+
 def test_early_bird_shop_is_prioritized_when_feasible():
     traffic = MockTrafficProvider()
     pref = UserPreference()

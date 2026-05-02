@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from agent import _build_shop_catalog, _build_shop_catalog_taipei, _build_shop_catalog_tokyo
+from agent import (
+    _build_shop_catalog,
+    _build_shop_catalog_taipei,
+    _build_shop_catalog_tokyo,
+)
 
 
 def test_catalog_files_load() -> None:
-    assert len(_build_shop_catalog()) >= 1
+    assert len(_build_shop_catalog()) >= 12
     assert len(_build_shop_catalog_tokyo()) >= 1
     assert len(_build_shop_catalog_taipei()) >= 12
 
@@ -30,9 +34,6 @@ def test_taipei_has_one_third_civilian_gems() -> None:
     shops = _build_shop_catalog_taipei()
     gems = [s for s in shops if 4.0 <= float(s.google_rating or 0.0) <= 4.3]
     assert len(gems) >= len(shops) // 3
-"""Catalog-level schedule fixture tests."""
-
-from agent import _build_shop_catalog
 
 
 def test_shoraian_has_explicit_open_time():

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+from contextlib import contextmanager
 from langgraph.graph import END, StateGraph
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -40,6 +41,8 @@ from shop_planning import (
 from decision_engine import (
     DensityScanner,
     GraphBuilder,
+    GraphEdge,
+    GraphNode,
     HealthBudgetTracker,
     ScoringEngine,
     ItinerarySynthesizer,
@@ -47,17 +50,21 @@ from decision_engine import (
     RankingEngine,
     RankedShop,
     SelectionStrategy,
+    SpatioTemporalGraph,
     UserPreferenceLearner,
     UserMinefield,
     UserPreference,
     WeightProfile,
     choose_health_backup,
 )
+
 from intent_parser import parse_intent as _parse_intent, Intent as _Intent
 from llm_router import LLMRouter as _LLMRouter
 from agents.retriever import RetrieverAgent
 from agents.critic import CriticAgent
 from agents.synthesizer import SynthesizerAgent, SynthesisReport
+
+_RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph
 
 
 class AgentState(TypedDict):
@@ -412,6 +419,51 @@ def _requested_meal_slots(query: str) -> list[str]:
     return slots
 
 
+def _effective_plan_meal_slots(intent: dict, query: str) -> list[str]:
+    """Prefer explicit planner intent; otherwise derive from `_requested_meal_slots` query expansion."""
+    raw = intent.get("meal_slots") if isinstance(intent.get("meal_slots"), list) else None
+    if isinstance(raw, list) and raw:
+        base = list(raw)
+    else:
+        base = _requested_meal_slots(query)
+    return ItinerarySynthesizer._normalize_slot_sequence(base)
+
+
+def _inject_slot_anchor_rankeds_into_phase1(
+    *,
+    core_head: list[RankedShop],
+    full_scores: list[RankedShop],
+    seed_profiles: list[ShopProfile],
+    slots: list[str],
+    query: str,
+    cap: int,
+) -> list[RankedShop]:
+    """Prepend researcher-style seed anchors per slot before DP so each layer has feasible nodes."""
+    norm_slots = ItinerarySynthesizer._normalize_slot_sequence(slots)
+    if not norm_slots:
+        return core_head[:cap]
+    anchor_names = _researcher_slot_anchor_names(norm_slots, seed_profiles, query=query)
+    by_name = {r.shop.name: r for r in full_scores}
+    seen: set[str] = set()
+    head: list[RankedShop] = []
+    for nm in anchor_names:
+        rs = by_name.get(nm)
+        if rs is None:
+            continue
+        if nm in seen:
+            continue
+        seen.add(nm)
+        head.append(rs)
+    merged: list[RankedShop] = list(head)
+    for rs in core_head:
+        if rs.shop.name not in seen:
+            seen.add(rs.shop.name)
+            merged.append(rs)
+        if len(merged) >= cap:
+            break
+    return merged[:cap]
+
+
 def _normalize_hhmm_from_period(hour: int, minute: int, period: str | None) -> str:
     h = max(0, min(23, int(hour)))
     m = max(0, min(59, int(minute)))
@@ -444,6 +496,18 @@ def _extract_user_time_window(query: str) -> TimeRange:
         start = _normalize_hhmm_from_period(int(h1), int(m1 or "0"), p1)
         end = _normalize_hhmm_from_period(int(h2), int(m2v or "0"), p2)
         return TimeRange(start=start, end=end)
+
+    # e.g. "7點開始", "早上7点开始"; used by meal-slot expansion so 7 AM plans open with breakfast anchors.
+    m3 = re.search(
+        r"(早上|清晨|凌晨|上午|中午|下午|晚上)?\s*(\d{1,2})\s*[點:]?\s*(\d{2})?\s*(開始|开始)",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if m3:
+        period, h_raw, mm_raw = m3.group(1), m3.group(2), m3.group(3)
+        start = _normalize_hhmm_from_period(int(h_raw), int(mm_raw or "0"), period)
+        return TimeRange(start=start, end=None)
+
     return TimeRange()
 
 
@@ -661,16 +725,249 @@ def _extract_search_category_keywords(query: str) -> list[str]:
     return out
 
 
-def _seed_covers_meal_slot(seed_shops: list[ShopProfile], slot: str) -> bool:
-    """True if at least one seed shop has tags/occasion overlap with slot needs."""
+def _seed_shop_tag_bag(shop: ShopProfile) -> set[str]:
+    return {str(t).lower() for t in shop.tags} | {str(t).lower() for t in shop.occasion_tags}
+
+
+def _seed_single_covers_slot(shop: ShopProfile, slot: str) -> bool:
+    """True if one shop semantically overlaps _SLOT_TAG_COVERAGE[slot]."""
     needed = _SLOT_TAG_COVERAGE.get(slot)
     if not needed:
         return True
-    for shop in seed_shops:
-        bag = {str(t).lower() for t in shop.tags} | {str(t).lower() for t in shop.occasion_tags}
-        if bag & needed:
+    return bool(_seed_shop_tag_bag(shop) & needed)
+
+
+def _seed_covers_meal_slot(seed_shops: list[ShopProfile], slot: str) -> bool:
+    """True if at least one seed shop has tags/occasion overlap with slot needs."""
+    return any(_seed_single_covers_slot(s, slot) for s in seed_shops)
+
+
+def _researcher_semantic_overlap(shop: ShopProfile, slot: str) -> bool:
+    """Broad slot semantics for researcher coverage (tea/late-night include common snack tokens)."""
+    base = frozenset(_SLOT_TAG_COVERAGE.get(slot, frozenset()))
+    if slot == "tea":
+        base |= frozenset({"snack", "tangyuan", "tang_yuan"})
+    elif slot == "late_night":
+        base |= frozenset({"snack", "night_snack"})
+    if not base:
+        return True
+    return bool(_seed_shop_tag_bag(shop) & base)
+
+
+def _researcher_clock_minutes(hhmm: str | None) -> int | None:
+    """Parse HH:MM to minute-of-day; None on failure."""
+    try:
+        parts = str(hhmm or "").strip().split(":", 1)
+        hh = max(0, min(23, int(parts[0])))
+        mm = max(0, min(59, int(parts[1]) if len(parts) > 1 else 0))
+        return hh * 60 + mm
+    except Exception:
+        return None
+
+
+def _researcher_slot_required_gate(shop: ShopProfile, slot: str, slot_req: dict[str, set[str]]) -> bool:
+    """Each slot maps to optional OR-groups from `_slot_level_required_tags`."""
+    if not slot_req:
+        return True
+    need = slot_req.get(str(slot).lower())
+    if not need:
+        return True
+    return bool(_seed_shop_tag_bag(shop) & need)
+
+
+def _researcher_time_fit_slot(shop: ShopProfile, slot: str, tier: str) -> bool:
+    """
+    Lightweight open/close heuristics aligned with itinerary meal windows.
+    tier: strict (time + semantics), relaxed (wider clocks), semantic_only skips time.
+    """
+    if tier == "semantic_only":
+        return True
+    open_m = _researcher_clock_minutes(getattr(shop, "open_time", "") or "")
+    close_m = _researcher_clock_minutes(getattr(shop, "close_time", "") or "")
+    bag = _seed_shop_tag_bag(shop)
+
+    # Breakfast: early starters or breakfast-tagged brunch places opening by late morning.
+    if slot == "breakfast":
+        if not _researcher_semantic_overlap(shop, "breakfast"):
+            return False
+        if tier == "relaxed":
+            if open_m is None:
+                return True
+            if open_m < 8 * 60:
+                return True
+            brunchish = bag & {"breakfast", "brunch", "morning", "soy_milk", "coffee", "cafe"}
+            return bool(brunchish) and open_m <= (11 * 60 + 30)
+        # strict
+        if open_m is None:
             return True
-    return False
+        if open_m < 8 * 60:
+            return True
+        brunchish = bag & {"breakfast", "brunch", "morning", "soy_milk"}
+        return bool(brunchish) and open_m <= (10 * 60 + 45)
+
+    if slot == "lunch":
+        if not _researcher_semantic_overlap(shop, "lunch"):
+            return False
+        if open_m is None:
+            return True
+        if tier == "relaxed":
+            return (10 * 60 + 30) <= open_m <= (13 * 60 + 30)
+        return (11 * 60) <= open_m <= (12 * 60 + 59)
+
+    if slot == "tea":
+        return _researcher_semantic_overlap(shop, "tea")
+
+    if slot == "dinner":
+        if not _researcher_semantic_overlap(shop, "dinner"):
+            return False
+        if close_m is None:
+            return True
+        if tier == "relaxed":
+            return close_m >= (20 * 60 + 30)
+        return close_m >= (21 * 60)
+
+    if slot == "late_night":
+        if _researcher_semantic_overlap(shop, "late_night"):
+            if close_m is None:
+                return True
+            if tier == "relaxed":
+                return close_m >= (22 * 60 + 30) or close_m <= (9 * 60)
+            return close_m >= (23 * 60) or close_m <= (9 * 60)
+        if close_m is None:
+            return False
+        return close_m >= (23 * 60) if tier == "strict" else close_m >= (22 * 60 + 30)
+
+    return _researcher_semantic_overlap(shop, slot)
+
+
+def _researcher_seed_eligible_for_slot(
+    shop: ShopProfile,
+    slot: str,
+    *,
+    query: str,
+    tier: str,
+) -> bool:
+    if not _researcher_slot_required_gate(shop, slot, _slot_level_required_tags(query)):
+        return False
+    if tier == "semantic_only":
+        return _researcher_semantic_overlap(shop, slot)
+    sem_ok = _researcher_semantic_overlap(shop, slot)
+    if not sem_ok:
+        return False
+    return _researcher_time_fit_slot(shop, slot, tier=tier)
+
+
+def _researcher_shop_eligible_any_tier(shop: ShopProfile, slot: str, *, query: str) -> bool:
+    return any(
+        _researcher_seed_eligible_for_slot(shop, slot, query=query, tier=t)
+        for t in ("strict", "relaxed", "semantic_only")
+    )
+
+
+def _researcher_score_tuple(shop: ShopProfile) -> tuple[float, float, float]:
+    ss = getattr(shop, "source_scores", None) or {}
+    table_top = float(max(ss.values()) if ss else 0.0)
+    return (
+        float(shop.google_rating or 0.0),
+        table_top,
+        float(shop.trust_score),
+    )
+
+
+def _researcher_best_seed_for_slot(
+    seed_shops: list[ShopProfile],
+    slot: str,
+    *,
+    query: str,
+    forbidden_names: set[str],
+) -> ShopProfile | None:
+    """Pick highest-scoring seed shop for slot; relax time tiers if sparse."""
+    for tier in ("strict", "relaxed", "semantic_only"):
+        pool = [
+            s
+            for s in seed_shops
+            if s.name not in forbidden_names
+            and _researcher_seed_eligible_for_slot(s, slot, query=query, tier=tier)
+        ]
+        if not pool:
+            continue
+        pool.sort(key=_researcher_score_tuple, reverse=True)
+        return pool[0]
+    return None
+
+
+def _researcher_slot_anchor_names(
+    meal_slots: list[str],
+    seed_shops: list[ShopProfile],
+    *,
+    query: str,
+) -> list[str]:
+    """At most one anchored seed candidate per meal slot (names unique when possible)."""
+    out: list[str] = []
+    seen: set[str] = set()
+    for slot in meal_slots:
+        pick = _researcher_best_seed_for_slot(seed_shops, slot, query=query, forbidden_names=seen)
+        if pick is None:
+            continue
+        out.append(pick.name)
+        seen.add(pick.name)
+    return out
+
+
+def _researcher_finalize_candidate_names(
+    *,
+    meal_slots: list[str],
+    shops: list[ShopProfile],
+    seed_shops: list[ShopProfile],
+    query: str,
+    base_names: list[str],
+    auditor_feedback: str = "",
+    notes_suffix: str = "",
+) -> tuple[list[str], str]:
+    """
+    Prepend anchored per-slot picks from seed catalog, preserve order uniqueness,
+    then append other high-score shops until cap.
+    """
+    shop_by_name = {s.name: s for s in shops}
+    anchors = _researcher_slot_anchor_names(meal_slots, seed_shops, query=query)
+    seen: set[str] = set()
+    merged: list[str] = []
+
+    def push(name: str) -> None:
+        if name not in shop_by_name or name in seen:
+            return
+        seen.add(name)
+        merged.append(name)
+
+    for a in anchors:
+        push(a)
+    for n in base_names:
+        push(str(n).strip())
+
+    floor = len(meal_slots) if meal_slots else 4
+    cap = max(8, floor + 3, len(anchors) + 4)
+
+    q = (query or "").lower()
+    avoid_far = ("太遠" in auditor_feedback) or ("distance" in auditor_feedback.lower())
+    sorted_shops = sorted(shops, key=_researcher_score_tuple, reverse=True)
+    for s in sorted_shops:
+        if len(merged) >= cap:
+            break
+        tags_low = {str(t).lower() for t in s.tags}
+        if "ramen" in q and "ramen" not in tags_low and "noodle" not in tags_low:
+            continue
+        if "vegan" in q and "vegan" not in [x.lower() for x in s.allowed_dietary_preferences]:
+            continue
+        if avoid_far and (s.latitude is None or s.longitude is None):
+            continue
+        push(s.name)
+
+    notes = notes_suffix.strip()
+    anchor_note = ""
+    if anchors:
+        anchor_note = f"slot_anchors={'|'.join(anchors)};"
+    extras = "; ".join(x for x in (anchor_note, notes) if x)
+    return merged, extras
 
 
 def _plan_dynamic_place_queries(query: str, city: str, seed_shops: list[ShopProfile]) -> tuple[list[str], list[str]]:
@@ -1668,33 +1965,70 @@ def _researcher_shop_pool(state: AgentState) -> list[ShopProfile]:
     return out
 
 
+def _researcher_seed_catalog(state: AgentState) -> list[ShopProfile]:
+    """City-scoped seed list only (no dynamic pool)."""
+    _intent = state.get("intent") or {}
+    _city = _intent.get("city") or ""
+    if _city == "台北":
+        return list(_build_shop_catalog_taipei())
+    if _city == "東京":
+        return list(_build_shop_catalog_tokyo())
+    return list(_build_shop_catalog())
+
+
 def _call_researcher_prompt(
-    query: str, shops: list[ShopProfile], auditor_feedback: str, iteration: int
+    query: str,
+    shops: list[ShopProfile],
+    *,
+    meal_slots: list[str],
+    seed_shops: list[ShopProfile],
+    auditor_feedback: str,
+    iteration: int,
 ) -> tuple[list[str], str]:
     """Prompt-driven candidate generation. Falls back to deterministic heuristic."""
+
+    cap_llm = max(8, len(meal_slots) + 2, 5)
+
+    def _finalize(base: list[str], notes_tag: str) -> tuple[list[str], str]:
+        merged, extras = _researcher_finalize_candidate_names(
+            meal_slots=meal_slots,
+            shops=shops,
+            seed_shops=seed_shops,
+            query=query,
+            base_names=base,
+            auditor_feedback=auditor_feedback,
+            notes_suffix=notes_tag,
+        )
+        return merged, extras
+
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
     sample = [
         {
             "name": s.name,
             "tags": list(s.tags),
+            "occasion_tags": sorted(_seed_shop_tag_bag(s)),
             "open_time": s.open_time,
             "close_time": s.close_time,
             "lat": s.latitude,
             "lng": s.longitude,
             "rating": s.google_rating,
         }
-        for s in shops[:25]
+        for s in shops[: min(36, len(shops))]
     ]
     if api_key:
         try:
             sys_msg = (
                 "You are Researcher Agent (student). Build a foodie itinerary candidate list. "
+                "You MUST nominate at least one distinct shop name per requested meal_slots entry "
+                "(breakfast,lunch,tea,dinner,late_night,custom) drawn from shops when plausible. "
                 "Return JSON only: {\"candidate_names\":[...],\"notes\":\"...\"}. "
+                "Prefer higher ratings/trust while covering every slot requested. "
                 "Respect auditor feedback if provided."
             )
             user_msg = json.dumps(
                 {
                     "query": query,
+                    "meal_slots": meal_slots,
                     "iteration": iteration,
                     "auditor_feedback": auditor_feedback,
                     "shops": sample,
@@ -1708,7 +2042,7 @@ def _call_researcher_prompt(
                     "model": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
                     "messages": [{"role": "system", "content": sys_msg}, {"role": "user", "content": user_msg}],
                     "temperature": 0.2,
-                    "max_tokens": 450,
+                    "max_tokens": 520,
                 },
                 timeout=35,
             )
@@ -1719,36 +2053,28 @@ def _call_researcher_prompt(
             obj = json.loads(txt)
             names = [str(x).strip() for x in obj.get("candidate_names", []) if str(x).strip()]
             notes = str(obj.get("notes", "") or "")
-            if names:
-                return names[:5], notes
+            shop_ok = {s.name for s in shops}
+            filtered = [n for n in names if n in shop_ok]
+            if filtered:
+                return _finalize(filtered[:cap_llm], f"openai_researcher;{notes}")
         except Exception:
             pass
 
-    # heuristic fallback
-    q = (query or "").lower()
-    avoid_far = ("太遠" in auditor_feedback) or ("distance" in auditor_feedback.lower())
-    sorted_shops = sorted(shops, key=lambda s: (float(s.google_rating or 0.0), s.trust_score), reverse=True)
-    picked: list[str] = []
-    for s in sorted_shops:
-        tags_low = {str(t).lower() for t in s.tags}
-        if "ramen" in q and "ramen" not in tags_low and "noodle" not in tags_low:
-            continue
-        if "vegan" in q and "vegan" not in [x.lower() for x in s.allowed_dietary_preferences]:
-            continue
-        if avoid_far and (s.latitude is None or s.longitude is None):
-            continue
-        picked.append(s.name)
-        if len(picked) >= 4:
-            break
-    return picked, "heuristic_fallback_researcher"
+    # Deterministic heuristic: anchors from seed catalog + greedy top-up from combined pool.
+    return _finalize([], "heuristic_fallback_researcher")
 
 
 def node_researcher(state: AgentState) -> AgentState:
     shops = _researcher_shop_pool(state)
+    seed_shops = _researcher_seed_catalog(state)
+    query = state.get("query", "") or ""
+    meal_slots = _effective_plan_meal_slots(state.get("intent") or {}, query)
     iteration = int(state.get("research_iteration", 0)) + 1
     names, notes = _call_researcher_prompt(
-        query=state.get("query", "") or "",
-        shops=shops,
+        query,
+        shops,
+        meal_slots=meal_slots,
+        seed_shops=seed_shops,
         auditor_feedback=state.get("auditor_feedback", "") or "",
         iteration=iteration,
     )
@@ -1829,6 +2155,466 @@ def node_audit(state: AgentState) -> AgentState:
         _dj("node_audit_skipped", reason="node_audit not in main graph (Task 7 ADR)")
     )
     return state
+
+
+def _combine_itinerary_clock(itinerary_start: datetime, t: datetime) -> datetime:
+    """Place `t`'s wall-clock onto `itinerary_start`'s calendar day (same tz semantics as start)."""
+    if itinerary_start.tzinfo is None and t.tzinfo is not None:
+        t = t.replace(tzinfo=None)
+    elif itinerary_start.tzinfo is not None and t.tzinfo is None:
+        t = t.replace(tzinfo=itinerary_start.tzinfo)
+    return itinerary_start.replace(
+        hour=t.hour,
+        minute=t.minute,
+        second=t.second,
+        microsecond=t.microsecond,
+    )
+
+
+def _relay_layer_one_edges_inplace(
+    graph: SpatioTemporalGraph,
+    *,
+    ranked: list[RankedShop],
+    traffic,
+) -> None:
+    """Mirror GraphBuilder layer-1 edge rule after mutating node datetimes (decision_engine stays unchanged)."""
+    ranked_index = {r.shop.name: r for r in ranked}
+    shop_index = {r.shop.name: r.shop for r in ranked}
+    by_slot: dict[int, list] = {}
+    for n in graph.nodes or []:
+        by_slot.setdefault(n.slot_index, []).append(n)
+    if not by_slot:
+        graph.edges = []
+        graph.debug_traces = []
+        return
+    slot_count = max(by_slot.keys()) + 1
+    edges: list[GraphEdge] = []
+    debug_traces: list[str] = []
+    if slot_count > 1:
+        for i in range(slot_count - 1):
+            from_nodes = by_slot.get(i, [])
+            if not from_nodes:
+                continue
+            for j in range(i + 1, slot_count):
+                to_nodes = by_slot.get(j, [])
+                if not to_nodes:
+                    continue
+                for a in from_nodes:
+                    shop_a = shop_index.get(a.shop_name)
+                    if shop_a is None:
+                        continue
+                    for b in to_nodes:
+                        if a.shop_name == b.shop_name:
+                            continue
+                        shop_b = shop_index.get(b.shop_name)
+                        if shop_b is None:
+                            continue
+                        travel_m = 18 + (8 * i)
+                        fastest_finish_at = a.start_time + timedelta(
+                            minutes=int(shop_a.base_wait_minutes)
+                            + int(shop_a.min_eat_minutes or shop_a.avg_eat_minutes)
+                        )
+                        ready_at = fastest_finish_at + timedelta(minutes=travel_m)
+                        open_b = ItinerarySynthesizer._shop_open_at(b.start_time, shop_b)
+                        if ready_at <= b.start_time and b.start_time >= open_b:
+                            status = traffic.get_route_status(a.shop_name, b.shop_name)
+                            queue_risk = min(1.0, max(0.0, float(shop_b.base_wait_minutes) / 45.0))
+                            slack_m = max(0.0, (b.start_time - ready_at).total_seconds() / 60.0)
+                            expected_buffer_m = max(0.0, float(status.transport_buffer_minutes))
+                            buffer_gap_m = max(0.0, expected_buffer_m - slack_m)
+                            travel_buffer_gap = min(1.0, buffer_gap_m / 45.0)
+                            base_score = float(ranked_index[b.shop_name].final_score)
+                            weight = ScoringEngine.risk_adjusted_score(
+                                base_score,
+                                queue_risk=queue_risk,
+                                travel_buffer_gap=travel_buffer_gap,
+                            )
+                            edges.append(GraphEdge(from_node_id=a.node_id, to_node_id=b.node_id, weight=weight))
+                        else:
+                            reasons: list[str] = []
+                            if ready_at > b.start_time:
+                                reasons.append(
+                                    f"準備時間 (ready_at) {ready_at.strftime('%H:%M')} > 開始時間 (B.start) {b.start_time.strftime('%H:%M')}"
+                                )
+                            if b.start_time < open_b:
+                                reasons.append(
+                                    f"B.start {b.start_time.strftime('%H:%M')} < B.open_time {open_b.strftime('%H:%M')}"
+                                )
+                            reason_text = "；".join(reasons) if reasons else "未知原因"
+                            debug_traces.append(
+                                _dj(
+                                    "graph_rejected_edge",
+                                    from_shop=a.shop_name,
+                                    to_shop=b.shop_name,
+                                    detail=reason_text,
+                                )
+                            )
+    graph.edges = edges
+    graph.debug_traces = debug_traces
+
+
+def _pin_dp_graph_to_itinerary_day_and_relayer_edges(
+    graph: SpatioTemporalGraph,
+    *,
+    itinerary_start: datetime,
+    ranked: list[RankedShop],
+    traffic,
+) -> None:
+    """DP graph nodes must share one excursion calendar day — align per-shop align() roll-forward with itinerary_start."""
+    if not graph.nodes:
+        return
+    for n in graph.nodes:
+        dur = n.end_time - n.start_time
+        n.start_time = _combine_itinerary_clock(itinerary_start, n.start_time)
+        n.end_time = n.start_time + dur
+    _relay_layer_one_edges_inplace(graph, ranked=ranked, traffic=traffic)
+
+
+def _expand_graph_node_tags_from_shop_profiles(graph: SpatioTemporalGraph, ranked: list[RankedShop]) -> None:
+    """DP only sees GraphNode.tags; merge occasion_tags for breakfast/affinity without editing decision_engine GraphBuilder."""
+    by_name = {r.shop.name: r.shop for r in ranked}
+    for n in graph.nodes or []:
+        sp = by_name.get(n.shop_name)
+        if sp is None:
+            continue
+        bag = {str(x).lower() for x in sp.tags} | {str(x).lower() for x in getattr(sp, "occasion_tags", ()) or []}
+        n.tags = tuple(sorted(bag))
+
+
+def agent_dp_find_optimal_path_no_shop_repeat(
+    graph: SpatioTemporalGraph,
+    required_length: int,
+    must_have_tags: set[str] | None = None,
+    banned_node_ids: set[str] | None = None,
+    solver_audit_log: list[str] | None = None,
+) -> list[GraphNode]:
+    """Same semantics as decision_engine DP, plus distinct shop constraint + soft slot-tag affinity."""
+    if solver_audit_log is not None:
+        solver_audit_log.append(
+            _dj(
+                "dp_start_agent",
+                variant="unique_shops_soft_slot_tag_affinity",
+                required_length=required_length,
+                nodes=len(graph.nodes or []),
+            )
+        )
+    if required_length <= 0 or not graph.nodes:
+        if solver_audit_log is not None:
+            solver_audit_log.append(_dj("dp_early_exit_agent", reason="invalid_required_length_or_empty_graph"))
+        return []
+    must_have_tags_l = {t.lower() for t in (must_have_tags or set())}
+    slot_names_raw = getattr(graph, "_agent_meal_slot_names_for_dp", None)
+    slot_names: list[str] | None = list(slot_names_raw) if isinstance(slot_names_raw, list) else None
+
+    required_tags_list = sorted(must_have_tags_l)
+    tag_idx = {t: i for i, t in enumerate(required_tags_list)}
+    full_mask = (1 << len(required_tags_list)) - 1
+
+    banned_node_ids_set = banned_node_ids or set()
+    usable_nodes = [n for n in graph.nodes if n.node_id not in banned_node_ids_set]
+    if not usable_nodes:
+        if solver_audit_log is not None:
+            solver_audit_log.append(_dj("dp_early_exit_agent", reason="all_nodes_filtered_by_banned_node_ids"))
+        return []
+    node_by_id = {n.node_id: n for n in usable_nodes}
+    indeg: dict[str, int] = {nid: 0 for nid in node_by_id}
+    out_edges: dict[str, list[GraphEdge]] = {nid: [] for nid in node_by_id}
+    for e in graph.edges:
+        if (
+            e.from_node_id not in node_by_id
+            or e.to_node_id not in node_by_id
+            or e.from_node_id in banned_node_ids_set
+            or e.to_node_id in banned_node_ids_set
+        ):
+            continue
+        indeg[e.to_node_id] += 1
+        out_edges[e.from_node_id].append(e)
+
+    queue = [nid for nid, d in indeg.items() if d == 0]
+    topo: list[str] = []
+    while queue:
+        queue.sort(key=lambda nid: (node_by_id[nid].slot_index, node_by_id[nid].start_time))
+        cur = queue.pop(0)
+        topo.append(cur)
+        for e in out_edges[cur]:
+            indeg[e.to_node_id] -= 1
+            if indeg[e.to_node_id] == 0:
+                queue.append(e.to_node_id)
+    if len(topo) < len(node_by_id):
+        topo = sorted(node_by_id.keys(), key=lambda nid: (node_by_id[nid].slot_index, node_by_id[nid].start_time))
+
+    def tag_mask(node: GraphNode) -> int:
+        m = 0
+        node_tags_low = {t.lower() for t in node.tags}
+        for t, idx in tag_idx.items():
+            if t in node_tags_low:
+                m |= 1 << idx
+        return m
+
+    def node_objective_score(node: GraphNode) -> float:
+        ideal = max(1, int(node.ideal_duration_minutes))
+        actual = max(1, int(node.actual_duration_minutes))
+        fidelity = max(0.0, min(1.0, float(actual) / float(ideal)))
+        bonus = 1.0
+        if slot_names and 0 <= node.slot_index < len(slot_names):
+            slot_nm = str(slot_names[node.slot_index]).lower()
+            preferred = ItinerarySynthesizer.SLOT_PREFERRED_TAGS.get(slot_nm)
+            if preferred and {str(t).lower() for t in node.tags} & preferred:
+                bonus = 1.3
+        return float(node.final_score) * fidelity * bonus
+
+    # Key: (node_id, path_len, must_have_bitmask, frozenset(shop_names_on_path)).
+    KeyT = tuple[str, int, int, frozenset[str]]
+    best: dict[KeyT, float] = {}
+    prev: dict[KeyT, KeyT | None] = {}
+
+    for nid in topo:
+        node = node_by_id[nid]
+        m = tag_mask(node)
+        fshops = frozenset({node.shop_name})
+        key = (nid, 1, m, fshops)
+        best[key] = node_objective_score(node)
+        prev[key] = None
+
+    for nid in topo:
+        outgoing = out_edges.get(nid, [])
+        cur_states = [(k, v) for k, v in best.items() if k[0] == nid]
+        if not cur_states:
+            continue
+        for cur_key, cur_score in cur_states:
+            _, cur_len, cur_mask, fshops_cur = cur_key
+            if cur_len >= required_length:
+                continue
+            for e in outgoing:
+                to_node = node_by_id[e.to_node_id]
+                if to_node.shop_name in fshops_cur:
+                    continue
+                next_mask = cur_mask | tag_mask(to_node)
+                fshops_next = frozenset(fshops_cur | {to_node.shop_name})
+                nxt: KeyT = (e.to_node_id, cur_len + 1, next_mask, fshops_next)
+                cand = cur_score + node_objective_score(to_node)
+                if cand > best.get(nxt, float("-inf")):
+                    best[nxt] = cand
+                    prev[nxt] = cur_key
+
+    max_len = max((k[1] for k in best.keys()), default=0)
+    target_len = required_length if any(k[1] == required_length for k in best.keys()) else max_len
+    if target_len <= 0:
+        if solver_audit_log is not None:
+            solver_audit_log.append(_dj("dp_early_exit_agent", reason="no_feasible_terminal_state"))
+        return []
+    terminal_keys = [k for k in best.keys() if k[1] == target_len]
+    if required_tags_list:
+        covered = [k for k in terminal_keys if k[2] == full_mask]
+        if covered:
+            terminal_keys = covered
+        elif target_len == required_length:
+            feasible_lens = sorted({k[1] for k in best.keys()}, reverse=True)
+            for ln in feasible_lens:
+                covered_ln = [k for k in best.keys() if k[1] == ln and k[2] == full_mask]
+                if covered_ln:
+                    terminal_keys = covered_ln
+                    target_len = ln
+                    break
+    end_key = max(terminal_keys, key=lambda k: best[k])
+
+    path_keys: list[KeyT] = []
+    cur_k: KeyT | None = end_key
+    while cur_k is not None:
+        path_keys.append(cur_k)
+        cur_k = prev.get(cur_k)
+    path_keys.reverse()
+    resolved_path = [node_by_id[k[0]] for k in path_keys]
+
+    uniq = len({p.shop_name for p in resolved_path})
+    if solver_audit_log is not None:
+        solver_audit_log.append(
+            _dj(
+                "dp_path_selected",
+                variant="agent_unique_shops",
+                unique_shop_count=uniq,
+                path=[{"shop": n.shop_name, "slot": n.slot_index} for n in resolved_path],
+            )
+        )
+    return resolved_path
+
+
+def _dp_graph_builder_with_itinerary_day_pin(
+    ranked: list[RankedShop],
+    traffic,
+    start_time: datetime,
+    *,
+    meal_slots: list[str] | None = None,
+    mode: OptimizationMode = OptimizationMode.BALANCED,
+    requested_meal_count: int | None = None,
+    slot_required_tags: dict[str, set[str]] | None = None,
+) -> SpatioTemporalGraph:
+    g = _RAW_GRAPHBUILDER_BUILD(
+        ranked,
+        traffic,
+        start_time,
+        meal_slots=meal_slots,
+        mode=mode,
+        requested_meal_count=requested_meal_count,
+        slot_required_tags=slot_required_tags,
+    )
+    _pin_dp_graph_to_itinerary_day_and_relayer_edges(
+        g, itinerary_start=start_time, ranked=ranked, traffic=traffic
+    )
+    setattr(
+        g,
+        "_agent_meal_slot_names_for_dp",
+        list(ItinerarySynthesizer._normalize_slot_sequence(meal_slots or [])),
+    )
+    _expand_graph_node_tags_from_shop_profiles(g, ranked)
+    return g
+
+
+@contextmanager
+def _pinned_travel_dp_calendar_and_solver():
+    """Calendar-consistent graph timestamps + tag merge for DP (uses decision_engine.find_optimal_path during this block)."""
+    GraphBuilder.build_graph = _dp_graph_builder_with_itinerary_day_pin
+    try:
+        yield
+    finally:
+        GraphBuilder.build_graph = _RAW_GRAPHBUILDER_BUILD
+
+
+def _append_graph_physical_transition_audit(
+    *,
+    graph,
+    ranked: list[RankedShop],
+    traffic,
+    transit_audit: list,
+    mode: OptimizationMode,
+) -> None:
+    """Log physical edge math (matches GraphBuilder layer-1) + sample slot_i→slot_{i+1} probes."""
+    shop_index = {r.shop.name: r.shop for r in ranked}
+    traces = list(getattr(graph, "debug_traces", []) or [])
+    rejects = 0
+    reject_detail_sample: list[str] = []
+    for tr in traces[:80]:
+        try:
+            o = json.loads(tr)
+        except Exception:
+            continue
+        if isinstance(o, dict) and str(o.get("event")) == "graph_rejected_edge":
+            rejects += 1
+            if len(reject_detail_sample) < 4:
+                dst = str(o.get("detail") or o.get("message") or "")[:260]
+                reject_detail_sample.append(f"{o.get('from_shop')}→{o.get('to_shop')}: {dst}")
+
+    by_slot: dict[int, list] = {}
+    for n in graph.nodes or []:
+        by_slot.setdefault(n.slot_index, []).append(n)
+    probes: list[dict] = []
+    indices = sorted(by_slot.keys())
+    for low_i in range(max(0, len(indices) - 1)):
+        i = indices[low_i]
+        j = indices[low_i + 1]
+        from_nodes = sorted(by_slot[i], key=lambda n: str(n.shop_name))[:5]
+        to_nodes = sorted(by_slot[j], key=lambda n: str(n.shop_name))[:8]
+        for a in from_nodes:
+            shop_a = shop_index.get(a.shop_name)
+            if shop_a is None:
+                continue
+            travel_m = 18 + (8 * i)
+            fastest_finish = a.start_time + timedelta(
+                minutes=int(shop_a.base_wait_minutes)
+                + int(shop_a.min_eat_minutes or shop_a.avg_eat_minutes)
+            )
+            ready_physical = fastest_finish + timedelta(minutes=travel_m)
+            digest_minutes = ItinerarySynthesizer._calculate_cooldown(
+                shop_a,
+                mode=mode,
+                requested_meal_count=None,
+                appetite_light_mode=False,
+            )
+            hypothetical_cool_ready = fastest_finish + timedelta(minutes=int(digest_minutes))
+            for b in to_nodes[:3]:
+                shop_b = shop_index.get(b.shop_name)
+                if shop_b is None:
+                    continue
+                open_b = ItinerarySynthesizer._shop_open_at(b.start_time, shop_b)
+                passed = ready_physical <= b.start_time and b.start_time >= open_b
+                probes.append(
+                    {
+                        "slot_from": i,
+                        "slot_to": j,
+                        "from_shop": a.shop_name,
+                        "from_start": str(a.start_time),
+                        "from_end_ideal": str(getattr(a, "end_time", "")),
+                        "eat_end_min_path": str(fastest_finish),
+                        "cooldown_na_in_graph_edges": digest_minutes,
+                        "hypothetical_ready_if_digest_enforced": str(hypothetical_cool_ready),
+                        "travel_minutes_edge": travel_m,
+                        "ready_at_physical_graph": str(ready_physical),
+                        "to_shop": b.shop_name,
+                        "b_start": str(b.start_time),
+                        "b_open": str(open_b),
+                        "edge_accepts_physical_layer1": passed,
+                    }
+                )
+        if len(probes) >= 12:
+            break
+
+    slot_timelines: list[dict] = []
+    for si in indices:
+        layer = sorted(by_slot[si], key=lambda n: str(n.shop_name))
+        if not layer:
+            continue
+        pick = layer[0]
+        sa = shop_index.get(pick.shop_name)
+        if sa is None:
+            continue
+        eat_end = pick.start_time + timedelta(
+            minutes=int(sa.base_wait_minutes)
+            + int(sa.min_eat_minutes or sa.avg_eat_minutes)
+        )
+        digest_min = ItinerarySynthesizer._calculate_cooldown(
+            sa,
+            mode=mode,
+            requested_meal_count=None,
+            appetite_light_mode=False,
+        )
+        travel_out = 18 + (8 * si)
+        slot_timelines.append(
+            {
+                "slot_index": si,
+                "repr_shop": pick.shop_name,
+                "start": str(pick.start_time),
+                "end_ideal_layer": str(pick.end_time),
+                "eat_end_min_wait_path": str(eat_end),
+                "synth_cooldown_minutes_note": digest_min,
+                "outgoing_travel_minutes_layer1_formula": travel_out,
+                "ready_at_physical_to_next_formula": (
+                    f"eat_end_min + {travel_out}m travel (cooldown omitted in GraphBuilder)"
+                ),
+            }
+        )
+
+    row = _dj(
+        "graph_physical_probe",
+        unique_slots=len(by_slot),
+        nodes=len(graph.nodes or []),
+        edges=len(graph.edges or []),
+        rejected_edges_logged=rejects,
+        reject_reason_samples=reject_detail_sample,
+        slot_repr_timeline=slot_timelines,
+        sample_transitions=probes,
+        note=(
+            "ready_at=start+wait+min_eat+travel; GraphBuilder omits digestion cooldown vs synthesize()"
+        ),
+    )
+    transit_audit.append(row)
+
+    dbg = os.getenv("GRAPH_PHYSICS_DEBUG", "").strip().lower()
+    if dbg not in {"", "0", "false"}:
+        try:
+            obj = json.loads(row)
+            print(json.dumps({"GRAPH_PHYSICS_DEBUG": obj}, ensure_ascii=False, indent=2, default=str))
+        except Exception:
+            print(row)
 
 
 def node_plan(state: AgentState) -> AgentState:
@@ -2289,10 +3075,37 @@ def node_plan(state: AgentState) -> AgentState:
             score *= 1.15
         heuristic_scored.append(RankedShop(shop=s, final_score=float(score), preference_match_score=float(pref_match)))
     heuristic_scored.sort(key=lambda x: x.final_score, reverse=True)
-    phase1_candidates = heuristic_scored[:15]
+    requested_slots = _effective_plan_meal_slots(_intent, query_text)
+    requested_meal_count = _requested_meal_count(query_text)
+    slot_required_tags = _slot_level_required_tags(query_text)
+    if slot_required_tags:
+        state["transit_audit"].append(
+            _dj(
+                "slot_specific_tags",
+                slots={k: sorted(v) for k, v in slot_required_tags.items()},
+            )
+        )
+    if requested_slots:
+        state["transit_audit"].append(
+            _dj("meal_slot_partitioning", slots=requested_slots)
+        )
+    phase_cap = max(22, len(requested_slots) + 18) if requested_slots else 22
+    phase1_candidates = _inject_slot_anchor_rankeds_into_phase1(
+        core_head=heuristic_scored[:15],
+        full_scores=heuristic_scored,
+        seed_profiles=seed_shops,
+        slots=requested_slots,
+        query=query_text,
+        cap=phase_cap,
+    )
     phase1_shops = [x.shop for x in phase1_candidates]
     state["transit_audit"].append(
-        _dj("hybrid_phase1_heuristic_filter", phase="done", kept=len(phase1_candidates))
+        _dj(
+            "hybrid_phase1_heuristic_filter",
+            phase="done",
+            kept=len(phase1_candidates),
+            slot_injection=max(0, len(phase1_candidates) - min(15, len(heuristic_scored))),
+        )
     )
 
     ranked, rejected_list = RankingEngine.generate_top_picks(
@@ -2337,20 +3150,6 @@ def node_plan(state: AgentState) -> AgentState:
                 required_samples=_MIN_FEEDBACK_FOR_ML,
             )
         )
-    requested_slots = list(_intent.get("meal_slots") or [])
-    requested_meal_count = _requested_meal_count(state.get("query", ""))
-    slot_required_tags = _slot_level_required_tags(state.get("query", ""))
-    if slot_required_tags:
-        state["transit_audit"].append(
-            _dj(
-                "slot_specific_tags",
-                slots={k: sorted(v) for k, v in slot_required_tags.items()},
-            )
-        )
-    if requested_slots:
-        state["transit_audit"].append(
-            _dj("meal_slot_partitioning", slots=requested_slots)
-        )
     if appetite_light_mode:
         state["transit_audit"].append(_dj("appetite_light_mode", enabled=True))
     feedback_applied = bool(_feedback_penalties) or bool(state.get("feedback_updates"))
@@ -2362,85 +3161,121 @@ def node_plan(state: AgentState) -> AgentState:
             meal_slot_optimized=bool(requested_slots),
         )
     )
-    # Phase 2: DP Solver on top-15
-    state["transit_audit"].append(_dj("hybrid_phase2_dp_solver", phase="start"))
-    graph = GraphBuilder.build_graph(
-        ranked=phase1_candidates,
-        traffic=traffic_provider,
-        start_time=synth_start_time,
-        meal_slots=requested_slots,
-        mode=mode,
-        requested_meal_count=requested_meal_count,
-        slot_required_tags=slot_required_tags if slot_required_tags else None,
-    )
-    desired_len = max(1, requested_meal_count or len(requested_slots or phase1_candidates[:3]))
-    k_paths = ItinerarySynthesizer.find_k_optimal_paths(
-        graph=graph,
-        required_length=desired_len,
-        must_have_tags=explicit_category_tags,
-        k=5,
-    )
-    state["transit_audit"].append(
-        _dj("hybrid_phase2_dp_solver", phase="done", paths=len(k_paths))
-    )
-
-    # Phase 3: Saga Commitment (SNS probe + flight lock), fallback to next-best path on failure.
-    state["transit_audit"].append(_dj("hybrid_phase3_saga_commitment", phase="start"))
-    ranked_by_name = {r.shop.name: r for r in phase1_candidates}
-    selected_ranked_path: list[RankedShop] = []
-    risk_keywords = ("火山", "臨休", "休業", "完売", "sold out")
-    for idx, path in enumerate(k_paths, start=1):
-        path_names = [n.shop_name for n in path]
-        phase3_failed = False
-        for name in path_names:
-            r = ranked_by_name.get(name)
-            if r is None:
-                continue
-            signal = sns_provider.check_store_status(r.shop.sns_handle).lower()
-            if any(k in signal for k in risk_keywords):
-                state["transit_audit"].append(
-                    _dj(
-                        "hybrid_phase3_fail",
-                        path_index=idx,
-                        shop=name,
-                        reason="sns_risk",
-                    )
-                )
-                phase3_failed = True
-                break
-        if phase3_failed:
-            continue
-        selected_ranked_path = [ranked_by_name[n] for n in path_names if n in ranked_by_name]
-        state["transit_audit"].append(
-            _dj("hybrid_phase3_commit", path_index=idx, shops=path_names)
-        )
-        break
-    if not selected_ranked_path:
-        selected_ranked_path = ranked[: max(1, min(3, len(ranked)))]
+    # Phase 2: DP Solver on top-15 (calendar-pin GraphBuilder wrapper: single excursion day vs per-node align drift)
+    with _pinned_travel_dp_calendar_and_solver():
         state["transit_audit"].append(
             _dj(
-                "hybrid_phase3_fallback",
-                detail="no committed path; using heuristic top picks",
+                "dp_graph_itinerary_calendar_pin_armed",
+                itinerary_date=str(synth_start_time.date()),
             )
         )
+        state["transit_audit"].append(_dj("hybrid_phase2_dp_solver", phase="start"))
+        graph = GraphBuilder.build_graph(
+            ranked=phase1_candidates,
+            traffic=traffic_provider,
+            start_time=synth_start_time,
+            meal_slots=requested_slots,
+            mode=mode,
+            requested_meal_count=requested_meal_count,
+            slot_required_tags=slot_required_tags if slot_required_tags else None,
+        )
+        _append_graph_physical_transition_audit(
+            graph=graph,
+            ranked=phase1_candidates,
+            traffic=traffic_provider,
+            transit_audit=state["transit_audit"],
+            mode=mode,
+        )
+        desired_len = max(1, requested_meal_count or len(requested_slots or phase1_candidates[:3]))
+        _k_meal_slots_norm = ItinerarySynthesizer._normalize_slot_sequence(requested_slots) if requested_slots else []
+        k_paths = ItinerarySynthesizer.find_k_optimal_paths(
+            graph=graph,
+            required_length=desired_len,
+            must_have_tags=explicit_category_tags,
+            k=5,
+            meal_slots=_k_meal_slots_norm if _k_meal_slots_norm else None,
+        )
+        state["transit_audit"].append(
+            _dj("hybrid_phase2_dp_solver", phase="done", paths=len(k_paths))
+        )
 
-    ranked = selected_ranked_path
-    synth_mode = OptimizationMode.BALANCED if mode == OptimizationMode.RIGHT_NOW else mode
-    synthesized = ItinerarySynthesizer.synthesize(
-        ranked,
-        traffic_provider,
-        user_pref,
-        start_time=synth_start_time,
-        sns_adapter=sns_provider,
-        isolation_threshold=0.7,
-        mode=synth_mode,
-        meal_slots=requested_slots,
-        global_end_time=global_end_dt,
-        requested_meal_count=requested_meal_count,
-        explicit_required_tags=explicit_category_tags,
-        slot_required_tags=slot_required_tags if slot_required_tags else None,
-        appetite_light_mode=appetite_light_mode,
-    )
+        # Phase 3: Saga Commitment (SNS probe + flight lock), fallback to next-best path on failure.
+        state["transit_audit"].append(_dj("hybrid_phase3_saga_commitment", phase="start"))
+        ranked_by_name = {r.shop.name: r for r in phase1_candidates}
+        selected_ranked_path: list[RankedShop] = []
+        phase3_used_fallback = False
+        risk_keywords = ("火山", "臨休", "休業", "完売", "sold out")
+        for idx, path in enumerate(k_paths, start=1):
+            path_ordered = sorted(path, key=lambda n: (n.slot_index, n.shop_name))
+            path_names = [n.shop_name for n in path_ordered]
+            phase3_failed = False
+            for name in path_names:
+                r = ranked_by_name.get(name)
+                if r is None:
+                    continue
+                signal = sns_provider.check_store_status(r.shop.sns_handle).lower()
+                if any(k in signal for k in risk_keywords):
+                    state["transit_audit"].append(
+                        _dj(
+                            "hybrid_phase3_fail",
+                            path_index=idx,
+                            shop=name,
+                            reason="sns_risk",
+                        )
+                    )
+                    phase3_failed = True
+                    break
+            if phase3_failed:
+                continue
+            selected_ranked_path = [ranked_by_name[n] for n in path_names if n in ranked_by_name]
+            state["transit_audit"].append(
+                _dj("hybrid_phase3_commit", path_index=idx, shops=path_names)
+            )
+            break
+        if not selected_ranked_path:
+            phase3_used_fallback = True
+            selected_ranked_path = ranked[: max(1, min(3, len(ranked)))]
+            state["transit_audit"].append(
+                _dj(
+                    "hybrid_phase3_fallback",
+                    detail="no committed path; using heuristic top picks",
+                )
+            )
+
+        ranked = selected_ranked_path
+        _binding_slots_norm = ItinerarySynthesizer._normalize_slot_sequence(
+            requested_slots or []
+        )
+        respect_slot_order = (
+            (not phase3_used_fallback)
+            and len(_binding_slots_norm) > 0
+            and len(ranked) == len(_binding_slots_norm)
+        )
+        if respect_slot_order:
+            state["transit_audit"].append(
+                _dj(
+                    "synth_respects_dp_slot_order",
+                    slots=_binding_slots_norm,
+                    shops=[r.shop.name for r in ranked],
+                )
+            )
+        synth_mode = OptimizationMode.BALANCED if mode == OptimizationMode.RIGHT_NOW else mode
+        synthesized = ItinerarySynthesizer.synthesize(
+            ranked,
+            traffic_provider,
+            user_pref,
+            start_time=synth_start_time,
+            sns_adapter=sns_provider,
+            isolation_threshold=0.7,
+            mode=synth_mode,
+            meal_slots=requested_slots,
+            global_end_time=global_end_dt,
+            requested_meal_count=requested_meal_count,
+            explicit_required_tags=explicit_category_tags,
+            slot_required_tags=slot_required_tags if slot_required_tags else None,
+            appetite_light_mode=appetite_light_mode,
+            respect_slot_order=respect_slot_order,
+        )
     boundary_skips = [w for w in synthesized.warnings if w.startswith("OPERATING_BOUNDARY_SKIP")]
     for skip_msg in boundary_skips:
         state["transit_audit"].append(

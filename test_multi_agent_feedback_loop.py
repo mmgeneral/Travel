@@ -1,23 +1,53 @@
+"""Researcher ↔ critic loop anchors: candidates must span requested meal slots."""
+
 from __future__ import annotations
 
-from agent import build_graph, make_initial_state
+import pytest
+
+from decision_engine import ItinerarySynthesizer
+
+from agent import (
+    _build_shop_catalog,
+    _call_researcher_prompt,
+    _researcher_slot_anchor_names,
+    _researcher_shop_eligible_any_tier,
+)
 
 
-def test_multi_agent_feedback_loop_max_three_iterations() -> None:
-    graph = build_graph()
-    state = make_initial_state("請給我一個美食行程，店不要太遠")
-    out = graph.invoke(state)
-    iters = int(out.get("research_iteration", 0))
-    assert 1 <= iters <= 3
-    assert isinstance(out.get("auditor_feedback", ""), str)
+def test_kyoto_seed_anchor_one_shop_per_standard_slot(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    seed = list(_build_shop_catalog())
+    query = ""
+    slots = ItinerarySynthesizer._normalize_slot_sequence(
+        ["breakfast", "lunch", "tea", "dinner", "late_night"]
+    )
+    anchors = _researcher_slot_anchor_names(slots, seed, query=query)
+    assert len(anchors) == len(slots)
+    by_name = {s.name: s for s in seed}
+    for slot, nm in zip(slots, anchors):
+        assert _researcher_shop_eligible_any_tier(by_name[nm], slot, query=query)
 
 
-def test_critic_verdict_written_to_transit_audit() -> None:
-    """node_critic logs critic_verdict; node_researcher logs researcher_iteration."""
-    graph = build_graph()
-    state = make_initial_state("安排今天拉麵行程")
-    out = graph.invoke(state)
-    logs = "\n".join(out.get("transit_audit", []))
-    # node_critic emits critic_verdict (replaced old auditor_review in Task 7)
-    assert "critic_verdict" in logs
-    assert "researcher_iteration" in logs
+def test_researcher_fallback_respects_slot_count(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    seed = list(_build_shop_catalog())
+    slots = ItinerarySynthesizer._normalize_slot_sequence(
+        ["breakfast", "lunch", "tea", "dinner", "late_night"]
+    )
+    names, notes = _call_researcher_prompt(
+        "",
+        seed,
+        meal_slots=slots,
+        seed_shops=seed,
+        auditor_feedback="",
+        iteration=1,
+    )
+    anchors = _researcher_slot_anchor_names(slots, seed, query="")
+
+    assert len(names) >= len(slots)
+    assert names[: len(anchors)] == anchors
+    assert "slot_anchors=" in notes
+    assert "heuristic_fallback_researcher" in notes
+

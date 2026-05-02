@@ -746,6 +746,20 @@ class ItinerarySynthesizer:
         "dinner": 3,
         "late_night": 4,
     }
+    #: Soft DP objective multiplier when node.tags intersects these (×1.3 vs slot).
+    SLOT_PREFERRED_TAGS: dict[str, frozenset[str]] = {
+        "breakfast": frozenset({"breakfast", "morning", "coffee", "morning_set"}),
+        "lunch": frozenset({"lunch", "main_meal", "quick_meal"}),
+        "tea": frozenset({"afternoon_tea", "cafe", "dessert", "coffee", "refresh"}),
+        "dinner": frozenset({"dinner", "main_meal", "course"}),
+        "late_night": frozenset({"late_night", "izakaya", "ramen", "night_food"}),
+    }
+    #: Soft DP objective multiplier when node.tags hit "wrong slot" cues (×0.5).
+    SLOT_NEGATIVE_TAGS: dict[str, frozenset[str]] = {
+        "lunch": frozenset({"afternoon_tea", "dessert", "cake", "patisserie"}),
+        "dinner": frozenset({"morning", "breakfast", "morning_set"}),
+        "breakfast": frozenset({"late_night", "dinner", "izakaya"}),
+    }
 
     @staticmethod
     def _slot_to_time_bucket(slot: str) -> str:
@@ -966,10 +980,12 @@ class ItinerarySynthesizer:
         must_have_tags: set[str] | None = None,
         banned_node_ids: set[str] | None = None,
         solver_audit_log: list[str] | None = None,
+        meal_slots: list[str] | None = None,
     ) -> list[GraphNode]:
         """
         DAG longest-path with DP under fixed path length and tag-coverage constraints.
-        Objective follows edge weights from GraphBuilder.
+        Each shop_name appears at most once per path. Optional meal_slots activates soft
+        slot–tag affinity (×1.3 when node.tags hits SLOT_PREFERRED_TAGS for that slot).
         """
         if solver_audit_log is not None:
             solver_audit_log.append(
@@ -991,6 +1007,8 @@ class ItinerarySynthesizer:
         tag_idx = {t: i for i, t in enumerate(required_tags)}
         full_mask = (1 << len(required_tags)) - 1
 
+        slot_sequence_norm = ItinerarySynthesizer._normalize_slot_sequence(meal_slots) if meal_slots else []
+
         banned_node_ids = banned_node_ids or set()
         usable_nodes = [n for n in graph.nodes if n.node_id not in banned_node_ids]
         if not usable_nodes:
@@ -1000,8 +1018,7 @@ class ItinerarySynthesizer:
                 )
             return []
         node_by_id = {n.node_id: n for n in usable_nodes}
-        indeg: dict[str, int] = {n.node_id: 0 for n in graph.nodes}
-        indeg = {nid: 0 for nid in node_by_id}
+        indeg: dict[str, int] = {nid: 0 for nid in node_by_id}
         out_edges: dict[str, list[GraphEdge]] = {nid: [] for nid in node_by_id}
         for e in graph.edges:
             if (
@@ -1031,26 +1048,53 @@ class ItinerarySynthesizer:
 
         def tag_mask(node: GraphNode) -> int:
             m = 0
-            node_tags = {t.lower() for t in node.tags}
+            node_tags_lp = {t.lower() for t in node.tags}
             for t, idx in tag_idx.items():
-                if t in node_tags:
-                    m |= (1 << idx)
+                if t in node_tags_lp:
+                    m |= 1 << idx
             return m
+
+        def _preferred_tag_bonus(node: GraphNode) -> float:
+            if not slot_sequence_norm or node.slot_index < 0 or node.slot_index >= len(slot_sequence_norm):
+                return 1.0
+            slot_nm = str(slot_sequence_norm[node.slot_index]).lower()
+            preferred = ItinerarySynthesizer.SLOT_PREFERRED_TAGS.get(slot_nm)
+            if not preferred:
+                return 1.0
+            node_tags_lp = {t.lower() for t in node.tags}
+            return 1.3 if node_tags_lp & preferred else 1.0
+
+        def _negative_tag_penalty(node: GraphNode) -> float:
+            if not slot_sequence_norm or node.slot_index < 0 or node.slot_index >= len(slot_sequence_norm):
+                return 1.0
+            slot_nm = str(slot_sequence_norm[node.slot_index]).lower()
+            avoid = ItinerarySynthesizer.SLOT_NEGATIVE_TAGS.get(slot_nm)
+            if not avoid:
+                return 1.0
+            node_tags_lp = {t.lower() for t in node.tags}
+            return 0.5 if node_tags_lp & avoid else 1.0
 
         def node_objective_score(node: GraphNode) -> float:
             ideal = max(1, int(node.ideal_duration_minutes))
             actual = max(1, int(node.actual_duration_minutes))
             fidelity = max(0.0, min(1.0, float(actual) / float(ideal)))
-            return float(node.final_score) * fidelity
+            return (
+                float(node.final_score)
+                * fidelity
+                * _preferred_tag_bonus(node)
+                * _negative_tag_penalty(node)
+            )
 
-        # (node_id, length, mask) -> score
-        best: dict[tuple[str, int, int], float] = {}
-        prev: dict[tuple[str, int, int], tuple[str, int, int] | None] = {}
+        # (node_id, length, mask, seen_shop_names) -> score ; seen enforces distinct shops.
+        KeyT = tuple[str, int, int, frozenset[str]]
+        best: dict[KeyT, float] = {}
+        prev: dict[KeyT, KeyT | None] = {}
 
         for nid in topo:
             node = node_by_id[nid]
             m = tag_mask(node)
-            key = (nid, 1, m)
+            seen0 = frozenset({node.shop_name})
+            key: KeyT = (nid, 1, m, seen0)
             best[key] = node_objective_score(node)
             prev[key] = None
 
@@ -1061,13 +1105,16 @@ class ItinerarySynthesizer:
             if not cur_states:
                 continue
             for (cur_key, cur_score) in cur_states:
-                _, cur_len, cur_mask = cur_key
+                _, cur_len, cur_mask, cur_seen = cur_key
                 if cur_len >= required_length:
                     continue
                 for e in outgoing:
                     to_node = node_by_id[e.to_node_id]
+                    if to_node.shop_name in cur_seen:
+                        continue
                     next_mask = cur_mask | tag_mask(to_node)
-                    nxt = (e.to_node_id, cur_len + 1, next_mask)
+                    next_seen = frozenset(cur_seen | {to_node.shop_name})
+                    nxt: KeyT = (e.to_node_id, cur_len + 1, next_mask, next_seen)
                     cand = cur_score + node_objective_score(to_node)
                     if cand > best.get(nxt, float("-inf")):
                         best[nxt] = cand
@@ -1135,11 +1182,11 @@ class ItinerarySynthesizer:
         end_key = max(terminal_keys, key=lambda k: best[k])
 
         # reconstruct
-        path_keys: list[tuple[str, int, int]] = []
-        cur: tuple[str, int, int] | None = end_key
-        while cur is not None:
-            path_keys.append(cur)
-            cur = prev.get(cur)
+        path_keys: list[KeyT] = []
+        cur_k: KeyT | None = end_key
+        while cur_k is not None:
+            path_keys.append(cur_k)
+            cur_k = prev.get(cur_k)
         path_keys.reverse()
         resolved_path = [node_by_id[k[0]] for k in path_keys]
         if solver_audit_log is not None:
@@ -1159,6 +1206,7 @@ class ItinerarySynthesizer:
         required_length: int,
         must_have_tags: set[str] | None = None,
         k: int = 3,
+        meal_slots: list[str] | None = None,
     ) -> list[list[GraphNode]]:
         """
         Lightweight K-best paths: iteratively ban one chosen node from previous path
@@ -1172,6 +1220,7 @@ class ItinerarySynthesizer:
                 required_length=required_length,
                 must_have_tags=must_have_tags,
                 banned_node_ids=banned,
+                meal_slots=meal_slots,
             )
             if not path:
                 break
@@ -1195,6 +1244,7 @@ class ItinerarySynthesizer:
         explicit_required_tags: set[str] | None = None,
         slot_required_tags: dict[str, set[str]] | None = None,
         appetite_light_mode: bool = False,
+        respect_slot_order: bool = False,
     ) -> SynthesisResult:
         nodes: list[ScheduleNode] = []
         backups: list[str] = []
@@ -1240,6 +1290,7 @@ class ItinerarySynthesizer:
             required_length=min(desired_len, max(1, len(normalized_slots or ranked[:3]))),
             must_have_tags=global_req,
             solver_audit_log=solver_audit_log,
+            meal_slots=normalized_slots if normalized_slots else None,
         )
         if optimal_nodes and len(optimal_nodes) < desired_len:
             warnings.append(
@@ -1254,32 +1305,60 @@ class ItinerarySynthesizer:
         slot_requests: list[str | None] = normalized_slots if normalized_slots else [None for _ in ranked[:3]]
 
         for i, slot_name in enumerate(slot_requests):
-            candidates = [r for r in ranked if r.shop.name not in used]
+            if respect_slot_order:
+                if i >= len(ranked):
+                    warnings.append(f"{slot_name or 'meal'} 無可用店家：DP 綁定清單長度不足")
+                    break
+                slot_rs = ranked[i]
+                if slot_rs.shop.name in used:
+                    warnings.append(f"DP_SLOT_ORDER_CONFLICT {slot_rs.shop.name} at slot_index={i}")
+                    break
+                candidates = [slot_rs]
+            else:
+                candidates = [r for r in ranked if r.shop.name not in used]
+                if not candidates:
+                    break
+                if slot_name is not None:
+                    slot_anchor_tags = ItinerarySynthesizer._slot_must_have_priority_tags(slot_name)
+                    preferred_shop = preferred_shop_by_slot.get(i)
+                    candidates.sort(
+                        key=lambda r: (
+                            1 if preferred_shop and r.shop.name == preferred_shop else 0,
+                            ItinerarySynthesizer._scarcity_bonus(current, r.shop),
+                            1 if any(t in {str(x).lower() for x in r.shop.tags} for t in slot_anchor_tags) else 0,
+                            ItinerarySynthesizer._early_bird_priority(current, r.shop),
+                            r.final_score * ItinerarySynthesizer._slot_semantic_bonus_multiplier(slot_name, r),
+                            ItinerarySynthesizer._slot_semantic_match_score(slot_name, r),
+                        ),
+                        reverse=True,
+                    )
+                else:
+                    candidates.sort(
+                        key=lambda r: (
+                            ItinerarySynthesizer._scarcity_bonus(current, r.shop),
+                            ItinerarySynthesizer._early_bird_priority(current, r.shop),
+                            r.final_score,
+                        ),
+                        reverse=True,
+                    )
             if not candidates:
                 break
-            if slot_name is not None:
-                slot_anchor_tags = ItinerarySynthesizer._slot_must_have_priority_tags(slot_name)
-                preferred_shop = preferred_shop_by_slot.get(i)
-                candidates.sort(
-                    key=lambda r: (
-                        1 if preferred_shop and r.shop.name == preferred_shop else 0,
-                        ItinerarySynthesizer._scarcity_bonus(current, r.shop),
-                        1 if any(t in {str(x).lower() for x in r.shop.tags} for t in slot_anchor_tags) else 0,
-                        ItinerarySynthesizer._early_bird_priority(current, r.shop),
-                        r.final_score * ItinerarySynthesizer._slot_semantic_bonus_multiplier(slot_name, r),
-                        ItinerarySynthesizer._slot_semantic_match_score(slot_name, r),
-                    ),
-                    reverse=True,
-                )
-            else:
-                candidates.sort(
-                    key=lambda r: (
-                        ItinerarySynthesizer._scarcity_bonus(current, r.shop),
-                        ItinerarySynthesizer._early_bird_priority(current, r.shop),
-                        r.final_score,
-                    ),
-                    reverse=True,
-                )
+            # Breakfast visibility: full-candidate scan only (strict DP order uses one shop per slot).
+            if slot_name == "breakfast" and not respect_slot_order:
+                for _rs in candidates:
+                    _s = _rs.shop
+                    _generic = {str(t).lower() for t in _s.tags}
+                    if global_req and not any(t in _generic for t in global_req):
+                        continue
+                    if not ItinerarySynthesizer._shop_matches_slot_required_tags(_s, slot_name, slot_req_norm):
+                        continue
+                    _occ = {t.lower() for t in _s.occasion_tags}
+                    _has_bf = ("breakfast" in _occ) or ("breakfast" in _generic)
+                    _ramen_bypass = bool(
+                        global_req and "ramen" in global_req and "ramen" in _generic
+                    )
+                    if not _has_bf and not _ramen_bypass:
+                        warnings.append(f"BREAKFAST_TAG_REQUIRED_SKIP {_s.name}")
             scheduled = False
             for ranked_shop in candidates:
                 s = ranked_shop.shop
@@ -1308,7 +1387,6 @@ class ItinerarySynthesizer:
                         global_req and "ramen" in global_req and "ramen" in shop_tag_set
                     )
                     if not has_breakfast_tag and not has_ramen_intent_match:
-                        warnings.append(f"BREAKFAST_TAG_REQUIRED_SKIP {s.name}")
                         continue
                     if not has_breakfast_tag and has_ramen_intent_match:
                         warnings.append(

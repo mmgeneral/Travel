@@ -33,24 +33,64 @@ Browser → FastAPI (api.py)
             ↓
         LangGraph (agent.py)
           route_intent
-          ├── flight_search  →  Duffel API
-          └── food_search    →  Google Places
                ↓
-           researcher  ←──┐
-               ↓          │ (rejected, < 3 iterations)
-            auditor  ──────┘
+           retriever (RetrieverAgent + Gemini)
                ↓
-            plan  →  final itinerary SSE stream
+           researcher
+               ↓
+             critic ←──────────────────────────────┐
+               ↓ verdict=satisfied / max-iters      │ verdict=request_more
+         collect_feedback                      (back to researcher)
+               ↓
+             plan  →  final itinerary SSE stream
+
+          [synthesizer]  ← on-demand only (POST /agent/pause/{thread_id})
 ```
 
-### LLM Routing (`llm_router.py`)
+### LLM Backend Priority (`llm_router.py`)
 
-| `TaskType` | Backend | Model |
-|---|---|---|
-| `INTENT_PARSING` | LocalQwenBackend | Ollama `qwen2.5:7b` |
-| `CRITIQUE` | ClaudeBackend | `claude-3-5-sonnet-latest` |
-| `RETRIEVAL_REASONING`, `SYNTHESIS`, `EMBEDDING` | GeminiBackend | `gemini-2.0-flash` |
+Backends are tried in order; the first **available** one wins.  
+`is_available()` results are cached 30 s (no repeated health probes).
 
+| Priority | Backend | Hardware | Env var | TaskTypes |
+|---|---|---|---|---|
+| 1 | `OllamaBackend` | 1080 Ti (always-on) | `OLLAMA_URL` | All (primary) |
+| 2 | `VLLMBackend` | Lab 4090 (on-demand) | `VLLM_URL` | `CRITIQUE` (strong reasoning) |
+| 3 | `GeminiBackend` | Cloud free-tier | `GEMINI_API_KEY` | All (cloud fallback) |
+| 4 | `ClaudeBackend` | Cloud paid | `ANTHROPIC_API_KEY` | optional |
+
+**Fallback chains by task:**
+
+| `TaskType` | Chain |
+|---|---|
+| `INTENT_PARSING` | Ollama → Gemini |
+| `CRITIQUE` | vLLM → Gemini → Ollama |
+| `RETRIEVAL_REASONING`, `SYNTHESIS`, `EMBEDDING` | Ollama → Gemini |
+
+**Availability health checks:**
+
+| Backend | Probe |
+|---|---|
+| `OllamaBackend` | `GET {OLLAMA_URL}/api/tags` (HTTP 200, timeout 2 s) |
+| `VLLMBackend` | `GET {VLLM_URL}/v1/models` (HTTP 200, timeout 2 s); skip if `VLLM_URL` is empty |
+| `GeminiBackend` | `GEMINI_API_KEY` env must be non-empty (no HTTP probe) |
+| `ClaudeBackend` | `ANTHROPIC_API_KEY` env must be non-empty (no HTTP probe) |
+
+**Quick setup:**
+
+```bash
+cp .env.example .env
+# Fill in OLLAMA_URL (default: http://localhost:11434) + optionally GEMINI_API_KEY
+
+# Verify routing
+python -c "
+from llm_router import LLMRouter, TaskType
+r = LLMRouter()
+print(r.complete(TaskType.INTENT_PARSING, [{'role':'user','content':'hi'}]).model_used)
+"
+```
+
+`LocalQwenBackend` is a backward-compat alias for `OllamaBackend`.
 Each backend has configurable `timeout`, `max_retries`, and a `tenacity`-based circuit breaker.
 
 ## 如何本地跑 Langfuse
@@ -137,15 +177,80 @@ curl -X POST http://localhost:8000/agent/query \
 ## Running Tests
 
 ```bash
-# All tests
+# All active tests (excludes tests/legacy/)
 pytest
 
-# Specific test suites
-pytest test_llm_router.py
-pytest test_observability.py
-pytest test_agent_catalog.py
-pytest test_agent_locale_fallback.py
-pytest test_region_and_dietary.py
-pytest test_geo_location_routing.py
-pytest test_multi_agent_feedback_loop.py
+# Core agent stack
+pytest test_llm_router.py test_observability.py
+pytest test_intent_parser.py
+pytest test_retriever_agent.py test_critic_agent.py
+
+# Data & catalog
+pytest test_agent_catalog.py test_agent_locale_fallback.py
+pytest test_region_and_dietary.py test_geo_location_routing.py
+
+# Legacy distributed-tx reference tests (not in default run)
+pytest tests/legacy/ -v
 ```
+
+---
+
+## Architecture Decision Record (ADR): Duffel / Saga / Polling Worker removed from main flow
+
+**Decision date:** 2026-05-01  
+**Status:** Accepted
+
+### Context
+
+The original agent included a full distributed-transaction stack:
+
+| Component | Purpose |
+|-----------|---------|
+| `node_flight_search` | Call Duffel API to fetch flight offers (TPE → NRT → SFO) |
+| `node_audit` | 2-phase Saga commit: reserve leg-1, reserve leg-2, rollback on failure |
+| `duffel.py` / `acl.py` | Duffel HTTP client + `ActionOutcome` error taxonomy |
+| `saga.py` | Generic Saga engine with step-level compensation |
+| `polling_worker.py` | Standalone batch worker for polling flight status |
+| `AgentState` fields | `leg1_offer`, `leg2_offer`, `rollback_occurred`, `saga_snapshot_idx`, `conv_saga_path` |
+
+The main `/agent/query` graph was: `route_intent → flight_search → retriever → researcher → auditor → audit → plan`.
+
+### Problem
+
+1. **Noise in the food-planning path.** Every non-flight query still ran `node_flight_search` (skipped only by a conditional edge), and `node_audit` was always wired in. This inflated latency, injected Duffel `transit_audit` entries into food-planning responses, and confused the LLM agents with unrelated state.
+2. **State pollution.** `leg1_offer`, `leg2_offer`, `rollback_occurred` sat in `AgentState` for every request, even pure "show me ramen in Kyoto" queries.
+3. **Scope creep.** The multi-agent foodie loop (`Retriever → Researcher → Critic → Synthesizer`) is the core product. Flight booking is a separate bounded context that deserves its own service/graph, not a bolted-on node in a food-recommendation graph.
+
+### Decision
+
+Remove `node_flight_search`, `node_audit`, and the 5 legacy `AgentState` fields from the **main graph** in `build_graph()`. The new graph is:
+
+```
+route_intent → retriever → researcher → critic ⟲ (up to 3 iterations)
+                                          ↓
+                                  collect_feedback → plan
+```
+
+**We deliberately keep all files** (`duffel.py`, `saga.py`, `acl.py`, `polling_worker.py`, `node_flight_search`, `node_audit`, `tests/legacy/`) because they demonstrate:
+
+- **Idempotent 2-phase commit** with automatic Saga compensation (backward recovery).
+- **`ActionOutcome` error taxonomy** (`SUCCESS | RETRYABLE | TERMINAL`) used by `LLMRouter`'s retry logic.
+- **Polling worker** architecture for async, out-of-band status checks.
+- **Duffel API integration** pattern for real flight booking systems.
+
+### Consequences
+
+- `pytest` (default) runs the food-agent stack only. `pytest tests/legacy/ -v` runs the distributed-tx reference tests.
+- `/duffel/*` and `/agent/rollback` API endpoints are marked `deprecated=True` in FastAPI (visible in `/docs`).
+- `wc -l agent.py` is ~700 lines shorter than the pre-Task-7 baseline.
+- Any team member can re-enable flight booking by adding `node_flight_search` and `node_audit` back to `build_graph()` and wiring `route_intent → flight_search → retriever` — the code is all there.
+- `polling_worker.py` is a **standalone batch job** — it is not invoked by the main agent. Run it directly: `python polling_worker.py --shop "燃えよ麺助"`.
+
+### References
+
+- `acl.py` — `ActionOutcome` enum (must not be deleted; used by `LLMRouter` retry logic).
+- `saga.py` — Saga engine with step-level compensation and SQLite persistence.
+- `duffel.py` — Duffel HTTP client with idempotency-key support.
+- `tests/legacy/test_idempotency.py` — idempotency replay tests.
+- `tests/legacy/test_saga_compensation.py` — Saga rollback tests.
+- `tests/legacy/test_resilience.py` — circuit-breaker + retry resilience tests.

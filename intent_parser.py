@@ -585,17 +585,29 @@ def parse_intent(
 
     This is the primary entry point.  It never raises; on LLM failure it
     returns a best-effort rule-derived Intent with confidence=0.0.
+
+    Geographic fix: LLM guesses for ``city``/``region`` are overwritten when
+    ``user_lat``/``user_lng`` fall inside a known bounded box (e.g. Taipei),
+    mirroring GPS-as-ground-truth for seed-catalog routing.
     """
     rule_result = parse_intent_rules(
         query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng
     )
+
+    def _stamp_geo_pins(intent_obj: Intent) -> None:
+        geo = _coords_to_city_region(user_lat, user_lng)
+        if geo is not None:
+            intent_obj.city = geo[0]
+            intent_obj.region = geo[1]
 
     if rule_result is not None and rule_result.confidence >= 0.6:
         return rule_result
 
     # Fallback to LLM
     try:
-        return parse_intent_llm(query, llm_router)
+        llm_result = parse_intent_llm(query, llm_router)
+        _stamp_geo_pins(llm_result)
+        return llm_result
     except Exception:
         # LLM failed entirely; return the rule result if we have one, else default
         if rule_result is not None:

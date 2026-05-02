@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+testpaths = ["."]
+norecursedirs = [
+    ".venv",
+    "_legacy_*",
+    "tools/transcripts",
+    "tests/legacy",
+    "__pycache__",
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+]

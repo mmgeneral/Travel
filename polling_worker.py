@@ -1,3 +1,12 @@
+"""Standalone batch worker for polling shop / flight status.
+
+NOTE: This is a standalone batch job — it is NOT invoked by the main agent graph.
+Run it directly:
+    python polling_worker.py --shop "燃えよ麺助"
+
+See the Architecture Decision Record in README.md for the rationale on why this
+is kept as a reference implementation but excluded from the live request path.
+"""
 from __future__ import annotations
 
 import argparse

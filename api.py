@@ -35,7 +35,8 @@ import requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-from agent import build_graph, make_initial_state
+from agent import build_graph, make_initial_state, node_synthesizer, AgentState
+from agents.synthesizer import SynthesisReport
 from saga import SagaEngine
 from duffel import DuffelService
 from acl import ActionOutcome, SagaActionResult
@@ -262,6 +263,120 @@ async def agent_query(
     )
 
 
+@app.post("/agent/pause/{thread_id}")
+async def agent_pause(
+    thread_id: str,
+    x_api_token: str = Header(default=""),
+) -> dict:
+    """Trigger SynthesizerAgent on the paused thread and return a SynthesisReport.
+
+    The graph must have been compiled with a SqliteSaver checkpointer and
+    ``interrupt_after=["retriever", "critic"]``.  If no checkpoint exists for
+    the thread, returns an empty synthesis with a 200 so the UI can display
+    "nothing to synthesise yet".
+    """
+    _require_api_token(x_api_token)
+    graph = build_graph()
+
+    if not hasattr(graph, "get_state"):
+        raise HTTPException(
+            status_code=503,
+            detail="Pause/resume requires SqliteSaver checkpointer — run with SAGA_PERSIST_DIR set.",
+        )
+
+    cfg = {"configurable": {"thread_id": thread_id}}
+    try:
+        snapshot = graph.get_state(cfg)
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail=f"Thread not found: {exc}") from exc
+
+    state_dict: dict = dict(snapshot.values) if snapshot and snapshot.values else {}
+    if not state_dict:
+        return {
+            "thread_id": thread_id,
+            "synthesis": SynthesisReport(
+                consensus=["No agent state found for this thread."],
+                unresolved=[],
+                frontier=[],
+                discussion_freshness=1.0,
+            ).as_dict(),
+            "paused_at": None,
+        }
+
+    # Run the synthesizer node directly on the current state (does NOT resume the graph)
+    updated_state = node_synthesizer(dict(state_dict))
+    report_dict = (updated_state.get("synthesis_history") or [{}])[-1]
+
+    # Persist the updated synthesis_history back to the checkpoint
+    try:
+        graph.update_state(cfg, {"synthesis_history": updated_state.get("synthesis_history", [])})
+    except Exception:
+        pass  # non-fatal — UI still gets the report
+
+    paused_at = list(snapshot.next) if snapshot and snapshot.next else []
+    return {
+        "thread_id": thread_id,
+        "synthesis": report_dict,
+        "paused_at": paused_at,
+    }
+
+
+@app.post("/agent/resume/{thread_id}")
+async def agent_resume(
+    thread_id: str,
+    x_api_token: str = Header(default=""),
+) -> StreamingResponse:
+    """Resume a paused graph thread from its last interrupt point, streaming SSE events."""
+    _require_api_token(x_api_token)
+    graph = build_graph()
+
+    if not hasattr(graph, "get_state"):
+        raise HTTPException(
+            status_code=503,
+            detail="Pause/resume requires SqliteSaver checkpointer.",
+        )
+
+    cfg = {"configurable": {"thread_id": thread_id}}
+
+    async def _stream_resume() -> AsyncIterator[str]:
+        yield f"event: resume_start\ndata: {json.dumps({'thread_id': thread_id})}\n\n"
+        q: asyncio.Queue[dict | None] = asyncio.Queue()
+
+        async def _produce() -> None:
+            try:
+                # Passing None as input resumes from the last interrupt checkpoint
+                async for step in graph.astream(None, config=cfg):
+                    await q.put(step)
+            finally:
+                await q.put(None)
+
+        asyncio.create_task(_produce())
+        while True:
+            try:
+                step = await asyncio.wait_for(q.get(), timeout=15)
+            except asyncio.TimeoutError:
+                yield ": heartbeat\n\n"
+                continue
+            if step is None:
+                break
+            for node_name, node_state in step.items():
+                payload = {
+                    "node": node_name,
+                    "thread_id": thread_id,
+                    "state": {k: v for k, v in node_state.items()
+                              if k in ("research_log", "transit_audit", "critique_history",
+                                       "synthesis_history", "final_itinerary")},
+                }
+                yield f"event: step\ndata: {json.dumps(payload, default=str)}\n\n"
+        yield f"event: done\ndata: {json.dumps({'thread_id': thread_id})}\n\n"
+
+    return StreamingResponse(
+        _stream_resume(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
 @app.get("/agent/itinerary")
 async def get_itinerary(day: int = 1, x_user_id: str = Header(default=""), x_api_token: str = Header(default="")) -> dict:
     _require_api_token(x_api_token)
@@ -298,7 +413,12 @@ async def put_onboarding_profile(payload: dict, x_user_id: str = Header(default=
     return {"ok": True, "user_id": user_id, "profile": _save_onboarding_profile(user_id, payload or {})}
 
 
-@app.post("/agent/rollback")
+@app.post(
+    "/agent/rollback",
+    deprecated=True,
+    summary="[DEPRECATED] Trigger agent rollback via Saga",
+    description="Rollback now handled by LangGraph checkpointer thread history. See ADR in README.md.",
+)
 async def agent_rollback(req: RollbackRequest, x_api_token: str = Header(default="")) -> dict:
     _require_api_token(x_api_token)
     raise HTTPException(
@@ -653,7 +773,15 @@ class HoldRequest(BaseModel):
     passenger_id: str
 
 
-@app.post("/duffel/search")
+@app.post(
+    "/duffel/search",
+    deprecated=True,
+    summary="[DEPRECATED] Search Duffel flight offers",
+    description=(
+        "Kept as an engineering reference for the distributed-transaction pattern. "
+        "Flight booking is not part of the main agent flow. See ADR in README.md."
+    ),
+)
 async def duffel_search(req: SearchRequest, x_api_token: str = Header(default="")) -> dict:
     _require_api_token(x_api_token)
     result = _duffel.search_offers(req.origin, req.destination, req.date)
@@ -668,7 +796,15 @@ async def duffel_search(req: SearchRequest, x_api_token: str = Header(default=""
     }
 
 
-@app.post("/duffel/hold")
+@app.post(
+    "/duffel/hold",
+    deprecated=True,
+    summary="[DEPRECATED] Hold a Duffel flight order (Saga step)",
+    description=(
+        "Demonstrates idempotent 2-phase hold with Saga compensation. "
+        "Not invoked by the main agent flow. See ADR in README.md."
+    ),
+)
 async def duffel_hold(req: HoldRequest, x_api_token: str = Header(default="")) -> dict:
     _require_api_token(x_api_token)
     request_trace_id = str(uuid.uuid4())
@@ -706,7 +842,15 @@ async def duffel_hold(req: HoldRequest, x_api_token: str = Header(default="")) -
     return {"order_id": order_id, "status": "held", "idem_key": hold_key}
 
 
-@app.delete("/duffel/orders/{order_id}")
+@app.delete(
+    "/duffel/orders/{order_id}",
+    deprecated=True,
+    summary="[DEPRECATED] Cancel / compensate a held Duffel order",
+    description=(
+        "Demonstrates idempotent Saga compensation via cached cancel receipts. "
+        "Not invoked by the main agent flow. See ADR in README.md."
+    ),
+)
 async def duffel_cancel(order_id: str, x_api_token: str = Header(default="")) -> dict:
     _require_api_token(x_api_token)
     cached_cancel = _get_cancel_receipt(order_id)

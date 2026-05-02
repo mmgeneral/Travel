@@ -1,9 +1,33 @@
+"""LLMRouter — central dispatch for all LLM calls in the travel-agent system.
+
+Backend priority (local-first, cloud-fallback):
+
+    1. OllamaBackend   — always-on 1080 Ti (Qwen 7B)       → OLLAMA_URL
+    2. VLLMBackend     — on-demand lab 4090 (Qwen 14B AWQ)  → VLLM_URL (skip if empty)
+    3. GeminiBackend   — cloud free-tier fallback            → GEMINI_API_KEY
+    4. ClaudeBackend   — optional paid tier                  → ANTHROPIC_API_KEY
+
+Each backend exposes ``is_available()`` (cheap health-check, result cached 30 s).
+``LLMRouter.complete()`` tries backends in task-specific order, skipping any that are
+unavailable or have an open circuit-breaker, and raises only when the entire chain fails.
+
+Environment variables (see .env.example)::
+
+    OLLAMA_URL=http://localhost:11434   (default)
+    OLLAMA_MODEL=qwen2.5:7b            (default)
+    VLLM_URL=                          (empty → vLLM disabled)
+    VLLM_MODEL=Qwen/Qwen2.5-14B-Instruct-AWQ
+    GEMINI_API_KEY=
+    GEMINI_MODEL=gemini-2.0-flash
+    ANTHROPIC_API_KEY=
+    CLAUDE_MODEL=claude-3-5-sonnet-latest
+"""
 from __future__ import annotations
 
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable
 
@@ -12,6 +36,10 @@ from tenacity import Retrying, retry_if_exception_type, stop_after_attempt, wait
 
 from observability import record_llm_call, _get_tracer
 
+
+# ---------------------------------------------------------------------------
+# Enums / dataclasses shared across all layers
+# ---------------------------------------------------------------------------
 
 class TaskType(str, Enum):
     INTENT_PARSING = "INTENT_PARSING"
@@ -31,6 +59,21 @@ class LLMResponse:
     cost_usd: float
 
 
+@dataclass
+class _AvailabilityCache:
+    """30-second TTL cache for a single backend health check."""
+    available: bool = False
+    checked_at: float = 0.0
+    ttl_sec: float = 30.0
+
+    def is_stale(self) -> bool:
+        return (time.monotonic() - self.checked_at) >= self.ttl_sec
+
+    def update(self, available: bool) -> None:
+        self.available = available
+        self.checked_at = time.monotonic()
+
+
 class CircuitBreakerOpenError(RuntimeError):
     pass
 
@@ -39,7 +82,15 @@ class BackendTransientError(RuntimeError):
     pass
 
 
+# ---------------------------------------------------------------------------
+# BaseBackend
+# ---------------------------------------------------------------------------
+
 class BaseBackend:
+    """Abstract base with retry, circuit-breaker, timeout, and availability check."""
+
+    _AVAILABILITY_TIMEOUT: float = 2.0  # max seconds for is_available() HTTP probe
+
     def __init__(
         self,
         model: str,
@@ -58,6 +109,30 @@ class BaseBackend:
         self.request_fn = request_fn
         self._consecutive_failures = 0
         self._circuit_open_until = 0.0
+        self._avail_cache = _AvailabilityCache()
+
+    # ------------------------------------------------------------------
+    # Availability
+    # ------------------------------------------------------------------
+
+    def is_available(self) -> bool:
+        """Return True if the backend can accept requests.
+
+        Result is cached for 30 s to avoid hammering health endpoints.
+        """
+        if not self._avail_cache.is_stale():
+            return self._avail_cache.available
+        result = self._probe_availability()
+        self._avail_cache.update(result)
+        return result
+
+    def _probe_availability(self) -> bool:
+        """Subclasses override this for their specific health check."""
+        raise NotImplementedError
+
+    # ------------------------------------------------------------------
+    # Inference
+    # ------------------------------------------------------------------
 
     def complete(self, messages: list[dict[str, str]], **kwargs: Any) -> LLMResponse:
         self._guard_circuit_breaker()
@@ -117,16 +192,51 @@ class BaseBackend:
             text = str(v)
         return max(1, len(text) // 4)
 
+    @property
+    def name(self) -> str:
+        return type(self).__name__
 
-class LocalQwenBackend(BaseBackend):
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(model=os.getenv("LOCAL_QWEN_MODEL", "qwen2.5:7b"), **kwargs)
+
+# ---------------------------------------------------------------------------
+# OllamaBackend  (always-on, local 1080 Ti)
+# ---------------------------------------------------------------------------
+
+class OllamaBackend(BaseBackend):
+    """Connects to a local Ollama server.
+
+    Defaults: OLLAMA_URL=http://localhost:11434, OLLAMA_MODEL=qwen2.5:7b.
+    Health check: GET {host}/api/tags, timeout=2 s.
+    """
+
+    def __init__(
+        self,
+        host: str | None = None,
+        model: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        _host = (host or os.getenv("OLLAMA_URL", "http://localhost:11434")).rstrip("/")
+        # Strip /api/chat suffix if user mistakenly included it
+        if _host.endswith("/api/chat"):
+            _host = _host[: -len("/api/chat")]
+        self._host = _host
+        _model = model or os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
+        super().__init__(model=_model, **kwargs)
+
+    def _probe_availability(self) -> bool:
+        try:
+            r = requests.get(
+                f"{self._host}/api/tags",
+                timeout=self._AVAILABILITY_TIMEOUT,
+            )
+            return r.status_code == 200
+        except Exception:
+            return False
 
     def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         if self.request_fn is not None:
             return self.request_fn(messages=messages, model=self.model, **kwargs)
         resp = requests.post(
-            os.getenv("OLLAMA_URL", "http://localhost:11434/api/chat"),
+            f"{self._host}/api/chat",
             json={"model": self.model, "messages": messages, "stream": False},
             timeout=self.timeout,
         )
@@ -142,9 +252,84 @@ class LocalQwenBackend(BaseBackend):
         }
 
 
+# Backward-compat alias so existing code (agents/, tests/) keeps working
+LocalQwenBackend = OllamaBackend
+
+
+# ---------------------------------------------------------------------------
+# VLLMBackend  (on-demand, lab 4090)
+# ---------------------------------------------------------------------------
+
+class VLLMBackend(BaseBackend):
+    """Connects to a vLLM server serving an OpenAI-compatible /v1 API.
+
+    Disabled when VLLM_URL is empty.
+    Health check: GET {base_url}/v1/models, timeout=2 s.
+    """
+
+    def __init__(
+        self,
+        base_url: str | None = None,
+        model: str | None = None,
+        **kwargs: Any,
+    ) -> None:
+        _url = (base_url or os.getenv("VLLM_URL", "")).rstrip("/")
+        self._base_url = _url
+        _model = model or os.getenv("VLLM_MODEL", "Qwen/Qwen2.5-14B-Instruct-AWQ")
+        super().__init__(model=_model, **kwargs)
+
+    def _probe_availability(self) -> bool:
+        if not self._base_url:
+            return False  # not configured → always unavailable
+        try:
+            r = requests.get(
+                f"{self._base_url}/v1/models",
+                timeout=self._AVAILABILITY_TIMEOUT,
+            )
+            return r.status_code == 200
+        except Exception:
+            return False
+
+    def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
+        if self.request_fn is not None:
+            return self.request_fn(messages=messages, model=self.model, **kwargs)
+        if not self._base_url:
+            raise BackendTransientError("VLLM_URL not configured")
+        resp = requests.post(
+            f"{self._base_url}/v1/chat/completions",
+            json={"model": self.model, "messages": messages},
+            timeout=self.timeout,
+        )
+        resp.raise_for_status()
+        obj = resp.json()
+        choice = (obj.get("choices") or [{}])[0]
+        text = (choice.get("message") or {}).get("content", "")
+        usage = obj.get("usage", {})
+        return {
+            "content": str(text),
+            "model_used": obj.get("model", self.model),
+            "tokens_in": int(usage.get("prompt_tokens", 0)),
+            "tokens_out": int(usage.get("completion_tokens", 0)),
+            "cost_usd": 0.0,
+        }
+
+
+# ---------------------------------------------------------------------------
+# GeminiBackend  (cloud free-tier fallback)
+# ---------------------------------------------------------------------------
+
 class GeminiBackend(BaseBackend):
+    """Google Gemini via google-genai SDK.
+
+    Availability check: GEMINI_API_KEY env must be non-empty.
+    (No HTTP probe — free-tier rate limits make live probing expensive.)
+    """
+
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"), **kwargs)
+
+    def _probe_availability(self) -> bool:
+        return bool(os.getenv("GEMINI_API_KEY", "").strip())
 
     def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         if self.request_fn is not None:
@@ -163,9 +348,21 @@ class GeminiBackend(BaseBackend):
         return {"content": str(text), "model_used": self.model, "cost_usd": 0.0}
 
 
+# ---------------------------------------------------------------------------
+# ClaudeBackend  (optional paid tier)
+# ---------------------------------------------------------------------------
+
 class ClaudeBackend(BaseBackend):
+    """Anthropic Claude via anthropic SDK.
+
+    Availability check: ANTHROPIC_API_KEY env must be non-empty.
+    """
+
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(model=os.getenv("CLAUDE_MODEL", "claude-3-5-sonnet-latest"), **kwargs)
+
+    def _probe_availability(self) -> bool:
+        return bool(os.getenv("ANTHROPIC_API_KEY", "").strip())
 
     def _call_provider(self, messages: list[dict[str, str]], **kwargs: Any) -> dict[str, Any]:
         if self.request_fn is not None:
@@ -195,40 +392,131 @@ class ClaudeBackend(BaseBackend):
         }
 
 
+# ---------------------------------------------------------------------------
+# LLMRouter  — fallback-chain orchestrator
+# ---------------------------------------------------------------------------
+
 class LLMRouter:
+    """Route LLM calls through a priority-ordered chain of backends.
+
+    Priority (local-first):
+    - INTENT_PARSING   → Ollama → Gemini
+    - CRITIQUE         → vLLM → Gemini → Ollama  (needs strong reasoning)
+    - everything else  → Ollama → Gemini
+
+    Any backend that is unavailable (``is_available()`` returns False) or
+    has an open circuit-breaker is silently skipped.  Only raises when the
+    entire chain is exhausted.
+    """
+
     def __init__(
         self,
         *,
-        local_backend: LocalQwenBackend | None = None,
+        ollama_backend: OllamaBackend | None = None,
+        vllm_backend: VLLMBackend | None = None,
         gemini_backend: GeminiBackend | None = None,
         claude_backend: ClaudeBackend | None = None,
+        # Backward-compat kwarg name used by existing callsites
+        local_backend: OllamaBackend | None = None,
     ) -> None:
-        self.local_backend = local_backend or LocalQwenBackend()
-        self.gemini_backend = gemini_backend or GeminiBackend()
-        self.claude_backend = claude_backend or ClaudeBackend()
+        # local_backend is a legacy alias for ollama_backend
+        self.ollama_backend: OllamaBackend = (
+            ollama_backend or local_backend or OllamaBackend()
+        )
+        self.vllm_backend: VLLMBackend = vllm_backend or VLLMBackend()
+        self.gemini_backend: GeminiBackend = gemini_backend or GeminiBackend()
+        self.claude_backend: ClaudeBackend = claude_backend or ClaudeBackend()
 
-    def _pick_backend(self, task: TaskType) -> BaseBackend:
+        # Expose legacy attribute name so existing code doesn't break
+        self.local_backend = self.ollama_backend
+
+    def _backend_chain(self, task: TaskType) -> list[BaseBackend]:
+        """Return ordered list of backends to try for a given task."""
         if task == TaskType.INTENT_PARSING:
-            return self.local_backend
-        if task == TaskType.CRITIQUE:
-            return self.claude_backend
-        return self.gemini_backend
+            # Simple classification — local 7B is sufficient; cloud is overkill
+            return [self.ollama_backend, self.gemini_backend]
 
-    def complete(self, task: TaskType, messages: list[dict[str, str]], **kwargs: Any) -> LLMResponse:
-        backend = self._pick_backend(task)
+        if task == TaskType.CRITIQUE:
+            # Needs strong reasoning: on-demand 4090 > cloud > local 7B fallback
+            return [self.vllm_backend, self.gemini_backend, self.ollama_backend]
+
+        # RETRIEVAL_REASONING, SYNTHESIS, EMBEDDING, … → local-first
+        return [self.ollama_backend, self.gemini_backend]
+
+    def complete(
+        self,
+        task: TaskType,
+        messages: list[dict[str, str]],
+        **kwargs: Any,
+    ) -> LLMResponse:
+        """Try each backend in priority order; return the first successful response."""
+        chain = self._backend_chain(task)
+        attempted: list[str] = []
+        last_error: Exception | None = None
+
         tracer = _get_tracer()
         span_name = f"llm.{task.value}"
+
+        def _try_chain() -> LLMResponse:
+            nonlocal last_error
+            for backend in chain:
+                if backend is None:
+                    continue
+                bname = backend.name
+                if not backend.is_available():
+                    attempted.append(f"{bname}:unavailable")
+                    continue
+                attempted.append(f"{bname}:trying")
+                try:
+                    resp = backend.complete(messages=messages, **kwargs)
+                    attempted.append(f"{bname}:ok")
+                    return resp
+                except CircuitBreakerOpenError as e:
+                    attempted[-1] = f"{bname}:circuit_open"
+                    last_error = e
+                except BackendTransientError as e:
+                    attempted[-1] = f"{bname}:transient_error"
+                    last_error = e
+                except Exception as e:
+                    attempted[-1] = f"{bname}:error"
+                    last_error = e
+            raise RuntimeError(
+                f"All backends exhausted for task={task.value}. "
+                f"Attempted: {attempted}. Last error: {last_error}"
+            )
+
         if tracer is None:
-            return backend.complete(messages=messages, **kwargs)
+            resp = _try_chain()
+            record_llm_call(
+                model=resp.model_used,
+                tokens_in=resp.tokens_in,
+                tokens_out=resp.tokens_out,
+                cost=resp.cost_usd,
+                latency=resp.latency_ms,
+            )
+            return resp
+
         with tracer.start_as_current_span(span_name) as span:
             span.set_attribute("llm.task_type", task.value)
-            span.set_attribute("llm.backend", type(backend).__name__)
-            response = backend.complete(messages=messages, **kwargs)
-            record_llm_call(
-                model=response.model_used,
-                tokens_in=response.tokens_in,
-                tokens_out=response.tokens_out,
-                cost=response.cost_usd,
-                latency=response.latency_ms,
-            )
-            return response
+            try:
+                resp = _try_chain()
+                # Find which backend succeeded (last "ok" entry)
+                selected = next(
+                    (a.split(":")[0] for a in reversed(attempted) if a.endswith(":ok")),
+                    "unknown",
+                )
+                span.set_attribute("llm.backend.attempted", str(attempted))
+                span.set_attribute("llm.backend.selected", selected)
+                span.set_attribute("llm.model", resp.model_used)
+                record_llm_call(
+                    model=resp.model_used,
+                    tokens_in=resp.tokens_in,
+                    tokens_out=resp.tokens_out,
+                    cost=resp.cost_usd,
+                    latency=resp.latency_ms,
+                )
+                return resp
+            except Exception as exc:
+                span.set_attribute("llm.backend.attempted", str(attempted))
+                span.set_attribute("llm.error", str(exc))
+                raise

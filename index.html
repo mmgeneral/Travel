@@ -116,11 +116,27 @@
     <button class="btn" onclick="editDietary()">飲食限制</button>
     <button class="btn" id="mode-btn" onclick="toggleAdvancedMode()">放寬限制</button>
     <button class="btn" id="foodie-btn" onclick="toggleFoodieMode()">美食家</button>
+    <button class="btn pause-btn" id="pause-btn" onclick="pauseAgent()" style="display:none" title="暫停並讀取目前共識摘要">⏸ 暫停</button>
     <button class="btn send" onclick="send()">發送</button>
   </div>
   <div class="status-bar">
     <span class="dot ok" id="dot"></span>
     <span id="status-text">就緒</span>
+  </div>
+  <!-- Synthesis panel — shown when user pauses -->
+  <div id="synthesis-panel" style="display:none;margin:10px 0;padding:12px 16px;border:1px solid #444;border-radius:8px;background:#1a1a2e;font-size:0.88em;line-height:1.6">
+    <div style="font-weight:600;margin-bottom:8px;color:#a0c4ff">⚖️ 目前共識摘要</div>
+    <div id="synthesis-loading" style="color:#888">正在分析討論記錄…</div>
+    <div id="synthesis-content" style="display:none">
+      <div style="margin-bottom:6px"><span style="color:#90ee90;font-weight:600">✅ 共識：</span><ul id="syn-consensus" style="margin:4px 0 0 18px;padding:0"></ul></div>
+      <div style="margin-bottom:6px"><span style="color:#ffb347;font-weight:600">⚡ 未解決：</span><ul id="syn-unresolved" style="margin:4px 0 0 18px;padding:0"></ul></div>
+      <div style="margin-bottom:6px"><span style="color:#87ceeb;font-weight:600">🔭 待探索：</span><ul id="syn-frontier" style="margin:4px 0 0 18px;padding:0"></ul></div>
+      <div style="color:#aaa;font-size:0.82em">討論新鮮度：<span id="syn-freshness" style="font-weight:600"></span></div>
+    </div>
+    <div style="margin-top:8px">
+      <button class="btn" onclick="resumeAgent()" id="resume-btn" style="display:none">▶ 繼續</button>
+      <button class="btn" onclick="closeSynthesis()" style="margin-left:6px">✕ 關閉</button>
+    </div>
   </div>
   <div class="hold-panel">
     <div class="hold-title">Duffel Hold 24 小時（先保留票價）</div>
@@ -373,6 +389,7 @@ const NODE_LABELS={
   plan:'正在規劃餐廳與交通'
 };
 let dietaryProfile={ethics:'unspecified',allergens:[],religious:'none',medical:[]};
+let currentThreadId=null;  // tracks agent_run_id for pause/resume
 function setStatus(state,text){
   document.getElementById('dot').className='dot '+state;
   const statusEl=document.getElementById('status-text');
@@ -432,6 +449,9 @@ async function send(){
         let data;try{data=JSON.parse(dataMatch[1]);}catch{continue;}
         if(event==='start'){
           setStatus('busy','開始規劃行程');
+          currentThreadId=data.agent_run_id||null;
+          if(currentThreadId){document.getElementById('pause-btn').style.display='';}
+          closeSynthesis();
           if(advancedMode)stream.textContent+=`▶ ${data.query}\n\n`;
         }
         else if(event==='node'){
@@ -444,6 +464,7 @@ async function send(){
           if(advancedMode)stream.textContent+='\n── 最終行程 ──\n'+data.itinerary;
           if(data.outcome||data.semantic_status){setOutcomeLamp(data.outcome||'SUCCESS',data.semantic_status||'');}
           else{setStatus('ok','完成');}
+          document.getElementById('pause-btn').style.display='none';
           refreshDaySyncBadges();
         }
         else if(event==='error'){
@@ -456,6 +477,82 @@ async function send(){
     }
   }catch(e){document.getElementById('stream').textContent+=`\n❌ 連線失敗：${e.message}`;setStatus('err','連線失敗');}
 }
+// ── Pause / Resume / Synthesis ────────────────────────────────────────────
+async function pauseAgent(){
+  if(!currentThreadId){alert('目前沒有進行中的行程，請先發送查詢。');return;}
+  const panel=document.getElementById('synthesis-panel');
+  const loading=document.getElementById('synthesis-loading');
+  const content=document.getElementById('synthesis-content');
+  panel.style.display='';
+  loading.style.display='';
+  content.style.display='none';
+  document.getElementById('resume-btn').style.display='';
+  setStatus('busy','正在暫停並分析討論記錄…');
+  try{
+    const res=await fetch(`${API}/agent/pause/${currentThreadId}`,{
+      method:'POST',
+      headers:apiHeaders({})
+    });
+    if(!res.ok){const e=await res.json();loading.textContent='暫停失敗：'+(e.detail||res.status);return;}
+    const data=await res.json();
+    const syn=data.synthesis||{};
+    const fillList=(id,items)=>{
+      const ul=document.getElementById(id);ul.innerHTML='';
+      (items||[]).forEach(txt=>{const li=document.createElement('li');li.textContent=txt;ul.appendChild(li);});
+    };
+    fillList('syn-consensus',syn.consensus);
+    fillList('syn-unresolved',syn.unresolved);
+    fillList('syn-frontier',syn.frontier);
+    const f=syn.discussion_freshness??null;
+    const freshnessEl=document.getElementById('syn-freshness');
+    if(f!==null){
+      const label=f<0.3?'低（討論已趨於重複）':f<0.6?'中（部分新觀點）':'高（活躍探索中）';
+      freshnessEl.textContent=`${(f*100).toFixed(0)}% — ${label}`;
+      freshnessEl.style.color=f<0.3?'#ff7070':f<0.6?'#ffb347':'#90ee90';
+    }else{freshnessEl.textContent='無資料';}
+    loading.style.display='none';
+    content.style.display='';
+    setStatus('ok','已暫停');
+  }catch(e){loading.textContent='暫停失敗：'+e.message;setStatus('err','暫停失敗');}
+}
+async function resumeAgent(){
+  if(!currentThreadId){closeSynthesis();return;}
+  closeSynthesis();
+  setStatus('busy','恢復行程規劃…');
+  try{
+    const res=await fetch(`${API}/agent/resume/${currentThreadId}`,{
+      method:'POST',
+      headers:apiHeaders({})
+    });
+    const reader=res.body.getReader(),decoder=new TextDecoder();
+    const stream=document.getElementById('stream');
+    let buf='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=decoder.decode(value,{stream:true});
+      const frames=buf.split('\n\n');buf=frames.pop();
+      for(const frame of frames){
+        const evMatch=frame.match(/^event:\s*(.+)/m),dataMatch=frame.match(/^data:\s*(.+)/ms);
+        if(!dataMatch)continue;
+        const event=evMatch?evMatch[1].trim():'message';
+        let data;try{data=JSON.parse(dataMatch[1]);}catch{continue;}
+        if(event==='step'){
+          const label=NODE_LABELS[data.node]||data.node;
+          if(advancedMode)stream.textContent+=`• [resume] ${label}\n`;
+          setStatus('busy',label);
+        }else if(event==='done'){
+          setStatus('ok','完成');
+          document.getElementById('pause-btn').style.display='none';
+        }
+        stream.scrollTop=stream.scrollHeight;
+      }
+    }
+  }catch(e){setStatus('err','恢復失敗：'+e.message);}
+}
+function closeSynthesis(){
+  document.getElementById('synthesis-panel').style.display='none';
+}
+// ── end Pause / Resume ─────────────────────────────────────────────────────
 function editDietary(){
   openDietaryModal();
 }

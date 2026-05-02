@@ -8,7 +8,7 @@ def _shop(**kwargs: object) -> ShopProfile:
     defaults: dict[str, object] = {
         "name": "TestShop",
         "close_time": "22:00",
-        "booking_type": BookingType.WALK_IN,
+        "booking_type": BookingType.NONE,
         "queue_strategy": QueueStrategy.PHYSICAL_LINE,
         "last_call_offset": 30,
         "is_cash_only": False,

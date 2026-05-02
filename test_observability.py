@@ -212,6 +212,7 @@ class TestLLMRouterInstrumentation:
         exp = _make_exporter()
 
         from llm_router import LLMRouter, TaskType, LocalQwenBackend, GeminiBackend, ClaudeBackend
+        from llm_router import OllamaBackend
 
         fn = self._make_mock_backend_fn()
         router = LLMRouter(
@@ -220,14 +221,21 @@ class TestLLMRouterInstrumentation:
             claude_backend=ClaudeBackend(request_fn=fn),
         )
 
-        router.complete(TaskType.INTENT_PARSING, [{"role": "user", "content": "hi"}])
+        with patch.object(OllamaBackend, "is_available", return_value=True):
+            router.complete(TaskType.INTENT_PARSING, [{"role": "user", "content": "hi"}])
 
         span = _find_span(exp, "llm.INTENT_PARSING")
         assert span is not None
         attrs = span.attributes or {}
-        assert attrs.get("llm.backend") == "LocalQwenBackend"
+        # INTENT_PARSING chain: Ollama (alias LocalQwenBackend) → Gemini
+        assert attrs.get("llm.backend.selected") == "OllamaBackend"
+        attempted = attrs.get("llm.backend.attempted", "")
+        assert "OllamaBackend:ok" in str(attempted)
 
-    def test_critique_routes_to_claude_backend(self) -> None:
+    def test_critique_fallback_chain_uses_gemini_when_vllm_unavailable(self) -> None:
+        """CRITIQUE chain is vLLM → Gemini → Ollama. With default empty VLLM_URL, Gemini wins."""
+        import os
+
         exp = _make_exporter()
 
         from llm_router import LLMRouter, TaskType, LocalQwenBackend, GeminiBackend, ClaudeBackend
@@ -239,12 +247,17 @@ class TestLLMRouterInstrumentation:
             claude_backend=ClaudeBackend(request_fn=fn),
         )
 
-        router.complete(TaskType.CRITIQUE, [{"role": "user", "content": "review this"}])
+        # Gemini availability is keyed off env; stabilize without relying on workstation config.
+        with patch.dict(os.environ, {"GEMINI_API_KEY": "test-nonempty-key"}, clear=False):
+            router.complete(TaskType.CRITIQUE, [{"role": "user", "content": "review this"}])
 
         span = _find_span(exp, "llm.CRITIQUE")
         assert span is not None
         attrs = span.attributes or {}
-        assert attrs.get("llm.backend") == "ClaudeBackend"
+        assert attrs.get("llm.backend.selected") == "GeminiBackend"
+        attempted = str(attrs.get("llm.backend.attempted", ""))
+        assert "VLLMBackend:unavailable" in attempted
+        assert "GeminiBackend:ok" in attempted
 
     def test_span_task_type_attribute(self) -> None:
         exp = _make_exporter()

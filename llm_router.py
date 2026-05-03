@@ -507,7 +507,10 @@ class LLMRouter:
             )
             return resp
 
-        if langfuse_tracing_active():
+        def _call_with_optional_langfuse() -> LLMResponse:
+            """LLM backends (required); optionally nest a Langfuse *generation* for the attempt."""
+            if not langfuse_tracing_active():
+                return _try_chain()
             wall0 = time.perf_counter()
             model_hint = os.getenv("GEMINI_MODEL") or os.getenv("OLLAMA_MODEL") or "llm_router"
             with llm_generation_context(
@@ -534,16 +537,16 @@ class LLMRouter:
                     cost_usd=resp.cost_usd,
                     extra_metadata={"attempted_backends": str(attempted)},
                 )
-            return resp
+                return resp
 
         tracer = _get_tracer()
         span_name = f"llm.{task.value}"
         if tracer is None:
-            return _finalize_otel(_try_chain(), None)
+            return _finalize_otel(_call_with_optional_langfuse(), None)
         with tracer.start_as_current_span(span_name) as span:
             span.set_attribute("llm.task_type", task.value)
             try:
-                return _finalize_otel(_try_chain(), span)
+                return _finalize_otel(_call_with_optional_langfuse(), span)
             except Exception as exc:
                 span.set_attribute("llm.backend.attempted", str(attempted))
                 span.set_attribute("llm.error", str(exc))

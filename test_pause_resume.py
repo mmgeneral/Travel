@@ -6,7 +6,7 @@ Coverage
 * resume after pause continues from the last interrupt point.
 * discussion_freshness < 0.3 when rounds produce identical candidates repeatedly.
 * node_synthesizer does not appear in graph unless explicitly invoked.
-* build_graph() with checkpointer compiles with interrupt_after.
+* build_graph() with checkpointer compiles without default ``interrupt_after`` (opt-in via argument).
 * /agent/pause and /agent/resume endpoints (unit-level mocks, no HTTP server needed).
 """
 from __future__ import annotations

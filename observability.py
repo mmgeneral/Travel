@@ -11,14 +11,21 @@ Usage:
     @traced
     async def my_handler(...): ...
 
-    # Inside an LLM wrapper:
-    record_llm_call(model="gemini-2.0-flash", tokens_in=42, tokens_out=17, cost=0.0, latency=320)
+    # Inside an LLM wrapper after a completion:
+    record_llm_call(
+        model="gemini-2.0-flash",
+        tokens_in=42,
+        tokens_out=17,
+        cost=0.0,
+        latency=320,
+        completion_preview="assistant text …",
+    )
 
 Design notes:
 - All OTEL imports are guarded so the module loads fine even without the SDK installed.
 - `init_tracing` accepts an optional `exporter` for tests (InMemorySpanExporter).
 - `traced` works for both sync and async callables.
-- `record_llm_call` is a no-op when no span is active or OTEL is absent.
+- `record_llm_call` maps tokens/cost onto the span and can attach a truncated ``llm.completion_preview``.
 """
 
 from __future__ import annotations
@@ -94,10 +101,21 @@ def record_llm_call(
     tokens_out: int,
     cost: float,
     latency: int,
+    *,
+    completion_preview: str | None = None,
+    preview_max_chars: int = 12_288,
 ) -> None:
     """Attach LLM call attributes to whichever span is currently active.
 
     Safe to call when there is no active span — the call becomes a no-op.
+
+    Parameters
+    ----------
+    completion_preview:
+        Assistant text truncated to ``preview_max_chars`` and stored as
+        ``llm.completion_preview`` for Langfuse / OTLP consumers.
+    preview_max_chars:
+        Caps attribute payload size for OTLP backends.
     """
     if not _OTEL_AVAILABLE:
         return
@@ -111,6 +129,12 @@ def record_llm_call(
     span.set_attribute("llm.tokens_out", tokens_out)
     span.set_attribute("llm.cost_usd", cost)
     span.set_attribute("llm.latency_ms", latency)
+    if completion_preview:
+        cap = max(256, preview_max_chars)
+        text = completion_preview.strip()
+        if len(text) > cap:
+            text = text[: cap - 1] + "…"
+        span.set_attribute("llm.completion_preview", text)
 
 
 F = TypeVar("F", bound=Callable[..., Any])

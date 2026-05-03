@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 from agent import _extract_city_from_query, build_graph, make_initial_state
 
 
@@ -26,7 +28,7 @@ def test_geo_location_drives_taipei_seed_catalog() -> None:
         user_lat=25.03,
         user_lng=121.56,
     )
-    out = graph.invoke(st)
+    out = asyncio.run(graph.ainvoke(st))
     # Intent should parse to Taipei
     intent = out.get("intent") or {}
     assert intent.get("region") == "tw", f"Expected region='tw', got intent={intent}"

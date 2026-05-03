@@ -1,6 +1,9 @@
 """
 FastAPI wrapper for agent.py — exposes the LangGraph agent over HTTP/SSE.
 
+Graph scheduling and normalized event payloads are implemented in ``orchestrator.py``
+(``AgentOrchestrator``); this module only frames those dicts as SSE for the HTTP response.
+
 Why SSE instead of WebSocket?
   - One-way streaming (agent → browser) matches our use case
   - Works through any HTTP proxy without special config
@@ -8,7 +11,8 @@ Why SSE instead of WebSocket?
 
 Routes:
   GET  /healthz       — liveness probe for Docker / browser offline detection
-  POST /agent/query   — fire a query, receive SSE stream of agent events
+  POST /agent/query   — fire a query, receive SSE stream of agent events (thread_id / rewind optional)
+  GET  /agent/history/{thread_id} — list checkpoints for time-travel (requires Sqlite checkpointer)
   POST /agent/rollback — rollback to a snapshot_idx
 """
 
@@ -20,42 +24,89 @@ import hmac
 import json
 import logging
 import sqlite3
-from datetime import datetime
-from typing import AsyncIterator
+from datetime import datetime, timezone
+from typing import Any, AsyncIterator
 from pathlib import Path
 import uuid
 from zoneinfo import ZoneInfo
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import os
-import requests
+import httpx
+import aiosqlite
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-from agent import build_graph, make_initial_state, node_synthesizer, AgentState
-from agents.synthesizer import SynthesisReport
-from saga import SagaEngine
-from duffel import DuffelService
-from acl import ActionOutcome, SagaActionResult
 from observability import init_tracing, traced
-
-app = FastAPI(title="Travel Agent API")
-logger = logging.getLogger(__name__)
 
 init_tracing("travel-agent")
 
-@app.get("/")
-async def index():
-    return FileResponse(os.path.join(BASE_DIR, "index.html"))
+from tracing import ensure_langfuse_env, init_langfuse, shutdown_langfuse
+
+from agent import build_graph, make_initial_state, node_synthesizer
+from orchestrator import AgentOrchestrator
+from agents.synthesizer import SynthesisReport
+from graph_checkpoint_utils import (
+    _graph_get_state,
+    _graph_has_checkpoint_state_reader,
+    _graph_history_chronological,
+    _graph_supports_checkpointing,
+    _graph_update_state,
+)
+from saga import SagaEngine
+from duffel import DuffelService
+from acl import ActionOutcome, SagaActionResult
+
+# Align with agent._SAGA_DIR (graph SQLite lives here, not saga_holds).
+_GRAPH_SAGA_DIR = Path(os.getenv("SAGA_PERSIST_DIR", str(Path.home() / ".travel_agent" / "saga")))
+_GRAPH_SAGA_DIR.mkdir(parents=True, exist_ok=True)
+
+logger = logging.getLogger(__name__)
 
 _ALLOWED_ORIGINS = [x.strip() for x in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if x.strip()]
 _API_TOKEN = os.getenv("TRAVEL_AGENT_API_TOKEN", "")
 _DEV_MODE = os.getenv("DEV_MODE", "0") == "1"
 _ENV = os.getenv("ENV", "development").lower()
 _APP_TZ = ZoneInfo(os.getenv("APP_TIMEZONE", "Asia/Taipei"))
+
+
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    ensure_langfuse_env()
+    init_langfuse()
+    try:
+        # Shared async HTTP client avoids per-request TLS handshakes; never block with sync requests.*.
+        async with httpx.AsyncClient(timeout=httpx.Timeout(15.0, connect=5.0)) as http_client:
+            app.state.http_client = http_client
+            app.state.checkpoint_conn = None
+            async with aiosqlite.connect(str(_GRAPH_SAGA_DIR / "graph_checkpoints.sqlite")) as conn:
+                app.state.checkpoint_conn = conn
+                app.state.checkpointer = AsyncSqliteSaver(conn)
+                yield
+            app.state.checkpoint_conn = None
+            app.state.checkpointer = None
+            app.state.http_client = None
+    finally:
+        shutdown_langfuse()
+
+
+app = FastAPI(title="Travel Agent API", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_ALLOWED_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/")
+async def index():
+    return FileResponse(os.path.join(BASE_DIR, "index.html"))
 
 
 def _now_iso() -> str:
@@ -71,23 +122,54 @@ def _require_api_token(x_api_token: str) -> None:
     if not hmac.compare_digest(x_api_token, _API_TOKEN):
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-# CORS defaults to localhost origins; configure ALLOWED_ORIGINS for deployment.
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_ALLOWED_ORIGINS,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+def _snapshot_ts_iso(snapshot: Any) -> str:
+    chk = getattr(snapshot, "checkpoint", None)
+    if isinstance(chk, dict):
+        ts = chk.get("ts")
+        if ts is not None:
+            try:
+                tnum = float(ts)
+                secs = tnum / 1e9 if tnum > 10**12 else tnum
+                return (
+                    datetime.fromtimestamp(secs, tz=timezone.utc)
+                    .astimezone(_APP_TZ)
+                    .isoformat(timespec="seconds")
+                )
+            except Exception:
+                pass
+    return _now_iso()
 
 
-class QueryRequest(BaseModel):
-    query: str
-    day:   int = 1
+def _state_summary_preview(vals: dict[str, Any]) -> str:
+    text = str(vals.get("final_report") or vals.get("final_itinerary") or "")
+    return text[:50] if text else ""
+
+
+def _transport_event_to_sse(msg: dict[str, Any]) -> str:
+    """Map orchestrator JSON to a single SSE frame (transport layer only)."""
+    ev = str(msg.get("event") or "message")
+    if ev == "ping":
+        return ": heartbeat\n\n"
+    payload = msg.get("data")
+    if payload is None:
+        payload = {}
+    return f"event: {ev}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
+
+
+class AgentQueryRequest(BaseModel):
+    query: str = Field(..., min_length=1)
+    day: int = 1
+    thread_id: str | None = None
+    rewind_to_checkpoint: str | None = None
     dietary_profile: dict | None = None
     advanced_mode: bool = False
     user_locale: str | None = None
     user_lat: float | None = None
     user_lng: float | None = None
+
+
+QueryRequest = AgentQueryRequest  # backwards-compatible alias
 
 
 class RollbackRequest(BaseModel):
@@ -108,7 +190,7 @@ async def healthz() -> dict:
 
 
 @app.get("/readyz")
-async def readyz() -> dict:
+async def readyz(request: Request) -> dict:
     checks: dict[str, str] = {}
     try:
         _SAGA_DIR.mkdir(parents=True, exist_ok=True)
@@ -124,11 +206,13 @@ async def readyz() -> dict:
         if not token:
             checks["duffel_connectivity"] = "skipped:no_token"
         else:
-            resp = requests.get(
-                "https://api.duffel.com/air/airports?limit=1",
-                headers={"Authorization": f"Bearer {token}", "Duffel-Version": "v2", "Accept": "application/json"},
-                timeout=3,
-            )
+            client = getattr(request.app.state, "http_client", None)
+            headers = {"Authorization": f"Bearer {token}", "Duffel-Version": "v2", "Accept": "application/json"}
+            if client is not None:
+                resp = await client.get("https://api.duffel.com/air/airports?limit=1", headers=headers)
+            else:
+                async with httpx.AsyncClient(timeout=httpx.Timeout(5.0, connect=3.0)) as c:
+                    resp = await c.get("https://api.duffel.com/air/airports?limit=1", headers=headers)
             checks["duffel_connectivity"] = "ok" if resp.status_code < 500 else f"error:{resp.status_code}"
     except Exception as exc:
         checks["duffel_connectivity"] = f"error:{exc.__class__.__name__}"
@@ -137,156 +221,130 @@ async def readyz() -> dict:
 
 
 async def _stream_agent(
+    *,
     query: str,
     day: int,
     user_id: str,
+    thread_id: str | None,
+    rewind_to_checkpoint: str | None = None,
     dietary_profile: dict | None = None,
     advanced_mode: bool = False,
     user_locale: str | None = None,
     user_lat: float | None = None,
     user_lng: float | None = None,
+    checkpointer: Any | None = None,
+    checkpoint_conn: Any | None = None,
 ) -> AsyncIterator[str]:
-    """
-    Run the graph and emit SSE events as each node completes.
-    Format: `event: <name>\\ndata: <json>\\n\\n`
-    """
-    agent_run_id = uuid.uuid4().hex
-    graph = build_graph()
-    graph_cfg = {"configurable": {"thread_id": agent_run_id}}
-    initial_state = make_initial_state(
+    """Delegate LangGraph execution to ``AgentOrchestrator``; emit SSE only here."""
+    orch = AgentOrchestrator()
+    async for msg in orch.stream_events(
         query=query,
+        day=day,
+        thread_id=thread_id,
+        rewind_to_checkpoint=rewind_to_checkpoint,
         dietary_profile=dietary_profile,
-        agent_run_id=agent_run_id,
         advanced_mode=advanced_mode,
         user_locale=user_locale,
         user_lat=user_lat,
         user_lng=user_lng,
-    )
-
-    yield f"event: start\ndata: {json.dumps({'day': day, 'query': query, 'agent_run_id': agent_run_id})}\n\n"
-
-    # Use background producer + queue to avoid cancelling __anext__()
-    # when heartbeat timeout fires.
-    final_state = None
-    q: asyncio.Queue[dict | None] = asyncio.Queue()
-    producer_error: Exception | None = None
-
-    async def _produce_steps() -> None:
-        nonlocal producer_error
-        try:
-            async for step in graph.astream(initial_state, config=graph_cfg):
-                await q.put(step)
-        except Exception as e:  # pragma: no cover - surfaced in parent
-            producer_error = e
-        finally:
-            await q.put(None)
-
-    producer_task = asyncio.create_task(_produce_steps())
-    try:
-        while True:
-            try:
-                step = await asyncio.wait_for(q.get(), timeout=15)
-            except asyncio.TimeoutError:
-                yield ": heartbeat\n\n"
-                continue
-            if step is None:
-                break
-            for node_name, node_state in step.items():
-                final_state = node_state
-                payload = {
-                    "node":   node_name,
-                    "agent_run_id": agent_run_id,
-                    "state":  {k: v for k, v in node_state.items()
-                               if k in ("research_log", "transit_audit",
-                                        "rollback_occurred", "saga_snapshot_idx", "agent_run_id")},
-                }
-                yield f"event: node\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
-                await asyncio.sleep(0)  # flush
-        await producer_task
-        if producer_error is not None:
-            raise producer_error
-    except Exception:
-        producer_task.cancel()
-        with contextlib.suppress(Exception):
-            await producer_task
-        logger.exception("Agent SSE stream failed, run_id=%s", agent_run_id)
-        yield (
-            "event: error\n"
-            f"data: {json.dumps({'error': 'stream_failed', 'agent_run_id': agent_run_id, 'user_message': '網路或服務暫時不穩，請稍後重試。'}, ensure_ascii=False)}\n\n"
-        )
-        return
-
-    if final_state is None:
-        final_state = initial_state
-    done_payload = json.dumps(
-        {
-            "itinerary":    final_state.get("final_itinerary", ""),
-            "ui_cards": final_state.get("ui_cards", []),
-            "snapshot_idx": final_state.get("saga_snapshot_idx", -1),
-            "outcome": "SUCCESS",
-            "semantic_status": "RUN_COMPLETED",
-            "agent_run_id": agent_run_id,
-        },
-        ensure_ascii=False,
-    )
-    _save_itinerary(
-        user_id=user_id,
-        day=day,
-        itinerary_text=final_state.get("final_itinerary", ""),
-        semantic_status="RUN_COMPLETED",
-    )
-    yield f"event: done\ndata: {done_payload}\n\n"
+        checkpointer=checkpointer,
+        checkpoint_conn=checkpoint_conn,
+    ):
+        if msg.get("event") == "done":
+            data = msg.get("data") or {}
+            _save_itinerary(
+                user_id=user_id,
+                day=day,
+                itinerary_text=str(data.get("itinerary") or ""),
+                semantic_status=str(data.get("semantic_status") or "RUN_COMPLETED"),
+            )
+        yield _transport_event_to_sse(msg)
 
 
 @app.post("/agent/query")
 @traced
 async def agent_query(
-    req: QueryRequest,
+    req: AgentQueryRequest,
+    request: Request,
     x_user_id: str = Header(default=""),
     x_api_token: str = Header(default=""),
 ) -> StreamingResponse:
+    """Stream agent SSE. ``thread_id`` is stored in LangGraph ``configurable`` for checkpoint I/O."""
     _require_api_token(x_api_token)
     user_id = x_user_id.strip() or "anonymous"
+    cp = getattr(request.app.state, "checkpointer", None)
+    cconn = getattr(request.app.state, "checkpoint_conn", None)
     return StreamingResponse(
         _stream_agent(
-            req.query,
-            req.day,
-            user_id,
-            req.dietary_profile,
-            req.advanced_mode,
-            req.user_locale,
-            req.user_lat,
-            req.user_lng,
+            query=req.query,
+            day=req.day,
+            user_id=user_id,
+            thread_id=req.thread_id,
+            rewind_to_checkpoint=req.rewind_to_checkpoint,
+            dietary_profile=req.dietary_profile,
+            advanced_mode=req.advanced_mode,
+            user_locale=req.user_locale,
+            user_lat=req.user_lat,
+            user_lng=req.user_lng,
+            checkpointer=cp,
+            checkpoint_conn=cconn,
         ),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 
+@app.get("/agent/history/{thread_id}")
+async def agent_history(
+    thread_id: str,
+    request: Request,
+    x_api_token: str = Header(default=""),
+) -> dict[str, Any]:
+    """Checkpoint timeline for ``thread_id`` (oldest → newest); ``checkpoint_id`` is ``cp_XXX`` for rewind UX."""
+    _require_api_token(x_api_token)
+    graph = build_graph(checkpointer=getattr(request.app.state, "checkpointer", None))
+    hist = []
+    if _graph_supports_checkpointing(graph):
+        hist = await _graph_history_chronological(graph, thread_id)
+    checkpoints: list[dict[str, str]] = []
+    for i, sn in enumerate(hist, start=1):
+        vals = dict(getattr(sn, "values", None) or {})
+        checkpoints.append(
+            {
+                "checkpoint_id": f"cp_{i:03d}",
+                "ts": _snapshot_ts_iso(sn),
+                "summary": _state_summary_preview(vals),
+            }
+        )
+    return {"thread_id": thread_id, "checkpoints": checkpoints}
+
+
 @app.post("/agent/pause/{thread_id}")
 async def agent_pause(
     thread_id: str,
+    request: Request,
     x_api_token: str = Header(default=""),
 ) -> dict:
     """Trigger SynthesizerAgent on the paused thread and return a SynthesisReport.
 
-    The graph must have been compiled with a SqliteSaver checkpointer and
-    ``interrupt_after=["retriever", "critic"]``.  If no checkpoint exists for
-    the thread, returns an empty synthesis with a 200 so the UI can display
+    The compiled graph uses the FastAPI lifespan ``AsyncSqliteSaver``.
+    Pause builds synthesis from the latest checkpoint snapshot; it does not require
+    a LangGraph interrupt.  If no checkpoint exists for the thread, returns an empty
+    synthesis with a 200 so the UI can display
     "nothing to synthesise yet".
     """
     _require_api_token(x_api_token)
-    graph = build_graph()
+    graph = build_graph(checkpointer=getattr(request.app.state, "checkpointer", None))
 
-    if not hasattr(graph, "get_state"):
+    if not _graph_has_checkpoint_state_reader(graph):
         raise HTTPException(
             status_code=503,
-            detail="Pause/resume requires SqliteSaver checkpointer — run with SAGA_PERSIST_DIR set.",
+            detail="Pause/resume requires a LangGraph checkpointer (API lifespan).",
         )
 
     cfg = {"configurable": {"thread_id": thread_id}}
     try:
-        snapshot = graph.get_state(cfg)
+        snapshot = await _graph_get_state(graph, cfg)
     except Exception as exc:
         raise HTTPException(status_code=404, detail=f"Thread not found: {exc}") from exc
 
@@ -309,7 +367,7 @@ async def agent_pause(
 
     # Persist the updated synthesis_history back to the checkpoint
     try:
-        graph.update_state(cfg, {"synthesis_history": updated_state.get("synthesis_history", [])})
+        await _graph_update_state(graph, cfg, {"synthesis_history": updated_state.get("synthesis_history", [])})
     except Exception:
         pass  # non-fatal — UI still gets the report
 
@@ -324,16 +382,17 @@ async def agent_pause(
 @app.post("/agent/resume/{thread_id}")
 async def agent_resume(
     thread_id: str,
+    request: Request,
     x_api_token: str = Header(default=""),
 ) -> StreamingResponse:
-    """Resume a paused graph thread from its last interrupt point, streaming SSE events."""
+    """Resume a paused graph thread from its last checkpoint / next step, streaming SSE events."""
     _require_api_token(x_api_token)
-    graph = build_graph()
+    graph = build_graph(checkpointer=getattr(request.app.state, "checkpointer", None))
 
-    if not hasattr(graph, "get_state"):
+    if not _graph_has_checkpoint_state_reader(graph):
         raise HTTPException(
             status_code=503,
-            detail="Pause/resume requires SqliteSaver checkpointer.",
+            detail="Pause/resume requires a LangGraph checkpointer (API lifespan).",
         )
 
     cfg = {"configurable": {"thread_id": thread_id}}
@@ -341,33 +400,82 @@ async def agent_resume(
     async def _stream_resume() -> AsyncIterator[str]:
         yield f"event: resume_start\ndata: {json.dumps({'thread_id': thread_id})}\n\n"
         q: asyncio.Queue[dict | None] = asyncio.Queue()
+        fatal: list[BaseException | None] = [None]
 
         async def _produce() -> None:
             try:
-                # Passing None as input resumes from the last interrupt checkpoint
                 async for step in graph.astream(None, config=cfg):
                     await q.put(step)
+            except asyncio.InvalidStateError as e:
+                logger.warning(
+                    "Resume stream InvalidStateError thread=%s", thread_id, exc_info=True
+                )
+                fatal[0] = e
+            except (OSError, ConnectionError, RuntimeError) as e:
+                logger.warning(
+                    "Resume stream backend failure thread=%s err=%s",
+                    thread_id,
+                    e.__class__.__name__,
+                    exc_info=True,
+                )
+                fatal[0] = e
+            except Exception as e:  # pragma: no cover
+                fatal[0] = e
             finally:
                 await q.put(None)
 
-        asyncio.create_task(_produce())
-        while True:
-            try:
-                step = await asyncio.wait_for(q.get(), timeout=15)
-            except asyncio.TimeoutError:
-                yield ": heartbeat\n\n"
-                continue
-            if step is None:
-                break
-            for node_name, node_state in step.items():
-                payload = {
-                    "node": node_name,
-                    "thread_id": thread_id,
-                    "state": {k: v for k, v in node_state.items()
-                              if k in ("research_log", "transit_audit", "critique_history",
-                                       "synthesis_history", "final_itinerary")},
-                }
-                yield f"event: step\ndata: {json.dumps(payload, default=str)}\n\n"
+        producer_task = asyncio.create_task(_produce())
+        try:
+            while True:
+                try:
+                    step = await asyncio.wait_for(q.get(), timeout=15)
+                except asyncio.TimeoutError:
+                    yield ": heartbeat\n\n"
+                    continue
+                if step is None:
+                    break
+                for node_name, node_state in step.items():
+                    payload = {
+                        "node": node_name,
+                        "thread_id": thread_id,
+                        "state": {k: v for k, v in node_state.items()
+                                  if k in ("research_log", "transit_audit", "critique_history",
+                                           "synthesis_history", "final_itinerary")},
+                    }
+                    yield f"event: step\ndata: {json.dumps(payload, default=str)}\n\n"
+        finally:
+            await producer_task
+        if fatal[0] is not None:
+            err = fatal[0]
+            if isinstance(err, asyncio.InvalidStateError):
+                payload = json.dumps(
+                    {
+                        "error": "checkpoint_transport_error",
+                        "thread_id": thread_id,
+                        "user_message": "檢查點／串流狀態異常，請重新發送請求或使用新 thread。",
+                    },
+                    ensure_ascii=False,
+                )
+            elif isinstance(err, (OSError, ConnectionError, RuntimeError)):
+                payload = json.dumps(
+                    {
+                        "error": "checkpoint_db_error",
+                        "thread_id": thread_id,
+                        "user_message": "持久化連線中斷，請稍後重試。",
+                    },
+                    ensure_ascii=False,
+                )
+            else:
+                payload = json.dumps(
+                    {
+                        "error": "stream_failed",
+                        "thread_id": thread_id,
+                        "user_message": "恢復串流失敗，請稍後重試。",
+                    },
+                    ensure_ascii=False,
+                )
+            yield f"event: error\ndata: {payload}\n\n"
+            return
         yield f"event: done\ndata: {json.dumps({'thread_id': thread_id})}\n\n"
 
     return StreamingResponse(

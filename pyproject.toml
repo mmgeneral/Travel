@@ -1,10 +1,13 @@
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["asyncio: asyncio tests (pytest-asyncio)"]
 testpaths = ["."]
 norecursedirs = [
+    "legacy",
     ".venv",
     "_legacy_*",
     "tools/transcripts",
-    "tests/legacy",
     "__pycache__",
     ".git",
     ".mypy_cache",

@@ -2,7 +2,7 @@
 Shared TypedDicts for both main.py (simple RAG agent)
 and agent.py (autonomous Search→Verify→Audit→Plan agent).
 """
-from typing import Annotated, Any, List, Optional
+from typing import Annotated, Any, Dict, List, Optional
 from typing_extensions import TypedDict
 
 
@@ -18,6 +18,9 @@ class AgentState(TypedDict):
     """
     Full autonomous agent state (agent.py).
     Each field is written by exactly one node and read by all downstream nodes.
+
+    ``intent`` snapshots follow ``intent_parser.Intent.as_dict()`` keys (JSON-serialisable).
+    ``intent_history`` keeps prior snapshots for intent-correction / UX audit trails.
     """
     query:            str
     research_log:     List[str]        # raw authority-domain snippets
@@ -28,3 +31,5 @@ class AgentState(TypedDict):
     final_itinerary:  str              # final markdown output
     version:          int              # itinerary version for optimistic concurrency
     error:            Optional[str]    # non-fatal error accumulator
+    intent:           Optional[Dict[str, Any]]
+    intent_history:   List[Dict[str, Any]]

@@ -22,12 +22,12 @@ Non-responsibilities (stay in later nodes)
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from observability import _get_tracer, record_llm_call
 from shop_catalog_io import load_shop_catalog
 from shop_planning import NearbySearchTool, ShopProfile
 
@@ -301,6 +301,10 @@ class RetrieverAgent:
             query=query,
         )
 
+    async def arun(self, state: dict) -> RetrievalReport:
+        """Async entry: offload sync HTTP/LLM so the LangGraph event loop is not blocked."""
+        return await asyncio.to_thread(self.run, state)
+
     # ------------------------------------------------------------------
     # Internals
     # ------------------------------------------------------------------
@@ -382,30 +386,8 @@ class RetrieverAgent:
 
         messages = _build_retriever_prompt(intent, candidates)
 
-        tracer = _get_tracer()
-        span_name = "retriever.llm_reason"
-
-        def _call() -> tuple[list[str], list[str]]:
-            response = self._router.complete(TaskType.RETRIEVAL_REASONING, messages)
-            record_llm_call(
-                model=response.model_used,
-                tokens_in=response.tokens_in,
-                tokens_out=response.tokens_out,
-                cost=response.cost_usd,
-                latency=response.latency_ms,
-            )
-            return _parse_llm_notes_gaps(response.content)
-
         try:
-            if tracer is not None:
-                with tracer.start_as_current_span(span_name) as span:
-                    span.set_attribute("retriever.candidate_count", len(candidates))
-                    span.set_attribute("retriever.city", intent.get("city") or "")
-                    notes, gaps = _call()
-                    span.set_attribute("retriever.notes_count", len(notes))
-                    span.set_attribute("retriever.gaps_count", len(gaps))
-                    return notes, gaps
-            else:
-                return _call()
+            response = self._router.complete(TaskType.RETRIEVAL_REASONING, messages)
+            return _parse_llm_notes_gaps(response.content)
         except Exception as exc:
             return [], [f"LLM reasoning failed: {exc!s}"]

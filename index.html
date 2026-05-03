@@ -57,7 +57,17 @@
   .btn.send{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:500;}
   .btn.send:hover{background:#6357d4;}
   .btn.mic.rec{background:var(--red);border-color:var(--red);color:#fff;}
-  .status-bar{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+  .conv-banner{font-size:11px;color:var(--muted);padding:6px 2px;line-height:1.4;border-bottom:1px solid rgba(42,42,50,.6);margin-bottom:4px;}
+  .conv-banner-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+  .conv-banner-row .btn.new-chat{font-size:11px;height:28px;padding:0 10px;min-height:28px;}
+  .intent-toast{
+    position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(8px);
+    max-width:min(92vw,340px);padding:8px 14px;border-radius:20px;font-size:12px;line-height:1.45;
+    background:rgba(26,26,31,.92);border:1px solid rgba(124,106,247,.35);color:var(--purple2);
+    box-shadow:0 4px 24px rgba(0,0,0,.35);z-index:60;opacity:0;pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .intent-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
   .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
   .dot.ok{background:var(--green);}
   .dot.busy{background:var(--amber);animation:pulse 1s infinite;}
@@ -101,8 +111,14 @@
   <div class="stream-box" id="stream"></div>
 </main>
 <div class="input-area">
+  <div id="conv-banner" class="conv-banner">
+    <div class="conv-banner-row">
+      <span id="conv-banner-text">新對話（尚未建立 thread）</span>
+      <button type="button" class="btn new-chat" onclick="startNewConversation()">新對話</button>
+    </div>
+  </div>
   <div class="input-row">
-    <textarea id="msg" placeholder="告訴 agent 要改什麼…"
+    <textarea id="msg" placeholder="輸入需求或調整⋯（可多輪對話。「回到第2輪」或 undo 可 time-travel）"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
   </div>
   <div class="input-row">
@@ -159,6 +175,7 @@
     <div class="hold-log" id="hold-log">尚未操作航班 hold。</div>
   </div>
 </div>
+<div id="intent-revision-toast" class="intent-toast" role="status" aria-live="polite"></div>
 <div id="onboarding-modal" class="modal" onclick="if(event.target===this){}">
   <div class="modal-card">
     <div class="modal-title">建立你的旅程</div>
@@ -252,6 +269,8 @@ const ALLOWED_ALLERGENS=['shellfish','peanuts','tree_nuts','egg','dairy','soy','
 const ALLOWED_MEDICAL=['pregnant','low_sodium','low_sugar','low_purine','gluten_sensitive'];
 const ALLERGEN_ALIAS={shrimp:'shellfish',prawn:'shellfish',crab:'shellfish',lobster:'shellfish',nuts:'tree_nuts',nut:'tree_nuts',milk:'dairy'};
 const API_TOKEN=localStorage.getItem('travel_api_token')||'';
+const THREAD_ID_KEY='travel_agent_thread_id';
+let _intentToastTimer=null;
 function apiHeaders(extra){
   const h=Object.assign({},extra||{});
   if(API_TOKEN)h['X-Api-Token']=API_TOKEN;
@@ -381,6 +400,7 @@ async function selectDay(day){
   }
 }
 const NODE_LABELS={
+  route_intent:'正在解析您的旅遊意圖',
   search:'正在查詢航班與候選資料',
   researcher:'Researcher 正在產生候選行程',
   auditor:'Auditor 正在審查物理邊界與品味',
@@ -389,7 +409,62 @@ const NODE_LABELS={
   plan:'正在規劃餐廳與交通'
 };
 let dietaryProfile={ethics:'unspecified',allergens:[],religious:'none',medical:[]};
-let currentThreadId=null;  // tracks agent_run_id for pause/resume
+let conversationRound=0;
+function refreshConversationBanner(){
+  const el=document.getElementById('conv-banner-text');
+  const tid = currentThreadId;
+  el.textContent = tid
+    ? (conversationRound > 0
+        ? `第 ${conversationRound} 輪 · thread_id: ${tid}`
+        : `續接對話 · thread_id: ${tid}`)
+    : `新對話（尚未建立 thread） · 輪數 ${conversationRound}`;
+}
+function startNewConversation(){
+  currentThreadId=null;
+  conversationRound=0;
+  try{
+    localStorage.removeItem(THREAD_ID_KEY);
+  }catch{}
+  refreshConversationBanner();
+  document.getElementById('pause-btn').style.display='none';
+  setStatus('ok','已開始新對話');
+}
+function showIntentRevisionToast(message){
+  const el=document.getElementById('intent-revision-toast');
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(_intentToastTimer);
+  _intentToastTimer=setTimeout(()=>{el.classList.remove('show');},4200);
+}
+/** @param {string[]} logs */
+function intentRevisionMessageFromResearchLog(logs){
+  if(!Array.isArray(logs))return null;
+  for(let i=logs.length-1;i>=0;i--){
+    const line=String(logs[i]||'');
+    if(!line.includes('使用者修正意圖'))continue;
+    const cm=line.match(/→\s*city=([^\s\r\n]+)/);
+    if(cm&&cm[1])return `已為您更新行程：${cm[1]}`;
+    return '已為您更新行程意向';
+  }
+  return null;
+}
+async function fetchUndoCheckpointId(){
+  if(!currentThreadId)return null;
+  try{
+    const res=await fetch(`${API}/agent/history/${encodeURIComponent(currentThreadId)}`,{
+      headers:apiHeaders({}),
+      signal:AbortSignal.timeout(8000),
+    });
+    if(!res.ok)return null;
+    const data=await res.json();
+    const cps=data.checkpoints||[];
+    if(cps.length<2)return null;
+    return cps[cps.length-2].checkpoint_id;
+  }catch{return null;}
+}
+let currentThreadId=(function(){
+  try{return localStorage.getItem(THREAD_ID_KEY)||null;}catch{return null;}
+})();  // LangGraph thread_id (same as agent_run_id server-side)
 function setStatus(state,text){
   document.getElementById('dot').className='dot '+state;
   const statusEl=document.getElementById('status-text');
@@ -416,6 +491,29 @@ async function send(){
     query.includes('美食狂熱')
   );
   const finalQuery=(foodieMode&&!hasTasteMaxKeyword)?`${query} TASTE_MAX`:query;
+
+  let rewindCp=null;
+  let effectiveQuery=finalQuery;
+  const rewindMatch=effectiveQuery.match(/^\s*回到第\s*(\d+)\s*輪\s*/);
+  if(rewindMatch){
+    rewindCp=`cp_${rewindMatch[1].padStart(3,'0')}`;
+    effectiveQuery=effectiveQuery.slice(rewindMatch[0].length).trim();
+  }
+  if(/^\s*undo\b/i.test(effectiveQuery)){
+    if(!rewindCp){
+      const cpUndo=await fetchUndoCheckpointId();
+      if(!cpUndo){
+        alert('undo：找不到上一個 checkpoint（需在同一 thread_id 且有歷史）。');
+        return;
+      }
+      rewindCp=cpUndo;
+    }
+    effectiveQuery=effectiveQuery.replace(/^\s*undo\s*/i,'').trim();
+  }
+  if(!effectiveQuery.trim()){
+    effectiveQuery='請依先前偏好繼續規劃或微調行程';
+  }
+
   input.value='';
   const stream=document.getElementById('stream');
   stream.className=advancedMode?'stream-box active':'stream-box';stream.textContent='';
@@ -423,19 +521,33 @@ async function send(){
   renderMap([]);
   setStatus('busy','連線中…');
   try{
+    const payload={
+      query:effectiveQuery,
+      day:selectedDay,
+      thread_id:currentThreadId || null,
+      rewind_to_checkpoint:rewindCp,
+      dietary_profile:dietaryProfile,
+      advanced_mode:advancedMode,
+      user_locale:onboardingProfile.city||null,
+      user_lat:onboardingProfile.user_lat,
+      user_lng:onboardingProfile.user_lng,
+    };
     const res=await fetch(`${API}/agent/query`,{
       method:'POST',
       headers:apiHeaders({'Content-Type':'application/json'}),
-      body:JSON.stringify({
-        query:finalQuery,
-        day:selectedDay,
-        dietary_profile:dietaryProfile,
-        advanced_mode:advancedMode,
-        user_locale:onboardingProfile.city||null,
-        user_lat:onboardingProfile.user_lat,
-        user_lng:onboardingProfile.user_lng
-      })
+      body:JSON.stringify(payload)
     });
+    if(!res.ok){
+      let msg=`請求失敗（HTTP ${res.status}）`;
+      try{
+        const j=await res.json();
+        const d=j.detail;
+        msg=(typeof d==='string'?d:(d!=null?JSON.stringify(d):''))||(j.message||msg);
+      }catch{}
+      stream.textContent+=`\n❌ ${msg}`;
+      setStatus('err',msg);
+      return;
+    }
     const reader=res.body.getReader(),decoder=new TextDecoder();
     let buf='';
     while(true){
@@ -449,15 +561,25 @@ async function send(){
         let data;try{data=JSON.parse(dataMatch[1]);}catch{continue;}
         if(event==='start'){
           setStatus('busy','開始規劃行程');
-          currentThreadId=data.agent_run_id||null;
+          const nextTid=data.thread_id||data.agent_run_id||currentThreadId;
+          currentThreadId=nextTid;
+          if(currentThreadId){
+            try{localStorage.setItem(THREAD_ID_KEY,currentThreadId);}catch{}
+          }
+          refreshConversationBanner();
           if(currentThreadId){document.getElementById('pause-btn').style.display='';}
           closeSynthesis();
-          if(advancedMode)stream.textContent+=`▶ ${data.query}\n\n`;
+          if(advancedMode){
+            stream.textContent+=rewindCp?`↩ rewind → ${rewindCp}\n`:'';
+            stream.textContent+=`▶ ${data.query}\n\n`;
+          }
         }
         else if(event==='node'){
           const label=NODE_LABELS[data.node]||'正在處理';
           if(advancedMode)stream.textContent+=`• ${label}\n`;
           setStatus('busy',label);
+          const revisionMsg=intentRevisionMessageFromResearchLog(data.state&&data.state.research_log);
+          if(revisionMsg)showIntentRevisionToast(revisionMsg);
         }
         else if(event==='done'){
           renderCards(data.ui_cards||[]);
@@ -465,10 +587,20 @@ async function send(){
           if(data.outcome||data.semantic_status){setOutcomeLamp(data.outcome||'SUCCESS',data.semantic_status||'');}
           else{setStatus('ok','完成');}
           document.getElementById('pause-btn').style.display='none';
+          conversationRound+=1;
+          refreshConversationBanner();
           refreshDaySyncBadges();
         }
         else if(event==='error'){
-          const msg=data.user_message||'服務暫時不穩，請稍後重試';
+          const detailStr=(typeof data.detail==='string'&&data.detail)?data.detail.trim():'';
+          const msg=(
+            data.user_message
+            ||data.message
+            ||(data.error?String(data.error):'')
+            ||(detailStr?detailStr.slice(0,400):'')
+            ||(data.exc_type?`${data.exc_type}（見伺服器紀錄）`:'')
+            ||'服務暫時不穩，請稍後重試'
+          );
           stream.textContent+=`\n❌ ${msg}`;
           setStatus('err',msg);
         }
@@ -784,7 +916,18 @@ function initSpeech(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return null;
   const r=new SR();r.continuous=false;r.interimResults=true;r.lang='zh-TW';
   r.onresult=e=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;document.getElementById('msg').value=t;};
-  r.onend=()=>{recording=false;document.getElementById('mic').classList.remove('rec');document.getElementById('mic-label').textContent='語音';setStatus('ok','就緒');};
+  r.onend=()=>{
+    recording=false;
+    document.getElementById('mic').classList.remove('rec');
+    document.getElementById('mic-label').textContent='語音';
+    setStatus('ok','就緒');
+    const ta=document.getElementById('msg');
+    requestAnimationFrame(()=>{
+      ta.focus();
+      const len=ta.value.length;
+      try{ta.setSelectionRange(len,len);}catch{}
+    });
+  };
   r.onerror=e=>setStatus('err','語音錯誤：'+e.error);
   return r;
 }
@@ -795,10 +938,15 @@ function toggleMic(){
   else{recognition.start();recording=true;document.getElementById('mic').classList.add('rec');document.getElementById('mic-label').textContent='停止';setStatus('busy','聆聽中…');}
 }
 (async()=>{
+  if(currentThreadId){
+    const pb=document.getElementById('pause-btn');
+    if(pb)pb.style.display='';
+  }
   if(!document.getElementById('flight-date').value){
     document.getElementById('flight-date').value=new Date(Date.now()+86400000).toISOString().slice(0,10);
   }
   refreshModeUi();
+  refreshConversationBanner();
   await loadDietaryProfile();
   await loadOnboardingProfile();
   try{const r=await fetch(`${API}/healthz`,{signal:AbortSignal.timeout(4000)});setStatus(r.ok?'ok':'err',r.ok?'API 已連線':'API 回應異常');}

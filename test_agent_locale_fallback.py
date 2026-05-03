@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 
@@ -54,7 +55,7 @@ def test_pure_food_query_skips_duffel_audit(monkeypatch: pytest.MonkeyPatch) -> 
     monkeypatch.delenv("DEFAULT_LOCALE_CITY", raising=False)
     graph = build_graph()
     initial = make_initial_state("京都駅附近午餐 拉麵")
-    result = graph.invoke(initial)
+    result = asyncio.run(graph.ainvoke(initial))
     audit_text = json.dumps(result.get("transit_audit") or [])
     assert "duffel" not in audit_text.lower()
     assert _is_flight_booking_intent("京都駅附近午餐 拉麵") is False

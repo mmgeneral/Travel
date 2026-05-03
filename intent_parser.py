@@ -1,11 +1,13 @@
 """
-Hybrid intent parser: rule fast-path → LLM fallback.
+Hybrid intent parser: rule fast-path → LLM fallback (+ optional refinement path).
 
 Public API
 ----------
-parse_intent(query, llm_router, *, user_locale, user_lat, user_lng) -> Intent
-parse_intent_rules(query, *, user_locale, user_lat, user_lng)        -> Intent | None
-parse_intent_llm(query, llm_router)                                  -> Intent
+parse_intent(query, llm_router, *, user_locale, user_lat, user_lng,
+             previous_intent=None)                               -> Intent
+intent_from_snapshot_dict(d)                                      -> Intent
+parse_intent_rules(query, *, user_locale, user_lat, user_lng)     -> Intent | None
+parse_intent_llm(query, llm_router, *, previous_intent=None)       -> Intent
 
 Intent dataclass fields
 -----------------------
@@ -19,6 +21,7 @@ mode               str          "right_now" | "balanced" | "taste_max"
 explicit_constraints list[str]  e.g. ["appetite_light", "strong_ramen"]
 wants_flight       bool
 confidence         float        0.0–1.0 (rules estimate)
+is_revision        bool         refinement-turn marker (typically from LLM when prior exists)
 
 Design notes
 ------------
@@ -26,7 +29,9 @@ Design notes
   imports them directly.
 * LLM output is validated with pydantic; a single retry is attempted on
   schema mismatch, with OTEL span attributes recorded.
-* parse_intent() skips the LLM entirely when rules return confidence >= 0.6.
+* With ``previous_intent`` set (multi-turn), ``parse_intent`` runs ONE targeted
+  refinement LLM call first (minimal re-tokenisation vs cold extraction).
+  Otherwise it skips LLM entirely when rule confidence ≥ 0.6.
 """
 
 from __future__ import annotations
@@ -57,6 +62,8 @@ class Intent:
     explicit_constraints: list[str] = field(default_factory=list)
     wants_flight: bool = False
     confidence: float = 0.0
+    #: True when this intent updates a stored prior snapshot (refinement turn).
+    is_revision: bool = False
 
     def as_dict(self) -> dict[str, Any]:
         """JSON-serialisable representation for AgentState storage."""
@@ -71,7 +78,34 @@ class Intent:
             "explicit_constraints": list(self.explicit_constraints),
             "wants_flight": self.wants_flight,
             "confidence": self.confidence,
+            "is_revision": self.is_revision,
         }
+
+
+def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
+    """Rebuild :class:`Intent` from ``AgentState['intent']`` / :meth:`Intent.as_dict` output."""
+    raw_tw = d.get("time_window")
+    if isinstance(raw_tw, dict):
+        tw: tuple[str | None, str | None] = (raw_tw.get("start"), raw_tw.get("end"))
+    elif isinstance(raw_tw, (list, tuple)) and len(raw_tw) >= 2:
+        tw = (raw_tw[0], raw_tw[1])
+    elif isinstance(raw_tw, (list, tuple)) and len(raw_tw) == 1:
+        tw = (raw_tw[0], None)
+    else:
+        tw = (None, None)
+    return Intent(
+        city=str(d.get("city") or "京都"),
+        region=str(d.get("region") or "jp"),
+        meal_slots=[str(x) for x in (d.get("meal_slots") or []) if x is not None],
+        time_window=tw,
+        category_tags=[str(x) for x in (d.get("category_tags") or []) if x is not None],
+        dietary_hints=d.get("dietary_hints"),
+        mode=str(d.get("mode") or "balanced"),
+        explicit_constraints=[str(x) for x in (d.get("explicit_constraints") or []) if x is not None],
+        wants_flight=bool(d.get("wants_flight", False)),
+        confidence=float(d.get("confidence", 0.0)),
+        is_revision=bool(d.get("is_revision", False)),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -333,6 +367,7 @@ class _LLMIntentSchema(BaseModel):
     explicit_constraints: list[str] = []
     wants_flight: bool = False
     confidence: float = 0.8
+    is_revision: bool = False
 
     @field_validator("meal_slots")
     @classmethod
@@ -374,6 +409,7 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
         explicit_constraints=list(s.explicit_constraints),
         wants_flight=bool(s.wants_flight),
         confidence=float(s.confidence),
+        is_revision=bool(s.is_revision),
     )
 
 
@@ -396,7 +432,8 @@ JSON schema:
   "mode": "<right_now|balanced|taste_max>",
   "explicit_constraints": ["<appetite_light|strong_ramen|...>"],
   "wants_flight": <true|false>,
-  "confidence": <0.0-1.0>
+  "confidence": <0.0-1.0>,
+  "is_revision": <false for a fresh standalone query>
 }
 
 Rules:
@@ -405,8 +442,63 @@ Rules:
 - mode=balanced otherwise.
 - If city is unclear, leave it blank ("") and set region="unknown".
 - confidence reflects how sure you are of the extracted intent (0=not sure, 1=very sure).
+- is_revision: always false here (standalone extraction); refinement uses a dedicated prompt below.
 - Do NOT add examples or commentary. Output JSON only.
 """
+
+_LLM_REFINEMENT_SYSTEM_PROMPT = """\
+You revise structured intent for a food-travel assistant in MULTI-TURN refinement mode.
+
+Workflow
+--------
+1) Compare `previous_intent` JSON (first user message below) against `New user message` (second message).
+2) Emit ONE JSON object describing the authoritative intent AFTER this turn. No markdown.
+
+Schema — same keys as cold extraction plus `is_revision`:
+{
+  "city": "...",
+  "region": "'tw' | 'jp' | 'unknown'",
+  "meal_slots": ["breakfast"|"lunch"|"tea"|"dinner"|"late_night", ...],
+  "time_window": {"start": "<HH:MM or null>", "end": "<HH:MM or null>"},
+  "category_tags": ["..."],
+  "dietary_hints": "<vegan|vegetarian|pescatarian|null>",
+  "mode": "<right_now|balanced|taste_max>",
+  "explicit_constraints": ["..."],
+  "wants_flight": <true|false>,
+  "confidence": <0.0-1.0>,
+  "is_revision": <true|false>
+}
+
+Industry intent-refinement playbook
+-----------------------------------
+* **Additive / supplement** (“也要有素食”“少油一點”“預算低”): Carry forward geography
+  (`city`, `region`), `meal_slots`, and `time_window` from `previous_intent` unless explicitly changed.
+  Update `category_tags`, `dietary_hints`, `explicit_constraints`, etc. Merge lists without dropping
+  unstated facets. Set `is_revision` true whenever the operative plan materially changes vs prior.
+* **Destructive pivot** (“改去台北”“算了換東京”“剛說拉麵改壽司”“不要拉麵了”): Replace every conflicting
+  field; drop contradictory cuisine tags/meal slots/time constraints; rebuild mode if urgency changes.
+  `is_revision` must be true.
+* **Neutral ack / same ask**: keep prior semantics; confidence may stay high and `is_revision` false only
+  when nothing operative changes.
+* Keep `region` consistent with `city` (`台北/台灣`⇒tw, `京都|東京|大阪`⇒jp).
+"""
+
+
+def _llm_prompt_messages(query: str, previous_intent: Intent | None) -> list[dict[str, Any]]:
+    """Build chat messages for INTENT_PARSING (cold extraction vs refinement)."""
+    if previous_intent is None:
+        return [
+            {"role": "system", "content": _LLM_SYSTEM_PROMPT},
+            {"role": "user", "content": f"User query: {query}"},
+        ]
+    snapshot = dict(previous_intent.as_dict())
+    snapshot.pop("is_revision", None)
+    snapshot.pop("confidence", None)
+    return [
+        {"role": "system", "content": _LLM_REFINEMENT_SYSTEM_PROMPT},
+        {"role": "user", "content": json.dumps({"previous_intent": snapshot}, ensure_ascii=False)},
+        {"role": "user", "content": f"New user message: {query}"},
+    ]
 
 
 def parse_intent_rules(
@@ -507,8 +599,13 @@ def parse_intent_rules(
     )
 
 
-def parse_intent_llm(query: str, llm_router: Any) -> Intent:
-    """LLM-based intent extraction with pydantic validation and one retry.
+def parse_intent_llm(
+    query: str,
+    llm_router: Any,
+    *,
+    previous_intent: Intent | None = None,
+) -> Intent:
+    """LLM-based extraction or refinement with pydantic validation and one retry.
 
     On schema mismatch the failure is recorded in the active OTEL span and
     a single retry is attempted with an additional hint in the prompt.
@@ -516,10 +613,7 @@ def parse_intent_llm(query: str, llm_router: Any) -> Intent:
     """
     from llm_router import TaskType  # local import avoids circular deps at module load
 
-    messages_base = [
-        {"role": "system", "content": _LLM_SYSTEM_PROMPT},
-        {"role": "user", "content": f"User query: {query}"},
-    ]
+    messages_base = _llm_prompt_messages(query, previous_intent)
 
     last_error: Exception | None = None
     for attempt in range(2):
@@ -554,6 +648,7 @@ def parse_intent_llm(query: str, llm_router: Any) -> Intent:
                 with tracer.start_as_current_span(span_name) as span:
                     span.set_attribute("intent_parser.attempt", attempt)
                     span.set_attribute("intent_parser.query_len", len(query))
+                    span.set_attribute("intent_parser.refinement", previous_intent is not None)
                     result = _do_call(messages)
                     span.set_attribute("intent_parser.success", True)
                     return result
@@ -580,19 +675,15 @@ def parse_intent(
     user_locale: str | None = None,
     user_lat: float | None = None,
     user_lng: float | None = None,
+    previous_intent: Intent | None = None,
 ) -> Intent:
-    """Hybrid parser: rules first, LLM fallback when confidence < 0.6.
+    """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.
 
-    This is the primary entry point.  It never raises; on LLM failure it
-    returns a best-effort rule-derived Intent with confidence=0.0.
+    This entry point never raises LLM failures: it falls back to rules or geography defaults.
 
     Geographic fix: LLM guesses for ``city``/``region`` are overwritten when
-    ``user_lat``/``user_lng`` fall inside a known bounded box (e.g. Taipei),
-    mirroring GPS-as-ground-truth for seed-catalog routing.
+    ``user_lat``/``user_lng`` fall inside a known bounded box (e.g. Taipei).
     """
-    rule_result = parse_intent_rules(
-        query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng
-    )
 
     def _stamp_geo_pins(intent_obj: Intent) -> None:
         geo = _coords_to_city_region(user_lat, user_lng)
@@ -600,16 +691,33 @@ def parse_intent(
             intent_obj.city = geo[0]
             intent_obj.region = geo[1]
 
+    if previous_intent is not None:
+        try:
+            llm_result = parse_intent_llm(query, llm_router, previous_intent=previous_intent)
+            _stamp_geo_pins(llm_result)
+            return llm_result
+        except Exception:
+            return parse_intent(
+                query,
+                llm_router,
+                user_locale=user_locale,
+                user_lat=user_lat,
+                user_lng=user_lng,
+                previous_intent=None,
+            )
+
+    rule_result = parse_intent_rules(
+        query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng
+    )
+
     if rule_result is not None and rule_result.confidence >= 0.6:
         return rule_result
 
-    # Fallback to LLM
     try:
         llm_result = parse_intent_llm(query, llm_router)
         _stamp_geo_pins(llm_result)
         return llm_result
     except Exception:
-        # LLM failed entirely; return the rule result if we have one, else default
         if rule_result is not None:
             return rule_result
         city, region, _ = _resolve_city(query, user_locale, user_lat, user_lng)

@@ -16,14 +16,12 @@ from __future__ import annotations
 
 import json
 import re
-import time
 from dataclasses import dataclass, field
 from typing import Any
 
 from pydantic import BaseModel, Field as PydanticField, field_validator
 
 from llm_router import LLMRouter, TaskType
-from observability import _get_tracer, record_llm_call
 
 
 # ---------------------------------------------------------------------------
@@ -258,19 +256,8 @@ class SynthesizerAgent:
 
         messages = _build_synthesis_prompt(retrieval_history, critique_history, intent)
 
-        tracer = _get_tracer()
-        t0 = time.monotonic()
-
         def _do_llm_call() -> SynthesisReport:
             resp = self._router.complete(TaskType.SYNTHESIS, messages)
-            latency_ms = int((time.monotonic() - t0) * 1000)
-            record_llm_call(
-                model=resp.model_used,
-                tokens_in=resp.tokens_in,
-                tokens_out=resp.tokens_out,
-                cost=resp.cost_usd,
-                latency=latency_ms,
-            )
             parsed = _parse_synthesis_response(resp.content)
             llm_freshness = parsed.discussion_freshness
             # Blend LLM freshness (70%) with heuristic (30%) for robustness
@@ -296,22 +283,10 @@ class SynthesizerAgent:
                 llm_summary=f"[error: {exc}]",
             )
 
-        if tracer is not None:
-            with tracer.start_as_current_span("synthesizer.run") as span:
-                span.set_attribute("retrieval_rounds", len(retrieval_history))
-                span.set_attribute("critique_rounds", len(critique_history))
-                try:
-                    result = _do_llm_call()
-                    span.set_attribute("llm.model", result.llm_summary[:20])
-                    return result
-                except Exception as exc:
-                    span.set_attribute("llm.error", str(exc))
-                    return _fallback(exc)
-        else:
-            try:
-                return _do_llm_call()
-            except Exception as exc:
-                return _fallback(exc)
+        try:
+            return _do_llm_call()
+        except Exception as exc:
+            return _fallback(exc)
 
     # ------------------------------------------------------------------
     # Heuristic fallbacks (no LLM needed)

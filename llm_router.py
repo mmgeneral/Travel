@@ -35,6 +35,12 @@ import requests
 from tenacity import Retrying, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from observability import record_llm_call, _get_tracer
+from tracing import (
+    generation_update_error,
+    generation_update_success,
+    langfuse_tracing_active,
+    llm_generation_context,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -454,9 +460,6 @@ class LLMRouter:
         attempted: list[str] = []
         last_error: Exception | None = None
 
-        tracer = _get_tracer()
-        span_name = f"llm.{task.value}"
-
         def _try_chain() -> LLMResponse:
             nonlocal last_error
             for backend in chain:
@@ -485,37 +488,62 @@ class LLMRouter:
                 f"Attempted: {attempted}. Last error: {last_error}"
             )
 
-        if tracer is None:
-            resp = _try_chain()
+        def _finalize_otel(resp: LLMResponse, span_obj: Any | None) -> LLMResponse:
+            if span_obj is not None:
+                selected = next(
+                    (a.split(":")[0] for a in reversed(attempted) if a.endswith(":ok")),
+                    "unknown",
+                )
+                span_obj.set_attribute("llm.backend.attempted", str(attempted))
+                span_obj.set_attribute("llm.backend.selected", selected)
+                span_obj.set_attribute("llm.model", resp.model_used)
             record_llm_call(
                 model=resp.model_used,
                 tokens_in=resp.tokens_in,
                 tokens_out=resp.tokens_out,
                 cost=resp.cost_usd,
                 latency=resp.latency_ms,
+                completion_preview=resp.content or None,
             )
             return resp
 
+        if langfuse_tracing_active():
+            wall0 = time.perf_counter()
+            model_hint = os.getenv("GEMINI_MODEL") or os.getenv("OLLAMA_MODEL") or "llm_router"
+            with llm_generation_context(
+                name=f"llm.{task.value}",
+                model_hint=model_hint,
+                input_messages=messages,
+            ) as gen:
+                try:
+                    resp = _try_chain()
+                except BaseException as exc:
+                    generation_update_error(
+                        gen,
+                        exc,
+                        latency_ms=int((time.perf_counter() - wall0) * 1000),
+                    )
+                    raise
+                generation_update_success(
+                    gen,
+                    output_text=resp.content,
+                    model_used=resp.model_used,
+                    tokens_in=resp.tokens_in,
+                    tokens_out=resp.tokens_out,
+                    latency_ms=resp.latency_ms,
+                    cost_usd=resp.cost_usd,
+                    extra_metadata={"attempted_backends": str(attempted)},
+                )
+            return resp
+
+        tracer = _get_tracer()
+        span_name = f"llm.{task.value}"
+        if tracer is None:
+            return _finalize_otel(_try_chain(), None)
         with tracer.start_as_current_span(span_name) as span:
             span.set_attribute("llm.task_type", task.value)
             try:
-                resp = _try_chain()
-                # Find which backend succeeded (last "ok" entry)
-                selected = next(
-                    (a.split(":")[0] for a in reversed(attempted) if a.endswith(":ok")),
-                    "unknown",
-                )
-                span.set_attribute("llm.backend.attempted", str(attempted))
-                span.set_attribute("llm.backend.selected", selected)
-                span.set_attribute("llm.model", resp.model_used)
-                record_llm_call(
-                    model=resp.model_used,
-                    tokens_in=resp.tokens_in,
-                    tokens_out=resp.tokens_out,
-                    cost=resp.cost_usd,
-                    latency=resp.latency_ms,
-                )
-                return resp
+                return _finalize_otel(_try_chain(), span)
             except Exception as exc:
                 span.set_attribute("llm.backend.attempted", str(attempted))
                 span.set_attribute("llm.error", str(exc))

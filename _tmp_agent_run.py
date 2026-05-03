@@ -1,47 +1,87 @@
-﻿from datetime import datetime
-from agent import _build_shop_catalog, _effective_plan_meal_slots
-from shop_planning import MockTrafficProvider
-from decision_engine import (
-    GraphBuilder,
-    ItinerarySynthesizer,
-    OptimizationMode,
-    RankingEngine,
-    UserMinefield,
-    UserPreference,
-)
+﻿"""One-shot LangGraph CLI debug — ``ainvoke`` without SSE / FastAPI.
 
-query = "京都 7點開始 安排五餐"
-intent = {}
-slots = _effective_plan_meal_slots(intent, query)
-shops = list(_build_shop_catalog())
-pref = UserPreference()
-mine = UserMinefield()
-ranked, _rej = RankingEngine.rank(shops, pref, mine)
-phase1 = ranked[:15]
+Use this to see whether ``plan`` filled ``final_itinerary`` and whether
+``synthesis_history`` changed (``node_synthesizer`` only runs on pause in API).
 
-g = GraphBuilder.build_graph(
-    ranked=phase1,
-    traffic=MockTrafficProvider(),
-    start_time=datetime(2026, 5, 10, 7, 0, 0),
-    meal_slots=slots,
-    mode=OptimizationMode.BALANCED,
-    requested_meal_count=5,
-    slot_required_tags=None,
-)
-uniq_slots = sorted({n.slot_index for n in g.nodes})
+Example::
 
-path = ItinerarySynthesizer.find_optimal_path(
-    graph=g,
-    required_length=len(slots),
-    must_have_tags=set(),
-    solver_audit_log=None,
-)
-names = [n.shop_name for n in path]
+    python _tmp_agent_run.py
 
-print("SLOTS", slots)
-print("slot_indices_in_graph", uniq_slots)
-print("edges", len(g.edges))
-print("PATH_LEN", len(path), "PATH", names)
-print("UNIQUE", len(names), len(set(names)))
-assert len(slots) == 5 == len(path)
-assert len(set(names)) == len(names)
+Depends on the same env as the production agent (Ollama / Gemini / …); optional OTLP::
+
+    PYTHONPATH=. python _tmp_agent_run.py
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import pprint
+import uuid
+
+from observability import init_tracing
+from tracing import agent_run, ensure_langfuse_env, flush, init_langfuse
+
+
+def _dump_diag(state: dict) -> None:
+    """Short summary after printing the full mapping (rich/json path)."""
+    keys = sorted(state.keys())
+    print("\n=== keys:", ", ".join(keys))
+    ft = state.get("final_itinerary")
+    syn = state.get("synthesis_history") or []
+    err = state.get("error")
+    print("=== diagnostic")
+    print("  error:", json.dumps(err, ensure_ascii=False, default=str) if err else None)
+    print("  final_itinerary length:", len(str(ft or "")))
+    print("  synthesis_history entries:", len(syn) if isinstance(syn, list) else "n/a")
+    print("\n=== final_itinerary excerpt (first 2000 chars)\n")
+    print(str(ft or "")[:2000])
+    if syn:
+        print("\n=== synthesis_history (preview up to 2 entries)")
+        pprint.pprint((syn[:2] if isinstance(syn, list) else syn))
+
+
+async def _main_async() -> None:
+    ensure_langfuse_env()
+    init_langfuse()
+    init_tracing("travel-agent-tmp-cli")
+
+    from agent import build_graph, make_initial_state
+
+    tid = uuid.uuid4().hex
+    graph = build_graph()
+    config = {"configurable": {"thread_id": tid}}
+    initial = make_initial_state(query="京都美食行程", agent_run_id=tid, checkpoint_thread_id=tid)
+
+    out = None
+    try:
+        with agent_run(
+            tid,
+            trace_input={"query": initial.get("query"), "thread_id": tid},
+            metadata={"source": "_tmp_agent_run"},
+        ):
+            out = await graph.ainvoke(initial, config)
+    finally:
+        flush()
+
+    if isinstance(out, dict):
+        try:
+            from rich.console import Console
+            from rich.pretty import Pretty
+
+            Console().print(Pretty(out))
+            _dump_diag(out)
+        except ImportError:
+            pprint.pprint(out)
+            _dump_diag(out)
+        return
+
+    pprint.pprint(out)
+
+
+def main() -> None:
+    asyncio.run(_main_async())
+
+
+if __name__ == "__main__":
+    main()

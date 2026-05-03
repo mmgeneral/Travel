@@ -29,14 +29,14 @@ def test_kyoto_seed_anchor_one_shop_per_standard_slot(monkeypatch: pytest.Monkey
         assert _researcher_shop_eligible_any_tier(by_name[nm], slot, query=query)
 
 
-def test_researcher_fallback_respects_slot_count(monkeypatch: pytest.MonkeyPatch) -> None:
+async def test_researcher_fallback_respects_slot_count(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
 
     seed = list(_build_shop_catalog())
     slots = ItinerarySynthesizer._normalize_slot_sequence(
         ["breakfast", "lunch", "tea", "dinner", "late_night"]
     )
-    names, notes = _call_researcher_prompt(
+    names, notes = await _call_researcher_prompt(
         "",
         seed,
         meal_slots=slots,

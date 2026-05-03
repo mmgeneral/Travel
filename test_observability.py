@@ -207,6 +207,7 @@ class TestLLMRouterInstrumentation:
         assert attrs.get("llm.tokens_in") == 5
         assert attrs.get("llm.tokens_out") == 3
         assert attrs.get("llm.cost_usd") == pytest.approx(0.002)
+        assert attrs.get("llm.completion_preview") == "ok"
 
     def test_intent_parsing_routes_to_local_backend(self) -> None:
         exp = _make_exporter()

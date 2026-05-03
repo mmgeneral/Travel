@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import json
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -420,7 +420,8 @@ _LANGGRAPH_AVAILABLE = _importlib_util.find_spec("langgraph") is not None
 
 @pytest.mark.skipif(not _LANGGRAPH_AVAILABLE, reason="langgraph not installed in this environment")
 class TestNodeRetriever:
-    def test_node_retriever_populates_retrieval_history(self) -> None:
+    @pytest.mark.asyncio
+    async def test_node_retriever_populates_retrieval_history(self) -> None:
         """node_retriever should append a RetrievalReport dict to state."""
         from agent import node_retriever
 
@@ -464,11 +465,11 @@ class TestNodeRetriever:
             mock_report.dynamic_count = 0
             mock_report.notes = ["燃えよ麺助: good."]
             mock_report.gaps = []
-            mock_instance.run.return_value = mock_report
+            mock_instance.arun = AsyncMock(return_value=mock_report)
             MockAgent.return_value = mock_instance
 
-            result = node_retriever(state)
+            result = await node_retriever(state)
 
         assert len(result["retrieval_history"]) == 1
         assert result["retrieval_history"][0]["city"] == "京都"
-        mock_instance.run.assert_called_once()
+        mock_instance.arun.assert_called_once()

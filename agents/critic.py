@@ -35,7 +35,6 @@ from decision_engine import (
     UserPreference,
     WeightProfile,
 )
-from observability import _get_tracer, record_llm_call
 from shop_catalog_io import load_shop_catalog
 from shop_planning import AuthorityData, BookingType, QueueStrategy, ShopProfile
 
@@ -460,31 +459,9 @@ class CriticAgent:
     ) -> _CritiqueSchema:
         from llm_router import TaskType
 
-        tracer = _get_tracer()
-        span_name = "critic.llm_critique"
-
-        def _call() -> _CritiqueSchema:
-            response = self._router.complete(TaskType.CRITIQUE, messages)
-            record_llm_call(
-                model=response.model_used,
-                tokens_in=response.tokens_in,
-                tokens_out=response.tokens_out,
-                cost=response.cost_usd,
-                latency=response.latency_ms,
-            )
-            return _parse_llm_critique(response.content)
-
         try:
-            if tracer is not None:
-                with tracer.start_as_current_span(span_name) as span:
-                    span.set_attribute("critic.city", city)
-                    span.set_attribute("critic.candidate_count", candidate_count)
-                    schema = _call()
-                    span.set_attribute("critic.verdict", schema.verdict)
-                    span.set_attribute("critic.rejected_count", len(schema.rejected))
-                    return schema
-            else:
-                return _call()
+            response = self._router.complete(TaskType.CRITIQUE, messages)
+            return _parse_llm_critique(response.content)
         except Exception as exc:
             # Graceful fallback: treat LLM failure as a soft pass
             return _CritiqueSchema(

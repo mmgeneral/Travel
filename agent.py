@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import copy
 import json
+import asyncio
+import logging
+import traceback
 from contextlib import contextmanager
 from langgraph.graph import END, StateGraph
 from dataclasses import dataclass
@@ -12,17 +15,13 @@ from pathlib import Path
 import sqlite3
 import uuid
 
-import requests
 from debug_json import audit_json_line_as_text, debug_json as _dj
 from zoneinfo import ZoneInfo
+from typing import Any
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field
-try:
-    from langgraph.checkpoint.sqlite import SqliteSaver
-except Exception:  # pragma: no cover
-    SqliteSaver = None
-
-from duffel import DuffelClient
+from duffel import DuffelService
+from openai_completion_client import OpenAIChatCompletionClient
 from saga import SagaEngine, SagaStep
 from shop_catalog_io import load_shop_catalog
 from shop_planning import (
@@ -58,16 +57,25 @@ from decision_engine import (
     choose_health_backup,
 )
 
-from intent_parser import parse_intent as _parse_intent, Intent as _Intent
+from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
+from intent_parser import parse_intent as _parse_intent
+from tracing import trace_agent_stage
 from llm_router import LLMRouter as _LLMRouter
 from agents.retriever import RetrieverAgent
 from agents.critic import CriticAgent
 from agents.synthesizer import SynthesizerAgent, SynthesisReport
+from observability import traced
 
 _RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph
 
 
 class AgentState(TypedDict):
+    """LangGraph state; ``intent`` matches ``Intent.as_dict()`` from ``intent_parser``.
+
+    ``intent`` is ``None`` until ``node_route_intent`` runs; each snapshot is a plain dict
+    aligned with :meth:`intent_parser.Intent.as_dict` for strict round-trip shape.
+    """
+
     query: str
     research_log: list[str]
     transit_audit: list[str]
@@ -83,15 +91,22 @@ class AgentState(TypedDict):
     wants_flight_search: bool  # kept for intent routing; flight booking removed from main flow
     user_lat: float | None
     user_lng: float | None
+    #: Client-supplied LangGraph ``thread_id`` when resuming/checkpoint refinement; empty if none.
+    checkpoint_thread_id: str
     researcher_candidate_names: list[str]
     researcher_notes: str
     auditor_feedback: str
     auditor_rejected: bool
     research_iteration: int
-    intent: dict          # serialised Intent.as_dict(); set once in node_route_intent
+    intent: dict[str, Any] | None  # serialised Intent.as_dict(); None before first parse in a turn
+    intent_history: list[dict[str, Any]]  # prior Intent.as_dict() snapshots for correction / audit
     retrieval_history: list[dict]   # append-only; RetrievalReport.as_dict() per round
     critique_history: list[dict]    # append-only; CritiqueReport.as_dict() per round
     synthesis_history: list[dict]   # append-only; SynthesisResult summary per round
+    #: Set by a failing node → downstream nodes noop; orchestrator maps to client errors.
+    error: dict[str, Any] | None
+    #: Injected deps (``llm_router``, ``openai_chat_client``, ``flight_service``); empty {} uses module defaults.
+    runtime_services: dict[str, Any]
 
 
 class AgentStateModel(BaseModel):
@@ -110,15 +125,19 @@ class AgentStateModel(BaseModel):
     wants_flight_search: bool = False
     user_lat: float | None = None
     user_lng: float | None = None
+    checkpoint_thread_id: str = ""
     researcher_candidate_names: list[str] = Field(default_factory=list)
     researcher_notes: str = ""
     auditor_feedback: str = ""
     auditor_rejected: bool = False
     research_iteration: int = 0
-    intent: dict = Field(default_factory=dict)
+    intent: dict[str, Any] | None = None
+    intent_history: list[dict[str, Any]] = Field(default_factory=list)
     retrieval_history: list[dict] = Field(default_factory=list)
     critique_history: list[dict] = Field(default_factory=list)
     synthesis_history: list[dict] = Field(default_factory=list)
+    error: dict[str, Any] | None = None
+    runtime_services: dict[str, Any] = Field(default_factory=dict)
 
 
 class AtomicCommitFailure(Exception):
@@ -147,7 +166,10 @@ _SAGA_DIR.mkdir(parents=True, exist_ok=True)
 _APP_TZ = ZoneInfo(os.getenv("APP_TIMEZONE", "Asia/Taipei"))
 _LEARNING_DB = _SAGA_DIR / "learning_state.db"
 # DEPRECATED: kept as distributed-tx reference, not in main flow (see node_flight_search, node_audit)
-_duffel = OfflineDuffelClient() if os.getenv("OFFLINE_MODE", "0") == "1" else DuffelClient()
+if os.getenv("OFFLINE_MODE", "0") == "1" or not os.getenv("DUFFEL_ACCESS_TOKEN", "").strip():
+    _duffel = OfflineDuffelClient()
+else:
+    _duffel = DuffelService()
 _pref_learner = UserPreferenceLearner()
 _llm_router = _LLMRouter()
 _learned_weight_profile = WeightProfile.trust_first()
@@ -246,8 +268,11 @@ def make_initial_state(
     user_locale: str | None = None,
     user_lat: float | None = None,
     user_lng: float | None = None,
+    *,
+    checkpoint_thread_id: str | None = None,
 ) -> dict:
     run_id = agent_run_id or uuid.uuid4().hex
+    ctid = (checkpoint_thread_id or "").strip()
     model = AgentStateModel(
         query=query,
         dietary_profile=dietary_profile or {"ethics": "unspecified", "allergens": [], "religious": "none", "medical": []},
@@ -256,6 +281,7 @@ def make_initial_state(
         user_locale=(user_locale or "").strip(),
         user_lat=user_lat,
         user_lng=user_lng,
+        checkpoint_thread_id=ctid,
     )
     return model.model_dump(mode="json")
 
@@ -271,6 +297,79 @@ def _cleanup_old_txn_logs(retention_days: int = 30) -> None:
 
 
 _load_learning_state()
+
+
+logger = logging.getLogger(__name__)
+_default_openai_chat_client = OpenAIChatCompletionClient()
+
+
+def _runtime_services_map(state: AgentState | dict[str, Any]) -> dict[str, Any]:
+    raw = state.get("runtime_services") if hasattr(state, "get") else None
+    if isinstance(raw, dict):
+        return raw
+    return {}
+
+
+def _svc_llm_router(state: AgentState):
+    svc = _runtime_services_map(state)
+    lr = svc.get("llm_router")
+    return lr if lr is not None else _llm_router
+
+
+def _svc_openai_chat_client(state: AgentState) -> OpenAIChatCompletionClient:
+    svc = _runtime_services_map(state)
+    c = svc.get("openai_chat_client")
+    if isinstance(c, OpenAIChatCompletionClient):
+        return c
+    return _default_openai_chat_client
+
+
+def _svc_flight_service(state: AgentState):
+    """Duffel-compatible flight Offers API adapter (offline stub or ``DuffelService``)."""
+    svc = _runtime_services_map(state)
+    fs = svc.get("flight_service")
+    if fs is None and "duffel" in svc:
+        fs = svc.get("duffel")
+    return fs if fs is not None else _duffel
+
+
+def _attach_node_error(
+    state: AgentState,
+    node: str,
+    exc_or_message: BaseException | str,
+    *,
+    code: str = "NODE_FAILURE",
+) -> None:
+    if state.get("error"):
+        logger.warning(
+            "agent error already set (%s); not overwriting from node=%s",
+            (state.get("error") or {}).get("node"),
+            node,
+        )
+        return
+    if isinstance(exc_or_message, BaseException):
+        msg = str(exc_or_message)
+        detail = "".join(traceback.format_exception(exc_or_message)).strip()
+        logger.exception("Agent node %s captured exception", node)
+    else:
+        msg = str(exc_or_message)
+        detail = ""
+    state["error"] = {
+        "node": node,
+        "message": msg,
+        "code": code,
+        "detail": detail[:8000],
+    }
+
+
+def _finalize_plan_on_agent_error(state: AgentState) -> AgentState:
+    err = state.get("error") or {}
+    nm = str(err.get("node", "?"))
+    msg = str(err.get("message", "unknown_error"))
+    state["final_itinerary"] = f"## 行程無法生成\n\n- **發生於** `{nm}`\n- **原因** {msg}\n"
+    state.setdefault("ui_cards", list(state.get("ui_cards") or []))
+    state.setdefault("transit_audit", []).append(_dj("plan_aborted_agent_error", node=nm, message=msg))
+    return state
 
 
 def _is_right_now_mode(query: str) -> bool:
@@ -1141,17 +1240,22 @@ def _fallback_broad_geo_queries(query: str, city: str, region: str) -> list[str]
     return uniq[:12]
 
 
-def _llm_broad_geo_search_queries(user_query: str, city: str, region: str) -> tuple[list[str], str]:
+async def _llm_broad_geo_search_queries(
+    user_query: str,
+    city: str,
+    region: str,
+    *,
+    chat_client: OpenAIChatCompletionClient | None = None,
+) -> tuple[list[str], str]:
     """
     Ask an LLM for broader English Places search phrases; fall back to heuristics.
     Returns (queries, mode_tag for audit).
     """
     fb = _fallback_broad_geo_queries(user_query, city, region)
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if not api_key:
+    client = chat_client if chat_client is not None else _default_openai_chat_client
+    if not client.is_configured():
         return fb, "heuristic_fallback_no_api_key"
 
-    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini").strip()
     system_msg = (
         "You fix sparse Google Places Text Search results. Reply with JSON only, no markdown: "
         '{"queries":["..."]} containing 5 to 8 short English search strings. '
@@ -1160,22 +1264,14 @@ def _llm_broad_geo_search_queries(user_query: str, city: str, region: str) -> tu
     )
     user_msg = f"City: {city} (region={region}). User query:\n{(user_query or '')[:2000]}"
     try:
-        resp = requests.post(
-            "https://api.openai.com/v1/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            json={
-                "model": model,
-                "messages": [
-                    {"role": "system", "content": system_msg},
-                    {"role": "user", "content": user_msg},
-                ],
-                "temperature": 0.35,
-                "max_tokens": 450,
-            },
-            timeout=45,
+        payload = await client.chat_completion_payload(
+            messages=[
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": user_msg},
+            ],
+            temperature=0.35,
+            max_tokens=450,
         )
-        resp.raise_for_status()
-        payload = resp.json()
         txt = str(payload["choices"][0]["message"]["content"] or "").strip()
         if txt.startswith("```"):
             txt = re.sub(r"^```(?:json)?\s*", "", txt)
@@ -1853,22 +1949,64 @@ def _reliability_cutoff_for_region(region: str) -> float:
     return 60.0
 
 
+@traced
 def node_route_intent(state: AgentState) -> AgentState:
     """Parse intent once, store in state, and set routing flags."""
     q = state.get("query", "") or ""
-    intent = _parse_intent(
-        q,
-        _llm_router,
-        user_locale=state.get("user_locale") or None,
-        user_lat=state.get("user_lat"),
-        user_lng=state.get("user_lng"),
-    )
+    ctid = (state.get("checkpoint_thread_id") or "").strip()
+    prev_snap = state.get("intent")
+    hist_full = list(state.get("intent_history") or [])
+    prev_model = None
+    if isinstance(prev_snap, dict) and prev_snap:
+        try:
+            prev_model = _intent_from_snapshot_dict(prev_snap)
+        except Exception:
+            prev_model = None
+    elif ctid and hist_full:
+        last_snap = hist_full[-1]
+        if isinstance(last_snap, dict):
+            try:
+                prev_model = _intent_from_snapshot_dict(last_snap)
+            except Exception:
+                prev_model = None
+    hist = list(hist_full)
+    if isinstance(prev_snap, dict) and prev_snap:
+        hist.append(copy.deepcopy(prev_snap))
+    try:
+        intent = _parse_intent(
+            q,
+            _svc_llm_router(state),
+            user_locale=state.get("user_locale") or None,
+            user_lat=state.get("user_lat"),
+            user_lng=state.get("user_lng"),
+            previous_intent=prev_model,
+        )
+    except Exception as exc:
+        _attach_node_error(state, "route_intent", exc)
+        state["intent_history"] = hist
+        state["intent"] = None
+        state.setdefault("research_log", []).append(
+            _dj("intent_parse_failed", reason=str(exc)[:500])
+        )
+        state["wants_flight_search"] = False
+        return state
+    state["intent_history"] = hist
     state["intent"] = intent.as_dict()
+    if intent.is_revision:
+        qtrim = q.strip()
+        preview = qtrim if len(qtrim) <= 160 else qtrim[:160] + "⋯"
+        msg = (
+            f"對話線程內調整意向；請求摘要：{preview}\n→ city={intent.city} region={intent.region} tags={intent.category_tags}"
+        )
+        state.setdefault("research_log", []).append(
+            "使用者修正意圖：" + audit_json_line_as_text(_dj("user_intent_revision", message=msg))
+        )
     # wants_flight_search retained for context but flight booking is not in main flow
     state["wants_flight_search"] = intent.wants_flight
     return state
 
 
+@traced
 def node_flight_search(state: AgentState) -> AgentState:
     """DEPRECATED: Duffel flight-search node — removed from main graph in Task 7.
 
@@ -1876,7 +2014,7 @@ def node_flight_search(state: AgentState) -> AgentState:
     duffel.py / saga.py / acl.py distributed-transaction pattern.
     To re-enable: add back to build_graph() and wire route_intent → flight_search → retriever.
     """
-    # Reference: call _duffel.search_offers(origin, dest, date) for each leg,
+    # Reference: _svc_flight_service(state).search_offers(origin, dest, date) …
     # normalise the response dict, log to research_log, then pass to node_audit (Saga).
     state["research_log"].append(
         _dj("flight_search_skipped", reason="node_flight_search not in main graph (Task 7)")
@@ -1884,6 +2022,7 @@ def node_flight_search(state: AgentState) -> AgentState:
     return state
 
 
+@traced
 def node_food_search(state: AgentState) -> AgentState:
     """DEPRECATED: Pure-heuristic Places search — replaced by node_retriever (Task 4, Task 7).
 
@@ -1897,15 +2036,23 @@ def node_food_search(state: AgentState) -> AgentState:
     return state
 
 
-def node_retriever(state: AgentState) -> AgentState:
+@trace_agent_stage("retriever")
+async def node_retriever(state: AgentState) -> AgentState:
     """LLM-powered retrieval node: discovers candidates + produces reasoning notes.
 
     Replaces the pure-heuristic node_food_search in the main graph path.
     Also back-fills state["dynamic_shop_pool"] so node_plan remains compatible.
     """
+    if state.get("error"):
+        return state
     print(_dj("debug_print", node="node_retriever", message="RetrieverAgent starting"))
-    agent = RetrieverAgent(llm_router=_llm_router)
-    report = agent.run(state)
+    try:
+        agent = RetrieverAgent(llm_router=_svc_llm_router(state))
+        report = await agent.arun(state)
+    except Exception as exc:
+        _attach_node_error(state, "retriever", exc)
+        state.setdefault("research_log", []).append(_dj("retriever_failed", reason=str(exc)[:800]))
+        return state
 
     # Append to append-only retrieval_history
     state["retrieval_history"] = list(state.get("retrieval_history") or []) + [report.as_dict()]
@@ -1976,7 +2123,7 @@ def _researcher_seed_catalog(state: AgentState) -> list[ShopProfile]:
     return list(_build_shop_catalog())
 
 
-def _call_researcher_prompt(
+async def _call_researcher_prompt(
     query: str,
     shops: list[ShopProfile],
     *,
@@ -1984,6 +2131,7 @@ def _call_researcher_prompt(
     seed_shops: list[ShopProfile],
     auditor_feedback: str,
     iteration: int,
+    chat_client: OpenAIChatCompletionClient | None = None,
 ) -> tuple[list[str], str]:
     """Prompt-driven candidate generation. Falls back to deterministic heuristic."""
 
@@ -2001,7 +2149,7 @@ def _call_researcher_prompt(
         )
         return merged, extras
 
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    client = chat_client if chat_client is not None else _default_openai_chat_client
     sample = [
         {
             "name": s.name,
@@ -2015,13 +2163,13 @@ def _call_researcher_prompt(
         }
         for s in shops[: min(36, len(shops))]
     ]
-    if api_key:
+    if client.is_configured():
         try:
             sys_msg = (
                 "You are Researcher Agent (student). Build a foodie itinerary candidate list. "
                 "You MUST nominate at least one distinct shop name per requested meal_slots entry "
                 "(breakfast,lunch,tea,dinner,late_night,custom) drawn from shops when plausible. "
-                "Return JSON only: {\"candidate_names\":[...],\"notes\":\"...\"}. "
+                'Return JSON only: {"candidate_names":[...],"notes":"..."}. '
                 "Prefer higher ratings/trust while covering every slot requested. "
                 "Respect auditor feedback if provided."
             )
@@ -2035,19 +2183,15 @@ def _call_researcher_prompt(
                 },
                 ensure_ascii=False,
             )
-            resp = requests.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-                json={
-                    "model": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-                    "messages": [{"role": "system", "content": sys_msg}, {"role": "user", "content": user_msg}],
-                    "temperature": 0.2,
-                    "max_tokens": 520,
-                },
-                timeout=35,
+            resp_json = await client.chat_completion_payload(
+                messages=[
+                    {"role": "system", "content": sys_msg},
+                    {"role": "user", "content": user_msg},
+                ],
+                temperature=0.2,
+                max_tokens=520,
             )
-            resp.raise_for_status()
-            txt = str(resp.json()["choices"][0]["message"]["content"] or "").strip()
+            txt = str(resp_json["choices"][0]["message"]["content"] or "").strip()
             txt = re.sub(r"^```(?:json)?\s*", "", txt)
             txt = re.sub(r"\s*```$", "", txt)
             obj = json.loads(txt)
@@ -2064,27 +2208,36 @@ def _call_researcher_prompt(
     return _finalize([], "heuristic_fallback_researcher")
 
 
-def node_researcher(state: AgentState) -> AgentState:
-    shops = _researcher_shop_pool(state)
-    seed_shops = _researcher_seed_catalog(state)
-    query = state.get("query", "") or ""
-    meal_slots = _effective_plan_meal_slots(state.get("intent") or {}, query)
-    iteration = int(state.get("research_iteration", 0)) + 1
-    names, notes = _call_researcher_prompt(
-        query,
-        shops,
-        meal_slots=meal_slots,
-        seed_shops=seed_shops,
-        auditor_feedback=state.get("auditor_feedback", "") or "",
-        iteration=iteration,
-    )
-    state["research_iteration"] = iteration
-    state["researcher_candidate_names"] = names
-    state["researcher_notes"] = notes
-    state["transit_audit"].append(
-        _dj("researcher_iteration", iteration=iteration, candidate_count=len(names), notes=notes)
-    )
-    return state
+@traced
+async def node_researcher(state: AgentState) -> AgentState:
+    if state.get("error"):
+        return state
+    try:
+        shops = _researcher_shop_pool(state)
+        seed_shops = _researcher_seed_catalog(state)
+        query = state.get("query", "") or ""
+        meal_slots = _effective_plan_meal_slots(state.get("intent") or {}, query)
+        iteration = int(state.get("research_iteration", 0)) + 1
+        names, notes = await _call_researcher_prompt(
+            query,
+            shops,
+            meal_slots=meal_slots,
+            seed_shops=seed_shops,
+            auditor_feedback=state.get("auditor_feedback", "") or "",
+            iteration=iteration,
+            chat_client=_svc_openai_chat_client(state),
+        )
+        state["research_iteration"] = iteration
+        state["researcher_candidate_names"] = names
+        state["researcher_notes"] = notes
+        state["transit_audit"].append(
+            _dj("researcher_iteration", iteration=iteration, candidate_count=len(names), notes=notes)
+        )
+        return state
+    except Exception as exc:
+        _attach_node_error(state, "researcher", exc)
+        state.setdefault("transit_audit", []).append(_dj("researcher_failed", reason=str(exc)[:800]))
+        return state
 
 
 def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -2099,15 +2252,23 @@ def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     return 2 * r * math.asin(math.sqrt(a))
 
 
+@trace_agent_stage("critic")
 def node_critic(state: AgentState) -> AgentState:
     """LLM-powered critic: foodie + IC dual-perspective critique of retriever's pool.
 
     Replaces node_auditor in the main graph path.  Sets auditor_rejected and
     auditor_feedback for backward-compat with the conditional edge logic.
     """
+    if state.get("error"):
+        return state
     print(_dj("debug_print", node="node_critic", message="CriticAgent starting"))
-    agent = CriticAgent(llm_router=_llm_router)
-    report = agent.run(state)
+    try:
+        agent = CriticAgent(llm_router=_svc_llm_router(state))
+        report = agent.run(state)
+    except Exception as exc:
+        _attach_node_error(state, "critic", exc)
+        state.setdefault("transit_audit", []).append(_dj("critic_failed", reason=str(exc)[:800]))
+        return state
 
     state["critique_history"] = list(state.get("critique_history") or []) + [report.as_dict()]
 
@@ -2130,6 +2291,7 @@ def node_critic(state: AgentState) -> AgentState:
     return state
 
 
+@traced
 def node_auditor(state: AgentState) -> AgentState:
     """DEPRECATED: Rule-based professor auditor — replaced by node_critic (CriticAgent, Task 5).
 
@@ -2143,6 +2305,7 @@ def node_auditor(state: AgentState) -> AgentState:
     return state
 
 
+@traced
 def node_audit(state: AgentState) -> AgentState:
     """DEPRECATED: Saga 2-phase flight reservation — removed from main graph in Task 7.
 
@@ -2617,13 +2780,25 @@ def _append_graph_physical_transition_audit(
             print(row)
 
 
-def node_plan(state: AgentState) -> AgentState:
+@trace_agent_stage("planner")
+async def node_plan(state: AgentState) -> AgentState:
     print(_dj("debug_print", node="node_plan", message="Generating outcome report"))
+    if state.get("error"):
+        return _finalize_plan_on_agent_error(state)
+    try:
+        return await _node_plan_core(state)
+    except Exception as exc:
+        logger.exception("node_plan failed agent_run_id=%s", state.get("agent_run_id"))
+        _attach_node_error(state, "plan", exc)
+        return _finalize_plan_on_agent_error(state)
+
+
+async def _node_plan_core(state: AgentState) -> AgentState:
     query_text = state.get("query", "") or ""
 
     report = "## Travel Agent - Live Run\n\n"
     report += f"**Run ID:** `{state.get('agent_run_id','')}` "
-    report += "(checkpointed by LangGraph SqliteSaver)\n\n"
+    report += "(checkpoint persisted via LangGraph checkpointer)\n\n"
     if state.get("researcher_candidate_names"):
         report += "### Multi-Agent Loop\n"
         report += f"- Researcher iterations: {int(state.get('research_iteration', 0))}\n"
@@ -2699,8 +2874,11 @@ def node_plan(state: AgentState) -> AgentState:
                 action="geo_expansion_llm_or_heuristic",
             )
         )
-        expansion_queries, expansion_mode = _llm_broad_geo_search_queries(
-            query_text, expand_city, expand_region
+        expansion_queries, expansion_mode = await _llm_broad_geo_search_queries(
+            query_text,
+            expand_city,
+            expand_region,
+            chat_client=_svc_openai_chat_client(state),
         )
         must_for_expansion = sorted(_plan_global_explicit_tags(query_text))
         merged_pool: dict[str, dict] = {}
@@ -3416,8 +3594,11 @@ def node_plan(state: AgentState) -> AgentState:
     return state
 
 
+@traced
 def node_collect_feedback(state: AgentState) -> AgentState:
     global _learned_weight_profile, _feedback_samples_seen, _feedback_penalties, _taste_max_blacklist
+    if state.get("error"):
+        return state
     query = state.get("query", "")
     # 後續 plan 可用：當輪 query 明示甜點／串燒等時，對歷史偏好做 runtime damping（不依賴 feedback:）
     state["explicit_intent_preference_damping"] = _should_damp_preference_for_query(query)
@@ -3544,15 +3725,23 @@ def node_collect_feedback(state: AgentState) -> AgentState:
     return state
 
 
+@traced
 def node_synthesizer(state: AgentState) -> AgentState:
     """On-demand transcript mediator — runs only when the user pauses.
 
     Reads retrieval_history + critique_history, calls SynthesizerAgent (Gemini),
     writes SynthesisReport into synthesis_history.  Never triggers automatically.
     """
+    if state.get("error"):
+        return state
     print(_dj("debug_print", node="node_synthesizer", message="SynthesizerAgent starting"))
-    agent = SynthesizerAgent(llm_router=_llm_router)
-    report = agent.run(state)
+    try:
+        agent = SynthesizerAgent(llm_router=_svc_llm_router(state))
+        report = agent.run(state)
+    except Exception as exc:
+        _attach_node_error(state, "synthesizer", exc)
+        state.setdefault("transit_audit", []).append(_dj("synthesizer_failed", reason=str(exc)[:800]))
+        return state
 
     state["synthesis_history"] = list(state.get("synthesis_history") or []) + [report.as_dict()]
     state["transit_audit"].append(
@@ -3569,14 +3758,21 @@ def node_synthesizer(state: AgentState) -> AgentState:
     return state
 
 
-def build_graph(*, interrupt_after_nodes: list[str] | None = None):
+def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer: object | None = None):
     """Build the main LangGraph agent: Retriever → Critic loop → Plan.
 
     Parameters
     ----------
     interrupt_after_nodes:
-        Nodes after which the graph pauses (for human-in-the-loop / pause-resume).
-        Defaults to ["retriever", "critic"] when a SqliteSaver checkpointer is present.
+        If ``checkpointer`` is set, LangGraph ``interrupt_after`` is **only** applied when this
+        argument is explicitly provided (including ``[]`` for no interrupts).
+        Pass ``None`` (default): compile with ``interrupt_after=[]`` so streaming runs finish
+        without an automatic pause after ``retriever`` / ``critic``.
+
+    checkpointer:
+        Optional LangGraph checkpointer (e.g. ``AsyncSqliteSaver`` wired in FastAPI ``lifespan``).
+        Async savers must be driven only from async graph APIs (``aget_state``, ``astream``, ``aupdate_state``, …).
+        Tests call ``build_graph()`` with no arguments so graphs compile without persistence.
 
     Graph topology
     --------------
@@ -3604,6 +3800,10 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None):
     g.add_edge("researcher", "critic")
 
     def _after_critic(state: AgentState) -> str:
+        if state.get("error"):
+            if (state.get("intent") or {}).get("mode") == "right_now":
+                return "plan"
+            return "collect_feedback"
         # CriticAgent verdict drives the loop
         verdict = (state.get("critique_history") or [{}])[-1].get("verdict", "")
         rejected = bool(state.get("auditor_rejected"))
@@ -3629,23 +3829,19 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None):
     # Synthesizer is a standalone on-demand node: synthesizer → END
     g.add_edge("synthesizer", END)
 
-    if SqliteSaver is not None:
-        cp = SqliteSaver.from_conn_string(str(_SAGA_DIR / "graph_checkpoints.sqlite"))
-        if interrupt_after_nodes is not None:
-            _interrupt = interrupt_after_nodes
-        elif os.environ.get("PYTEST_CURRENT_TEST"):
-            # Pytest invokes `graph.invoke` without checkpoint resume loops; disabling
-            # default interrupts avoids stopping mid-graph before `plan`.
-            _interrupt = []
-        else:
-            _interrupt = ["retriever", "critic"]
-        return g.compile(checkpointer=cp, interrupt_after=_interrupt)
-    # No checkpointer → compile without interrupts (tests / offline mode)
+    if checkpointer is not None:
+        _interrupt: list[str] = (
+            list(interrupt_after_nodes) if interrupt_after_nodes is not None else []
+        )
+        return g.compile(checkpointer=checkpointer, interrupt_after=_interrupt)
     return g.compile()
 
 
 if __name__ == "__main__":
-    initial_state: AgentState = make_initial_state("Book TPE to SFO via NRT")
-    result = build_graph().invoke(initial_state)
+    async def _cli() -> AgentState:
+        initial_state_local: AgentState = make_initial_state("Book TPE to SFO via NRT")
+        return await build_graph().ainvoke(initial_state_local)
+
+    result = asyncio.run(_cli())
     print(_dj("cli_demo_done", itinerary_chars=len(result.get("final_itinerary", "") or "")))
     print(result["final_itinerary"])

@@ -126,7 +126,7 @@ def test_low_key_bonus_qualifies_mid_review_no_medal_high_rating():
     assert not RankingEngine._qualifies_low_key_bonus(awarded)
 
 
-def test_synthesize_delays_meal_to_open_time():
+def test_synthesize_defers_lunch_until_shop_opens():
     traffic = MockTrafficProvider()
     pref = UserPreference()
     start = datetime(2026, 4, 27, 10, 0, 0)
@@ -141,11 +141,12 @@ def test_synthesize_delays_meal_to_open_time():
         mode=OptimizationMode.TASTE_MAX,
     )
     meal_nodes = [n for n in result.nodes if "Transit to" not in n.title and "BackupNode" not in n.title]
-    assert not meal_nodes
-    assert any("OPERATING_BOUNDARY_SKIP" in w and "open_time=12:00" in w for w in result.warnings)
+    assert len(meal_nodes) == 1
+    assert meal_nodes[0].start_at.hour == 12 and meal_nodes[0].start_at.minute == 0
+    assert any("WAIT_UNTIL_OPEN" in w and "LateOpen" in w for w in result.warnings)
 
 
-def test_synthesize_skips_when_open_alignment_breaks_slot_window():
+def test_synthesize_breakfast_slot_allows_high_ranked_shop_via_wait_until_open():
     traffic = MockTrafficProvider()
     pref = UserPreference()
     start = datetime(2026, 4, 27, 7, 0, 0)
@@ -177,10 +178,13 @@ def test_synthesize_skips_when_open_alignment_breaks_slot_window():
         meal_slots=["breakfast"],
         mode=OptimizationMode.TASTE_MAX,
     )
-    assert any("OPERATING_BOUNDARY_SKIP" in w and "OpensAt11" in w for w in result.warnings)
-    meal_titles = " ".join(n.title for n in result.nodes if "Transit" not in n.title and "Backup" not in n.title)
-    assert "EarlyBird" in meal_titles
-    assert "OpensAt11" not in meal_titles
+    meal_meals = [n for n in result.nodes if "Transit" not in n.title and "Backup" not in n.title]
+    meal_titles = " ".join(n.title for n in meal_meals)
+    assert "OpensAt11" in meal_titles
+    assert "EarlyBird" not in meal_titles
+    opens_meal = next(n for n in meal_meals if "OpensAt11" in n.title)
+    assert opens_meal.start_at.hour >= 11
+    assert any("WAIT_UNTIL_OPEN" in w and "OpensAt11" in w for w in result.warnings)
 
 
 def test_slot_semantic_bonus_is_soft_preference():

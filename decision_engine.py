@@ -732,13 +732,6 @@ class ItinerarySynthesizer:
         "dinner": {"dinner": 2.5, "main_meal": 1.7, "course": 1.6, "kaiseki": 1.5, "social": 1.2, "izakaya": 1.2},
         "late_night": {"late_night": 3.0, "night_food": 2.4, "izakaya": 2.8, "snack": 1.4, "ramen": 1.6},
     }
-    SLOT_WINDOWS: dict[str, tuple[tuple[int, int], tuple[int, int]]] = {
-        "breakfast": ((7, 0), (10, 30)),
-        "lunch": ((11, 30), (14, 30)),
-        "tea": ((15, 0), (17, 0)),
-        "dinner": ((18, 0), (21, 30)),
-        "late_night": ((22, 0), (1, 0)),
-    }
     SLOT_ORDER: dict[str, int] = {
         "breakfast": 0,
         "lunch": 1,
@@ -768,27 +761,6 @@ class ItinerarySynthesizer:
         if slot in {"dinner", "late_night"}:
             return "dinner"
         return "offpeak"
-
-    @staticmethod
-    def _window_for_slot(base: datetime, slot: str) -> tuple[datetime, datetime]:
-        start_hm, end_hm = ItinerarySynthesizer.SLOT_WINDOWS.get(slot, ((10, 0), (23, 59)))
-        ws = base.replace(hour=start_hm[0], minute=start_hm[1], second=0, microsecond=0)
-        we = base.replace(hour=end_hm[0], minute=end_hm[1], second=0, microsecond=0)
-        if we < ws:
-            we = we + timedelta(days=1)
-        return ws, we
-
-    @staticmethod
-    def _align_current_to_slot_window(current: datetime, slot: str) -> tuple[datetime, datetime]:
-        window_start, window_end = ItinerarySynthesizer._window_for_slot(current, slot)
-        if current < window_start:
-            return window_start, window_end
-        if current <= window_end:
-            return current, window_end
-        # Missed current window: roll to next day's same slot window.
-        next_base = current + timedelta(days=1)
-        next_start, next_end = ItinerarySynthesizer._window_for_slot(next_base, slot)
-        return next_start, next_end
 
     @staticmethod
     def _slot_semantic_match_score(slot: str, ranked_shop: RankedShop) -> int:
@@ -1392,7 +1364,6 @@ class ItinerarySynthesizer:
                         warnings.append(
                             f"BREAKFAST_TAG_BYPASS_EXPLICIT_INTENT {s.name}: allowed_by=ramen_intent"
                         )
-                early_bird_active = ItinerarySynthesizer._early_bird_priority(candidate_current, s) > 0
                 cooldown_end: datetime | None = None
                 cooldown_m = 0
                 if candidate_last_meal_end is not None:
@@ -1407,13 +1378,10 @@ class ItinerarySynthesizer:
                     aligned_daytime, moved = ItinerarySynthesizer._align_to_daytime(candidate_current)
                     if moved:
                         candidate_current = aligned_daytime
-                        warnings.append(f"{slot_name} 已套用日間可行時間對齊：{candidate_current.strftime('%Y-%m-%d %H:%M')}")
-                skip_slot_alignment_for_early_bird = (
-                    early_bird_active
-                    and slot_name in {"lunch", "tea", "dinner"}
-                    and candidate_current.hour < 12
-                )
-                # Slot labels guide semantic ordering only; no fixed slot-window hard boundaries.
+                        warnings.append(
+                            f"{slot_name} 已套用日間可行時間對齊：{candidate_current.strftime('%Y-%m-%d %H:%M')}"
+                        )
+                # Meal slot names affect catalog affinity only; no fixed clock windows per slot.
                 from_loc = prev_shop_name if i > 0 else "Kyoto Station"
                 to_loc = s.name
                 traffic_status = traffic.get_route_status(from_loc, to_loc)
@@ -1471,17 +1439,12 @@ class ItinerarySynthesizer:
                     eat_start, moved = ItinerarySynthesizer._align_to_daytime(eat_start)
                     if moved:
                         warnings.append(f"{slot_name} 用餐起點已對齊日間可行時間：{eat_start.strftime('%Y-%m-%d %H:%M')}")
-                if appetite_light_mode and (requested_meal_count or 0) >= 3 and slot_name in {"lunch", "dinner"}:
-                    # Soft slot nudging remains optional guidance, not a hard boundary gate.
-                    if slot_name == "dinner":
-                        soft_anchor = eat_start.replace(hour=20, minute=0, second=0, microsecond=0)
-                    else:
-                        soft_anchor = eat_start.replace(hour=13, minute=0, second=0, microsecond=0)
-                    if soft_anchor > eat_start:
-                        eat_start = soft_anchor
-                        warnings.append(
-                            f"{slot_name} 食量小模式：已微調餐期至 {eat_start.strftime('%H:%M')}（非硬性時窗）"
-                        )
+                open_at_shop = ItinerarySynthesizer._shop_open_at(eat_start, s)
+                if eat_start < open_at_shop:
+                    warnings.append(
+                        f"WAIT_UNTIL_OPEN {s.name}: deferred meal start to {open_at_shop.strftime('%H:%M')}"
+                    )
+                    eat_start = open_at_shop
                 selected_eat_minutes = int(s.avg_eat_minutes)
                 compression_note = ""
                 eat_end = eat_start + timedelta(minutes=selected_eat_minutes)
@@ -1519,13 +1482,6 @@ class ItinerarySynthesizer:
                             graph_debug_traces=graph_debug_traces,
                             rollback_triggered=rollback_triggered,
                         )
-
-                open_at = ItinerarySynthesizer._shop_open_at(eat_start, s)
-                if eat_start < open_at:
-                    warnings.append(
-                        f"OPERATING_BOUNDARY_SKIP {s.name}: eat_start={eat_start.strftime('%H:%M')} < open_time={open_at.strftime('%H:%M')}"
-                    )
-                    continue
 
                 last_call_at = ItinerarySynthesizer._shop_last_call_at(eat_start, s)
                 if eat_start >= last_call_at:
@@ -1631,6 +1587,7 @@ class GraphBuilder:
     """
     Transform ranked shops into a spatio-temporal compatibility DAG.
     Node = (shop_name, slot_index), edge exists when A can physically reach B.
+    Slot indices encode meal-order / affinity layers only, not fixed clock windows per slot label.
     """
 
     @staticmethod
@@ -1639,10 +1596,9 @@ class GraphBuilder:
         if normalized:
             anchors: list[datetime] = []
             cursor = start_time
-            for slot in normalized:
-                anchor, _ = ItinerarySynthesizer._align_current_to_slot_window(cursor, slot)
-                anchors.append(anchor)
-                cursor = anchor + timedelta(minutes=60)
+            for _slot in normalized:
+                anchors.append(cursor)
+                cursor = cursor + timedelta(minutes=60)
             return anchors
         return [start_time + timedelta(minutes=90 * i) for i in range(max(1, node_count))]
 
@@ -1682,8 +1638,6 @@ class GraphBuilder:
                 open_at = ItinerarySynthesizer._shop_open_at(candidate_start, s)
                 if candidate_start < open_at:
                     candidate_start = open_at
-                if slot_name is not None:
-                    candidate_start, _ = ItinerarySynthesizer._align_current_to_slot_window(candidate_start, slot_name)
                 # Layer-1 physical interval: base queue + pure eating duration.
                 ideal_duration = int(s.base_wait_minutes) + int(s.avg_eat_minutes)
                 actual_duration = int(s.base_wait_minutes) + int(s.min_eat_minutes or s.avg_eat_minutes)

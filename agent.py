@@ -93,6 +93,8 @@ class AgentState(TypedDict):
     user_lng: float | None
     #: Client-supplied LangGraph ``thread_id`` when resuming/checkpoint refinement; empty if none.
     checkpoint_thread_id: str
+    #: Prior round finalized itinerary text; filled on thread continuation so intent can treat edits as amendments.
+    prev_itinerary: str
     researcher_candidate_names: list[str]
     researcher_notes: str
     auditor_feedback: str
@@ -126,6 +128,7 @@ class AgentStateModel(BaseModel):
     user_lat: float | None = None
     user_lng: float | None = None
     checkpoint_thread_id: str = ""
+    prev_itinerary: str = ""
     researcher_candidate_names: list[str] = Field(default_factory=list)
     researcher_notes: str = ""
     auditor_feedback: str = ""
@@ -270,6 +273,7 @@ def make_initial_state(
     user_lng: float | None = None,
     *,
     checkpoint_thread_id: str | None = None,
+    prev_itinerary: str = "",
 ) -> dict:
     run_id = agent_run_id or uuid.uuid4().hex
     ctid = (checkpoint_thread_id or "").strip()
@@ -282,6 +286,7 @@ def make_initial_state(
         user_lat=user_lat,
         user_lng=user_lng,
         checkpoint_thread_id=ctid,
+        prev_itinerary=(prev_itinerary or ""),
     )
     return model.model_dump(mode="json")
 
@@ -1980,6 +1985,7 @@ def node_route_intent(state: AgentState) -> AgentState:
             user_lat=state.get("user_lat"),
             user_lng=state.get("user_lng"),
             previous_intent=prev_model,
+            prev_itinerary=str(state.get("prev_itinerary") or ""),
         )
     except Exception as exc:
         _attach_node_error(state, "route_intent", exc)

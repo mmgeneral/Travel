@@ -138,6 +138,9 @@ def _merge_continuation_invoke_state(
     merged["research_iteration"] = 0
     merged["retrieval_history"] = []
     merged["critique_history"] = []
+    prev_itinerary = prev.get("final_itinerary") or ""
+    if prev_itinerary:
+        merged["prev_itinerary"] = prev_itinerary
     return merged
 
 

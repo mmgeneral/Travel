@@ -4,10 +4,11 @@ Hybrid intent parser: rule fast-path → LLM fallback (+ optional refinement pat
 Public API
 ----------
 parse_intent(query, llm_router, *, user_locale, user_lat, user_lng,
-             previous_intent=None)                               -> Intent
+             previous_intent=None, prev_itinerary=None)                     -> Intent
 intent_from_snapshot_dict(d)                                      -> Intent
 parse_intent_rules(query, *, user_locale, user_lat, user_lng)     -> Intent | None
-parse_intent_llm(query, llm_router, *, previous_intent=None)       -> Intent
+parse_intent_llm(query, llm_router, *, previous_intent=None,
+                  prev_itinerary=None)                            -> Intent
 
 Intent dataclass fields
 -----------------------
@@ -443,6 +444,7 @@ Rules:
 - If city is unclear, leave it blank ("") and set region="unknown".
 - confidence reflects how sure you are of the extracted intent (0=not sure, 1=very sure).
 - is_revision: always false here (standalone extraction); refinement uses a dedicated prompt below.
+- If a "Current itinerary baseline" block appears below, the user may be amending that plan—extract tags and meal_slots accordingly and set is_revision true only when the operative request clearly changes the plan vs a greenfield query.
 - Do NOT add examples or commentary. Output JSON only.
 """
 
@@ -480,22 +482,49 @@ Industry intent-refinement playbook
   `is_revision` must be true.
 * **Neutral ack / same ask**: keep prior semantics; confidence may stay high and `is_revision` false only
   when nothing operative changes.
+* **Slot-level food swap** (“把午餐換成蕎麥麵”“晚餐改壽司”): Infer targeted `meal_slots`; update
+  `category_tags` / `explicit_constraints` for the substitution while carrying forward the rest of
+  `previous_intent`. When a **Current itinerary baseline** block appears in the system message, use it to
+  anchor which meal or section the user refers to. `is_revision` must be true when the plan changes.
 * Keep `region` consistent with `city` (`台北/台灣`⇒tw, `京都|東京|大阪`⇒jp).
 """
 
 
-def _llm_prompt_messages(query: str, previous_intent: Intent | None) -> list[dict[str, Any]]:
+def _prev_itinerary_system_addon(prev_itinerary: str | None) -> str:
+    """Append prior-round markdown itinerary so the model can interpret amendment-style queries."""
+    pw = (prev_itinerary or "").strip()
+    if not pw:
+        return ""
+    max_chars = 6000
+    body = pw[:max_chars] + ("…" if len(pw) > max_chars else "")
+    return (
+        "\n\n---\nCurrent itinerary baseline (this conversation thread). "
+        "The user may refer to specific meals or sections here. "
+        "Prefer amendment / partial update over discarding the whole plan unless they ask to replan.\n"
+        "<<<ITINERARY\n"
+        f"{body}\n"
+        "ITINERARY>>>\n"
+    )
+
+
+def _llm_prompt_messages(
+    query: str,
+    previous_intent: Intent | None,
+    *,
+    prev_itinerary: str | None = None,
+) -> list[dict[str, Any]]:
     """Build chat messages for INTENT_PARSING (cold extraction vs refinement)."""
+    itinerary_ctx = _prev_itinerary_system_addon(prev_itinerary)
     if previous_intent is None:
         return [
-            {"role": "system", "content": _LLM_SYSTEM_PROMPT},
+            {"role": "system", "content": _LLM_SYSTEM_PROMPT + itinerary_ctx},
             {"role": "user", "content": f"User query: {query}"},
         ]
     snapshot = dict(previous_intent.as_dict())
     snapshot.pop("is_revision", None)
     snapshot.pop("confidence", None)
     return [
-        {"role": "system", "content": _LLM_REFINEMENT_SYSTEM_PROMPT},
+        {"role": "system", "content": _LLM_REFINEMENT_SYSTEM_PROMPT + itinerary_ctx},
         {"role": "user", "content": json.dumps({"previous_intent": snapshot}, ensure_ascii=False)},
         {"role": "user", "content": f"New user message: {query}"},
     ]
@@ -604,6 +633,7 @@ def parse_intent_llm(
     llm_router: Any,
     *,
     previous_intent: Intent | None = None,
+    prev_itinerary: str | None = None,
 ) -> Intent:
     """LLM-based extraction or refinement with pydantic validation and one retry.
 
@@ -613,7 +643,7 @@ def parse_intent_llm(
     """
     from llm_router import TaskType  # local import avoids circular deps at module load
 
-    messages_base = _llm_prompt_messages(query, previous_intent)
+    messages_base = _llm_prompt_messages(query, previous_intent, prev_itinerary=prev_itinerary)
 
     last_error: Exception | None = None
     for attempt in range(2):
@@ -676,6 +706,7 @@ def parse_intent(
     user_lat: float | None = None,
     user_lng: float | None = None,
     previous_intent: Intent | None = None,
+    prev_itinerary: str | None = None,
 ) -> Intent:
     """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.
 
@@ -693,7 +724,12 @@ def parse_intent(
 
     if previous_intent is not None:
         try:
-            llm_result = parse_intent_llm(query, llm_router, previous_intent=previous_intent)
+            llm_result = parse_intent_llm(
+                query,
+                llm_router,
+                previous_intent=previous_intent,
+                prev_itinerary=prev_itinerary,
+            )
             _stamp_geo_pins(llm_result)
             return llm_result
         except Exception:
@@ -704,6 +740,7 @@ def parse_intent(
                 user_lat=user_lat,
                 user_lng=user_lng,
                 previous_intent=None,
+                prev_itinerary=prev_itinerary,
             )
 
     rule_result = parse_intent_rules(
@@ -714,7 +751,7 @@ def parse_intent(
         return rule_result
 
     try:
-        llm_result = parse_intent_llm(query, llm_router)
+        llm_result = parse_intent_llm(query, llm_router, prev_itinerary=prev_itinerary)
         _stamp_geo_pins(llm_result)
         return llm_result
     except Exception:

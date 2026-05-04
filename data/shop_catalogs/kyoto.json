@@ -580,6 +580,245 @@
         "beer"
       ],
       "is_sharing_friendly": true
+    },
+    {
+      "name": "錦 わらじ亭",
+      "open_time": "11:30",
+      "close_time": "14:30",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 20,
+      "is_cash_only": true,
+      "sns_handle": "nishiki_waraji",
+      "avg_eat_minutes": 45,
+      "is_famous": false,
+      "base_wait_minutes": 20,
+      "flavor_intensity": 0.55,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.35,
+        "fat": 0.3,
+        "umami": 0.65,
+        "acid": 0.2,
+        "spice": 0.05
+      },
+      "source_scores": {
+        "google": 0.74,
+        "tablelog": 0.71
+      },
+      "occasion_tags": [
+        "lunch",
+        "main_meal"
+      ],
+      "tags": [
+        "udon",
+        "lunch",
+        "traditional",
+        "noodle"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian"
+      ],
+      "neighborhood": "Nishiki",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00512,
+      "longitude": 135.76501
+    },
+    {
+      "name": "京都勝牛 河原町店",
+      "open_time": "11:00",
+      "close_time": "22:00",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 30,
+      "is_cash_only": false,
+      "sns_handle": "kyoto_katsugyuu",
+      "avg_eat_minutes": 40,
+      "is_famous": false,
+      "base_wait_minutes": 15,
+      "flavor_intensity": 0.72,
+      "flavor_category": "HEAVY",
+      "flavor_vector": {
+        "salt": 0.55,
+        "fat": 0.72,
+        "umami": 0.8,
+        "acid": 0.15,
+        "spice": 0.2
+      },
+      "source_scores": {
+        "google": 0.72,
+        "tablelog": 0.68
+      },
+      "occasion_tags": [
+        "lunch",
+        "dinner",
+        "main_meal"
+      ],
+      "tags": [
+        "katsu",
+        "beef_cutlet",
+        "lunch",
+        "dinner",
+        "set_meal"
+      ],
+      "allowed_dietary_preferences": [
+        "regular"
+      ],
+      "neighborhood": "Kawaramachi",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00421,
+      "longitude": 135.76883
+    },
+    {
+      "name": "茶寮 都路里 祇園本店",
+      "open_time": "10:00",
+      "close_time": "22:00",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 30,
+      "is_cash_only": false,
+      "sns_handle": "tsuji_tsuru_gion",
+      "avg_eat_minutes": 40,
+      "is_famous": true,
+      "base_wait_minutes": 35,
+      "flavor_intensity": 0.38,
+      "flavor_category": "SWEET",
+      "flavor_vector": {
+        "salt": 0.08,
+        "fat": 0.35,
+        "umami": 0.3,
+        "acid": 0.25,
+        "spice": 0.02
+      },
+      "source_scores": {
+        "tablelog": 0.82,
+        "google": 0.79,
+        "sns": 0.75
+      },
+      "occasion_tags": [
+        "tea",
+        "dessert",
+        "afternoon_tea"
+      ],
+      "tags": [
+        "matcha",
+        "parfait",
+        "afternoon_tea",
+        "dessert",
+        "cafe",
+        "sweets"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian"
+      ],
+      "neighborhood": "Gion",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00363,
+      "longitude": 135.77512
+    },
+    {
+      "name": "イカリヤ食堂",
+      "open_time": "12:00",
+      "close_time": "22:30",
+      "booking_type": "NONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 30,
+      "is_cash_only": false,
+      "sns_handle": "ikariya_shokudo_kyoto",
+      "avg_eat_minutes": 55,
+      "is_famous": false,
+      "base_wait_minutes": 18,
+      "flavor_intensity": 0.6,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.42,
+        "fat": 0.5,
+        "umami": 0.65,
+        "acid": 0.35,
+        "spice": 0.15
+      },
+      "source_scores": {
+        "google": 0.75,
+        "tablelog": 0.7
+      },
+      "occasion_tags": [
+        "lunch",
+        "dinner",
+        "main_meal"
+      ],
+      "tags": [
+        "yoshoku",
+        "western",
+        "lunch",
+        "dinner",
+        "curry",
+        "hamburg"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian"
+      ],
+      "neighborhood": "Kawaramachi",
+      "region": "jp",
+      "closed_weekdays": [],
+      "latitude": 35.00489,
+      "longitude": 135.76978
+    },
+    {
+      "name": "権太呂 金閣寺店",
+      "open_time": "11:00",
+      "close_time": "21:00",
+      "booking_type": "PHONE",
+      "queue_strategy": "PHYSICAL_LINE",
+      "last_call_offset": 30,
+      "is_cash_only": false,
+      "sns_handle": "gontaro_kinkakuji",
+      "avg_eat_minutes": 50,
+      "is_famous": true,
+      "base_wait_minutes": 22,
+      "flavor_intensity": 0.45,
+      "flavor_category": "LIGHT",
+      "flavor_vector": {
+        "salt": 0.4,
+        "fat": 0.32,
+        "umami": 0.68,
+        "acid": 0.22,
+        "spice": 0.04
+      },
+      "source_scores": {
+        "tablelog": 0.84,
+        "google": 0.76
+      },
+      "occasion_tags": [
+        "lunch",
+        "dinner",
+        "main_meal"
+      ],
+      "tags": [
+        "udon",
+        "soba",
+        "lunch",
+        "dinner",
+        "traditional",
+        "noodle"
+      ],
+      "allowed_dietary_preferences": [
+        "regular",
+        "vegetarian",
+        "pescatarian"
+      ],
+      "neighborhood": "Kinkakuji",
+      "region": "jp",
+      "closed_weekdays": [
+        2
+      ],
+      "latitude": 35.03952,
+      "longitude": 135.72894
     }
   ]
 }

@@ -31,6 +31,15 @@ from typing import Any
 from shop_catalog_io import load_shop_catalog
 from shop_planning import NearbySearchTool, ShopProfile
 
+from retrieval_service import (
+    filter_shop_profiles_by_dietary_exclusions,
+    filter_shop_profiles_by_excluded_shop_names,
+    filter_shop_profiles_by_excluded_tags,
+    normalized_excluded_shop_names_from_intent,
+    normalized_excluded_tags_from_intent,
+    plan_excluded_frozenset,
+)
+
 
 # ---------------------------------------------------------------------------
 # Output dataclass
@@ -270,11 +279,21 @@ class RetrieverAgent:
         category_tags: list[str] = list(intent.get("category_tags") or [])
         query = state.get("query") or ""
 
-        # 1. Seed catalog
+        excluded = plan_excluded_frozenset(state)
+        excluded_names = normalized_excluded_shop_names_from_intent(intent)
+        excluded_tag_bans = normalized_excluded_tags_from_intent(intent)
+
+        # 1. Seed catalog (diet exclusions at ingress — before pooling / dedup / LLM)
         seed_shops = _load_seed_for_city(city, region)
+        seed_shops = filter_shop_profiles_by_dietary_exclusions(seed_shops, excluded)
+        seed_shops = filter_shop_profiles_by_excluded_tags(seed_shops, excluded_tag_bans)
+        seed_shops = filter_shop_profiles_by_excluded_shop_names(seed_shops, excluded_names)
 
         # 2. Dynamic candidates from Places API
         dynamic_shops = self._fetch_dynamic(query, city, region, meal_slots, seed_shops)
+        dynamic_shops = filter_shop_profiles_by_dietary_exclusions(dynamic_shops, excluded)
+        dynamic_shops = filter_shop_profiles_by_excluded_tags(dynamic_shops, excluded_tag_bans)
+        dynamic_shops = filter_shop_profiles_by_excluded_shop_names(dynamic_shops, excluded_names)
 
         # 3. Rule-based gap detection (before LLM for efficiency)
         structural_gaps = _detect_structural_gaps(

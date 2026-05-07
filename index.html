@@ -87,7 +87,10 @@
   .hold-row{display:flex;gap:6px;flex-wrap:wrap;}
   .hold-row input{background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 10px;font-size:12px;min-width:110px;}
   .hold-log{font-size:12px;color:var(--muted);white-space:pre-wrap;word-break:break-word;line-height:1.45;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .dietary-clarify-panel{font-size:13px;line-height:1.55;color:var(--text);margin-bottom:4px;}
+  .dietary-clarify-panel .dc-q{white-space:pre-wrap;margin-bottom:10px;color:var(--purple2);}
+  .dietary-clarify-panel .dc-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .dietary-clarify-panel button.dc-opt{flex:1;min-width:120px;}
   @media(max-width:600px){
     body{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;}
     .days{grid-column:1;grid-row:1;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:10px;}
@@ -121,6 +124,7 @@
     <textarea id="msg" placeholder="輸入需求或調整⋯（可多輪對話。「回到第2輪」或 undo 可 time-travel）"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
   </div>
+  <div id="dietary-clarify-panel" class="dietary-clarify-panel" style="display:none" role="dialog" aria-live="polite"></div>
   <div class="input-row">
     <button class="btn mic" id="mic" onclick="toggleMic()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -401,6 +405,9 @@ async function selectDay(day){
 }
 const NODE_LABELS={
   route_intent:'正在解析您的旅遊意圖',
+  clarify_constraint:'正在確認飲食限制解讀方式',
+  retriever:'正在搜尋候選餐廳',
+  critic:'Critic 正在審查餐廳組合',
   search:'正在查詢航班與候選資料',
   researcher:'Researcher 正在產生候選行程',
   auditor:'Auditor 正在審查物理邊界與品味',
@@ -409,6 +416,36 @@ const NODE_LABELS={
   plan:'正在規劃餐廳與交通'
 };
 let dietaryProfile={ethics:'unspecified',allergens:[],religious:'none',medical:[]};
+function hideDietaryClarifyPanel(){
+  const p=document.getElementById('dietary-clarify-panel');
+  if(!p)return;
+  p.style.display='none';
+  p.innerHTML='';
+}
+/** @param {{question?:string,hint?:string,type?:string}} data */
+function showDietaryClarifyPanel(data){
+  const p=document.getElementById('dietary-clarify-panel');
+  if(!p)return;
+  p.style.display='block';
+  p.innerHTML='';
+  const q=document.createElement('div');
+  q.className='dc-q';
+  q.textContent=data.question||'請選擇飲食限制解讀方式';
+  p.appendChild(q);
+  const row=document.createElement('div');
+  row.className='dc-row';
+  const mk=(label,val)=>{
+    const b=document.createElement('button');
+    b.type='button';
+    b.className='btn dc-opt';
+    b.textContent=label;
+    b.onclick=()=>{hideDietaryClarifyPanel();send(val);};
+    row.appendChild(b);
+  };
+  mk('(A) 嚴格（菜單完全不能有）','A');
+  mk('(B) 寬鬆（自己不點即可）','B');
+  p.appendChild(row);
+}
 let conversationRound=0;
 function refreshConversationBanner(){
   const el=document.getElementById('conv-banner-text');
@@ -462,6 +499,19 @@ async function fetchUndoCheckpointId(){
     return cps[cps.length-2].checkpoint_id;
   }catch{return null;}
 }
+/** @returns {Promise<{checkpoint_id:string,label?:string,turn?:string,ts?:string}[]|null>} */
+async function fetchTurnCheckpoints(threadId){
+  if(!threadId)return null;
+  try{
+    const res=await fetch(`${API}/agent/history/${encodeURIComponent(threadId)}`,{
+      headers:apiHeaders({}),
+      signal:AbortSignal.timeout(8000),
+    });
+    if(!res.ok)return null;
+    const data=await res.json();
+    return data.checkpoints||[];
+  }catch{return null;}
+}
 let currentThreadId=(function(){
   try{return localStorage.getItem(THREAD_ID_KEY)||null;}catch{return null;}
 })();  // LangGraph thread_id (same as agent_run_id server-side)
@@ -479,9 +529,11 @@ function setOutcomeLamp(outcome,semanticStatus){
   const detail=semanticStatus?`${label} · ${semanticStatus}`:label;
   setStatus(dotState,detail);
 }
-async function send(){
+async function send(presetQuery){
   const input=document.getElementById('msg');
-  const query=input.value.trim();if(!query)return;
+  const rawQ=presetQuery!=null?String(presetQuery):input.value;
+  const query=rawQ.trim();if(!query)return;
+  if(presetQuery==null)input.value='';
   const queryUpper=query.toUpperCase();
   const hasTasteMaxKeyword=(
     queryUpper.includes('TASTE_MAX')||
@@ -496,8 +548,18 @@ async function send(){
   let effectiveQuery=finalQuery;
   const rewindMatch=effectiveQuery.match(/^\s*回到第\s*(\d+)\s*輪\s*/);
   if(rewindMatch){
-    rewindCp=`cp_${rewindMatch[1].padStart(3,'0')}`;
+    const roundN=parseInt(rewindMatch[1],10);
     effectiveQuery=effectiveQuery.slice(rewindMatch[0].length).trim();
+    if(!currentThreadId){
+      alert('「回到第N輪」需已有對話：請先有至少一輪完成後在同一 thread。');
+      return;
+    }
+    const turns=await fetchTurnCheckpoints(currentThreadId);
+    if(!turns||!(roundN>=1)||roundN>turns.length){
+      alert(`找不到第 ${rewindMatch[1]} 輪紀錄（目前有 ${turns?turns.length:0} 個可跳轉輪次）。`);
+      return;
+    }
+    rewindCp=turns[roundN-1].checkpoint_id;
   }
   if(/^\s*undo\b/i.test(effectiveQuery)){
     if(!rewindCp){
@@ -516,6 +578,7 @@ async function send(){
 
   input.value='';
   const stream=document.getElementById('stream');
+  hideDietaryClarifyPanel();
   stream.className=advancedMode?'stream-box active':'stream-box';stream.textContent='';
   renderCards([]);
   renderMap([]);
@@ -574,6 +637,10 @@ async function send(){
             stream.textContent+=`▶ ${data.query}\n\n`;
           }
         }
+        else if(event==='clarification'){
+          if(data&&data.question)showDietaryClarifyPanel(data);
+          setStatus('busy','請確認飲食限制');
+        }
         else if(event==='node'){
           const label=NODE_LABELS[data.node]||'正在處理';
           if(advancedMode)stream.textContent+=`• ${label}\n`;
@@ -587,7 +654,10 @@ async function send(){
           if(data.outcome||data.semantic_status){setOutcomeLamp(data.outcome||'SUCCESS',data.semantic_status||'');}
           else{setStatus('ok','完成');}
           document.getElementById('pause-btn').style.display='none';
-          conversationRound+=1;
+          if(!data.awaiting_clarification){conversationRound+=1;}
+          if(data.awaiting_clarification){
+            setStatus('ok','請選擇 (A) 或 (B) 以繼續規劃');
+          }
           refreshConversationBanner();
           refreshDaySyncBadges();
         }

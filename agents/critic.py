@@ -38,6 +38,13 @@ from decision_engine import (
 from shop_catalog_io import load_shop_catalog
 from shop_planning import AuthorityData, BookingType, QueueStrategy, ShopProfile
 
+from retrieval_service import (
+    filter_shop_profiles_by_dietary_exclusions,
+    filter_shop_profiles_by_excluded_shop_names,
+    normalized_excluded_shop_names_from_intent,
+    plan_excluded_frozenset,
+)
+
 
 # ---------------------------------------------------------------------------
 # Seed-catalog helper (mirrors agents/retriever.py; no circular import)
@@ -373,7 +380,11 @@ class CriticAgent:
         prev_critique = crit_history[-1] if crit_history else {}
 
         # 3. Reconstruct ShopProfile objects
-        seed_shops = _load_seed_for_city(city, region)
+        xnames = normalized_excluded_shop_names_from_intent(intent)
+        seed_shops = filter_shop_profiles_by_dietary_exclusions(
+            _load_seed_for_city(city, region), plan_excluded_frozenset(state)
+        )
+        seed_shops = filter_shop_profiles_by_excluded_shop_names(seed_shops, xnames)
         seed_by_name: dict[str, ShopProfile] = {s.name: s for s in seed_shops}
 
         dyn_pool = list(state.get("dynamic_shop_pool") or [])

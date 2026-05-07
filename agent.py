@@ -7,6 +7,7 @@ import logging
 import traceback
 from contextlib import contextmanager
 from langgraph.graph import END, StateGraph
+from langchain_core.runnables.config import RunnableConfig
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 import os
@@ -17,7 +18,7 @@ import uuid
 
 from debug_json import audit_json_line_as_text, debug_json as _dj
 from zoneinfo import ZoneInfo
-from typing import Any
+from typing import Any, Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field
 from duffel import DuffelService
@@ -36,6 +37,16 @@ from shop_planning import (
     ReviewAnalyzer,
     ShopProfile,
     plan_shop_visit,
+)
+from graph_checkpoint_utils import extend_turn_checkpoint_in_state
+from retrieval_service import (
+    DietaryConstraints,
+    catalog_stem_for_city,
+    filter_shop_profiles_by_dietary_exclusions,
+    filter_shop_profiles_by_excluded_shop_names,
+    normalized_excluded_shop_names_from_intent,
+    plan_excluded_frozenset,
+    retrieve_seed_candidates,
 )
 from decision_engine import (
     DensityScanner,
@@ -67,6 +78,202 @@ from agents.synthesizer import SynthesizerAgent, SynthesisReport
 from observability import traced
 
 _RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph
+
+def _user_negates_food_category_in_query(q_raw: str, category: str) -> bool:
+    q = (q_raw or "").lower()
+    if category == "ramen":
+        return any(
+            k in (q_raw or "") for k in ("不吃拉麵", "不吃拉面", "不要拉麵", "不要拉面", "忌拉麵", "忌拉面")
+        ) or any(x in q for x in ("no ramen", "avoid ramen", "without ramen"))
+    if category == "izakaya":
+        return any(k in (q_raw or "") for k in ("不吃居酒屋", "不要居酒屋")) or "no izakaya" in q or "avoid izakaya" in q
+    if category == "dessert":
+        return ("不吃甜點" in (q_raw or "") or "不吃甜点" in (q_raw or "") or "不要甜點" in (q_raw or "")) or (
+            "no dessert" in q or "avoid dessert" in q
+        )
+    return False
+
+
+def _constraint_string_to_dietary_keys(constraint_raw: str) -> list[str]:
+    s = (constraint_raw or "").strip()
+    if not s:
+        return []
+    sl = s.lower().replace("-", "_")
+    direct = ItinerarySynthesizer._canonical_dietary_constraint_key(sl)
+    if direct:
+        return [direct]
+    keys: list[str] = []
+    if "不吃拉麵" in s or "不吃拉面" in s or ("拉麵" in s and "不吃" in s) or ("拉面" in s and "不吃" in s):
+        keys.append("no_ramen")
+    if "不吃牛" in s or ("牛肉" in s and "不吃" in s):
+        keys.append("no_beef")
+    if "不吃豬" in s or "不吃猪" in s or ("豬" in s and "不吃" in s) or ("猪" in s and "不吃" in s) or "不吃豚" in s:
+        keys.append("no_pork")
+    return list(dict.fromkeys(keys))
+
+
+def _dietary_keys_from_query_and_intent_signals(query_text: str) -> list[str]:
+    q_raw = query_text or ""
+    q = q_raw.lower()
+    keys: list[str] = []
+    if "vegan" in q or "純素" in q_raw:
+        keys.append("vegan")
+    elif "vegetarian" in q or "素食" in q_raw:
+        keys.append("vegetarian")
+    elif "pescatarian" in q:
+        keys.append("pescatarian")
+    if any(k in q_raw for k in ("不吃牛", "不吃牛肉")) or "no beef" in q or "avoid beef" in q:
+        keys.append("no_beef")
+    if any(k in q_raw for k in ("不吃拉麵", "不吃拉面")) or "no ramen" in q or "avoid ramen" in q:
+        keys.append("no_ramen")
+    if any(k in q_raw for k in ("不吃豬", "不吃猪", "不吃豚")) or "no pork" in q or "avoid pork" in q:
+        keys.append("no_pork")
+    return list(dict.fromkeys(keys))
+
+
+def _build_plan_excluded_shop_tags(
+    query_text: str,
+    intent: dict | None,
+    dietary_profile: dict | None,
+) -> frozenset[str]:
+    """Union of excluded shop tags from dietary_hints, profile ethics, explicit_constraints, and query."""
+    _intent = intent or {}
+    prof = dietary_profile or {}
+    key_list: list[str] = []
+
+    dh = _intent.get("dietary_hints")
+    if dh is not None and str(dh).strip():
+        for part in str(dh).split(","):
+            k = ItinerarySynthesizer._canonical_dietary_constraint_key(part.strip())
+            if k:
+                key_list.append(k)
+
+    pe = prof.get("ethics")
+    if pe is not None and str(pe).strip():
+        ek = ItinerarySynthesizer._canonical_dietary_constraint_key(str(pe).strip())
+        if ek:
+            key_list.append(ek)
+
+    for ec in _intent.get("explicit_constraints") or []:
+        key_list.extend(_constraint_string_to_dietary_keys(str(ec)))
+
+    key_list.extend(_dietary_keys_from_query_and_intent_signals(query_text))
+
+    return ItinerarySynthesizer.union_excluded_tags_from_dietary_keys(key_list)
+
+
+_DIETARY_CLARIFICATION_QUESTIONS: dict[str, str] = {
+    "no_beef": (
+        "請問您說不吃牛肉，是指：\n(A) 餐廳菜單完全不能有牛肉\n(B) 您自己不點牛肉，但可以去有牛肉的餐廳"
+    ),
+    "no_pork": (
+        "請問您說不吃豬肉，是指：\n(A) 餐廳菜單完全不能有豬肉\n(B) 您自己不點豬肉，但可以去有豬肉的餐廳"
+    ),
+    "no_ramen": (
+        "請問您說不吃拉麵，是指：\n(A) 餐廳完全不提供或主打拉麵\n(B) 您自己不點拉麵，但可以去有拉麵的店"
+    ),
+}
+
+_DIETARY_HINT_TO_PREFERS_KEY: dict[str, str] = {
+    "no_beef": "prefers_no_beef",
+    "no_pork": "prefers_no_pork",
+    "no_ramen": "prefers_no_ramen",
+}
+
+
+def _canonical_dietary_hints_list(dh: Any) -> list[str]:
+    raw = str(dh or "").strip()
+    if not raw:
+        return []
+    out: list[str] = []
+    for part in raw.split(","):
+        k = ItinerarySynthesizer._canonical_dietary_constraint_key(part.strip())
+        if k:
+            out.append(k)
+    return list(dict.fromkeys(out))
+
+
+def _ambiguous_dietary_hint_for_clarification(
+    intent: dict[str, Any],
+    resolved: dict[str, Any] | None,
+) -> str | None:
+    dh = intent.get("dietary_hints")
+    keys = _canonical_dietary_hints_list(dh)
+    if len(keys) != 1:
+        return None
+    hint_key = keys[0]
+    if hint_key not in _DIETARY_CLARIFICATION_QUESTIONS:
+        return None
+    r = str((resolved or {}).get(hint_key, "") or "").strip().lower()
+    if r in {"strict", "loose"}:
+        return None
+    return hint_key
+
+
+def _parse_dietary_clarification_reply(query: str) -> str | None:
+    q = (query or "").strip().upper()
+    ql = (query or "").strip()
+    if q in {"A", "(A)", "選A", "Ａ"} or ql.startswith("選項A"):
+        return "strict"
+    if q in {"B", "(B)", "選B", "Ｂ"} or ql.startswith("選項B"):
+        return "loose"
+    low = ql.lower()
+    if "菜單完全" in ql or "完全不能" in ql or "strict" in low:
+        return "strict"
+    if "我自己不點" in ql or "不點牛肉" in ql or "不點豬肉" in ql or "不點拉麵" in ql or "loose" in low:
+        return "loose"
+    return None
+
+
+def _strip_dietary_hint_key_from_intent(intent: dict[str, Any], hint_key: str) -> None:
+    keys = _canonical_dietary_hints_list(intent.get("dietary_hints"))
+    if not keys:
+        intent["dietary_hints"] = None
+        return
+    remainder = [x for x in keys if x != hint_key]
+    if not remainder:
+        intent["dietary_hints"] = None
+    else:
+        intent["dietary_hints"] = ",".join(remainder)
+
+
+def _consume_pending_dietary_clarification_answer(state: AgentState) -> bool:
+    """If user answered (A)/(B) while a clarification is pending, apply and skip full re-parse."""
+    pend = state.get("pending_dietary_clarification")
+    if not isinstance(pend, dict) or not pend.get("hint"):
+        return False
+    mode = _parse_dietary_clarification_reply(str(state.get("query") or ""))
+    if mode is None:
+        return False
+    hint = str(pend["hint"])
+    snap = pend.get("intent_snapshot")
+    if not isinstance(snap, dict):
+        return False
+    intent = copy.deepcopy(snap)
+    resolved = dict(state.get("dietary_clarification_resolved") or {})
+    resolved[hint] = mode
+    state["dietary_clarification_resolved"] = resolved
+    if mode == "strict":
+        pass
+    else:
+        pref = _DIETARY_HINT_TO_PREFERS_KEY.get(hint)
+        _strip_dietary_hint_key_from_intent(intent, hint)
+        if pref:
+            ec = list(intent.get("explicit_constraints") or [])
+            if pref not in ec:
+                ec.append(pref)
+                intent["explicit_constraints"] = ec
+    state["intent"] = intent
+    state.pop("pending_dietary_clarification", None)
+    state.pop("awaiting_dietary_clarification", None)
+    state.pop("clarification_broadcast", None)
+    state["plan_excluded_shop_tags"] = sorted(
+        _build_plan_excluded_shop_tags(state.get("query") or "", intent, state.get("dietary_profile"))
+    )
+    state.setdefault("transit_audit", []).append(
+        _dj("dietary_clarification_answer", hint=hint, mode=mode)
+    )
+    return True
 
 
 class AgentState(TypedDict):
@@ -105,6 +312,15 @@ class AgentState(TypedDict):
     retrieval_history: list[dict]   # append-only; RetrievalReport.as_dict() per round
     critique_history: list[dict]    # append-only; CritiqueReport.as_dict() per round
     synthesis_history: list[dict]   # append-only; SynthesisResult summary per round
+    #: Union of lowercase shop tags ruled out via :meth:`decision_engine.ItinerarySynthesizer.DIETARY_EXCLUDED_TAGS`
+    #: (intent + dietary profile); set in ``route_intent`` before retriever/plan consume candidates.
+    plan_excluded_shop_tags: list[str]
+    #: LangGraph checkpoint IDs (one entry per finished user/query round); used for undo / history UX.
+    turn_checkpoints: list[str]
+    dietary_clarification_resolved: dict[str, str]
+    pending_dietary_clarification: dict[str, Any] | None
+    awaiting_dietary_clarification: bool
+    clarification_broadcast: dict[str, Any] | None
     #: Set by a failing node → downstream nodes noop; orchestrator maps to client errors.
     error: dict[str, Any] | None
     #: Injected deps (``llm_router``, ``openai_chat_client``, ``flight_service``); empty {} uses module defaults.
@@ -139,6 +355,12 @@ class AgentStateModel(BaseModel):
     retrieval_history: list[dict] = Field(default_factory=list)
     critique_history: list[dict] = Field(default_factory=list)
     synthesis_history: list[dict] = Field(default_factory=list)
+    turn_checkpoints: list[str] = Field(default_factory=list)
+    plan_excluded_shop_tags: list[str] = Field(default_factory=list)
+    dietary_clarification_resolved: dict[str, str] = Field(default_factory=dict)
+    pending_dietary_clarification: dict[str, Any] | None = None
+    awaiting_dietary_clarification: bool = False
+    clarification_broadcast: dict[str, Any] | None = None
     error: dict[str, Any] | None = None
     runtime_services: dict[str, Any] = Field(default_factory=dict)
 
@@ -638,18 +860,23 @@ def _has_strong_ramen_intent(query: str) -> bool:
 
 
 def _extract_explicit_category_tags(query: str) -> set[str]:
-    q = (query or "").lower()
+    q_raw = query or ""
+    q = q_raw.lower()
     tags: set[str] = set()
-    if any(k in q for k in ("拉麵", "拉面", "ramen")):
+    if (any(k in q for k in ("拉麵", "拉面", "ramen"))) and not _user_negates_food_category_in_query(q_raw, "ramen"):
         tags.add("ramen")
-    if any(k in q for k in ("居酒屋", "izakaya")):
+    if (any(k in q for k in ("居酒屋", "izakaya"))) and not _user_negates_food_category_in_query(q_raw, "izakaya"):
         tags.add("izakaya")
     kws_l = [k.lower() for k in _extract_search_category_keywords(query)]
-    if any(x in kws_l for x in ("cake", "bakery", "dessert", "patisserie", "coffee", "cafe")):
+    if (
+        any(x in kws_l for x in ("cake", "bakery", "dessert", "patisserie", "coffee", "cafe"))
+        and not _user_negates_food_category_in_query(q_raw, "dessert")
+    ):
         tags.add("dessert")
     if any(x in kws_l for x in ("yakitori", "izakaya", "beer", "pub", "japanese pub")):
-        tags.add("izakaya")
-    if "ramen" in kws_l:
+        if not _user_negates_food_category_in_query(q_raw, "izakaya"):
+            tags.add("izakaya")
+    if "ramen" in kws_l and not _user_negates_food_category_in_query(q_raw, "ramen"):
         tags.add("ramen")
     return tags
 
@@ -659,16 +886,25 @@ def _direct_food_category_mentions(query: str) -> set[str]:
     q_raw = query or ""
     q = q_raw.lower()
     out: set[str] = set()
-    if any(k in q_raw for k in ("拉麵", "拉面")) or "ramen" in q:
+    if (
+        any(k in q_raw for k in ("拉麵", "拉面")) or "ramen" in q
+    ) and not _user_negates_food_category_in_query(q_raw, "ramen"):
         out.add("ramen")
-    if any(
-        k in q_raw
-        for k in ("蛋糕", "甜點", "甜点", "下午茶", "茶點", "巴斯克", "提拉米蘇", "抹茶", "戚風")
+    if (
+        any(
+            k in q_raw
+            for k in ("蛋糕", "甜點", "甜点", "下午茶", "茶點", "巴斯克", "提拉米蘇", "抹茶", "戚風")
+        )
+        and not _user_negates_food_category_in_query(q_raw, "dessert")
     ):
         out.add("dessert")
-    if any(k in q_raw for k in ("串燒", "串烧", "燒鳥", "烧鸟", "焼き鳥")) or "yakitori" in q:
+    if (
+        any(k in q_raw for k in ("串燒", "串烧", "燒鳥", "烧鸟", "焼き鳥")) or "yakitori" in q
+    ) and not _user_negates_food_category_in_query(q_raw, "izakaya"):
         out.add("izakaya")
-    if any(k in q_raw for k in ("居酒屋", "啤酒", "生啤")) or "izakaya" in q:
+    if (
+        any(k in q_raw for k in ("居酒屋", "啤酒", "生啤")) or "izakaya" in q
+    ) and not _user_negates_food_category_in_query(q_raw, "izakaya"):
         out.add("izakaya")
     return out
 
@@ -1955,9 +2191,44 @@ def _reliability_cutoff_for_region(region: str) -> float:
 
 
 @traced
+def node_clarify_constraint(state: AgentState) -> AgentState:
+    """Prompt strict vs loose for single-hint dietary exclusions before retrieval (non-revision only)."""
+    if state.get("error"):
+        return state
+    intent = state.get("intent") or {}
+    if not isinstance(intent, dict):
+        intent = {}
+    if not intent:
+        state.pop("awaiting_dietary_clarification", None)
+        state.pop("clarification_broadcast", None)
+        return state
+    resolved = dict(state.get("dietary_clarification_resolved") or {})
+    hint = _ambiguous_dietary_hint_for_clarification(intent, resolved)
+    if hint is None:
+        state.pop("awaiting_dietary_clarification", None)
+        state.pop("clarification_broadcast", None)
+        return state
+    if intent.get("is_revision"):
+        return state
+    qbody = _DIETARY_CLARIFICATION_QUESTIONS.get(hint)
+    if not qbody:
+        return state
+    state["pending_dietary_clarification"] = {
+        "hint": hint,
+        "intent_snapshot": copy.deepcopy(intent),
+    }
+    state["awaiting_dietary_clarification"] = True
+    state["clarification_broadcast"] = {"type": "clarification", "question": qbody, "hint": hint}
+    state.setdefault("transit_audit", []).append(_dj("dietary_clarification_prompt", hint=hint))
+    return state
+
+
+@traced
 def node_route_intent(state: AgentState) -> AgentState:
     """Parse intent once, store in state, and set routing flags."""
     q = state.get("query", "") or ""
+    if _consume_pending_dietary_clarification_answer(state):
+        return state
     ctid = (state.get("checkpoint_thread_id") or "").strip()
     prev_snap = state.get("intent")
     hist_full = list(state.get("intent_history") or [])
@@ -1991,6 +2262,7 @@ def node_route_intent(state: AgentState) -> AgentState:
         _attach_node_error(state, "route_intent", exc)
         state["intent_history"] = hist
         state["intent"] = None
+        state["plan_excluded_shop_tags"] = []
         state.setdefault("research_log", []).append(
             _dj("intent_parse_failed", reason=str(exc)[:500])
         )
@@ -2007,6 +2279,18 @@ def node_route_intent(state: AgentState) -> AgentState:
         state.setdefault("research_log", []).append(
             "使用者修正意圖：" + audit_json_line_as_text(_dj("user_intent_revision", message=msg))
         )
+    state["plan_excluded_shop_tags"] = sorted(
+        _build_plan_excluded_shop_tags(q, state["intent"], state.get("dietary_profile"))
+    )
+    pend = state.get("pending_dietary_clarification")
+    if isinstance(pend, dict) and pend.get("hint"):
+        cur_amb = _ambiguous_dietary_hint_for_clarification(
+            state["intent"] or {}, state.get("dietary_clarification_resolved") or {}
+        )
+        if cur_amb != pend.get("hint"):
+            state.pop("pending_dietary_clarification", None)
+            state.pop("awaiting_dietary_clarification", None)
+            state.pop("clarification_broadcast", None)
     # wants_flight_search retained for context but flight booking is not in main flow
     state["wants_flight_search"] = intent.wants_flight
     return state
@@ -2097,6 +2381,7 @@ async def node_retriever(state: AgentState) -> AgentState:
 
 
 def _researcher_shop_pool(state: AgentState) -> list[ShopProfile]:
+    excluded = plan_excluded_frozenset(state)
     _intent = state.get("intent") or {}
     _city = _intent.get("city") or ""
     if _city == "台北":
@@ -2115,18 +2400,21 @@ def _researcher_shop_pool(state: AgentState) -> list[ShopProfile]:
             continue
         seen.add(s.name)
         out.append(s)
-    return out
+    return filter_shop_profiles_by_dietary_exclusions(out, excluded)
 
 
 def _researcher_seed_catalog(state: AgentState) -> list[ShopProfile]:
     """City-scoped seed list only (no dynamic pool)."""
+    excluded = plan_excluded_frozenset(state)
     _intent = state.get("intent") or {}
     _city = _intent.get("city") or ""
     if _city == "台北":
-        return list(_build_shop_catalog_taipei())
-    if _city == "東京":
-        return list(_build_shop_catalog_tokyo())
-    return list(_build_shop_catalog())
+        seed = list(_build_shop_catalog_taipei())
+    elif _city == "東京":
+        seed = list(_build_shop_catalog_tokyo())
+    else:
+        seed = list(_build_shop_catalog())
+    return filter_shop_profiles_by_dietary_exclusions(seed, excluded)
 
 
 async def _call_researcher_prompt(
@@ -2456,6 +2744,7 @@ def agent_dp_find_optimal_path_no_shop_repeat(
     must_have_tags: set[str] | None = None,
     banned_node_ids: set[str] | None = None,
     solver_audit_log: list[str] | None = None,
+    excluded_shop_tags: frozenset[str] | None = None,
 ) -> list[GraphNode]:
     """Same semantics as decision_engine DP, plus distinct shop constraint + soft slot-tag affinity."""
     if solver_audit_log is not None:
@@ -2481,6 +2770,13 @@ def agent_dp_find_optimal_path_no_shop_repeat(
 
     banned_node_ids_set = banned_node_ids or set()
     usable_nodes = [n for n in graph.nodes if n.node_id not in banned_node_ids_set]
+    _excl = excluded_shop_tags or frozenset()
+    if _excl:
+        usable_nodes = [
+            n
+            for n in usable_nodes
+            if not ItinerarySynthesizer.node_tags_intersect_excluded(n.tags, _excl)
+        ]
     if not usable_nodes:
         if solver_audit_log is not None:
             solver_audit_log.append(_dj("dp_early_exit_agent", reason="all_nodes_filtered_by_banned_node_ids"))
@@ -2617,6 +2913,7 @@ def _dp_graph_builder_with_itinerary_day_pin(
     mode: OptimizationMode = OptimizationMode.BALANCED,
     requested_meal_count: int | None = None,
     slot_required_tags: dict[str, set[str]] | None = None,
+    excluded_shop_tags: frozenset[str] | None = None,
 ) -> SpatioTemporalGraph:
     g = _RAW_GRAPHBUILDER_BUILD(
         ranked,
@@ -2626,6 +2923,7 @@ def _dp_graph_builder_with_itinerary_day_pin(
         mode=mode,
         requested_meal_count=requested_meal_count,
         slot_required_tags=slot_required_tags,
+        excluded_shop_tags=excluded_shop_tags,
     )
     _pin_dp_graph_to_itinerary_day_and_relayer_edges(
         g, itinerary_start=start_time, ranked=ranked, traffic=traffic
@@ -2787,16 +3085,20 @@ def _append_graph_physical_transition_audit(
 
 
 @trace_agent_stage("planner")
-async def node_plan(state: AgentState) -> AgentState:
+async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) -> AgentState:
     print(_dj("debug_print", node="node_plan", message="Generating outcome report"))
     if state.get("error"):
-        return _finalize_plan_on_agent_error(state)
+        out = _finalize_plan_on_agent_error(state)
+        extend_turn_checkpoint_in_state(out, config)
+        return out
     try:
-        return await _node_plan_core(state)
+        out = await _node_plan_core(state)
     except Exception as exc:
         logger.exception("node_plan failed agent_run_id=%s", state.get("agent_run_id"))
         _attach_node_error(state, "plan", exc)
-        return _finalize_plan_on_agent_error(state)
+        out = _finalize_plan_on_agent_error(state)
+    extend_turn_checkpoint_in_state(out, config)
+    return out
 
 
 async def _node_plan_core(state: AgentState) -> AgentState:
@@ -2856,8 +3158,34 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         religious=str(dietary_raw.get("religious", "none")),
         medical={str(x) for x in dietary_raw.get("medical", [])},
     )
+    plan_excluded_tags = plan_excluded_frozenset(state)
+    if not plan_excluded_tags and _intent:
+        plan_excluded_tags = _build_plan_excluded_shop_tags(query_text, _intent, dietary_raw)
+        state["plan_excluded_shop_tags"] = sorted(plan_excluded_tags)
+    if plan_excluded_tags:
+        state["transit_audit"].append(
+            _dj(
+                "plan_excluded_shop_tags",
+                count=len(plan_excluded_tags),
+                sample=sorted(plan_excluded_tags)[:24],
+                note="ingress_via_route_intent_or_rebuilt",
+            )
+        )
+    excluded_shop_names = normalized_excluded_shop_names_from_intent(_intent)
+    if excluded_shop_names:
+        state["transit_audit"].append(
+            _dj(
+                "plan_excluded_shop_names",
+                count=len(excluded_shop_names),
+                sample=list(excluded_shop_names)[:12],
+            )
+        )
     expand_city = _intent.get("city") or "京都"
     expand_region = _intent.get("region") or "jp"
+    appetite_light_mode = "appetite_light" in _intent.get("explicit_constraints", [])
+    explicit_category_tags = _plan_global_explicit_tags(query_text)
+    must_have_tags = sorted(explicit_category_tags)
+    meal_slots_eff = _effective_plan_meal_slots(_intent, query_text)
     sns_fixtures, traffic_fixtures = _region_driven_mock_fixtures(expand_city, expand_region)
     sns_provider = MockSnsProvider(fixtures=sns_fixtures)
     traffic_provider = MockTrafficProvider(fixtures=traffic_fixtures)
@@ -2921,19 +3249,51 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     dynamic_shops: list[ShopProfile] = []
 
     # Seed catalog so planning never goes empty when nearby search fails or returns nothing.
-    if expand_city == "台北":
-        seed_shops = list(_build_shop_catalog_taipei())
-        state["transit_audit"].append(_dj("seed_shops_loaded", region="tw", profile="taipei", count=len(seed_shops)))
-    elif expand_city == "東京":
-        seed_shops = list(_build_shop_catalog_tokyo())
-        state["transit_audit"].append(_dj("seed_shops_loaded", region="jp", profile="tokyo", count=len(seed_shops)))
-    else:
-        seed_shops = list(_build_shop_catalog())
-        state["transit_audit"].append(_dj("seed_shops_loaded", region="jp", profile="kyoto", count=len(seed_shops)))
+    seed_shops = retrieve_seed_candidates(
+        city=expand_city,
+        dietary_constraints=DietaryConstraints(
+            excluded_shop_tags=plan_excluded_tags,
+            appetite_light=appetite_light_mode,
+            excluded_shop_names=excluded_shop_names,
+        ),
+        category_tags=must_have_tags,
+        meal_slots=meal_slots_eff,
+    )
+    state["transit_audit"].append(
+        _dj(
+            "retrieval_service_seed",
+            city=expand_city,
+            catalog_stem=catalog_stem_for_city(expand_city),
+            count=len(seed_shops),
+            meal_slots=meal_slots_eff,
+            category_tags=must_have_tags,
+        )
+    )
 
     for p in dynamic_pool[:60]:
         prof = _build_dynamic_shop_profile(p, region=str(p.get("region", "jp")))
         dynamic_shops.append(prof)
+    _dyn_die_before = len(dynamic_shops)
+    dynamic_shops = filter_shop_profiles_by_dietary_exclusions(dynamic_shops, plan_excluded_tags)
+    if len(dynamic_shops) < _dyn_die_before:
+        state["transit_audit"].append(
+            _dj(
+                "node_plan_dynamic_dietary_filtered",
+                dropped=_dyn_die_before - len(dynamic_shops),
+                kept=len(dynamic_shops),
+            )
+        )
+    _dyn_excl_before = len(dynamic_shops)
+    dynamic_shops = filter_shop_profiles_by_excluded_shop_names(dynamic_shops, excluded_shop_names)
+    if len(dynamic_shops) < _dyn_excl_before:
+        state["transit_audit"].append(
+            _dj(
+                "node_plan_dynamic_excluded_shop_names",
+                dropped=_dyn_excl_before - len(dynamic_shops),
+                kept=len(dynamic_shops),
+                sample=list(excluded_shop_names)[:8],
+            )
+        )
 
     shops = seed_shops + dynamic_shops
     deduped_shops: list[ShopProfile] = []
@@ -2970,8 +3330,6 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 _dj("researcher_candidates_applied", candidate_names=researcher_names, matched=len(shortlisted))
             )
 
-    explicit_category_tags = _plan_global_explicit_tags(query_text)
-    must_have_tags = sorted(explicit_category_tags)
     if must_have_tags:
         state["transit_audit"].append(
             _dj(
@@ -2984,7 +3342,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     if must_have_tags:
         must_have_set = {t.lower() for t in must_have_tags}
         shops_for_dynamic_planning = [
-            s for s in shops if any(str(tag).lower() in must_have_set for tag in s.tags)
+            s for s in shops_for_dynamic_planning if any(str(tag).lower() in must_have_set for tag in s.tags)
         ]
         state["transit_audit"].append(
             _dj(
@@ -2995,7 +3353,6 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             )
         )
 
-    appetite_light_mode = "appetite_light" in _intent.get("explicit_constraints", [])
     if appetite_light_mode:
         _ap_before = len(shops_for_dynamic_planning)
         shops_for_dynamic_planning = [
@@ -3259,7 +3616,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             score *= 1.15
         heuristic_scored.append(RankedShop(shop=s, final_score=float(score), preference_match_score=float(pref_match)))
     heuristic_scored.sort(key=lambda x: x.final_score, reverse=True)
-    requested_slots = _effective_plan_meal_slots(_intent, query_text)
+    requested_slots = meal_slots_eff
     requested_meal_count = _requested_meal_count(query_text)
     slot_required_tags = _slot_level_required_tags(query_text)
     if slot_required_tags:
@@ -3362,6 +3719,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             mode=mode,
             requested_meal_count=requested_meal_count,
             slot_required_tags=slot_required_tags if slot_required_tags else None,
+            excluded_shop_tags=plan_excluded_tags,
         )
         _append_graph_physical_transition_audit(
             graph=graph,
@@ -3378,6 +3736,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             must_have_tags=explicit_category_tags,
             k=5,
             meal_slots=_k_meal_slots_norm if _k_meal_slots_norm else None,
+            excluded_shop_tags=plan_excluded_tags,
         )
         state["transit_audit"].append(
             _dj("hybrid_phase2_dp_solver", phase="done", paths=len(k_paths))
@@ -3418,7 +3777,35 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             break
         if not selected_ranked_path:
             phase3_used_fallback = True
-            selected_ranked_path = ranked[: max(1, min(3, len(ranked)))]
+            fallback_pool = ranked
+            if plan_excluded_tags:
+                fb = [
+                    r
+                    for r in ranked
+                    if not ItinerarySynthesizer.shop_has_excluded_tag(r.shop, plan_excluded_tags)
+                ]
+                if not fb:
+                    fb = [
+                        rc
+                        for rc in phase1_candidates
+                        if not ItinerarySynthesizer.shop_has_excluded_tag(rc.shop, plan_excluded_tags)
+                    ]
+                if fb:
+                    fallback_pool = fb
+                else:
+                    state["transit_audit"].append(
+                        _dj(
+                            "phase3_fallback_empty_after_tag_exclusions",
+                            excluded_count=len(plan_excluded_tags),
+                            ranked_len=len(ranked),
+                        )
+                    )
+                    fallback_pool = []
+            if fallback_pool:
+                take_n = max(1, min(3, len(fallback_pool)))
+                selected_ranked_path = fallback_pool[:take_n]
+            else:
+                selected_ranked_path = []
             state["transit_audit"].append(
                 _dj(
                     "hybrid_phase3_fallback",
@@ -3459,6 +3846,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             slot_required_tags=slot_required_tags if slot_required_tags else None,
             appetite_light_mode=appetite_light_mode,
             respect_slot_order=respect_slot_order,
+            excluded_shop_tags=plan_excluded_tags,
         )
     boundary_skips = [w for w in synthesized.warnings if w.startswith("OPERATING_BOUNDARY_SKIP")]
     for skip_msg in boundary_skips:
@@ -3732,7 +4120,7 @@ def node_collect_feedback(state: AgentState) -> AgentState:
 
 
 @traced
-def node_synthesizer(state: AgentState) -> AgentState:
+def node_synthesizer(state: AgentState, config: Optional[RunnableConfig] = None) -> AgentState:
     """On-demand transcript mediator — runs only when the user pauses.
 
     Reads retrieval_history + critique_history, calls SynthesizerAgent (Gemini),
@@ -3782,10 +4170,12 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer:
 
     Graph topology
     --------------
-    route_intent → retriever → critic ⟲ (request_more → retriever, max-iter guard)
+    route_intent → clarify_constraint → retriever → researcher → critic ⟲ (request_more → researcher, max-iter guard)
                                   ↓ satisfied / deadlock
-                             collect_feedback → plan → END
-    synthesizer → END          (separate entry point; invoked on pause)
+                             collect_feedback → plan → END  (``plan`` appends LangGraph checkpoint id to ``turn_checkpoints``)
+    If ``clarify_constraint`` needs a strict/loose answer, the graph routes to END until the user replies (A/B).
+
+    synthesizer → END             (standalone; same bookkeeping when invoked in-graph)
 
     Note: node_researcher is still available but the critic verdict drives the loop.
     Flight-booking (node_flight_search) and Saga-reservation (node_audit) are
@@ -3793,6 +4183,7 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer:
     """
     g = StateGraph(AgentState)
     g.add_node("route_intent", node_route_intent)
+    g.add_node("clarify_constraint", node_clarify_constraint)
     g.add_node("retriever", node_retriever)
     g.add_node("researcher", node_researcher)
     g.add_node("critic", node_critic)
@@ -3801,7 +4192,17 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer:
     g.add_node("plan", node_plan)
     g.set_entry_point("route_intent")
 
-    g.add_edge("route_intent", "retriever")
+    def _after_clarify_constraint(state: AgentState) -> str:
+        if state.get("awaiting_dietary_clarification"):
+            return "end"
+        return "retriever"
+
+    g.add_edge("route_intent", "clarify_constraint")
+    g.add_conditional_edges(
+        "clarify_constraint",
+        _after_clarify_constraint,
+        {"end": END, "retriever": "retriever"},
+    )
     g.add_edge("retriever", "researcher")
     g.add_edge("researcher", "critic")
 

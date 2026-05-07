@@ -21,6 +21,7 @@ import pytest
 
 from intent_parser import (
     Intent,
+    intent_from_snapshot_dict,
     parse_intent,
     parse_intent_llm,
     parse_intent_rules,
@@ -51,6 +52,7 @@ def _valid_llm_json(**overrides: Any) -> str:
         "time_window": {"start": None, "end": None},
         "category_tags": ["sour", "taiwanese"],
         "dietary_hints": None,
+        "excluded_shops": [],
         "mode": "balanced",
         "explicit_constraints": [],
         "wants_flight": False,
@@ -281,6 +283,7 @@ class TestIntentFields:
             time_window=("10:00", "21:00"),
             category_tags=["ramen"],
             dietary_hints="vegan",
+            excluded_shops=["-demo-venue-"],
             mode="taste_max",
             explicit_constraints=["appetite_light"],
             wants_flight=False,
@@ -292,6 +295,21 @@ class TestIntentFields:
         assert recovered["city"] == "台北"
         assert recovered["meal_slots"] == ["lunch", "dinner"]
         assert recovered["time_window"] == ["10:00", "21:00"]
+        assert recovered["excluded_shops"] == ["-demo-venue-"]
+
+    def test_intent_snapshot_roundtrip_excluded_shops(self) -> None:
+        d = intent_from_snapshot_dict(
+            {"city": "京都", "excluded_shops": ["茶寮 都路里"], "confidence": 0.5},
+        ).as_dict()
+        assert d["city"] == "京都"
+        assert d["excluded_shops"] == ["茶寮 都路里"]
+
+
+class TestExcludedShopsQuickRules:
+    def test_parse_intent_rules_extracts_do_not_eat_phrase(self) -> None:
+        r = parse_intent_rules("三餐拉麵 不想吃茶寮都路里")
+        assert r is not None
+        assert any("茶寮" in x for x in r.excluded_shops)
 
 
 # ---------------------------------------------------------------------------

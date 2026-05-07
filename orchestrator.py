@@ -21,6 +21,7 @@ from graph_checkpoint_utils import (
     _graph_resolve_checkpoint_snapshot,
     _graph_supports_checkpointing,
     _graph_update_state,
+    turn_checkpoints_trimmed_to_checkpoint_id,
 )
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ logger = logging.getLogger(__name__)
 _KNOWN_GRAPH_NODES: frozenset[str] = frozenset(
     {
         "route_intent",
+        "clarify_constraint",
         "retriever",
         "researcher",
         "critic",
@@ -125,6 +127,14 @@ def _merge_continuation_invoke_state(
     rs = prev.get("runtime_services")
     if isinstance(rs, dict):
         merged["runtime_services"] = copy.deepcopy(rs)
+    dr = prev.get("dietary_clarification_resolved")
+    if isinstance(dr, dict) and dr:
+        merged["dietary_clarification_resolved"] = copy.deepcopy(dr)
+    pend = prev.get("pending_dietary_clarification")
+    if isinstance(pend, dict) and pend:
+        merged["pending_dietary_clarification"] = copy.deepcopy(pend)
+    if prev.get("awaiting_dietary_clarification"):
+        merged["awaiting_dietary_clarification"] = True
     ih = list(prev.get("intent_history") or [])
     pi = prev.get("intent")
     if isinstance(pi, dict) and pi:
@@ -141,6 +151,8 @@ def _merge_continuation_invoke_state(
     prev_itinerary = prev.get("final_itinerary") or ""
     if prev_itinerary:
         merged["prev_itinerary"] = prev_itinerary
+    tcp_prev = prev.get("turn_checkpoints")
+    merged["turn_checkpoints"] = [str(x) for x in tcp_prev] if isinstance(tcp_prev, list) else []
     return merged
 
 
@@ -317,6 +329,19 @@ class AgentOrchestrator:
                         fork_base["advanced_mode"] = advanced_mode
                         if user_locale is not None:
                             fork_base["user_locale"] = user_locale or ""
+                        rew_id = rewind_to_checkpoint.strip()
+                        try:
+                            head_snap = await _graph_get_state(graph, graph_cfg)
+                            hv = dict(getattr(head_snap, "values", None) or {})
+                            trimmed_tcp = turn_checkpoints_trimmed_to_checkpoint_id(
+                                hv.get("turn_checkpoints"), rew_id
+                            )
+                            if trimmed_tcp is not None:
+                                fork_base["turn_checkpoints"] = trimmed_tcp
+                        except Exception:
+                            logger.exception(
+                                "rewind prune turn_checkpoints failed thread=%s (non-fatal)", tid
+                            )
                         try:
                             stream_cfg = await _graph_update_state(graph, snap.config, fork_base)
                             stream_input = None
@@ -464,6 +489,15 @@ class AgentOrchestrator:
                                             "state": _state_excerpt(frag),
                                         },
                                     }
+                                    if (
+                                        node_name == "clarify_constraint"
+                                        and isinstance(frag.get("clarification_broadcast"), dict)
+                                        and frag["clarification_broadcast"].get("question")
+                                    ):
+                                        yield {
+                                            "event": "clarification",
+                                            "data": dict(frag["clarification_broadcast"]),
+                                        }
                                     await asyncio.sleep(0)
 
                         logger.info(
@@ -484,6 +518,7 @@ class AgentOrchestrator:
                 emit_success_done = not stream_failed
 
                 if emit_success_done:
+                    # Turn checkpoints are appended only by ``node_plan`` (see ``extend_turn_checkpoint_in_state``).
                     if stream_input is not None:
                         fallback_initial = stream_input
                     else:
@@ -508,6 +543,8 @@ class AgentOrchestrator:
                         "agent_run_id": tid,
                         "thread_id": tid,
                     }
+                    if resolved_final.get("awaiting_dietary_clarification"):
+                        done_body["awaiting_clarification"] = True
                     err = resolved_final.get("error")
                     if err:
                         done_body["error"] = err

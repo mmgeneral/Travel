@@ -287,7 +287,7 @@ class TestGraphTopology:
         # The synthesizer node should exist but have no incoming edge from critic/plan
         edges = {(e.source, e.target) for e in compiled_graph.edges}
         # synthesizer should not be reachable from the normal flow nodes
-        normal_flow = {"route_intent", "retriever", "researcher", "critic",
+        normal_flow = {"route_intent", "clarify_constraint", "retriever", "researcher", "critic",
                        "collect_feedback", "plan"}
         synthesizer_in_edges = {src for src, tgt in edges if tgt == "synthesizer" and src in normal_flow}
         assert not synthesizer_in_edges, (

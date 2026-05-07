@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
@@ -753,6 +754,93 @@ class ItinerarySynthesizer:
         "dinner": frozenset({"morning", "breakfast", "morning_set"}),
         "breakfast": frozenset({"late_night", "dinner", "izakaya"}),
     }
+    #: Hard filter: shop tag-bag (tags ∪ occasion_tags) ∩ excluded ≠ ∅ → ineligible.
+    DIETARY_EXCLUDED_TAGS: dict[str, frozenset[str]] = {
+        "no_beef": frozenset({"beef", "yakiniku", "bbq_yakiniku", "wagyu", "beef_cutlet", "katsu"}),
+        "no_ramen": frozenset({"ramen", "kotteri", "tonkotsu", "豚骨"}),
+        "no_pork": frozenset({"pork", "tonkatsu", "tonkotsu"}),
+        "vegetarian": frozenset(
+            {"beef", "pork", "chicken", "seafood", "beef_cutlet", "katsu", "yakiniku", "bbq_yakiniku", "wagyu"}
+        ),
+        "vegan": frozenset(
+            {
+                "beef",
+                "pork",
+                "chicken",
+                "seafood",
+                "dairy",
+                "beef_cutlet",
+                "katsu",
+                "yakiniku",
+                "bbq_yakiniku",
+                "wagyu",
+            }
+        ),
+        # Legacy / intent: fish allowed; land-animal meats excluded
+        "pescatarian": frozenset(
+            {
+                "beef",
+                "pork",
+                "chicken",
+                "meat",
+                "tonkatsu",
+                "tonkotsu",
+                "yakiniku",
+                "bbq_yakiniku",
+                "wagyu",
+                "beef_cutlet",
+                "katsu",
+            }
+        ),
+    }
+
+    @staticmethod
+    def _canonical_dietary_constraint_key(raw: str | None) -> str | None:
+        """Normalize API / profile strings to DIETARY_EXCLUDED_TAGS keys."""
+        if not raw:
+            return None
+        k = str(raw).strip().lower().replace("-", "_").replace(" ", "_")
+        if k in {"", "none", "omnivore", "unspecified", "regular"}:
+            return None
+        if k in {"nob_beef", "nobeef"}:
+            k = "no_beef"
+        if k in {"noramen", "no_ramyen"}:
+            k = "no_ramen"
+        if k in {"nopork"}:
+            k = "no_pork"
+        return k if k in ItinerarySynthesizer.DIETARY_EXCLUDED_TAGS else None
+
+    @staticmethod
+    def excluded_tags_for_dietary_key(key: str | None) -> frozenset[str]:
+        canon = ItinerarySynthesizer._canonical_dietary_constraint_key(key)
+        if not canon:
+            return frozenset()
+        return ItinerarySynthesizer.DIETARY_EXCLUDED_TAGS.get(canon, frozenset())
+
+    @staticmethod
+    def union_excluded_tags_from_dietary_keys(keys: Iterable[str | None]) -> frozenset[str]:
+        bag: set[str] = set()
+        for k in keys:
+            if not k:
+                continue
+            bag |= set(ItinerarySynthesizer.excluded_tags_for_dietary_key(str(k).strip()))
+        return frozenset(bag)
+
+    @staticmethod
+    def shop_has_excluded_tag(shop: ShopProfile, excluded: frozenset[str]) -> bool:
+        if not excluded:
+            return False
+        tag_bag = {str(t).lower() for t in shop.tags} | {
+            str(t).lower() for t in (getattr(shop, "occasion_tags", None) or ())
+        }
+        return bool(tag_bag & excluded)
+
+    @staticmethod
+    def node_tags_intersect_excluded(tags: tuple[str, ...] | Iterable[str], excluded: frozenset[str]) -> bool:
+        if not excluded:
+            return False
+        tag_bag = {str(t).lower() for t in tags}
+        return bool(tag_bag & excluded)
 
     @staticmethod
     def _slot_to_time_bucket(slot: str) -> str:
@@ -953,6 +1041,7 @@ class ItinerarySynthesizer:
         banned_node_ids: set[str] | None = None,
         solver_audit_log: list[str] | None = None,
         meal_slots: list[str] | None = None,
+        excluded_shop_tags: frozenset[str] | None = None,
     ) -> list[GraphNode]:
         """
         DAG longest-path with DP under fixed path length and tag-coverage constraints.
@@ -983,6 +1072,21 @@ class ItinerarySynthesizer:
 
         banned_node_ids = banned_node_ids or set()
         usable_nodes = [n for n in graph.nodes if n.node_id not in banned_node_ids]
+        _excluded = excluded_shop_tags or frozenset()
+        if _excluded:
+            before_dn = len(usable_nodes)
+            usable_nodes = [
+                n for n in usable_nodes if not ItinerarySynthesizer.node_tags_intersect_excluded(n.tags, _excluded)
+            ]
+            if solver_audit_log is not None and before_dn != len(usable_nodes):
+                solver_audit_log.append(
+                    _dj(
+                        "dp_excluded_tag_node_filter",
+                        excluded_count=len(_excluded),
+                        dropped=before_dn - len(usable_nodes),
+                        retained=len(usable_nodes),
+                    )
+                )
         if not usable_nodes:
             if solver_audit_log is not None:
                 solver_audit_log.append(
@@ -1179,6 +1283,7 @@ class ItinerarySynthesizer:
         must_have_tags: set[str] | None = None,
         k: int = 3,
         meal_slots: list[str] | None = None,
+        excluded_shop_tags: frozenset[str] | None = None,
     ) -> list[list[GraphNode]]:
         """
         Lightweight K-best paths: iteratively ban one chosen node from previous path
@@ -1193,6 +1298,7 @@ class ItinerarySynthesizer:
                 must_have_tags=must_have_tags,
                 banned_node_ids=banned,
                 meal_slots=meal_slots,
+                excluded_shop_tags=excluded_shop_tags,
             )
             if not path:
                 break
@@ -1217,6 +1323,7 @@ class ItinerarySynthesizer:
         slot_required_tags: dict[str, set[str]] | None = None,
         appetite_light_mode: bool = False,
         respect_slot_order: bool = False,
+        excluded_shop_tags: frozenset[str] | None = None,
     ) -> SynthesisResult:
         nodes: list[ScheduleNode] = []
         backups: list[str] = []
@@ -1247,6 +1354,7 @@ class ItinerarySynthesizer:
             mode=mode,
             requested_meal_count=requested_meal_count,
             slot_required_tags=slot_req_norm if slot_req_norm else None,
+            excluded_shop_tags=excluded_shop_tags,
         )
         graph_debug_traces.extend(graph.debug_traces)
         if not graph.debug_traces:
@@ -1263,6 +1371,7 @@ class ItinerarySynthesizer:
             must_have_tags=global_req,
             solver_audit_log=solver_audit_log,
             meal_slots=normalized_slots if normalized_slots else None,
+            excluded_shop_tags=excluded_shop_tags,
         )
         if optimal_nodes and len(optimal_nodes) < desired_len:
             warnings.append(
@@ -1282,6 +1391,12 @@ class ItinerarySynthesizer:
                     warnings.append(f"{slot_name or 'meal'} 無可用店家：DP 綁定清單長度不足")
                     break
                 slot_rs = ranked[i]
+                _excl = excluded_shop_tags or frozenset()
+                if _excl and ItinerarySynthesizer.shop_has_excluded_tag(slot_rs.shop, _excl):
+                    warnings.append(
+                        f"EXCLUDED_TAG_SKIP {slot_rs.shop.name}: matches excluded_shop_tags"
+                    )
+                    break
                 if slot_rs.shop.name in used:
                     warnings.append(f"DP_SLOT_ORDER_CONFLICT {slot_rs.shop.name} at slot_index={i}")
                     break
@@ -1334,6 +1449,9 @@ class ItinerarySynthesizer:
             scheduled = False
             for ranked_shop in candidates:
                 s = ranked_shop.shop
+                _ex_loop = excluded_shop_tags or frozenset()
+                if _ex_loop and ItinerarySynthesizer.shop_has_excluded_tag(s, _ex_loop):
+                    continue
                 candidate_current = current
                 candidate_last_meal_end = last_meal_end
                 alpha = float(getattr(s, "_isolation_factor", 0.0))
@@ -1612,6 +1730,7 @@ class GraphBuilder:
         mode: OptimizationMode = OptimizationMode.BALANCED,
         requested_meal_count: int | None = None,
         slot_required_tags: dict[str, set[str]] | None = None,
+        excluded_shop_tags: frozenset[str] | None = None,
     ) -> SpatioTemporalGraph:
         if not ranked:
             return SpatioTemporalGraph(nodes=[], edges=[], debug_traces=[])
@@ -1633,6 +1752,9 @@ class GraphBuilder:
             for r in ranked:
                 s = r.shop
                 if not ItinerarySynthesizer._shop_matches_slot_required_tags(s, slot_name, slot_req_norm):
+                    continue
+                _gx = excluded_shop_tags or frozenset()
+                if _gx and ItinerarySynthesizer.shop_has_excluded_tag(s, _gx):
                     continue
                 candidate_start = base_anchor
                 open_at = ItinerarySynthesizer._shop_open_at(candidate_start, s)

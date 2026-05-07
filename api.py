@@ -52,8 +52,8 @@ from orchestrator import AgentOrchestrator
 from agents.synthesizer import SynthesisReport
 from graph_checkpoint_utils import (
     _graph_get_state,
+    _graph_resolve_checkpoint_snapshot,
     _graph_has_checkpoint_state_reader,
-    _graph_history_chronological,
     _graph_supports_checkpointing,
     _graph_update_state,
 )
@@ -141,9 +141,33 @@ def _snapshot_ts_iso(snapshot: Any) -> str:
     return _now_iso()
 
 
-def _state_summary_preview(vals: dict[str, Any]) -> str:
-    text = str(vals.get("final_report") or vals.get("final_itinerary") or "")
-    return text[:50] if text else ""
+
+
+def _turn_checkpoint_summary(vals: dict[str, Any]) -> str:
+    """One-line recap for undo / timeline UI (city, user query excerpt, itinerary preview)."""
+    q = str(vals.get("query") or "").strip().replace("\n", " ")
+    if len(q) > 120:
+        q = q[:117] + "..."
+    intent = vals.get("intent")
+    city = ""
+    if isinstance(intent, dict):
+        city = str(intent.get("city") or "").strip()
+    excerpt = ""
+    fi = vals.get("final_itinerary")
+    if fi is not None:
+        excerpt = str(fi).strip().replace("\n", " ")
+        if len(excerpt) > 80:
+            excerpt = excerpt[:77] + "..."
+    bits: list[str] = []
+    if city and q:
+        bits.append(f"{city}: {q}")
+    elif q:
+        bits.append(q)
+    elif city:
+        bits.append(city)
+    if excerpt:
+        bits.append(excerpt)
+    return " · ".join(bits) if bits else ""
 
 
 def _transport_event_to_sse(msg: dict[str, Any]) -> str:
@@ -300,23 +324,37 @@ async def agent_history(
     request: Request,
     x_api_token: str = Header(default=""),
 ) -> dict[str, Any]:
-    """Checkpoint timeline for ``thread_id`` (oldest → newest); ``checkpoint_id`` is ``cp_XXX`` for rewind UX."""
+    """Timeline bookmarked **turns** for ``thread_id`` (oldest → newest).
+
+    Lists only IDs stored under ``AgentState.turn_checkpoints`` from the thread head —
+    never raw LangGraph node-level history (often 100+ entries).
+
+    ``label`` is ``cp_XXX`` (1-based) for UX. ``rewind_to_checkpoint`` should use ``checkpoint_id``.
+    """
     _require_api_token(x_api_token)
     graph = build_graph(checkpointer=getattr(request.app.state, "checkpointer", None))
-    hist = []
-    if _graph_supports_checkpointing(graph):
-        hist = await _graph_history_chronological(graph, thread_id)
-    checkpoints: list[dict[str, str]] = []
-    for i, sn in enumerate(hist, start=1):
-        vals = dict(getattr(sn, "values", None) or {})
-        checkpoints.append(
-            {
-                "checkpoint_id": f"cp_{i:03d}",
-                "ts": _snapshot_ts_iso(sn),
-                "summary": _state_summary_preview(vals),
-            }
-        )
-    return {"thread_id": thread_id, "checkpoints": checkpoints}
+    checkpoints: list[dict[str, Any]] = []
+    if _graph_supports_checkpointing(graph) and _graph_has_checkpoint_state_reader(graph):
+        cfg = {"configurable": {"thread_id": thread_id}}
+        try:
+            snap_head = await _graph_get_state(graph, cfg)
+        except Exception:
+            snap_head = None
+        vals = dict(getattr(snap_head, "values", None) or {}) if snap_head else {}
+        turn_ids = [str(x) for x in (vals.get("turn_checkpoints") or []) if x is not None]
+        for i, cid in enumerate(turn_ids, start=1):
+            resolved = await _graph_resolve_checkpoint_snapshot(graph, thread_id, cid)
+            prev = dict(getattr(resolved, "values", None) or {}) if resolved else {}
+            checkpoints.append(
+                {
+                    "checkpoint_id": cid,
+                    "label": f"cp_{i:03d}",
+                    "ts": _snapshot_ts_iso(resolved) if resolved else _now_iso(),
+                    "summary": _turn_checkpoint_summary(prev),
+                    "turn": str(i),
+                }
+            )
+    return {"thread_id": thread_id, "checkpoint_source": "turn_checkpoints", "checkpoints": checkpoints}
 
 
 @app.post("/agent/pause/{thread_id}")

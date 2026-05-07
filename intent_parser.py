@@ -17,7 +17,9 @@ region             str          "tw" | "jp" | "unknown"
 meal_slots         list[str]    subset of breakfast/lunch/tea/dinner/late_night
 time_window        tuple[str|None, str|None]  (HH:MM start, HH:MM end) or Nones
 category_tags      list[str]    e.g. ["ramen", "dessert"]
-dietary_hints      str | None   "vegan" | "vegetarian" | "pescatarian" | None
+dietary_hints      str | None   "vegan" | "vegetarian" | "pescatarian" | "no_beef" | "no_ramen" | "no_pork" | None
+excluded_shops     list[str]    venue names to avoid (「不想吃 X」); prefer canonical storefront strings
+excluded_tags      list[str]    category / cuisine tags to avoid (e.g. matcha, cafe); not venue names
 mode               str          "right_now" | "balanced" | "taste_max"
 explicit_constraints list[str]  e.g. ["appetite_light", "strong_ramen"]
 wants_flight       bool
@@ -59,6 +61,8 @@ class Intent:
     time_window: tuple[str | None, str | None] = (None, None)
     category_tags: list[str] = field(default_factory=list)
     dietary_hints: str | None = None
+    excluded_shops: list[str] = field(default_factory=list)
+    excluded_tags: list[str] = field(default_factory=list)
     mode: str = "balanced"
     explicit_constraints: list[str] = field(default_factory=list)
     wants_flight: bool = False
@@ -75,6 +79,8 @@ class Intent:
             "time_window": list(self.time_window),
             "category_tags": list(self.category_tags),
             "dietary_hints": self.dietary_hints,
+            "excluded_shops": list(self.excluded_shops),
+            "excluded_tags": list(self.excluded_tags),
             "mode": self.mode,
             "explicit_constraints": list(self.explicit_constraints),
             "wants_flight": self.wants_flight,
@@ -101,6 +107,14 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
         time_window=tw,
         category_tags=[str(x) for x in (d.get("category_tags") or []) if x is not None],
         dietary_hints=d.get("dietary_hints"),
+        excluded_shops=[str(x) for x in (d.get("excluded_shops") or []) if x is not None],
+        excluded_tags=list(
+            dict.fromkeys(
+                str(x).strip().lower()
+                for x in (d.get("excluded_tags") or [])
+                if x is not None and len(str(x).strip()) >= 2
+            )
+        ),
         mode=str(d.get("mode") or "balanced"),
         explicit_constraints=[str(x) for x in (d.get("explicit_constraints") or []) if x is not None],
         wants_flight=bool(d.get("wants_flight", False)),
@@ -278,14 +292,56 @@ def _extract_category_tags(query: str) -> set[str]:
 
 
 def _dietary_ethics(query: str) -> str | None:
-    q = (query or "").lower()
-    if "vegan" in q or "純素" in q:
+    q_raw = query or ""
+    q = q_raw.lower()
+    if "vegan" in q or "純素" in q_raw:
         return "vegan"
-    if "vegetarian" in q or "素食" in q:
+    if "vegetarian" in q or "素食" in q_raw:
         return "vegetarian"
     if "pescatarian" in q:
         return "pescatarian"
+    if any(k in q_raw for k in ("不吃牛", "不吃牛肉")) or "no beef" in q or "avoid beef" in q:
+        return "no_beef"
+    if any(k in q_raw for k in ("不吃拉麵", "不吃拉面")) or "no ramen" in q or "avoid ramen" in q:
+        return "no_ramen"
+    if any(k in q_raw for k in ("不吃豬", "不吃猪", "不吃豚")) or "no pork" in q or "avoid pork" in q:
+        return "no_pork"
     return None
+
+
+_RE_EXCLUDED_SHOP_CHUNK = re.compile(
+    r"(?:不想吃|不要吃|不喜歡吃|忌口|避開|排除)(?:這家|那家|本店)?\s*[：:]?\s*"
+    r"([\u3040-\u30ff\u4e00-\u9fffA-Za-z0-9〇・．.·\-＆&/／、，, ]{2,48})",
+    flags=re.UNICODE,
+)
+
+
+def _extract_excluded_shops_quick(query: str) -> list[str]:
+    """Surface-form venue tokens; LLM path should normalize to canonical storefront names."""
+    text = query or ""
+    out: list[str] = []
+    for m in _RE_EXCLUDED_SHOP_CHUNK.finditer(text):
+        chunk = m.group(1).strip()
+        if not chunk:
+            continue
+        for sep in ("、", ",", "，", "/", "／"):
+            if sep in chunk:
+                for part in chunk.split(sep):
+                    p = part.strip().rstrip("的店館院所")
+                    if len(p) >= 2:
+                        out.append(p)
+                break
+        else:
+            chunk = chunk.rstrip("的店館院所")
+            if len(chunk) >= 2:
+                out.append(chunk)
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for x in out:
+        if x not in seen:
+            seen.add(x)
+            deduped.append(x)
+    return deduped
 
 
 def _locale_to_city_region(token: str) -> tuple[str, str] | None:
@@ -364,11 +420,53 @@ class _LLMIntentSchema(BaseModel):
     time_window: dict[str, str | None] = {"start": None, "end": None}
     category_tags: list[str] = []
     dietary_hints: str | None = None
+    excluded_shops: list[str] = []
+    excluded_tags: list[str] = []
     mode: str = "balanced"
     explicit_constraints: list[str] = []
     wants_flight: bool = False
     confidence: float = 0.8
     is_revision: bool = False
+
+    @field_validator("excluded_shops", mode="before")
+    @classmethod
+    def _normalize_excluded_shops(cls, v: object) -> list[str]:
+        if v is None:
+            return []
+        if not isinstance(v, list):
+            return []
+        seen: set[str] = set()
+        out: list[str] = []
+        for x in v:
+            if x is None:
+                continue
+            s = str(x).strip()
+            if len(s) < 2:
+                continue
+            if s not in seen:
+                seen.add(s)
+                out.append(s)
+        return out
+
+    @field_validator("excluded_tags", mode="before")
+    @classmethod
+    def _normalize_excluded_tags(cls, v: object) -> list[str]:
+        if v is None:
+            return []
+        if not isinstance(v, list):
+            return []
+        seen: set[str] = set()
+        out: list[str] = []
+        for x in v:
+            if x is None:
+                continue
+            s = str(x).strip().lower()
+            if len(s) < 2:
+                continue
+            if s not in seen:
+                seen.add(s)
+                out.append(s)
+        return out
 
     @field_validator("meal_slots")
     @classmethod
@@ -406,6 +504,8 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
         time_window=(tw.get("start"), tw.get("end")),
         category_tags=list(s.category_tags),
         dietary_hints=s.dietary_hints,
+        excluded_shops=list(s.excluded_shops),
+        excluded_tags=list(s.excluded_tags),
         mode=str(s.mode),
         explicit_constraints=list(s.explicit_constraints),
         wants_flight=bool(s.wants_flight),
@@ -429,7 +529,9 @@ JSON schema:
   "meal_slots": ["<breakfast|lunch|tea|dinner|late_night>", ...],
   "time_window": {"start": "<HH:MM or null>", "end": "<HH:MM or null>"},
   "category_tags": ["<food category tags e.g. ramen, sushi, dessert, izakaya>", ...],
-  "dietary_hints": "<vegan|vegetarian|pescatarian|null>",
+  "dietary_hints": "<vegan|vegetarian|pescatarian|no_beef|no_ramen|no_pork|null>",
+  "excluded_shops": ["<canonical venue name(s) the user refuses, e.g. full storefront>", ...],
+  "excluded_tags": ["<lowercase category/cuisine tags to avoid, e.g. matcha, cafe, coffee>", ...],
   "mode": "<right_now|balanced|taste_max>",
   "explicit_constraints": ["<appetite_light|strong_ramen|...>"],
   "wants_flight": <true|false>,
@@ -441,6 +543,9 @@ Rules:
 - mode=right_now when user is hungry NOW or wants nearby results within 30 min.
 - mode=taste_max when food quality is the main focus.
 - mode=balanced otherwise.
+- excluded_shops: named venues only (specific restaurant/bar names). storefront name—prefer full local form (e.g. guidebook / map style). use [] if none.
+- excluded_tags: when the user bans a **food category / vibe / ingredient class** aligned with retrieval tags—e.g. no matcha, no cafes—use lowercase tags (`matcha`, `cafe`, `coffee`). use [] if none.
+  Never put venue names here (those go to `excluded_shops`). Diet/medical/ethics bans stay mainly in `dietary_hints` / `explicit_constraints`; `excluded_tags` complements tag-level negatives.
 - If city is unclear, leave it blank ("") and set region="unknown".
 - confidence reflects how sure you are of the extracted intent (0=not sure, 1=very sure).
 - is_revision: always false here (standalone extraction); refinement uses a dedicated prompt below.
@@ -463,7 +568,9 @@ Schema — same keys as cold extraction plus `is_revision`:
   "meal_slots": ["breakfast"|"lunch"|"tea"|"dinner"|"late_night", ...],
   "time_window": {"start": "<HH:MM or null>", "end": "<HH:MM or null>"},
   "category_tags": ["..."],
-  "dietary_hints": "<vegan|vegetarian|pescatarian|null>",
+  "dietary_hints": "<vegan|vegetarian|pescatarian|no_beef|no_ramen|no_pork|null>",
+  "excluded_shops": ["<specific venue(s) user refuses>", ...],
+  "excluded_tags": ["<lowercase tags to steer away from, e.g. matcha, cafe>", ...],
   "mode": "<right_now|balanced|taste_max>",
   "explicit_constraints": ["..."],
   "wants_flight": <true|false>,
@@ -480,6 +587,13 @@ Industry intent-refinement playbook
 * **Destructive pivot** (“改去台北”“算了換東京”“剛說拉麵改壽司”“不要拉麵了”): Replace every conflicting
   field; drop contradictory cuisine tags/meal slots/time constraints; rebuild mode if urgency changes.
   `is_revision` must be true.
+* **Venue avoidance** (“不想吃茶寮都路里”“避雷 ○○ 本店”“don’t suggest X”)：append to `excluded_shops`
+  using the fullest identifiable venue label (prior turn’s exclusions stay unless clearly overridden).
+  `is_revision` true when exclusions change materially.
+* Refinement phrase → field examples:
+  • “不要抹茶的店” ⇒ `"excluded_tags": ["matcha"]`.
+  • “把咖啡廳都換掉” ⇒ `"excluded_tags": ["cafe", "coffee"]`.
+  • “不想吃茶寮都路里” ⇒ `"excluded_shops": ["茶寮 都路里 祇園本店"]` — **venue** ⇒ `excluded_shops`, not `excluded_tags`.
 * **Neutral ack / same ask**: keep prior semantics; confidence may stay high and `is_revision` false only
   when nothing operative changes.
 * **Slot-level food swap** (“把午餐換成蕎麥麵”“晚餐改壽司”): Infer targeted `meal_slots`; update
@@ -549,6 +663,7 @@ def parse_intent_rules(
     meal_slots = _requested_meal_slots(query)
     category_tags = sorted(_extract_category_tags(query))
     dietary_hints = _dietary_ethics(query)
+    excluded_shops_quick = _extract_excluded_shops_quick(query)
     wants_flight = _is_flight_intent(query)
     appetite_light = _is_appetite_light(query)
     ramen = _is_ramen(query)
@@ -581,6 +696,8 @@ def parse_intent_rules(
         score += 0.15
     if dietary_hints:
         score += 0.10
+    if excluded_shops_quick:
+        score += 0.08
     if wants_flight:
         score += 0.10
     if mode == "right_now":
@@ -607,6 +724,7 @@ def parse_intent_rules(
         meal_slots
         or category_tags
         or dietary_hints
+        or excluded_shops_quick
         or wants_flight
         or mode == "right_now"
         or time_window[0]
@@ -621,6 +739,7 @@ def parse_intent_rules(
         time_window=time_window,
         category_tags=category_tags,
         dietary_hints=dietary_hints,
+        excluded_shops=excluded_shops_quick,
         mode=mode,
         explicit_constraints=explicit_constraints,
         wants_flight=wants_flight,

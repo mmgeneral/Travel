@@ -33,3 +33,5 @@ class AgentState(TypedDict):
     error:            Optional[str]    # non-fatal error accumulator
     intent:           Optional[Dict[str, Any]]
     intent_history:   List[Dict[str, Any]]
+    #: End-of-turn checkpoint ids (typically after ``plan``); used by time-travel UX.
+    turn_checkpoints: List[str]

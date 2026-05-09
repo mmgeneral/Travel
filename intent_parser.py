@@ -691,6 +691,10 @@ def parse_intent_rules(
     the query is too ambiguous for rules and needs LLM interpretation).
     Returns an ``Intent`` with a ``confidence`` score otherwise.
     """
+    _NEGATION_TOKENS = ("不想", "不要", "不吃", "不喜歡", "避開", "no ", "avoid", "don't want")
+    if any(tok in (query or "").lower() for tok in _NEGATION_TOKENS):
+        return None
+
     city, region, city_in_query = _resolve_city(query, user_locale, user_lat, user_lng)
     tr = _extract_time_range(query)
     time_window = (tr.start, tr.end)

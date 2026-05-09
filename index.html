@@ -422,30 +422,41 @@ function hideDietaryClarifyPanel(){
   p.style.display='none';
   p.innerHTML='';
 }
-/** @param {{question?:string,hint?:string,type?:string}} data */
-function showDietaryClarifyPanel(data){
+function showClarifyPanel(data){
   const p=document.getElementById('dietary-clarify-panel');
   if(!p)return;
   p.style.display='block';
   p.innerHTML='';
   const q=document.createElement('div');
   q.className='dc-q';
-  q.textContent=data.question||'請選擇飲食限制解讀方式';
+  q.textContent=data.question||'請提供更多資訊';
   p.appendChild(q);
   const row=document.createElement('div');
   row.className='dc-row';
-  const mk=(label,val)=>{
-    const b=document.createElement('button');
-    b.type='button';
-    b.className='btn dc-opt';
-    b.textContent=label;
-    b.onclick=()=>{hideDietaryClarifyPanel();send(val);};
-    row.appendChild(b);
-  };
-  mk('(A) 嚴格（菜單完全不能有）','A');
-  mk('(B) 寬鬆（自己不點即可）','B');
+  if(data.type==='dietary'){
+    const mk=(label,val)=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='btn dc-opt';
+      b.textContent=label;
+      b.onclick=()=>{hideDietaryClarifyPanel();send(val);};
+      row.appendChild(b);
+    };
+    mk('(A) 嚴格（菜單完全不能有）','A');
+    mk('(B) 寬鬆（自己不點即可）','B');
+  } else {
+    const inp=document.createElement('input');
+    inp.type='text'; inp.className='input';
+    inp.style.flex='1'; inp.style.minWidth='180px';
+    inp.placeholder=data.placeholder||'請輸入...';
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='btn'; btn.textContent='確認';
+    btn.onclick=()=>{const v=inp.value.trim();if(!v)return;hideDietaryClarifyPanel();send(v);};
+    inp.onkeydown=(e)=>{if(e.key==='Enter')btn.onclick();};
+    row.appendChild(inp); row.appendChild(btn);
+  }
   p.appendChild(row);
 }
+function showDietaryClarifyPanel(data){showClarifyPanel({...data,type:'dietary'});}
 let conversationRound=0;
 function refreshConversationBanner(){
   const el=document.getElementById('conv-banner-text');
@@ -638,8 +649,8 @@ async function send(presetQuery){
           }
         }
         else if(event==='clarification'){
-          if(data&&data.question)showDietaryClarifyPanel(data);
-          setStatus('busy','請確認飲食限制');
+          if(data&&data.question)showClarifyPanel(data);
+          setStatus('busy',data&&data.type==='dietary'?'請確認飲食限制':'請提供更多資訊');
         }
         else if(event==='node'){
           const label=NODE_LABELS[data.node]||'正在處理';

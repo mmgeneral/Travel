@@ -543,23 +543,42 @@ Rules:
 - mode=right_now when user is hungry NOW or wants nearby results within 30 min.
 - mode=taste_max when food quality is the main focus.
 - mode=balanced otherwise.
-- excluded_shops: named venues only (specific restaurant/bar names). storefront name—prefer full local form (e.g. guidebook / map style). use [] if none.
-- excluded_tags: when the user bans a **food category / vibe / ingredient class** aligned with retrieval tags—e.g. no matcha, no cafes—use lowercase tags (`matcha`, `cafe`, `coffee`). use [] if none.
-  Never put venue names here (those go to `excluded_shops`). Diet/medical/ethics bans stay mainly in `dietary_hints` / `explicit_constraints`; `excluded_tags` complements tag-level negatives.
-
-Examples for excluded_tags:
-- '不想吃麵' / '不吃麵食' / 'no noodles' ⇒ excluded_tags: ['ramen', 'noodle', 'udon', 'soba']
-- '不吃辣' ⇒ excluded_tags: ['spicy']
-- '不想去太貴的店' ⇒ excluded_tags: ['fine_dining', 'kaiseki']
-- '不想吃拉麵' ⇒ excluded_tags: ['ramen'], dietary_hints: 'no_ramen'
-- '想吃拉麵' ⇒ category_tags: ['ramen']  (positive, NOT in excluded_tags)
-
-Key rule: if user says they do NOT want something, always put the tag in excluded_tags (never in category_tags). category_tags is ONLY for things the user WANTS.
-- If city is unclear, leave it blank ("") and set region="unknown".
-- confidence reflects how sure you are of the extracted intent (0=not sure, 1=very sure).
-- is_revision: always false here (standalone extraction); refinement uses a dedicated prompt below.
-- If a "Current itinerary baseline" block appears below, the user may be amending that plan—extract tags and meal_slots accordingly and set is_revision true only when the operative request clearly changes the plan vs a greenfield query.
+- excluded_shops: named venues only (specific restaurant/bar names). use [] if none.
+- excluded_tags: ONLY for food categories/cuisines/vibes the user does NOT want.
+  Use lowercase retrieval tags (e.g. ramen, noodle, matcha, cafe, beef, spicy).
+  Never put venue names here. Use [] if none.
+- category_tags: ONLY for food categories the user DOES want. Never put negations here.
+- CRITICAL RULE — negation handling:
+  If the user says they do NOT want something (不想、不要、不吃、避開、換掉、no X、avoid X),
+  put the tag in excluded_tags. NEVER put it in category_tags.
+  If the user says they DO want something, put the tag in category_tags.
+- dietary_hints: use for ethical/medical/religious restrictions only (vegan, no_beef, no_pork, etc.).
+- confidence: 0.0 if city/meal intent is completely unclear; 1.0 if all fields are explicit.
+- is_revision: always false here.
 - Do NOT add examples or commentary. Output JSON only.
+
+Few-shot examples (these show correct mapping — study them carefully):
+
+Query: '我要去京都吃拉麵'
+Output: {'city':'京都','region':'jp','category_tags':['ramen'],'excluded_tags':[],'dietary_hints':null,'confidence':0.9}
+
+Query: '不想吃麵'
+Output: {'city':'','region':'unknown','category_tags':[],'excluded_tags':['ramen','noodle','udon','soba','tsukemen'],'dietary_hints':null,'confidence':0.5}
+
+Query: '幫我排行程，不要拉麵'
+Output: {'city':'','region':'unknown','category_tags':[],'excluded_tags':['ramen'],'dietary_hints':'no_ramen','confidence':0.6}
+
+Query: '我不吃牛肉，幫我排京都行程'
+Output: {'city':'京都','region':'jp','category_tags':[],'excluded_tags':['beef','yakiniku','wagyu'],'dietary_hints':'no_beef','confidence':0.85}
+
+Query: '不要抹茶的店'
+Output: {'city':'','region':'unknown','category_tags':[],'excluded_tags':['matcha'],'dietary_hints':null,'confidence':0.6}
+
+Query: '我想吃壽司，不要太貴'
+Output: {'city':'','region':'unknown','category_tags':['sushi'],'excluded_tags':['fine_dining','kaiseki'],'dietary_hints':null,'confidence':0.7}
+
+Query: '京都美食之旅，我要吃最好吃的'
+Output: {'city':'京都','region':'jp','category_tags':[],'excluded_tags':[],'dietary_hints':null,'mode':'taste_max','confidence':0.8}
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\
@@ -604,6 +623,11 @@ Industry intent-refinement playbook
   • '不想吃麵' ⇒ excluded_tags: ['ramen', 'noodle', 'udon', 'soba']
   • “把咖啡廳都換掉” ⇒ `"excluded_tags": ["cafe", "coffee"]`.
   • “不想吃茶寮都路里” ⇒ `"excluded_shops": ["茶寮 都路里 祇園本店"]` — **venue** ⇒ `excluded_shops`, not `excluded_tags`.
+  • '不想吃麵' / '不吃麵食' ⇒ excluded_tags: ['ramen','noodle','udon','soba','tsukemen'], dietary_hints: 'no_ramen'
+  • '不想吃辣' ⇒ excluded_tags: ['spicy']
+  • '想吃拉麵' ⇒ category_tags: ['ramen']  ← positive only, NOT excluded_tags
+  • '不要牛肉' ⇒ excluded_tags: ['beef','yakiniku','wagyu'], dietary_hints: 'no_beef'
+  CRITICAL: 否定句（不想、不要、不吃）→ excluded_tags。肯定句（想吃、要）→ category_tags。絕不混淆。
 * **Neutral ack / same ask**: keep prior semantics; confidence may stay high and `is_revision` false only
   when nothing operative changes.
 * **Slot-level food swap** (“把午餐換成蕎麥麵”“晚餐改壽司”): Infer targeted `meal_slots`; update

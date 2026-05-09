@@ -398,7 +398,10 @@ async function selectDay(day){
       stream.textContent=`Day ${day} 尚未同步，請輸入需求後按「發送」。`;
       return;
     }
-    stream.textContent=data.itinerary||`Day ${day} 沒有可顯示內容`;
+    stream.textContent=data.itinerary||'Day '+day+' 沒有可顯示內容';
+    if(data.ui_cards&&data.ui_cards.length){
+      renderCards(data.ui_cards);
+    }
   }catch{
     stream.textContent='讀取行程失敗，請稍後再試。';
   }

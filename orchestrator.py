@@ -130,11 +130,6 @@ def _merge_continuation_invoke_state(
     dr = prev.get("dietary_clarification_resolved")
     if isinstance(dr, dict) and dr:
         merged["dietary_clarification_resolved"] = copy.deepcopy(dr)
-    pend = prev.get("pending_dietary_clarification")
-    if isinstance(pend, dict) and pend:
-        merged["pending_dietary_clarification"] = copy.deepcopy(pend)
-    if prev.get("awaiting_dietary_clarification"):
-        merged["awaiting_dietary_clarification"] = True
     ih = list(prev.get("intent_history") or [])
     pi = prev.get("intent")
     if isinstance(pi, dict) and pi:

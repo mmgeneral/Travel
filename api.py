@@ -281,6 +281,7 @@ async def _stream_agent(
                 day=day,
                 itinerary_text=str(data.get("itinerary") or ""),
                 semantic_status=str(data.get("semantic_status") or "RUN_COMPLETED"),
+                ui_cards_json=json.dumps(data.get("ui_cards") or [], ensure_ascii=False),
             )
         yield _transport_event_to_sse(msg)
 
@@ -538,6 +539,7 @@ async def get_itinerary(day: int = 1, x_user_id: str = Header(default=""), x_api
         "updated_at": row["updated_at"],
         "itinerary": row["itinerary_text"],
         "semantic_status": row["semantic_status"],
+        "ui_cards": json.loads(row["ui_cards_json"] or "[]"),
     }
 
 
@@ -646,10 +648,16 @@ def _init_hold_store() -> None:
                 updated_at TEXT NOT NULL,
                 itinerary_text TEXT NOT NULL,
                 semantic_status TEXT NOT NULL,
+                ui_cards_json TEXT DEFAULT '[]',
                 PRIMARY KEY(user_id, day)
             )
             """
         )
+        # Migration for existing databases that lack ui_cards_json column
+        try:
+            conn.execute("ALTER TABLE itineraries ADD COLUMN ui_cards_json TEXT DEFAULT '[]'")
+        except Exception:
+            pass
 
 
 def _insert_intent(intent_id: str, offer_id: str, passenger_id: str, idem_key: str, saga_id: str) -> None:
@@ -817,20 +825,21 @@ def _save_dietary_profile(user_id: str, profile: dict) -> dict:
     return normalized
 
 
-def _save_itinerary(user_id: str, day: int, itinerary_text: str, semantic_status: str = "RUN_COMPLETED") -> None:
+def _save_itinerary(user_id: str, day: int, itinerary_text: str, semantic_status: str = "RUN_COMPLETED", ui_cards_json: str = "[]") -> None:
     now = _now_iso()
     with _db_conn() as conn:
         conn.execute("BEGIN IMMEDIATE")
         conn.execute(
             """
-            INSERT INTO itineraries(user_id, day, updated_at, itinerary_text, semantic_status)
-            VALUES(?, ?, ?, ?, ?)
+            INSERT INTO itineraries(user_id, day, updated_at, itinerary_text, semantic_status, ui_cards_json)
+            VALUES(?, ?, ?, ?, ?, ?)
             ON CONFLICT(user_id, day) DO UPDATE SET
                 updated_at=excluded.updated_at,
                 itinerary_text=excluded.itinerary_text,
-                semantic_status=excluded.semantic_status
+                semantic_status=excluded.semantic_status,
+                ui_cards_json=excluded.ui_cards_json
             """,
-            (user_id, int(day), now, itinerary_text, semantic_status),
+            (user_id, int(day), now, itinerary_text, semantic_status, ui_cards_json),
         )
         conn.execute("COMMIT")
 
@@ -838,7 +847,7 @@ def _save_itinerary(user_id: str, day: int, itinerary_text: str, semantic_status
 def _get_itinerary(user_id: str, day: int) -> dict | None:
     with _db_conn() as conn:
         row = conn.execute(
-            "SELECT user_id, day, updated_at, itinerary_text, semantic_status FROM itineraries WHERE user_id=? AND day=?",
+            "SELECT user_id, day, updated_at, itinerary_text, semantic_status, ui_cards_json FROM itineraries WHERE user_id=? AND day=?",
             (user_id, int(day)),
         ).fetchone()
     return dict(row) if row is not None else None

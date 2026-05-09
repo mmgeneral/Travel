@@ -548,37 +548,50 @@ Rules:
   Use lowercase retrieval tags (e.g. ramen, noodle, matcha, cafe, beef, spicy).
   Never put venue names here. Use [] if none.
 - category_tags: ONLY for food categories the user DOES want. Never put negations here.
-- CRITICAL RULE — negation handling:
-  If the user says they do NOT want something (不想、不要、不吃、避開、換掉、no X、avoid X),
-  put the tag in excluded_tags. NEVER put it in category_tags.
-  If the user says they DO want something, put the tag in category_tags.
+- CRITICAL RULE — negation handling (STRICTLY ENFORCE):
+  * If the user says they do NOT want something (不想、不要、不吃、不喜歡、避開、換掉、no X、avoid X、don't want X),
+    put the tag in excluded_tags. NEVER EVER put it in category_tags.
+  * If the user says they DO want something (想吃、要吃、喜歡、推薦、want X、love X),
+    put the tag in category_tags. NEVER put it in excluded_tags.
+  * Negation keywords override everything: "不吃牛" means excluded_tags:["beef"], NOT category_tags:["beef"].
+  * "不想吃拉麵" means excluded_tags:["ramen"], NOT category_tags:["ramen"].
+  * When in doubt about negation vs affirmation, re-read the user's exact words.
 - dietary_hints: use for ethical/medical/religious restrictions only (vegan, no_beef, no_pork, etc.).
 - confidence: 0.0 if city/meal intent is completely unclear; 1.0 if all fields are explicit.
 - is_revision: always false here.
 - Do NOT add examples or commentary. Output JSON only.
 
-Few-shot examples (these show correct mapping — study them carefully):
+Few-shot examples demonstrating CORRECT negation handling (study these patterns):
 
 Query: '我要去京都吃拉麵'
-Output: {'city':'京都','region':'jp','category_tags':['ramen'],'excluded_tags':[],'dietary_hints':null,'confidence':0.9}
+Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["ramen"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":false}
 
 Query: '不想吃麵'
-Output: {'city':'','region':'unknown','category_tags':[],'excluded_tags':['ramen','noodle','udon','soba','tsukemen'],'dietary_hints':null,'confidence':0.5}
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["ramen","noodle","udon","soba","tsukemen"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.5,"is_revision":false}
 
 Query: '幫我排行程，不要拉麵'
-Output: {'city':'','region':'unknown','category_tags':[],'excluded_tags':['ramen'],'dietary_hints':'no_ramen','confidence':0.6}
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_ramen","excluded_shops":[],"excluded_tags":["ramen"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
 
 Query: '我不吃牛肉，幫我排京都行程'
-Output: {'city':'京都','region':'jp','category_tags':[],'excluded_tags':['beef','yakiniku','wagyu'],'dietary_hints':'no_beef','confidence':0.85}
+Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.85,"is_revision":false}
 
 Query: '不要抹茶的店'
-Output: {'city':'','region':'unknown','category_tags':[],'excluded_tags':['matcha'],'dietary_hints':null,'confidence':0.6}
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["matcha"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
 
 Query: '我想吃壽司，不要太貴'
-Output: {'city':'','region':'unknown','category_tags':['sushi'],'excluded_tags':['fine_dining','kaiseki'],'dietary_hints':null,'confidence':0.7}
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["sushi"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["fine_dining","kaiseki"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.7,"is_revision":false}
 
 Query: '京都美食之旅，我要吃最好吃的'
-Output: {'city':'京都','region':'jp','category_tags':[],'excluded_tags':[],'dietary_hints':null,'mode':'taste_max','confidence':0.8}
+Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.8,"is_revision":false}
+
+Query: '不吃牛'
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
+
+Query: '不要有牛肉'
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
+
+Query: '不想吃拉麵'
+Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_ramen","excluded_shops":[],"excluded_tags":["ramen"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\

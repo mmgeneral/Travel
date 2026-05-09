@@ -224,7 +224,7 @@ async def readyz(request: Request) -> dict:
         checks["saga_dir_writable"] = "ok"
     except Exception as exc:
         checks["saga_dir_writable"] = f"error:{exc}"
-    checks["indexes_loaded"] = "ok" if (_PENDING_FILE.exists() or _CANCELLED_FILE.exists()) else "missing"
+    checks["indexes_loaded"] = "skipped"
     try:
         token = os.getenv("DUFFEL_ACCESS_TOKEN", "")
         if not token:

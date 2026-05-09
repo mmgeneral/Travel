@@ -546,6 +546,15 @@ Rules:
 - excluded_shops: named venues only (specific restaurant/bar names). storefront name—prefer full local form (e.g. guidebook / map style). use [] if none.
 - excluded_tags: when the user bans a **food category / vibe / ingredient class** aligned with retrieval tags—e.g. no matcha, no cafes—use lowercase tags (`matcha`, `cafe`, `coffee`). use [] if none.
   Never put venue names here (those go to `excluded_shops`). Diet/medical/ethics bans stay mainly in `dietary_hints` / `explicit_constraints`; `excluded_tags` complements tag-level negatives.
+
+Examples for excluded_tags:
+- '不想吃麵' / '不吃麵食' / 'no noodles' ⇒ excluded_tags: ['ramen', 'noodle', 'udon', 'soba']
+- '不吃辣' ⇒ excluded_tags: ['spicy']
+- '不想去太貴的店' ⇒ excluded_tags: ['fine_dining', 'kaiseki']
+- '不想吃拉麵' ⇒ excluded_tags: ['ramen'], dietary_hints: 'no_ramen'
+- '想吃拉麵' ⇒ category_tags: ['ramen']  (positive, NOT in excluded_tags)
+
+Key rule: if user says they do NOT want something, always put the tag in excluded_tags (never in category_tags). category_tags is ONLY for things the user WANTS.
 - If city is unclear, leave it blank ("") and set region="unknown".
 - confidence reflects how sure you are of the extracted intent (0=not sure, 1=very sure).
 - is_revision: always false here (standalone extraction); refinement uses a dedicated prompt below.
@@ -592,6 +601,7 @@ Industry intent-refinement playbook
   `is_revision` true when exclusions change materially.
 * Refinement phrase → field examples:
   • “不要抹茶的店” ⇒ `"excluded_tags": ["matcha"]`.
+  • '不想吃麵' ⇒ excluded_tags: ['ramen', 'noodle', 'udon', 'soba']
   • “把咖啡廳都換掉” ⇒ `"excluded_tags": ["cafe", "coffee"]`.
   • “不想吃茶寮都路里” ⇒ `"excluded_shops": ["茶寮 都路里 祇園本店"]` — **venue** ⇒ `excluded_shops`, not `excluded_tags`.
 * **Neutral ack / same ask**: keep prior semantics; confidence may stay high and `is_revision` false only

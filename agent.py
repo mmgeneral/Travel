@@ -3409,228 +3409,44 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             meal_slot_optimized=bool(requested_slots),
         )
     )
-    # Phase 2: DP Solver on top-15 (calendar-pin GraphBuilder wrapper: single excursion day vs per-node align drift)
-    with _pinned_travel_dp_calendar_and_solver():
-        state["transit_audit"].append(
-            _dj(
-                "dp_graph_itinerary_calendar_pin_armed",
-                itinerary_date=str(synth_start_time.date()),
-            )
-        )
-        state["transit_audit"].append(_dj("hybrid_phase2_dp_solver", phase="start"))
-        graph = GraphBuilder.build_graph(
-            ranked=phase1_candidates,
-            traffic=traffic_provider,
-            start_time=synth_start_time,
-            meal_slots=requested_slots,
-            mode=mode,
-            requested_meal_count=requested_meal_count,
-            slot_required_tags=slot_required_tags if slot_required_tags else None,
-            excluded_shop_tags=plan_excluded_tags,
-        )
-        _append_graph_physical_transition_audit(
-            graph=graph,
-            ranked=phase1_candidates,
-            traffic=traffic_provider,
-            transit_audit=state["transit_audit"],
-            mode=mode,
-        )
-        desired_len = max(1, requested_meal_count or len(requested_slots or phase1_candidates[:3]))
-        _k_meal_slots_norm = ItinerarySynthesizer._normalize_slot_sequence(requested_slots) if requested_slots else []
-        k_paths = ItinerarySynthesizer.find_k_optimal_paths(
-            graph=graph,
-            required_length=desired_len,
-            must_have_tags=explicit_category_tags,
-            k=5,
-            meal_slots=_k_meal_slots_norm if _k_meal_slots_norm else None,
-            excluded_shop_tags=plan_excluded_tags,
-        )
-        state["transit_audit"].append(
-            _dj("hybrid_phase2_dp_solver", phase="done", paths=len(k_paths))
-        )
-
-        # --- Hard Lock Constraints (must_include / must_exclude) ---
-        _intent_hard = state.get("intent") or {}
-        must_include: list[str] = [
-            str(s).strip() for s in _intent_hard.get("must_include_shops", []) if str(s).strip()
-        ]
-        must_exclude: list[str] = [
-            str(s).strip() for s in _intent_hard.get("must_exclude_shops", []) if str(s).strip()
-        ]
-        if must_include or must_exclude:
-            state["transit_audit"].append(
-                _dj(
-                    "hard_lock_constraints",
-                    must_include=must_include,
-                    must_exclude=must_exclude,
-                    before_filter=len(k_paths),
-                )
-            )
-            filtered_paths: list[list[GraphNode]] = []
-            for path in k_paths:
-                path_names = {n.shop_name for n in path}
-                if must_include and not must_include.issubset(path_names):
-                    continue
-                if must_exclude and path_names & set(must_exclude):
-                    continue
-                filtered_paths.append(path)
-            rejected_count = len(k_paths) - len(filtered_paths)
-            if rejected_count > 0:
-                state["transit_audit"].append(
-                    _dj(
-                        "hard_lock_filtered",
-                        kept=len(filtered_paths),
-                        rejected=rejected_count,
-                    )
-                )
-            k_paths = filtered_paths
-        # ----------------------------------------------------------
-
-        # Phase 3: Saga Commitment (SNS probe + flight lock), fallback to next-best path on failure.
-        state["transit_audit"].append(_dj("hybrid_phase3_saga_commitment", phase="start"))
-        ranked_by_name = {r.shop.name: r for r in phase1_candidates}
-        selected_ranked_path: list[RankedShop] = []
-        phase3_used_fallback = False
-        risk_keywords = ("火山", "臨休", "休業", "完売", "sold out")
-        for idx, path in enumerate(k_paths, start=1):
-            path_ordered = sorted(path, key=lambda n: (n.slot_index, n.shop_name))
-            path_names = [n.shop_name for n in path_ordered]
-            phase3_failed = False
-            for name in path_names:
-                r = ranked_by_name.get(name)
-                if r is None:
-                    continue
-                signal = sns_provider.check_store_status(r.shop.sns_handle).lower()
-                if any(k in signal for k in risk_keywords):
-                    state["transit_audit"].append(
-                        _dj(
-                            "hybrid_phase3_fail",
-                            path_index=idx,
-                            shop=name,
-                            reason="sns_risk",
-                        )
-                    )
-                    phase3_failed = True
-                    break
-            if phase3_failed:
-                continue
-            # --- Quick timing validity check (reject paths that will trigger boundary skip) ---
-            timing_valid = True
-            for k in range(len(path_ordered) - 1):
-                a_node = path_ordered[k]
-                b_node = path_ordered[k + 1]
-                shop_a = ranked_by_name.get(a_node.shop_name)
-                shop_b = ranked_by_name.get(b_node.shop_name)
-                if shop_a is None or shop_b is None:
-                    continue
-                cooldown_m = ItinerarySynthesizer._calculate_cooldown(
-                    shop_a.shop,
-                    mode=mode,
-                    requested_meal_count=None,
-                    appetite_light_mode=False,
-                )
-                eat_end_min = (
-                    int(shop_a.shop.base_wait_minutes)
-                    + int(shop_a.shop.min_eat_minutes or shop_a.shop.avg_eat_minutes)
-                )
-                travel_m = 18 + (8 * a_node.slot_index)
-                ready_at_try = a_node.start_time + timedelta(minutes=eat_end_min + cooldown_m + travel_m)
-                b_open = ItinerarySynthesizer._shop_open_at(b_node.start_time, shop_b.shop)
-                if ready_at_try > b_node.start_time or b_node.start_time < b_open:
-                    timing_valid = False
-                    state["transit_audit"].append(
-                        _dj(
-                            "hybrid_phase3_reject_due_time",
-                            path_index=idx,
-                            detail=f"{shop_a.shop.name}→{shop_b.shop.name} timing conflict",
-                        )
-                    )
-                    break
-            if not timing_valid:
-                continue
-            selected_ranked_path = [ranked_by_name[n] for n in path_names if n in ranked_by_name]
-            state["transit_audit"].append(
-                _dj("hybrid_phase3_commit", path_index=idx, shops=path_names)
-            )
+    # ------------------------------------------------------------------
+    # MOCK DP / Synthesis – skip all graph building and cooldown.
+    # Pick top N shops from phase1_candidates and assign fixed timestamps.
+    # ------------------------------------------------------------------
+    take_n = max(1, min(3, len(phase1_candidates)))
+    ranked = phase1_candidates[:take_n]
+    state["transit_audit"].append(
+        _dj("mock_plan", mode="skip_dp_graph", slots=len(ranked))
+    )
+    # Build a fake SynthesisResult with fixed time slots.
+    slot_timings = [("11:30", "12:30"), ("13:00", "14:00"), ("14:30", "15:30")]
+    from decision_engine import SynthesisNode, SynthesisResult as _SynthesisResult
+    mock_date = synth_start_time.date()
+    nodes = []
+    for i, r in enumerate(ranked):
+        if i >= len(slot_timings):
             break
-            fallback_pool = ranked
-            if plan_excluded_tags:
-                fb = [
-                    r
-                    for r in ranked
-                    if not ItinerarySynthesizer.shop_has_excluded_tag(r.shop, plan_excluded_tags)
-                ]
-                if not fb:
-                    fb = [
-                        rc
-                        for rc in phase1_candidates
-                        if not ItinerarySynthesizer.shop_has_excluded_tag(rc.shop, plan_excluded_tags)
-                    ]
-                if fb:
-                    fallback_pool = fb
-                else:
-                    state["transit_audit"].append(
-                        _dj(
-                            "phase3_fallback_empty_after_tag_exclusions",
-                            excluded_count=len(plan_excluded_tags),
-                            ranked_len=len(ranked),
-                        )
-                    )
-                    fallback_pool = []
-            if fallback_pool:
-                take_n = max(1, min(3, len(fallback_pool)))
-                selected_ranked_path = fallback_pool[:take_n]
-            else:
-                selected_ranked_path = []
-            state["transit_audit"].append(
-                _dj(
-                    "hybrid_phase3_fallback",
-                    detail="no committed path; using heuristic top picks",
-                )
-            )
-
-        ranked = selected_ranked_path
-        _binding_slots_norm = ItinerarySynthesizer._normalize_slot_sequence(
-            requested_slots or []
-        )
-        respect_slot_order = (
-            (not phase3_used_fallback)
-            and len(_binding_slots_norm) > 0
-            and len(ranked) == len(_binding_slots_norm)
-        )
-        if respect_slot_order:
-            state["transit_audit"].append(
-                _dj(
-                    "synth_respects_dp_slot_order",
-                    slots=_binding_slots_norm,
-                    shops=[r.shop.name for r in ranked],
-                )
-            )
-        synth_mode = OptimizationMode.BALANCED if mode == OptimizationMode.RIGHT_NOW else mode
-        synthesized = ItinerarySynthesizer.synthesize(
-            ranked,
-            traffic_provider,
-            user_pref,
-            start_time=synth_start_time,
-            sns_adapter=sns_provider,
-            isolation_threshold=0.7,
-            mode=synth_mode,
-            meal_slots=requested_slots,
-            global_end_time=global_end_dt,
-            requested_meal_count=requested_meal_count,
-            explicit_required_tags=explicit_category_tags,
-            slot_required_tags=slot_required_tags if slot_required_tags else None,
-            appetite_light_mode=appetite_light_mode,
-            respect_slot_order=respect_slot_order,
-            excluded_shop_tags=plan_excluded_tags,
-        )
-    boundary_skips = [w for w in synthesized.warnings if w.startswith("OPERATING_BOUNDARY_SKIP")]
-    for skip_msg in boundary_skips:
-        state["transit_audit"].append(
-            _dj("synthesis_warning_forwarded", warning=skip_msg)
-        )
-    if synthesized.rollback_triggered:
-        state["transit_audit"].append(_dj("early_interception_rollback_triggered"))
+        start_str, end_str = slot_timings[i]
+        sh, sm = map(int, start_str.split(":"))
+        eh, em = map(int, end_str.split(":"))
+        start_dt = datetime(mock_date.year, mock_date.month, mock_date.day, sh, sm, tzinfo=synth_start_time.tzinfo)
+        end_dt = datetime(mock_date.year, mock_date.month, mock_date.day, eh, em, tzinfo=synth_start_time.tzinfo)
+        nodes.append(SynthesisNode(
+            title=r.shop.name,
+            start_at=start_dt,
+            end_at=end_dt,
+            shop_profile=r.shop,
+            note="MOCK – fixed timing (no DP)",
+        ))
+    synthesized = _SynthesisResult(
+        nodes=nodes,
+        warnings=[],
+        backup_nodes=[],
+        rollback_triggered=False,
+        solver_audit_log=[],
+        graph_debug_traces=[],
+        mermaid="",
+    )
 
     # Health_Check before commitment: if over budget, rollback to healthier backup.
     if ranked:

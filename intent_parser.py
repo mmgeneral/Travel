@@ -12,7 +12,7 @@ parse_intent_llm(query, llm_router, *, previous_intent=None,
 
 Intent dataclass fields
 -----------------------
-city               str          e.g. "台北" / "京都" / "東京"
+city               str | None   concrete city name; ``None`` when unknown (never silently defaulted)
 region             str          "tw" | "jp" | "unknown"
 meal_slots         list[str]    subset of breakfast/lunch/tea/dinner/late_night
 time_window        tuple[str|None, str|None]  (HH:MM start, HH:MM end) or Nones
@@ -25,6 +25,8 @@ explicit_constraints list[str]  e.g. ["appetite_light", "strong_ramen"]
 wants_flight       bool
 confidence         float        0.0–1.0 (rules estimate)
 is_revision        bool         refinement-turn marker (typically from LLM when prior exists)
+is_actionable      bool         False → route_intent ends early with LLM ``actionability_followup``
+actionability_followup str|None  User-facing (A)–(D) clarification when not actionable
 
 Design notes
 ------------
@@ -49,14 +51,22 @@ from pydantic import BaseModel, field_validator, model_validator
 
 from observability import record_llm_call, _get_tracer
 
+
+def _strip_city_optional(raw: str | None) -> str | None:
+    """Normalize intent city: empty string → None (never invent a default city)."""
+    if raw is None:
+        return None
+    s = str(raw).strip()
+    return None if s == "" else s
+
 # ---------------------------------------------------------------------------
 # Intent data structure
 # ---------------------------------------------------------------------------
 
 @dataclass
 class Intent:
-    city: str = "京都"
-    region: str = "jp"
+    city: str | None = None
+    region: str = "unknown"
     meal_slots: list[str] = field(default_factory=list)
     time_window: tuple[str | None, str | None] = (None, None)
     category_tags: list[str] = field(default_factory=list)
@@ -69,6 +79,10 @@ class Intent:
     confidence: float = 0.0
     #: True when this intent updates a stored prior snapshot (refinement turn).
     is_revision: bool = False
+    #: False when the query is too vague to run retrieval/planning without clarification.
+    is_actionable: bool = True
+    #: User-facing follow-up when ``is_actionable`` is false; must include (A)(B)(C)(D) options.
+    actionability_followup: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         """JSON-serialisable representation for AgentState storage."""
@@ -86,6 +100,8 @@ class Intent:
             "wants_flight": self.wants_flight,
             "confidence": self.confidence,
             "is_revision": self.is_revision,
+            "is_actionable": self.is_actionable,
+            "actionability_followup": self.actionability_followup,
         }
 
 
@@ -100,9 +116,10 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
         tw = (raw_tw[0], None)
     else:
         tw = (None, None)
+    rc = d.get("city")
     return Intent(
-        city=str(d.get("city") or "京都"),
-        region=str(d.get("region") or "jp"),
+        city=_strip_city_optional(str(rc) if rc is not None else None),
+        region=str(d.get("region") or "unknown"),
         meal_slots=[str(x) for x in (d.get("meal_slots") or []) if x is not None],
         time_window=tw,
         category_tags=[str(x) for x in (d.get("category_tags") or []) if x is not None],
@@ -120,6 +137,12 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
         wants_flight=bool(d.get("wants_flight", False)),
         confidence=float(d.get("confidence", 0.0)),
         is_revision=bool(d.get("is_revision", False)),
+        is_actionable=bool(d.get("is_actionable", True)),
+        actionability_followup=(
+            None
+            if d.get("actionability_followup") in (None, "")
+            else str(d.get("actionability_followup")).strip() or None
+        ),
     )
 
 
@@ -401,7 +424,7 @@ def _resolve_city(
     if env_mapped is not None:
         return (*env_mapped, False)
 
-    return ("京都", "jp", False)
+    return (None, "unknown", False)
 
 
 # ---------------------------------------------------------------------------
@@ -412,10 +435,15 @@ _VALID_SLOTS = {"breakfast", "lunch", "tea", "dinner", "late_night"}
 _VALID_MODES = {"right_now", "balanced", "taste_max"}
 _VALID_REGIONS = {"tw", "jp", "unknown"}
 
+_DEFAULT_MISSING_CITY_FOLLOWUP = (
+    "請指定要規劃的城市（無法從您的描述推斷）：\n"
+    "(A) 東京\n(B) 大阪\n(C) 京都\n(D) 台北"
+)
+
 
 class _LLMIntentSchema(BaseModel):
-    city: str = "京都"
-    region: str = "jp"
+    city: str | None = None
+    region: str = "unknown"
     meal_slots: list[str] = []
     time_window: dict[str, str | None] = {"start": None, "end": None}
     category_tags: list[str] = []
@@ -427,6 +455,19 @@ class _LLMIntentSchema(BaseModel):
     wants_flight: bool = False
     confidence: float = 0.8
     is_revision: bool = False
+    is_actionable: bool = True
+    actionability_followup: str | None = None
+
+    @field_validator("city", mode="before")
+    @classmethod
+    def _normalize_city_nullable(cls, v: object) -> str | None:
+        if v is None:
+            return None
+        if isinstance(v, str):
+            s = v.strip()
+            return None if s == "" else s
+        s = str(v).strip()
+        return None if s == "" else s
 
     @field_validator("excluded_shops", mode="before")
     @classmethod
@@ -497,9 +538,20 @@ class _LLMIntentSchema(BaseModel):
 
 def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
     tw = s.time_window or {}
+    actionable = bool(s.is_actionable)
+    fu = (s.actionability_followup or "").strip()
+    if not actionable and not fu:
+        fu = (
+            "資訊不足以開始規劃，請選擇或補充：\n"
+            "(A) 北海道\n(B) 關東（東京）\n(C) 關西（大阪／京都）\n(D) 九州／沖繩"
+        )
+    city_val = _strip_city_optional(s.city)
+    reg = str(s.region or "unknown")
+    if reg not in _VALID_REGIONS:
+        reg = "unknown"
     return Intent(
-        city=str(s.city or "京都"),
-        region=str(s.region or "jp"),
+        city=city_val,
+        region=reg,
         meal_slots=list(s.meal_slots),
         time_window=(tw.get("start"), tw.get("end")),
         category_tags=list(s.category_tags),
@@ -511,7 +563,40 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
         wants_flight=bool(s.wants_flight),
         confidence=float(s.confidence),
         is_revision=bool(s.is_revision),
+        is_actionable=actionable,
+        actionability_followup=fu if fu else None,
     )
+
+
+def _trip_requires_resolved_city(intent: Intent) -> bool:
+    """Whether this intent implies needing a concrete city before search/plan (vs pure dietary text)."""
+    if intent.wants_flight:
+        return True
+    if intent.meal_slots:
+        return True
+    if intent.category_tags:
+        return True
+    if intent.mode == "right_now":
+        return True
+    if intent.explicit_constraints:
+        return True
+    if intent.dietary_hints or intent.excluded_tags:
+        return False
+    return True
+
+
+def _clamp_missing_city_if_actionable(intent: Intent) -> None:
+    """After geo pins: trip-like intents must not stay actionable without a resolved city."""
+    intent.city = _strip_city_optional(intent.city)
+    if not intent.is_actionable:
+        return
+    if not _trip_requires_resolved_city(intent):
+        return
+    if intent.city:
+        return
+    intent.is_actionable = False
+    if not (intent.actionability_followup or "").strip():
+        intent.actionability_followup = _DEFAULT_MISSING_CITY_FOLLOWUP
 
 
 # ---------------------------------------------------------------------------
@@ -524,7 +609,7 @@ Given a user query, output ONLY a JSON object — no markdown, no explanation.
 
 JSON schema:
 {
-  "city": "<city name in original language, e.g. 台北/東京/京都>",
+  "city": "<specific city name in original language, or JSON null if unknown — NEVER invent a city>",
   "region": "<'tw' for Taiwan | 'jp' for Japan | 'unknown'>",
   "meal_slots": ["<breakfast|lunch|tea|dinner|late_night>", ...],
   "time_window": {"start": "<HH:MM or null>", "end": "<HH:MM or null>"},
@@ -536,8 +621,43 @@ JSON schema:
   "explicit_constraints": ["<appetite_light|strong_ramen|...>"],
   "wants_flight": <true|false>,
   "confidence": <0.0-1.0>,
-  "is_revision": <false for a fresh standalone query>
+  "is_revision": <false for a fresh standalone query>,
+  "is_actionable": <true|false>,
+  "actionability_followup": "<string or null>"
 }
+
+ACTIONABILITY (is_actionable + actionability_followup)
+------------------------------------------------------
+Decide if the request is executable for restaurant/itinerary search WITHOUT guessing user's geography or meal structure.
+
+Set is_actionable=false when ANY of these hold:
+- User names only a country/region but no city AND no implicit locale from context (e.g. 「我想去日本」).
+- User names food/category but no city/time/meal slot and none can be inferred (e.g. 「我想吃拉麵」 alone).
+
+When is_actionable=false you MUST set actionability_followup to a concise question in the user's language (Traditional Chinese for zh requests).
+The follow-up MUST list exactly four reply choices labeled (A) (B) (C) (D) on separate lines or clearly separated.
+Examples of valid patterns:
+- Japan-only trip: ask which macro region with (A)–(D) areas.
+- Food-only with no place: ask which city with (A)–(D) cities or 「請輸入城市名」 as one option.
+
+When is_actionable=true, set actionability_followup to null.
+
+CRITICAL RULE — NO CITY GUESSING (ABSOLUTE)
+-------------------------------------------
+You MUST NOT guess, invent, or implicitly default any city (including Kyoto/Tokyo/Osaka).
+If the user names only a country (e.g. 「日本」「台灣」) or a broad area without naming ONE concrete city
+(東京、京都、大阪、台北…), set `"city": null`, set `is_actionable` to **false**, and put region-level (A)(B)(C)(D)
+choices in `actionability_followup`.
+Only output a non-null `city` when the user (or thread context) clearly names or implies that single city.
+
+CRITICAL RULE — STRICT NEGATION HANDLING (WANTED VS UNWANTED)
+-------------------------------------------------------------
+You must strictly distinguish between wanted and unwanted entities.
+- IF NEGATIVE ("不想", "不要", "不吃", "不喜歡", "避開", "換掉"): you MUST put the item in `excluded_tags` or `dietary_hints`. `category_tags` MUST NOT contain it.
+  * Example: "不想吃麵" => excluded_tags: ["ramen", "noodle"], category_tags MUST BE EMPTY or unrelated.
+  * Example: "不吃牛" => excluded_tags: ["beef"], dietary_hints: "no_beef", category_tags MUST NOT contain beef.
+- IF POSITIVE ("想吃", "要", "喜歡"): you MUST put the item in `category_tags`.
+DO NOT confuse these two. Explicitly negated items NEVER go into category_tags.
 
 Rules:
 - mode=right_now when user is hungry NOW or wants nearby results within 30 min.
@@ -548,50 +668,25 @@ Rules:
   Use lowercase retrieval tags (e.g. ramen, noodle, matcha, cafe, beef, spicy).
   Never put venue names here. Use [] if none.
 - category_tags: ONLY for food categories the user DOES want. Never put negations here.
-- CRITICAL RULE — negation handling (STRICTLY ENFORCE):
-  * If the user says they do NOT want something (不想、不要、不吃、不喜歡、避開、換掉、no X、avoid X、don't want X),
-    put the tag in excluded_tags. NEVER EVER put it in category_tags.
-  * If the user says they DO want something (想吃、要吃、喜歡、推薦、want X、love X),
-    put the tag in category_tags. NEVER put it in excluded_tags.
-  * Negation keywords override everything: "不吃牛" means excluded_tags:["beef"], NOT category_tags:["beef"].
-  * "不想吃拉麵" means excluded_tags:["ramen"], NOT category_tags:["ramen"].
-  * When in doubt about negation vs affirmation, re-read the user's exact words.
 - dietary_hints: use for ethical/medical/religious restrictions only (vegan, no_beef, no_pork, etc.).
 - confidence: 0.0 if city/meal intent is completely unclear; 1.0 if all fields are explicit.
 - is_revision: always false here.
+- is_actionable / actionability_followup: follow ACTIONABILITY rules above.
 - Do NOT add examples or commentary. Output JSON only.
 
-Few-shot examples demonstrating CORRECT negation handling (study these patterns):
-
-Query: '我要去京都吃拉麵'
-Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["ramen"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":false}
-
+Few-shot examples demonstrating CORRECT negation handling:
 Query: '不想吃麵'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["ramen","noodle","udon","soba","tsukemen"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.5,"is_revision":false}
-
-Query: '幫我排行程，不要拉麵'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_ramen","excluded_shops":[],"excluded_tags":["ramen"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
-
-Query: '我不吃牛肉，幫我排京都行程'
-Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.85,"is_revision":false}
-
-Query: '不要抹茶的店'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["matcha"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
-
-Query: '我想吃壽司，不要太貴'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["sushi"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["fine_dining","kaiseki"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.7,"is_revision":false}
-
-Query: '京都美食之旅，我要吃最好吃的'
-Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.8,"is_revision":false}
+Output: {"city":null,"region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_ramen","excluded_shops":[],"excluded_tags":["ramen","noodle","udon","soba"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false,"is_actionable":true,"actionability_followup":null}
 
 Query: '不吃牛'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
+Output: {"city":null,"region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false,"is_actionable":true,"actionability_followup":null}
 
-Query: '不要有牛肉'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_beef","excluded_shops":[],"excluded_tags":["beef","yakiniku","wagyu"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
+Few-shot — NOT actionable (must include A–D in actionability_followup):
+Query: '我想去日本'
+Output: {"city":null,"region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.3,"is_revision":false,"is_actionable":false,"actionability_followup":"日本很大，您較想先規劃哪個區域？\\n(A) 北海道\\n(B) 關東（東京周邊）\\n(C) 關西（大阪／京都）\\n(D) 九州／沖繩"}
 
-Query: '不想吃拉麵'
-Output: {"city":"","region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":"no_ramen","excluded_shops":[],"excluded_tags":["ramen"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.6,"is_revision":false}
+Query: '我想吃拉麵'
+Output: {"city":null,"region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["ramen"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.35,"is_revision":false,"is_actionable":false,"actionability_followup":"想在哪個城市找拉麵？\\n(A) 東京\\n(B) 大阪\\n(C) 京都\\n(D) 台北"}
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\
@@ -602,9 +697,9 @@ Workflow
 1) Compare `previous_intent` JSON (first user message below) against `New user message` (second message).
 2) Emit ONE JSON object describing the authoritative intent AFTER this turn. No markdown.
 
-Schema — same keys as cold extraction plus `is_revision`:
+Schema — same keys as cold extraction plus `is_revision`, `is_actionable`, `actionability_followup`:
 {
-  "city": "...",
+  "city": "<specific city | JSON null if still unknown — NEVER invent defaults>",
   "region": "'tw' | 'jp' | 'unknown'",
   "meal_slots": ["breakfast"|"lunch"|"tea"|"dinner"|"late_night", ...],
   "time_window": {"start": "<HH:MM or null>", "end": "<HH:MM or null>"},
@@ -616,40 +711,47 @@ Schema — same keys as cold extraction plus `is_revision`:
   "explicit_constraints": ["..."],
   "wants_flight": <true|false>,
   "confidence": <0.0-1.0>,
-  "is_revision": <true|false>
+  "is_revision": <true|false>,
+  "is_actionable": <true|false>,
+  "actionability_followup": "<string or null; if false, MUST include (A)(B)(C)(D)>"
 }
+
+CRITICAL RULE 1 — FIELD INHERITANCE FOR REVISION (DO NOT DROP FIELDS!)
+----------------------------------------------------------------------
+When the user says they want to swap/replace/exclude a specific venue (e.g. '把XX換掉', '不要XX', 'replace XX', 'swap XX'), this is a venue-level change ONLY.
+You MUST carry forward ALL of these fields from previous_intent unchanged:
+- city
+- region  
+- meal_slots (CRITICAL: NEVER reduce the number of meal slots during a venue swap)
+- time_window
+- mode
+
+Only update excluded_shops (add the venue to exclude) and set is_revision=true.
+Example:
+previous_intent has meal_slots=["breakfast","lunch","tea","dinner"], city="京都"
+user says: "把燃えよ麺助換掉"
+correct output: carry forward meal_slots=["breakfast","lunch","tea","dinner"], city="京都", add "燃えよ麺助" to excluded_shops, is_revision=true
+WRONG output: meal_slots=["breakfast","lunch"], city="unknown"
+
+CRITICAL RULE 2 — STRICT NEGATION HANDLING (WANTED VS UNWANTED)
+---------------------------------------------------------------
+You must strictly distinguish between wanted and unwanted entities.
+- IF NEGATIVE ("不想", "不要", "不吃"): you MUST put the item in `excluded_tags` or `dietary_hints`. `category_tags` MUST NOT contain it.
+  Example: "不想吃麵" => excluded_tags: ["ramen", "noodle"], category_tags MUST BE EMPTY or unrelated.
+- IF POSITIVE ("想吃", "要"): you MUST put the item in `category_tags`.
+DO NOT confuse these two.
+
+CRITICAL RULE 3 — NO CITY GUESSING (ABSOLUTE)
+----------------------------------------------
+Same as cold extraction: never invent or default a city. If the user still names only a country/region without ONE concrete city,
+keep `"city": null`, set `is_actionable` false, and supply (A)(B)(C)(D) in `actionability_followup`.
 
 Industry intent-refinement playbook
 -----------------------------------
-* **Additive / supplement** (“也要有素食”“少油一點”“預算低”): Carry forward geography
-  (`city`, `region`), `meal_slots`, and `time_window` from `previous_intent` unless explicitly changed.
-  Update `category_tags`, `dietary_hints`, `explicit_constraints`, etc. Merge lists without dropping
-  unstated facets. Set `is_revision` true whenever the operative plan materially changes vs prior.
-* **Destructive pivot** (“改去台北”“算了換東京”“剛說拉麵改壽司”“不要拉麵了”): Replace every conflicting
-  field; drop contradictory cuisine tags/meal slots/time constraints; rebuild mode if urgency changes.
-  `is_revision` must be true.
-* **Venue avoidance** (“不想吃茶寮都路里”“避雷 ○○ 本店”“don’t suggest X”)：append to `excluded_shops`
-  using the fullest identifiable venue label (prior turn’s exclusions stay unless clearly overridden).
-  `is_revision` true when exclusions change materially.
-* Refinement phrase → field examples:
-  • “不要抹茶的店” ⇒ `"excluded_tags": ["matcha"]`.
-  • '不想吃麵' ⇒ excluded_tags: ['ramen', 'noodle', 'udon', 'soba']
-  • “把咖啡廳都換掉” ⇒ `"excluded_tags": ["cafe", "coffee"]`.
-  • “不想吃茶寮都路里” ⇒ `"excluded_shops": ["茶寮 都路里 祇園本店"]` — **venue** ⇒ `excluded_shops`, not `excluded_tags`.
-  • '不想吃麵' / '不吃麵食' ⇒ excluded_tags: ['ramen','noodle','udon','soba','tsukemen'], dietary_hints: 'no_ramen'
-  • '不想吃辣' ⇒ excluded_tags: ['spicy']
-  • '想吃拉麵' ⇒ category_tags: ['ramen']  ← positive only, NOT excluded_tags
-  • '不要牛肉' ⇒ excluded_tags: ['beef','yakiniku','wagyu'], dietary_hints: 'no_beef'
-  CRITICAL: 否定句（不想、不要、不吃）→ excluded_tags。肯定句（想吃、要）→ category_tags。絕不混淆。
-* **Neutral ack / same ask**: keep prior semantics; confidence may stay high and `is_revision` false only
-  when nothing operative changes.
-* **Slot-level food swap** (“把午餐換成蕎麥麵”“晚餐改壽司”): Infer targeted `meal_slots`; update
-  `category_tags` / `explicit_constraints` for the substitution while carrying forward the rest of
-  `previous_intent`. When a **Current itinerary baseline** block appears in the system message, use it to
-  anchor which meal or section the user refers to. `is_revision` must be true when the plan changes.
-* Keep `region` consistent with `city` (`台北/台灣`⇒tw, `京都|東京|大阪`⇒jp).
+* **Additive / supplement** (“也要有素食”“少油一點”“預算低”): Carry forward geography from `previous_intent`.
+* **Venue avoidance** (“不想吃XX”“換掉XX”): append to `excluded_shops`. `is_revision` true.
+* **Slot-level food swap** (“把午餐換成蕎麥麵”): Infer targeted `meal_slots`; update `category_tags` while carrying forward the rest. `is_revision` true.
 """
-
 
 def _prev_itinerary_system_addon(prev_itinerary: str | None) -> str:
     """Append prior-round markdown itinerary so the model can interpret amendment-style queries."""
@@ -880,10 +982,10 @@ def parse_intent(
 ) -> Intent:
     """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.
 
-    This entry point never raises LLM failures: it falls back to rules or geography defaults.
+    This entry point never raises LLM failures: it falls back to rules or partial intents.
 
-    Geographic fix: LLM guesses for ``city``/``region`` are overwritten when
-    ``user_lat``/``user_lng`` fall inside a known bounded box (e.g. Taipei).
+    Geographic pin: when ``user_lat``/``user_lng`` fall inside a known bounded box (e.g. Taipei),
+    ``city``/``region`` are set from coordinates — never from a global default like Kyoto.
     """
 
     def _stamp_geo_pins(intent_obj: Intent) -> None:
@@ -901,6 +1003,7 @@ def parse_intent(
                 prev_itinerary=prev_itinerary,
             )
             _stamp_geo_pins(llm_result)
+            _clamp_missing_city_if_actionable(llm_result)
             return llm_result
         except Exception:
             return parse_intent(
@@ -918,14 +1021,25 @@ def parse_intent(
     )
 
     if rule_result is not None and rule_result.confidence >= 0.6:
+        _stamp_geo_pins(rule_result)
+        _clamp_missing_city_if_actionable(rule_result)
         return rule_result
 
     try:
         llm_result = parse_intent_llm(query, llm_router, prev_itinerary=prev_itinerary)
         _stamp_geo_pins(llm_result)
+        _clamp_missing_city_if_actionable(llm_result)
         return llm_result
     except Exception:
         if rule_result is not None:
             return rule_result
         city, region, _ = _resolve_city(query, user_locale, user_lat, user_lng)
-        return Intent(city=city, region=region)
+        return Intent(
+            city=city,
+            region=region,
+            is_actionable=False,
+            actionability_followup=(
+                "無法從這則訊息解析出可執行的行程需求，請選擇或補充：\n"
+                "(A) 日本 — 關西\n(B) 日本 — 關東\n(C) 台灣\n(D) 其他（請直接輸入城市）"
+            ),
+        )

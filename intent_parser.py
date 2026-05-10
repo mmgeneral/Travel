@@ -756,6 +756,15 @@ Industry intent-refinement playbook
 
 MULTI-TURN SHORT REPLY RESOLUTION (answer to previous actionability_followup)
 -------------------------------------------------------------------------------
+CRITICAL RULE: If the user's reply is a single letter (like "A", "B", "C", "D") or a short selection, you MUST examine the (A)(B)(C)(D) options that the model previously wrote in `previous_intent.actionability_followup`. Map the user's short answer to one of those options, extract the corresponding city name, and set:
+- `"city"` to that city name.
+- `"is_actionable"` = true
+- `"actionability_followup"` = null
+
+For example:
+   - Input "A" or "(A)" or "選A" ⇒ the first option.
+   - Input a city name (e.g. "東京") ⇒ the option containing that city.
+
 When the user’s new message is SHORT (e.g. "A", "B", "第一個", "東京", "大阪") and
 `previous_intent.is_actionable` is False and `previous_intent.actionability_followup` is set:
 
@@ -805,10 +814,18 @@ def _llm_prompt_messages(
     snapshot = dict(previous_intent.as_dict())
     snapshot.pop("is_revision", None)
     snapshot.pop("confidence", None)
+    # -- Dynamic context injection for short reply resolution --
+    followup = (previous_intent.actionability_followup or "").strip()
+    context_line = ""
+    if followup:
+        context_line = (
+            f"\n（系統先前詢問了使用者：{followup}。"
+            f"請根據這個選項清單，解析使用者最新的簡短回覆。）\n"
+        )
     return [
         {"role": "system", "content": _LLM_REFINEMENT_SYSTEM_PROMPT + itinerary_ctx},
         {"role": "user", "content": json.dumps({"previous_intent": snapshot}, ensure_ascii=False)},
-        {"role": "user", "content": f"New user message: {query}"},
+        {"role": "user", "content": f"New user message: {query}{context_line}"},
     ]
 
 

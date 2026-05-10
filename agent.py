@@ -75,7 +75,7 @@ from decision_engine import (
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
 from intent_parser import parse_intent as _parse_intent
 from tracing import trace_agent_stage
-from llm_router import LLMRouter as _LLMRouter
+from llm_router import TaskType, LLMRouter as _LLMROuter
 from agents.retriever import RetrieverAgent
 from agents.critic import CriticAgent
 from agents.synthesizer import SynthesizerAgent, SynthesisReport
@@ -278,6 +278,114 @@ def _consume_pending_dietary_clarification_answer(state: AgentState) -> bool:
         _dj("dietary_clarification_answer", hint=hint, mode=mode)
     )
     return True
+
+
+def _llm_extract_city_from_choice(
+    question: str,
+    user_answer: str,
+    state: AgentState,
+) -> str | None:
+    """Minimal LLM call: map user answer to a city name from the given clarification options."""
+    router = _svc_llm_router(state)
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "You are a city extractor. Given the previous options list and the user's answer, "
+                "output JUST the city name (e.g. 東京, 台北). No extra text."
+            ),
+        },
+        {
+            "role": "user",
+            "content": f"Options:\n{question}\n\nUser answer: {user_answer}",
+        },
+    ]
+    try:
+        response = router.complete(TaskType.INTENT_PARSING, messages)
+        raw = (response.content or "").strip()
+        if raw.startswith("```"):
+            raw = re.sub(r"^```[a-z]*\n?", "", raw)
+            raw = re.sub(r"\n?```$", "", raw)
+        raw = raw.strip()
+        if raw:
+            return raw
+    except Exception:
+        pass
+    return None
+
+
+def _apply_city_from_clarification(state: AgentState, city: str) -> None:
+    """Fill `state['intent']` with the resolved city and mark actionable."""
+    region = "jp" if city in ("東京", "京都", "大阪") else "tw" if city == "台北" else "unknown"
+    state["intent"] = {
+        "city": city,
+        "region": region,
+        "meal_slots": [],
+        "time_window": [None, None],
+        "category_tags": [],
+        "dietary_hints": None,
+        "excluded_shops": [],
+        "excluded_tags": [],
+        "mode": "balanced",
+        "explicit_constraints": [],
+        "wants_flight": False,
+        "confidence": 0.9,
+        "is_revision": True,
+        "is_actionable": True,
+        "actionability_followup": None,
+    }
+    state.pop("awaiting_intent_clarification", None)
+    state.pop("clarification_broadcast", None)
+    state.setdefault("transit_audit", []).append(
+        _dj("intent_clarification_resolved", city=city, method="interceptor")
+    )
+
+
+def _consume_pending_intent_clarification(state: AgentState) -> bool:
+    """
+    Slot‑filling interceptor for intent clarification (A/B/C/D options).
+    Called at the start of node_route_intent *before* any LLM re‑parse.
+
+    Returns True if the clarification answer was successfully resolved,
+    causing node_route_intent to early‑return with the filled intent.
+    """
+    if not state.get("awaiting_intent_clarification"):
+        return False
+
+    broadcast = state.get("clarification_broadcast") or {}
+    question = str(broadcast.get("question", "") or "")
+    q = (state.get("query") or "").strip()
+    if not q:
+        # nothing to parse, clear the flag anyway so we don’t loop forever
+        state.pop("awaiting_intent_clarification", None)
+        state.pop("clarification_broadcast", None)
+        return False
+
+    # 1) Try a lightweight heuristic mapping for most common answer patterns
+    #    (single letter, parenthesised letter, or a known city name)
+    q_lower = q.lower().strip()
+    known_cities = {"東京": "jp", "东京": "jp", "京都": "jp", "大阪": "jp",
+                    "台北": "tw", "taipei": "tw", "tokyo": "jp",
+                    "kyoto": "jp", "osaka": "jp"}
+    direct_match = None
+    for k, reg in known_cities.items():
+        if k in q_lower or q_lower in k:
+            direct_match = k
+            break
+    if direct_match:
+        _apply_city_from_clarification(state, direct_match)
+        return True
+
+    # 2) Answer is a short letter code – rely on LLM to map it
+    city = _llm_extract_city_from_choice(question, q, state)
+    if city:
+        _apply_city_from_clarification(state, city)
+        return True
+
+    # 3) fallback: clear the flag and let the original LLM parsing run
+    state.pop("awaiting_intent_clarification", None)
+    state.pop("clarification_broadcast", None)
+    return False
 
 
 class AgentState(TypedDict):
@@ -1749,6 +1857,8 @@ def node_route_intent(state: AgentState) -> AgentState:
     """Parse intent once, store in state, and set routing flags."""
     q = state.get("query", "") or ""
     if _consume_pending_dietary_clarification_answer(state):
+        return state
+    if _consume_pending_intent_clarification(state):
         return state
     ctid = (state.get("checkpoint_thread_id") or "").strip()
     prev_snap = state.get("intent")

@@ -1,9 +1,5 @@
 from __future__ import annotations
-from catalog import (
-    _build_shop_catalog,
-    _build_shop_catalog_taipei,
-    _build_shop_catalog_tokyo,
-)
+from catalog import _build_shop_catalog
 import copy
 import json
 import asyncio
@@ -325,6 +321,8 @@ class AgentState(TypedDict):
     pending_dietary_clarification: dict[str, Any] | None
     awaiting_dietary_clarification: bool
     clarification_broadcast: dict[str, Any] | None
+    #: True when intent gate refused to run retrieval; user must answer (A)–(D) or clarify geography.
+    awaiting_intent_clarification: bool
     #: Set by a failing node → downstream nodes noop; orchestrator maps to client errors.
     error: dict[str, Any] | None
     #: Injected deps (``llm_router``, ``openai_chat_client``, ``flight_service``); empty {} uses module defaults.
@@ -365,6 +363,7 @@ class AgentStateModel(BaseModel):
     pending_dietary_clarification: dict[str, Any] | None = None
     awaiting_dietary_clarification: bool = False
     clarification_broadcast: dict[str, Any] | None = None
+    awaiting_intent_clarification: bool = False
     error: dict[str, Any] | None = None
     runtime_services: dict[str, Any] = Field(default_factory=dict)
 
@@ -1788,6 +1787,22 @@ def node_route_intent(state: AgentState) -> AgentState:
         return state
     state["intent_history"] = hist
     state["intent"] = intent.as_dict()
+    if not intent.is_actionable:
+        msg = (intent.actionability_followup or "").strip()
+        if not msg:
+            msg = (
+                "資訊不足以開始規劃，請選擇或補充：\n"
+                "(A) 北海道\n(B) 關東（東京）\n(C) 關西（大阪／京都）\n(D) 九州／沖繩"
+            )
+        state["awaiting_intent_clarification"] = True
+        state["clarification_broadcast"] = {"type": "clarification", "question": msg}
+        state["plan_excluded_shop_tags"] = []
+        state["wants_flight_search"] = False
+        state.setdefault("research_log", []).append(
+            _dj("intent_not_actionable", excerpt=msg[:200])
+        )
+        return state
+    state["awaiting_intent_clarification"] = False
     if intent.is_revision:
         qtrim = q.strip()
         preview = qtrim if len(qtrim) <= 160 else qtrim[:160] + "⋯"
@@ -2067,37 +2082,6 @@ def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 @trace_agent_stage("critic")
 def node_critic(state: AgentState) -> AgentState:
     """Run :class:`CriticAgent` over the retrieval pool; fills ``critique_history`` for routing."""
-    intent = state.get("intent")
-
-    def get_intent_field(obj: Any, key: str) -> Any:
-        if obj is None:
-            return None
-        if isinstance(obj, dict):
-            return obj.get(key)
-        return getattr(obj, key, None)
-
-    city = get_intent_field(intent, "city")
-
-    # Only treat missing city as a hard block (serialized intent is a dict; meal_slots → CriticAgent).
-    if not intent or not city or city == "unknown":
-        msg = "為了精準規劃，我還需要知道您想去哪個城市？"
-        state["auditor_rejected"] = True
-        state["auditor_feedback"] = msg
-        state["critique_history"] = list(state.get("critique_history") or []) + [
-            {
-                "verdict": "request_more",
-                "accepted_names": [],
-                "rejected_with_reason": [],
-                "requests_for_retriever": [],
-                "score_table": {},
-                "fame_damped_table": {},
-                "accolade_table": {},
-                "llm_analysis": msg,
-                "iteration": int(state.get("research_iteration", 0)),
-            }
-        ]
-        return state
-
     if state.get("error"):
         return state
     print(_dj("debug_print", node="node_critic", message="CriticAgent starting"))
@@ -2725,8 +2709,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 sample=list(excluded_shop_names)[:12],
             )
         )
-    expand_city = _intent.get("city") or "京都"
-    expand_region = _intent.get("region") or "jp"
+    expand_city = (str(_intent.get("city") or "").strip())
+    expand_region = (str(_intent.get("region") or "").strip()) or "unknown"
     appetite_light_mode = "appetite_light" in _intent.get("explicit_constraints", [])
     explicit_category_tags = _plan_global_explicit_tags(query_text)
     must_have_tags = sorted(explicit_category_tags)
@@ -3715,7 +3699,8 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer:
 
     Graph topology
     --------------
-    route_intent → clarify_constraint → retriever → researcher → critic ⟲ (request_more → researcher, max-iter guard)
+    route_intent → [if intent not actionable → END with clarification] else clarify_constraint → retriever → …
+    clarify_constraint → retriever → researcher → critic ⟲ (request_more → researcher, max-iter guard)
                                   ↓ satisfied / deadlock
                              collect_feedback → plan → END  (``plan`` appends LangGraph checkpoint id to ``turn_checkpoints``)
     If ``clarify_constraint`` needs a strict/loose answer, the graph routes to END until the user replies (A/B).
@@ -3737,12 +3722,21 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer:
     g.add_node("plan", node_plan)
     g.set_entry_point("route_intent")
 
+    def _after_route_intent(state: AgentState) -> str:
+        if state.get("awaiting_intent_clarification"):
+            return "end"
+        return "clarify_constraint"
+
     def _after_clarify_constraint(state: AgentState) -> str:
         if state.get("awaiting_dietary_clarification"):
             return "end"
         return "retriever"
 
-    g.add_edge("route_intent", "clarify_constraint")
+    g.add_conditional_edges(
+        "route_intent",
+        _after_route_intent,
+        {"end": END, "clarify_constraint": "clarify_constraint"},
+    )
     g.add_conditional_edges(
         "clarify_constraint",
         _after_clarify_constraint,

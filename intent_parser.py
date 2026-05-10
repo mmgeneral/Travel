@@ -87,6 +87,8 @@ class Intent:
     is_actionable: bool = True
     #: User-facing follow-up when ``is_actionable`` is false; must include (A)(B)(C)(D) options.
     actionability_followup: str | None = None
+    #: Additional metadata about intent source
+    metadata: dict = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
         """JSON-serialisable representation for AgentState storage."""
@@ -151,6 +153,7 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
             if d.get("actionability_followup") in (None, "")
             else str(d.get("actionability_followup")).strip() or None
         ),
+        metadata=dict(d.get("metadata", {})),
     )
 
 
@@ -870,6 +873,25 @@ def parse_intent_rules(
     the query is too ambiguous for rules and needs LLM interpretation).
     Returns an ``Intent`` with a ``confidence`` score otherwise.
     """
+    # Fast-path for (A)(B)(C)(D) options and common city names
+    q_clean = (query or "").strip()
+    if q_clean:
+        # Pattern for (A), (B), A, B, etc.
+        letter_match = re.match(r"^[（(]?([ABCD])[)）]?$", q_clean)
+        city_match = re.match(r"^(東京|大阪|京都|台北)$", q_clean)
+        if letter_match or city_match:
+            # For letters: we need to map to cities via previous intent's options
+            # But in rule-based we don't have previous intent, so we'll handle only city names
+            if city_match:
+                city_name = city_match.group(1)
+                region_map = {"東京": "jp", "大阪": "jp", "京都": "jp", "台北": "tw"}
+                return Intent(
+                    city=city_name,
+                    region=region_map[city_name],
+                    confidence=1.0,
+                    metadata={'source': 'fast-path-rule'}
+                )
+
     _NEGATION_TOKENS = ("不想", "不要", "不吃", "不喜歡", "避開", "no ", "avoid", "don't want")
     if any(tok in (query or "").lower() for tok in _NEGATION_TOKENS):
         return None
@@ -1058,6 +1080,15 @@ def parse_intent(
             intent_obj.city = geo[0]
             intent_obj.region = geo[1]
 
+    # First, try rule-based fast path regardless of previous_intent
+    rule_result = parse_intent_rules(
+        query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng
+    )
+    if rule_result is not None and rule_result.confidence >= 0.6:
+        _stamp_geo_pins(rule_result)
+        _clamp_missing_city_if_actionable(rule_result)
+        return rule_result
+
     if previous_intent is not None:
         try:
             llm_result = parse_intent_llm(
@@ -1079,15 +1110,6 @@ def parse_intent(
                 previous_intent=None,
                 prev_itinerary=prev_itinerary,
             )
-
-    rule_result = parse_intent_rules(
-        query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng
-    )
-
-    if rule_result is not None and rule_result.confidence >= 0.6:
-        _stamp_geo_pins(rule_result)
-        _clamp_missing_city_if_actionable(rule_result)
-        return rule_result
 
     try:
         llm_result = parse_intent_llm(query, llm_router, prev_itinerary=prev_itinerary)

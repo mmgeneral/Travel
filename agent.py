@@ -1790,10 +1790,7 @@ def node_route_intent(state: AgentState) -> AgentState:
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()
         if not msg:
-            msg = (
-                "資訊不足以開始規劃，請選擇或補充：\n"
-                "(A) 北海道\n(B) 關東（東京）\n(C) 關西（大阪／京都）\n(D) 九州／沖繩"
-            )
+            msg = "請告訴我您具體想去的城市或國家，以便我為您規劃。"
         state["awaiting_intent_clarification"] = True
         state["clarification_broadcast"] = {"type": "clarification", "question": msg}
         state["plan_excluded_shop_tags"] = []

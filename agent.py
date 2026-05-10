@@ -2284,8 +2284,13 @@ def _relay_layer_one_edges_inplace(
     *,
     ranked: list[RankedShop],
     traffic,
+    mode: OptimizationMode = OptimizationMode.BALANCED,
 ) -> None:
-    """Mirror GraphBuilder layer-1 edge rule after mutating node datetimes (decision_engine stays unchanged)."""
+    """Mirror GraphBuilder layer-1 edge rule after mutating node datetimes (decision_engine stays unchanged).
+
+    Cooldown (digestion) is now included before travel: the earliest time the customer
+    can leave shop A is ``fastest_finish + _calculate_cooldown(A) + travel``.
+    """
     ranked_index = {r.shop.name: r for r in ranked}
     shop_index = {r.shop.name: r.shop for r in ranked}
     by_slot: dict[int, list] = {}
@@ -2311,6 +2316,12 @@ def _relay_layer_one_edges_inplace(
                     shop_a = shop_index.get(a.shop_name)
                     if shop_a is None:
                         continue
+                    cooldown_m = ItinerarySynthesizer._calculate_cooldown(
+                        shop_a,
+                        mode=mode,
+                        requested_meal_count=None,
+                        appetite_light_mode=False,
+                    )
                     for b in to_nodes:
                         if a.shop_name == b.shop_name:
                             continue
@@ -2322,7 +2333,8 @@ def _relay_layer_one_edges_inplace(
                             minutes=int(shop_a.base_wait_minutes)
                             + int(shop_a.min_eat_minutes or shop_a.avg_eat_minutes)
                         )
-                        ready_at = fastest_finish_at + timedelta(minutes=travel_m)
+                        # Ready = finish + cooldown + travel
+                        ready_at = fastest_finish_at + timedelta(minutes=cooldown_m) + timedelta(minutes=travel_m)
                         open_b = ItinerarySynthesizer._shop_open_at(b.start_time, shop_b)
                         if ready_at <= b.start_time and b.start_time >= open_b:
                             status = traffic.get_route_status(a.shop_name, b.shop_name)
@@ -2342,7 +2354,7 @@ def _relay_layer_one_edges_inplace(
                             reasons: list[str] = []
                             if ready_at > b.start_time:
                                 reasons.append(
-                                    f"準備時間 (ready_at) {ready_at.strftime('%H:%M')} > 開始時間 (B.start) {b.start_time.strftime('%H:%M')}"
+                                    f"準備時間 (ready_at with cooldown) {ready_at.strftime('%H:%M')} > 開始時間 (B.start) {b.start_time.strftime('%H:%M')}"
                                 )
                             if b.start_time < open_b:
                                 reasons.append(
@@ -2367,6 +2379,7 @@ def _pin_dp_graph_to_itinerary_day_and_relayer_edges(
     itinerary_start: datetime,
     ranked: list[RankedShop],
     traffic,
+    mode: OptimizationMode = OptimizationMode.BALANCED,
 ) -> None:
     """DP graph nodes must share one excursion calendar day — align per-shop align() roll-forward with itinerary_start."""
     if not graph.nodes:
@@ -2375,7 +2388,7 @@ def _pin_dp_graph_to_itinerary_day_and_relayer_edges(
         dur = n.end_time - n.start_time
         n.start_time = _combine_itinerary_clock(itinerary_start, n.start_time)
         n.end_time = n.start_time + dur
-    _relay_layer_one_edges_inplace(graph, ranked=ranked, traffic=traffic)
+    _relay_layer_one_edges_inplace(graph, ranked=ranked, traffic=traffic, mode=mode)
 
 
 def _expand_graph_node_tags_from_shop_profiles(graph: SpatioTemporalGraph, ranked: list[RankedShop]) -> None:
@@ -2577,7 +2590,7 @@ def _dp_graph_builder_with_itinerary_day_pin(
         excluded_shop_tags=excluded_shop_tags,
     )
     _pin_dp_graph_to_itinerary_day_and_relayer_edges(
-        g, itinerary_start=start_time, ranked=ranked, traffic=traffic
+        g, itinerary_start=start_time, ranked=ranked, traffic=traffic, mode=mode
     )
     setattr(
         g,
@@ -3426,8 +3439,6 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 _dj("hybrid_phase3_commit", path_index=idx, shops=path_names)
             )
             break
-        if not selected_ranked_path:
-            phase3_used_fallback = True
             fallback_pool = ranked
             if plan_excluded_tags:
                 fb = [

@@ -837,13 +837,13 @@ CRITICAL RULE — SELF-CORRECTION
 If the user's query has a complaining or corrective tone, pointing out that you overlooked previously provided information (e.g., "我上一句就說過我要吃晚餐了啊", "你沒看到嗎"), you MUST:
 - Fully retain the city and category_tags from previous_intent (NEVER move wanted food into excluded_tags).
 - Extract the correct meal slot(s) and place them in meal_slots (e.g., ["dinner"]).
-- Set is_actionable=false.
-- In actionability_followup output an apology, for example: "非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"
+- Set is_actionable=true (because the conditions are now complete; the system must continue planning). As a special case, even though is_actionable is true, you MUST still output an apology in actionability_followup, for example: "非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您規劃。"
+- In actionability_followup output an apology, for example: "非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您規劃。"
 
 Few-shot — Self-Correction during revision:
 previous_intent: {"city": "京都", "category_tags": ["yakiniku"], "meal_slots": [], ...}
 Query: '我上一句就說過我要吃晚餐了啊，你沒看到嗎'
-Output: {"city":"京都","region":"jp","meal_slots":["dinner"],"time_window":{"start":null,"end":null},"category_tags":["yakiniku"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":true,"is_actionable":false,"actionability_followup":"非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"}
+Output: {"city":"京都","region":"jp","meal_slots":["dinner"],"time_window":{"start":null,"end":null},"category_tags":["yakiniku"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":true,"is_actionable":true,"actionability_followup":"非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"}
 """
 
 def _prev_itinerary_system_addon(prev_itinerary: str | None) -> str:

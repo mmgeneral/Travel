@@ -439,6 +439,8 @@ class AgentState(TypedDict):
     error: dict[str, Any] | None
     #: Injected deps (``llm_router``, ``openai_chat_client``, ``flight_service``); empty {} uses module defaults.
     runtime_services: dict[str, Any]
+    #: Count of how many times the critic node has been executed in the current turn.
+    critic_retry_count: int
 
 
 class AgentStateModel(BaseModel):
@@ -478,6 +480,7 @@ class AgentStateModel(BaseModel):
     awaiting_intent_clarification: bool = False
     error: dict[str, Any] | None = None
     runtime_services: dict[str, Any] = Field(default_factory=dict)
+    critic_retry_count: int = 0
 
 
 class AtomicCommitFailure(Exception):
@@ -2249,6 +2252,8 @@ def node_critic(state: AgentState) -> AgentState:
     """Run :class:`CriticAgent` over the retrieval pool; fills ``critique_history`` for routing."""
     if state.get("error"):
         return state
+    # Increment the critic_retry_count
+    state["critic_retry_count"] = state.get("critic_retry_count", 0) + 1
     print(_dj("debug_print", node="node_critic", message="CriticAgent starting"))
     try:
         agent = CriticAgent(llm_router=_svc_llm_router(state))
@@ -3115,8 +3120,16 @@ def build_graph(*, interrupt_after_nodes: list[str] | None = None, checkpointer:
 
         if verdict == "satisfied":
             pass  # fall through to plan/collect
-        elif (rejected or verdict == "request_more") and iteration < 3:
-            return "researcher"
+        elif (rejected or verdict == "request_more"):
+            # Check the critic_retry_count for escalation
+            if state.get("critic_retry_count", 0) < 2:
+                return "researcher"
+            else:
+                # Escalation: max retries reached
+                state.setdefault("transit_audit", []).append(
+                    _dj("critic_escalation", message="Max retries reached, proceeding to plan")
+                )
+                return "plan"
         # satisfied / deadlock / max-iterations → proceed
         if (state.get("intent") or {}).get("mode") == "right_now":
             return "plan"

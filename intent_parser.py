@@ -612,6 +612,114 @@ def _clamp_missing_city_if_actionable(intent: Intent) -> None:
         intent.actionability_followup = _DEFAULT_MISSING_CITY_FOLLOWUP
 
 
+def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
+    """Merge new revision intent into previous, applying state reconciliation rules."""
+    if not new.is_revision:
+        return new
+
+    # Start from a copy of previous
+    merged = copy.deepcopy(previous)
+
+    # Overwrite meal_slots if changed
+    if new.meal_slots and new.meal_slots != previous.meal_slots:
+        print(f"[State Manager] Detected meal_slots overwrite: {previous.meal_slots} -> {new.meal_slots}")
+        merged.meal_slots = list(new.meal_slots)
+
+    # Merge dietary_hints (prefer new if non-null, else keep previous)
+    if new.dietary_hints is not None:
+        merged.dietary_hints = new.dietary_hints
+
+    # Merge excluded_tags (union)
+    if new.excluded_tags:
+        merged.excluded_tags = list(dict.fromkeys(previous.excluded_tags + new.excluded_tags))
+
+    # Merge excluded_shops (union)
+    if new.excluded_shops:
+        merged.excluded_shops = list(dict.fromkeys(previous.excluded_shops + new.excluded_shops))
+
+    # Merge category_tags (union)
+    if new.category_tags:
+        merged.category_tags = list(dict.fromkeys(previous.category_tags + new.category_tags))
+
+    # Override city if new provides a non-null city
+    if new.city is not None:
+        merged.city = new.city
+
+    # Override region if new provides a non-null region
+    if new.region != "unknown":
+        merged.region = new.region
+
+    # Override mode if new provides a non-default mode
+    if new.mode != "balanced":
+        merged.mode = new.mode
+
+    # Override time_window if new provides non-null start/end
+    if new.time_window != (None, None):
+        merged.time_window = new.time_window
+
+    # Override explicit_constraints (union)
+    if new.explicit_constraints:
+        merged.explicit_constraints = list(dict.fromkeys(previous.explicit_constraints + new.explicit_constraints))
+
+    # Override wants_flight if new explicitly sets it
+    if new.wants_flight:
+        merged.wants_flight = True
+
+    # Override confidence
+    merged.confidence = new.confidence
+
+    # Override is_revision
+    merged.is_revision = True
+
+    # Override is_actionable and actionability_followup from new
+    merged.is_actionable = new.is_actionable
+    merged.actionability_followup = new.actionability_followup
+
+    return merged
+
+
+def _iterative_actionability_check(intent: Intent) -> None:
+    """Force is_actionable=False if city or meal_slots are missing after merge."""
+    if intent.is_actionable:
+        missing = []
+        if intent.city is None:
+            missing.append("city")
+        if not intent.meal_slots:
+            missing.append("meal_slots")
+        if missing:
+            intent.is_actionable = False
+            # Generate appropriate follow-up
+            if "meal_slots" in missing and "city" not in missing:
+                intent.actionability_followup = (
+                    "好的，已為您記錄。但請問您的用餐時段是\n"
+                    "(A) 午餐\n(B) 晚餐\n(C) 宵夜"
+                )
+            elif "city" in missing and "meal_slots" not in missing:
+                intent.actionability_followup = _DEFAULT_MISSING_CITY_FOLLOWUP
+            else:
+                intent.actionability_followup = (
+                    "請指定城市與用餐時段：\n"
+                    "(A) 東京 — 午餐\n(B) 東京 — 晚餐\n(C) 大阪 — 午餐\n(D) 大阪 — 晚餐"
+                )
+            print(f"[State Manager] Forced is_actionable=False due to missing: {missing}")
+
+
+def _sanitize_intent(intent: Intent) -> None:
+    """Remove any fields not in the Intent dataclass (defensive)."""
+    # The Intent dataclass already defines allowed fields.
+    # We can also ensure meal_slots only contain valid values.
+    valid_slots = {"breakfast", "lunch", "tea", "dinner", "late_night"}
+    intent.meal_slots = [s for s in intent.meal_slots if s in valid_slots]
+    valid_modes = {"right_now", "balanced", "taste_max"}
+    if intent.mode not in valid_modes:
+        intent.mode = "balanced"
+    valid_regions = {"tw", "jp", "unknown"}
+    if intent.region not in valid_regions:
+        intent.region = "unknown"
+    # Ensure city is None if empty string
+    intent.city = _strip_city_optional(intent.city)
+
+
 # ---------------------------------------------------------------------------
 # Public parse functions
 # ---------------------------------------------------------------------------
@@ -1072,6 +1180,9 @@ def parse_intent(
                 prev_itinerary=prev_itinerary,
             )
             _stamp_geo_pins(llm_result)
+            llm_result = _reconcile_intents(previous_intent, llm_result)
+            _iterative_actionability_check(llm_result)
+            _sanitize_intent(llm_result)
             _clamp_missing_city_if_actionable(llm_result)
             return llm_result
         except Exception:
@@ -1088,13 +1199,16 @@ def parse_intent(
     try:
         llm_result = parse_intent_llm(query, llm_router, prev_itinerary=prev_itinerary)
         _stamp_geo_pins(llm_result)
+        _iterative_actionability_check(llm_result)
+        _sanitize_intent(llm_result)
         _clamp_missing_city_if_actionable(llm_result)
         return llm_result
     except Exception:
         if rule_result is not None:
+            _sanitize_intent(rule_result)
             return rule_result
         city, region, _ = _resolve_city(query, user_locale, user_lat, user_lng)
-        return Intent(
+        fallback = Intent(
             city=city,
             region=region,
             is_actionable=False,
@@ -1103,3 +1217,5 @@ def parse_intent(
                 "(A) 日本 — 關西\n(B) 日本 — 關東\n(C) 台灣\n(D) 其他（請直接輸入城市）"
             ),
         )
+        _sanitize_intent(fallback)
+        return fallback

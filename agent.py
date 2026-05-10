@@ -2830,9 +2830,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     fixed_times = [("11:30", "13:00"), ("13:30", "15:00"), ("17:30", "19:00")]
 
     mock_date = datetime.now(_APP_TZ).date()
-    from decision_engine import SynthesisNode, SynthesisResult as _SynthesisResult
 
-    nodes = []
     report_lines = []
     report_lines.append("## Travel Agent - Live Run\n")
     report_lines.append("### Itinerary (dummy planner – no DP)\n")
@@ -2846,26 +2844,9 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         eh, em = map(int, end_str.split(":"))
         start_dt = datetime(mock_date.year, mock_date.month, mock_date.day, sh, sm, tzinfo=_APP_TZ)
         end_dt = datetime(mock_date.year, mock_date.month, mock_date.day, eh, em, tzinfo=_APP_TZ)
-        nodes.append(SynthesisNode(
-            title=name,
-            start_at=start_dt,
-            end_at=end_dt,
-            shop_profile=None,
-            note="MOCK – fixed timing (no DP)",
-        ))
         report_lines.append(
             f"| {start_dt.strftime('%H:%M')} - {end_dt.strftime('%H:%M')} | {name} | MOCK |\n"
         )
-
-    synthesized = _SynthesisResult(
-        nodes=nodes,
-        warnings=[],
-        backup_nodes=[],
-        rollback_triggered=False,
-        solver_audit_log=[],
-        graph_debug_traces=[],
-        mermaid="",
-    )
 
     report_lines.append("\n### Summary\n")
     report = "".join(report_lines)

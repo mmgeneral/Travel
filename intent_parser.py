@@ -45,7 +45,7 @@ import json
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -703,6 +703,10 @@ Output: {"city":null,"region":"jp","meal_slots":[],"time_window":{"start":null,"
 
 Query: '我想吃拉麵'
 Output: {"city":null,"region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["ramen"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.35,"is_revision":false,"is_actionable":false,"actionability_followup":"想在哪個城市找拉麵？\\n(A) 東京\\n(B) 大阪\\n(C) 京都\\n(D) 台北"}
+
+Few-shot — ACTIONABLE with explicit city and mode:
+Query: '京都 TASTE_MAX'
+Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":1.0,"is_revision":false,"is_actionable":true,"actionability_followup":null}
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\
@@ -861,130 +865,41 @@ def _llm_prompt_messages(
 
 
 def parse_intent_rules(
-    query: str,
-    *,
-    user_locale: str | None = None,
-    user_lat: float | None = None,
-    user_lng: float | None = None,
-) -> Intent | None:
-    """Rule-based fast path.
+    query: str, *, user_locale: str = "zh_TW", user_lat: Optional[float] = None, user_lng: Optional[float] = None
+) -> Optional['Intent']:
+    print(f"👉 [DEBUG-RULE] 快慢路徑攔截器收到的原始 query: {query!r}")
+    
+    q = query.strip().upper()
+    
+    option_match = re.match(r"^[(（]?\s*([A-D])\s*[)）]?(?:\s|$|.)", q)
+    if option_match:
+        choice = option_match.group(1)
+        mapping = {"A": "東京", "B": "大阪", "C": "京都", "D": "台北"}
+        city = mapping[choice]
+        print(f"👉 [DEBUG-RULE] 攔截成功！選項 {choice} 映射為 {city}")
+        
+        # 👇 這裡把 note 刪掉了
+        return Intent(
+            city=city,
+            region="jp" if city != "台北" else "tw",
+            is_actionable=True,
+            confidence=1.0
+        )
 
-    Returns ``None`` if no meaningful signals are found in the query (i.e.
-    the query is too ambiguous for rules and needs LLM interpretation).
-    Returns an ``Intent`` with a ``confidence`` score otherwise.
-    """
-    # Fast-path for (A)(B)(C)(D) options and common city names
-    q_clean = (query or "").strip()
-    if q_clean:
-        # Pattern for (A), (B), A, B, etc.
-        letter_match = re.match(r"^[（(]?([ABCD])[)）]?$", q_clean)
-        city_match = re.match(r"^(東京|大阪|京都|台北)$", q_clean)
-        if letter_match or city_match:
-            # For letters: we need to map to cities via previous intent's options
-            # But in rule-based we don't have previous intent, so we'll handle only city names
-            if city_match:
-                city_name = city_match.group(1)
-                region_map = {"東京": "jp", "大阪": "jp", "京都": "jp", "台北": "tw"}
-                return Intent(
-                    city=city_name,
-                    region=region_map[city_name],
-                    confidence=1.0,
-                    metadata={'source': 'fast-path-rule'}
-                )
-
-    _NEGATION_TOKENS = ("不想", "不要", "不吃", "不喜歡", "避開", "no ", "avoid", "don't want")
-    if any(tok in (query or "").lower() for tok in _NEGATION_TOKENS):
-        return None
-
-    city, region, city_in_query = _resolve_city(query, user_locale, user_lat, user_lng)
-    tr = _extract_time_range(query)
-    time_window = (tr.start, tr.end)
-    meal_slots = _requested_meal_slots(query)
-    category_tags = sorted(_extract_category_tags(query))
-    dietary_hints = _dietary_ethics(query)
-    excluded_shops_quick = _extract_excluded_shops_quick(query)
-    wants_flight = _is_flight_intent(query)
-    appetite_light = _is_appetite_light(query)
-    ramen = _is_ramen(query)
-
-    # Determine mode
-    if _is_right_now_mode(query):
-        mode = "right_now"
-    elif category_tags or ramen:
-        mode = "taste_max"
-    else:
-        mode = "balanced"
-
-    explicit_constraints: list[str] = []
-    if appetite_light:
-        explicit_constraints.append("appetite_light")
-    if ramen and _requested_meal_count(query) is not None:
-        explicit_constraints.append("strong_ramen")
-
-    # Confidence: how much structure did rules extract?
-    score = 0.0
-    if city_in_query:
-        score += 0.20
-    elif user_locale or user_lat is not None:
-        score += 0.08  # city from context, not query
-    if meal_slots:
-        score += 0.30
-    if category_tags:
-        score += 0.20
-    if time_window[0] or time_window[1]:
-        score += 0.15
-    if dietary_hints:
-        score += 0.10
-    if excluded_shops_quick:
-        score += 0.08
-    if wants_flight:
-        score += 0.10
-    if mode == "right_now":
-        score += 0.10
-    confidence = min(1.0, score)
-
-    # Boost for combinations where rules unambiguously capture the full intent.
-    # These avoid unnecessary LLM calls when the query is structurally clear.
-    if wants_flight:
-        # Flight booking intent is definitively parseable by rules.
-        confidence = max(confidence, 0.70)
-    if mode == "right_now" and (category_tags or meal_slots):
-        # "現在餓了 + 想吃X" is fully handled by rules.
-        confidence = max(confidence, 0.70)
-    if city_in_query and meal_slots:
-        # Explicit city + at least one meal slot = high planning clarity.
-        confidence = max(confidence, 0.70)
-    if meal_slots and category_tags:
-        # Meal structure + food category = enough for deterministic planning.
-        confidence = max(confidence, 0.70)
-
-    # No useful signals → caller should use LLM
-    has_signal = bool(
-        meal_slots
-        or category_tags
-        or dietary_hints
-        or excluded_shops_quick
-        or wants_flight
-        or mode == "right_now"
-        or time_window[0]
-    )
-    if not has_signal:
-        return None
-
-    return Intent(
-        city=city,
-        region=region,
-        meal_slots=meal_slots,
-        time_window=time_window,
-        category_tags=category_tags,
-        dietary_hints=dietary_hints,
-        excluded_shops=excluded_shops_quick,
-        mode=mode,
-        explicit_constraints=explicit_constraints,
-        wants_flight=wants_flight,
-        confidence=confidence,
-    )
-
+    known_cities = ["東京", "大阪", "京都", "台北"]
+    if q in known_cities:
+        print(f"👉 [DEBUG-RULE] 攔截成功！關鍵字匹配為 {q}")
+        
+        # 👇 這裡把 note 刪掉了
+        return Intent(
+            city=q,
+            region="jp" if q != "台北" else "tw",
+            is_actionable=True,
+            confidence=1.0
+        )
+        
+    print("👉 [DEBUG-RULE] 攔截失敗，準備進入 LLM...")
+    return None
 
 def parse_intent_llm(
     query: str,
@@ -1003,6 +918,13 @@ def parse_intent_llm(
 
     messages_base = _llm_prompt_messages(query, previous_intent, prev_itinerary=prev_itinerary)
 
+    # === 在呼叫 LLM 之前加入這段 ===
+    print("\n👉 [DEBUG-PROMPT] 即將送給 LLM 的訊息:")
+    import json
+    print(json.dumps(messages_base, ensure_ascii=False, indent=2))
+    print("=" * 50)
+    # ================================
+    
     last_error: Exception | None = None
     for attempt in range(2):
         messages = list(messages_base)

@@ -717,10 +717,6 @@ Output: {"city":null,"region":"jp","meal_slots":[],"time_window":{"start":null,"
 Query: '我想吃拉麵'
 Output: {"city":null,"region":"unknown","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["ramen"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.35,"is_revision":false,"is_actionable":false,"actionability_followup":"想在哪個城市找拉麵？\\n(A) 東京\\n(B) 大阪\\n(C) 京都\\n(D) 台北"}
 
-Few-shot — ACTIONABLE with explicit city and mode:
-Query: '京都 TASTE_MAX'
-Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":1.0,"is_revision":false,"is_actionable":true,"actionability_followup":null}
-
 Few-shot — Missing Parameter Clarification (Needs meal slot):
 Query: '我想去京都吃燒肉'
 Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["yakiniku"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.8,"is_revision":false,"is_actionable":false,"actionability_followup":"請問您想安排在哪個時段享用呢？\\n(A) 午餐\\n(B) 晚餐\\n(C) 宵夜"}

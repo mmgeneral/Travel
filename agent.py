@@ -75,7 +75,7 @@ from decision_engine import (
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
 from intent_parser import parse_intent as _parse_intent
 from tracing import trace_agent_stage
-from llm_router import TaskType, LLMRouter as _LLMROuter
+from llm_router import TaskType, LLMRouter as _LLMRouter
 from agents.retriever import RetrieverAgent
 from agents.critic import CriticAgent
 from agents.synthesizer import SynthesizerAgent, SynthesisReport

@@ -2809,635 +2809,54 @@ async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) 
 
 
 async def _node_plan_core(state: AgentState) -> AgentState:
-    query_text = state.get("query", "") or ""
-
-    report = "## Travel Agent - Live Run\n\n"
-    report += f"**Run ID:** `{state.get('agent_run_id','')}` "
-    report += "(checkpoint persisted via LangGraph checkpointer)\n\n"
-    if state.get("researcher_candidate_names"):
-        report += "### Multi-Agent Loop\n"
-        report += f"- Researcher iterations: {int(state.get('research_iteration', 0))}\n"
-        report += f"- Candidate draft: {', '.join(state.get('researcher_candidate_names', []))}\n"
-        report += f"- Critic feedback: {state.get('auditor_feedback', '')}\n\n"
-
-    # Dynamic shop-aware planning block (ACL-style constraint check + fallback).
-    _intent = state.get("intent") or {}
-    report += "\n\n### Dynamic Shop Planning\n"
-    if "appetite_light" in _intent.get("explicit_constraints", []):
-        report += (
-            "> **食量敏感**：已排除份量規定嚴格（strictness>0.9）且無「小盛／半份」選項的店家；"
-            "含小盛選項者於排序中獲得加分。\n\n"
-        )
-    report += "| Slot | Shop | Outcome | Preparation Note |\n|---|---|---|---|\n"
-
-    right_now_mode = _intent.get("mode") == "right_now"
-    _tw = _intent.get("time_window") or [None, None]
-    forced_start_hhmm = _tw[0] if _tw else None
-    forced_end_hhmm = _tw[1] if _tw else None
-    base_day = datetime.now(_APP_TZ)
-    if forced_start_hhmm:
-        sh, sm = [int(x) for x in forced_start_hhmm.split(":", 1)]
-        # Hard rule: user-provided start overrides all default start-time sources.
-        now = base_day.replace(hour=sh, minute=sm, second=0, microsecond=0)
-        state["transit_audit"].append(
-            _dj("global_window_start_enforced", start_hhmm=forced_start_hhmm)
-        )
-    else:
-        now = base_day if right_now_mode else base_day.replace(hour=11, minute=30, second=0, microsecond=0)
-    global_end_dt: datetime | None = None
-    if forced_end_hhmm:
-        eh, em = [int(x) for x in forced_end_hhmm.split(":", 1)]
-        global_end_dt = now.replace(hour=eh, minute=em, second=0, microsecond=0)
-        if global_end_dt <= now:
-            global_end_dt = global_end_dt + timedelta(days=1)
-        state["transit_audit"].append(_dj("global_window_end_enforced", end_hhmm=forced_end_hhmm))
-    synth_start_time = now
-    prefers_driving_mode = ("DRIVE" in state.get("query", "") or "自駕" in state.get("query", ""))
-    dietary_raw = state.get("dietary_profile", {}) or {}
-    inferred_ethics = _intent.get("dietary_hints")
-    effective_ethics = str(dietary_raw.get("ethics", "omnivore"))
-    if inferred_ethics and effective_ethics in {"unspecified", "omnivore", "regular", "none"}:
-        effective_ethics = inferred_ethics
-    advanced_mode = bool(state.get("advanced_mode", False))
-    dietary_axis = DietaryAxis(
-        ethics=effective_ethics,
-        allergens={str(x) for x in dietary_raw.get("allergens", [])},
-        religious=str(dietary_raw.get("religious", "none")),
-        medical={str(x) for x in dietary_raw.get("medical", [])},
-    )
-    plan_excluded_tags = plan_excluded_frozenset(state)
-    if not plan_excluded_tags and _intent:
-        plan_excluded_tags = _build_plan_excluded_shop_tags(query_text, _intent, dietary_raw)
-        state["plan_excluded_shop_tags"] = sorted(plan_excluded_tags)
-    if plan_excluded_tags:
-        state["transit_audit"].append(
-            _dj(
-                "plan_excluded_shop_tags",
-                count=len(plan_excluded_tags),
-                sample=sorted(plan_excluded_tags)[:24],
-                note="ingress_via_route_intent_or_rebuilt",
-            )
-        )
-    excluded_shop_names = normalized_excluded_shop_names_from_intent(_intent)
-    if excluded_shop_names:
-        state["transit_audit"].append(
-            _dj(
-                "plan_excluded_shop_names",
-                count=len(excluded_shop_names),
-                sample=list(excluded_shop_names)[:12],
-            )
-        )
-    expand_city = (str(_intent.get("city") or "").strip())
-    expand_region = (str(_intent.get("region") or "").strip()) or "unknown"
-    appetite_light_mode = "appetite_light" in _intent.get("explicit_constraints", [])
-    explicit_category_tags = _plan_global_explicit_tags(query_text)
-    must_have_tags = sorted(explicit_category_tags)
-    meal_slots_eff = _effective_plan_meal_slots(_intent, query_text)
-    sns_fixtures, traffic_fixtures = _region_driven_mock_fixtures(expand_city, expand_region)
-    sns_provider = MockSnsProvider(fixtures=sns_fixtures)
-    traffic_provider = MockTrafficProvider(fixtures=traffic_fixtures)
-    state.setdefault("transit_audit", []).append(
-        _dj(
-            "region_fixture_loaded",
-            city=expand_city,
-            region=expand_region,
-            sns_keys=sorted(sns_fixtures.keys()),
-            traffic_edges=len(traffic_fixtures),
-        )
-    )
-    dynamic_pool: list[dict] = list(state.get("dynamic_shop_pool", []) or [])
-    if len(dynamic_pool) < _MIN_DYNAMIC_POOL_HEALTHY:
-        state.setdefault("transit_audit", []).append(
-            _dj(
-                "dynamic_pool_low_warning",
-                count=len(dynamic_pool),
-                threshold=_MIN_DYNAMIC_POOL_HEALTHY,
-                action="geo_expansion_llm_or_heuristic",
-            )
-        )
-        expansion_queries, expansion_mode = await _llm_broad_geo_search_queries(
-            query_text,
-            expand_city,
-            expand_region,
-            chat_client=_svc_openai_chat_client(state),
-        )
-        must_for_expansion = sorted(_plan_global_explicit_tags(query_text))
-        merged_pool: dict[str, dict] = {}
-        for row in dynamic_pool:
-            nk = (row.get("name") or "").strip().lower()
-            if nk:
-                merged_pool[nk] = dict(row)
-        nearby_expand = NearbySearchTool()
-        for qstr in expansion_queries:
-            batch = nearby_expand.search_places(
-                city=expand_city,
-                user_query=qstr,
-                limit=60,
-                must_have_tags=must_for_expansion if must_for_expansion else None,
-            )
-            for p in batch:
-                nk = (p.get("name") or "").strip().lower()
-                if nk and nk not in merged_pool:
-                    merged_pool[nk] = _dynamic_pool_row_from_place(p, expand_region)
-            if len(merged_pool) >= 60:
-                break
-        dynamic_pool = list(merged_pool.values())[:60]
-        state["dynamic_shop_pool"] = dynamic_pool
-        state["transit_audit"].append(
-            _dj(
-                "dynamic_pool_expansion",
-                mode=expansion_mode,
-                query_batches=len(expansion_queries),
-                merged_total=len(dynamic_pool),
-            )
-        )
-
-    seed_shops: list[ShopProfile] = []
-    dynamic_shops: list[ShopProfile] = []
-
-    # Seed catalog so planning never goes empty when nearby search fails or returns nothing.
-    seed_shops = retrieve_seed_candidates(
-        city=expand_city,
-        dietary_constraints=DietaryConstraints(
-            excluded_shop_tags=plan_excluded_tags,
-            appetite_light=appetite_light_mode,
-            excluded_shop_names=excluded_shop_names,
-        ),
-        category_tags=must_have_tags,
-        meal_slots=meal_slots_eff,
-    )
-    state["transit_audit"].append(
-        _dj(
-            "retrieval_service_seed",
-            city=expand_city,
-            catalog_stem=catalog_stem_for_city(expand_city),
-            count=len(seed_shops),
-            meal_slots=meal_slots_eff,
-            category_tags=must_have_tags,
-        )
-    )
-
-    for p in dynamic_pool[:60]:
-        prof = _build_dynamic_shop_profile(p, region=str(p.get("region", "jp")))
-        dynamic_shops.append(prof)
-    _dyn_die_before = len(dynamic_shops)
-    dynamic_shops = filter_shop_profiles_by_dietary_exclusions(dynamic_shops, plan_excluded_tags)
-    if len(dynamic_shops) < _dyn_die_before:
-        state["transit_audit"].append(
-            _dj(
-                "node_plan_dynamic_dietary_filtered",
-                dropped=_dyn_die_before - len(dynamic_shops),
-                kept=len(dynamic_shops),
-            )
-        )
-    _dyn_excl_before = len(dynamic_shops)
-    dynamic_shops = filter_shop_profiles_by_excluded_shop_names(dynamic_shops, excluded_shop_names)
-    if len(dynamic_shops) < _dyn_excl_before:
-        state["transit_audit"].append(
-            _dj(
-                "node_plan_dynamic_excluded_shop_names",
-                dropped=_dyn_excl_before - len(dynamic_shops),
-                kept=len(dynamic_shops),
-                sample=list(excluded_shop_names)[:8],
-            )
-        )
-
-    shops = seed_shops + dynamic_shops
-    deduped_shops: list[ShopProfile] = []
-    seen_shop_names: set[str] = set()
-    for s in shops:
-        if s.name in seen_shop_names:
-            continue
-        seen_shop_names.add(s.name)
-        deduped_shops.append(s)
-    added_dynamic = max(0, len(deduped_shops) - len(seed_shops))
-    shops = deduped_shops
-
-    if not dynamic_pool:
-        state["transit_audit"].append(
-            _dj(
-                "dynamic_place_search_empty",
-                candidates=0,
-                detail="using seed-only pool until expansion",
-            )
-        )
-    elif added_dynamic == 0:
-        state["transit_audit"].append(
-            _dj("dynamic_place_search_deduped_seed", new_dynamic_names=0)
-        )
-
-    # Multi-agent handoff: Researcher selected candidate shortlist.
-    researcher_names = [str(x) for x in (state.get("researcher_candidate_names") or []) if str(x)]
-    if researcher_names:
-        name_set = set(researcher_names)
-        shortlisted = [s for s in shops if s.name in name_set]
-        if shortlisted:
-            shops = shortlisted + [s for s in shops if s.name not in name_set]
-            state["transit_audit"].append(
-                _dj("researcher_candidates_applied", candidate_names=researcher_names, matched=len(shortlisted))
-            )
-
-    if must_have_tags:
-        state["transit_audit"].append(
-            _dj(
-                "hard_tag_filter",
-                explicit_tags=must_have_tags,
-                note="softened_global; slot tags may apply per meal",
-            )
-        )
-    shops_for_dynamic_planning = shops
-    if must_have_tags:
-        must_have_set = {t.lower() for t in must_have_tags}
-        shops_for_dynamic_planning = [
-            s for s in shops_for_dynamic_planning if any(str(tag).lower() in must_have_set for tag in s.tags)
-        ]
-        state["transit_audit"].append(
-            _dj(
-                "dynamic_plan_filtered_tags",
-                tags=must_have_tags,
-                kept=len(shops_for_dynamic_planning),
-                total=len(shops),
-            )
-        )
-
-    if appetite_light_mode:
-        _ap_before = len(shops_for_dynamic_planning)
-        shops_for_dynamic_planning = [
-            s
-            for s in shops_for_dynamic_planning
-            if not (
-                float(getattr(s, "portion_strictness", 0.5)) > 0.9
-                and not bool(getattr(s, "has_small_portion", False))
-            )
-        ]
-        state["transit_audit"].append(
-            _dj(
-                "appetite_light_portion_filter",
-                kept=len(shops_for_dynamic_planning),
-                before=_ap_before,
-            )
-        )
-
-    # Probe clock isolated from synthesis start (also required before high-pressure slack scan).
-    probe_now = copy.deepcopy(now)
-
-    # Layer-3 runtime resilience: reserve probe outcomes for two tight high-score shops.
-    high_pressure_pair: dict[str, str] = {}
-    pressure_candidates: list[tuple[str, float, float]] = []  # (shop_name, urgency_score, trust)
-    for s in shops_for_dynamic_planning:
-        try:
-            ch, cm = [int(x) for x in s.close_time.split(":", 1)]
-            close_at = probe_now.replace(hour=ch, minute=cm, second=0, microsecond=0)
-            last_call_at = close_at - timedelta(minutes=max(0, int(s.last_call_offset)))
-            slack_min = (last_call_at - probe_now).total_seconds() / 60.0
-        except Exception:
-            continue
-        if slack_min <= 0:
-            continue
-        if slack_min > 180:
-            continue
-        # Higher trust and shorter slack => higher priority for dual-path reservation.
-        urgency = (300.0 - min(300.0, slack_min)) + (s.trust_score * 100.0)
-        pressure_candidates.append((s.name, urgency, s.trust_score))
-    pressure_candidates.sort(key=lambda x: (x[1], x[2]), reverse=True)
-    if len(pressure_candidates) >= 2:
-        a = pressure_candidates[0][0]
-        b = pressure_candidates[1][0]
-        high_pressure_pair[a] = b
-        high_pressure_pair[b] = a
-        state["transit_audit"].append(_dj("high_pressure_pair_reserved", shop_a=a, shop_b=b))
-
-    review_samples: dict[str, dict] = {}
-    review_index = {s.name: s for s in shops}
-    for name, payload in review_samples.items():
-        if name in review_index:
-            setattr(review_index[name], "_review_texts", payload.get("reviews", []))
-
-    shop_warning_badges: dict[str, str] = {}
-    for shop in shops_for_dynamic_planning:
-        # Demo override: user query can force probe keyword for testing.
-        if "臨休" in state.get("query", "") and "燃えよ" in shop.name:
-            sns_provider.fixtures[shop.sns_handle] = "本日臨休"
-        plan = plan_shop_visit(
-            shop=shop,
-            current_time=probe_now,
-            day_of_week="Sat",
-            time_slot="lunch",
-            from_loc="Kyoto Station" if "燃えよ" in shop.name else "Umeda",
-            to_loc="Umeda" if "燃えよ" in shop.name else "Karasuma",
-            travel_time_minutes=35 if "燃えよ" in shop.name else 18,
-            dietary_preference=dietary_axis,
-            sns_adapter=sns_provider,
-            traffic_adapter=traffic_provider,
-            candidate_shops=shops,
-            use_driving_mode=prefers_driving_mode,
-            allow_preorder_risk=advanced_mode,
-        )
-        if appetite_light_mode:
-            _ps = float(getattr(shop, "portion_strictness", 0.5))
-            if _ps > 0.9 and not bool(getattr(shop, "has_small_portion", False)):
-                plan.preparation_note = (
-                    f"{plan.preparation_note}；⚠ 此店份量較大且規定嚴格，若食量小建議改選有『小盛』標籤的店家"
-                )
-        if shop.name in high_pressure_pair:
-            fallback = high_pressure_pair[shop.name]
-            plan.preparation_note = (
-                f"{plan.preparation_note}；此為高壓行程，若 {shop.name} 店排隊過長，Saga 引擎將自動切換至 {fallback} 備案"
-            )
-            state["transit_audit"].append(
-                _dj("hybrid_saga_overbooking_note", shop=shop.name, fallback_shop=fallback)
-            )
-
-        review_data = review_samples.get(shop.name, {"google_negative_ratio": 0.3, "critic_score": 0.6, "reviews": []})
-        review_analysis = ReviewAnalyzer.consensus_scoring(
-            google_negative_ratio=review_data["google_negative_ratio"],
-            critic_score=review_data["critic_score"],
-            reviews=review_data["reviews"],
-        )
-        reliability_cutoff = _reliability_cutoff_for_region(shop.region)
-        if review_analysis.final_reliability_score < reliability_cutoff:
-            strongest_negative = review_analysis.negative_evidence[0] if review_analysis.negative_evidence else "（無可用負評樣本）"
-            report += (
-                f"| -- | {shop.name} | HIGH_BIAS_RISK | "
-                f"Reliability={review_analysis.final_reliability_score}% "
-                f"(cutoff={reliability_cutoff}, penalty={review_analysis.bias_penalty})；最真實負評：{strongest_negative} |\n"
-            )
-            state["transit_audit"].append(
-                _dj(
-                    "shop_review_high_bias_risk",
-                    shop=shop.name,
-                    reliability_score=review_analysis.final_reliability_score,
-                )
-            )
-            continue
-
-        if plan.outcome in ("FORCE_ABORT", "CONSTRAINT_CONFLICT", "PREORDER_EXPIRED_RISK"):
-            backup = plan.backup_option or "N/A"
-            report += (
-                f"| -- | {shop.name} | {plan.semantic_status} | "
-                f"{plan.preparation_note} Backup Option: {backup} |\n"
-            )
-            # Compensation-like behavior: fallback recommendation and continue.
-            state["transit_audit"].append(
-                _dj(
-                    "plan_shop_visit_outcome",
-                    shop=shop.name,
-                    semantic_status=plan.semantic_status,
-                    fallback=backup,
-                )
-            )
-            continue
-        if plan.outcome == "REROUTED_TRANSPORT":
-            report += (
-                f"| -- | {shop.name} | {plan.semantic_status} | {plan.preparation_note} |\n"
-            )
-            state["transit_audit"].append(
-                _dj("plan_shop_visit_reroute", shop=shop.name, mode="taxi")
-            )
-            continue
-        if "【紅色警告】" in plan.preparation_note:
-            shop_warning_badges[shop.name] = plan.preparation_note
-
-        for slot in plan.slots:
-            report += (
-                f"| {slot.start_at.strftime('%H:%M')} - {slot.end_at.strftime('%H:%M')} | "
-                f"{slot.title} | {plan.semantic_status} | {plan.preparation_note} |\n"
-            )
-            probe_now = max(probe_now, slot.end_at + timedelta(minutes=15))
-
-    # Decision optimization and itinerary synthesis
-    user_pref = UserPreference(
-        preferred_tags=["ramen", "scenic", "vegetarian"],
-        avoid_tags=["nightlife"],
-        dietary_preference="regular",
-        max_wait_minutes=35,
-        health_budget_limit=1.2,
-        prefers_driving=prefers_driving_mode,
-        max_total_minutes=115,
-        max_budget_impact=0.72,
-    )
-    health_tracker = HealthBudgetTracker(spent=0.58)
-    minefield = UserMinefield(
-        blocked_shop_names={"Wildcard Izakaya"},
-        blocked_tags={"too_salty", "賄賂送禮"},
-    )
-    query_upper = query_text.upper()
-    is_taste_max = any(
-        k in query_upper
-        for k in ["TASTE_MAX", "好吃第一", "不計代價", "老饕", "美食狂熱"]
-    )
-    if right_now_mode:
-        mode = OptimizationMode.RIGHT_NOW
-    elif is_taste_max:
-        mode = OptimizationMode.TASTE_MAX
-    else:
-        mode = OptimizationMode.BALANCED
-    # Keep strategy routing deterministic for testability and reproducible demos.
-    strategy = (
-        SelectionStrategy.FOODIE_STRATEGY
-        if "FOODIE_STRATEGY" in state.get("query", "")
-        else SelectionStrategy.TOURIST_STRATEGY
-    )
-    base_weight_profile = WeightProfile.trust_first() if mode == OptimizationMode.RIGHT_NOW else (
-        _learned_weight_profile if state.get("feedback_updates") else WeightProfile.trust_first()
-    )
-    preference_damping = bool(state.get("explicit_intent_preference_damping")) or _should_damp_preference_for_query(
-        query_text
-    )
-    active_weight_profile = base_weight_profile
-    if (
-        preference_damping
-        and mode != OptimizationMode.RIGHT_NOW
-        and base_weight_profile.preference_bias > WeightProfile.trust_first().preference_bias + 1e-6
-    ):
-        active_weight_profile = _apply_runtime_weight_damping(base_weight_profile)
-        state["transit_audit"].append(
-            _dj(
-                "preference_damping_runtime",
-                trust_up=True,
-                preference_down=True,
-                reason="explicit query vs learned taste",
-            )
-        )
-    ml_ready = _feedback_samples_seen >= _MIN_FEEDBACK_FOR_ML
-    if mode == OptimizationMode.RIGHT_NOW:
-        # RIGHT_NOW: keep only immediately reachable shops (default 30m travel budget).
-        now_from = "Shinsaibashi" if ("心齋橋" in state.get("query", "") or "SHINSAIBASHI" in state.get("query", "").upper()) else "Kyoto Station"
-        reachable: list[ShopProfile] = []
-        for s in shops:
-            if appetite_light_mode and float(getattr(s, "portion_strictness", 0.5)) > 0.9 and not getattr(
-                s, "has_small_portion", False
-            ):
-                continue
-            probe_plan = plan_shop_visit(
-                shop=s,
-                current_time=now,
-                day_of_week=now.strftime("%a"),
-                time_slot="dinner",
-                from_loc=now_from,
-                to_loc=s.neighborhood or s.name,
-                travel_time_minutes=30,
-                dietary_preference=dietary_axis,
-                sns_adapter=sns_provider,
-                traffic_adapter=traffic_provider,
-                candidate_shops=shops,
-                use_driving_mode=prefers_driving_mode,
-            )
-            if probe_plan.outcome in {"SUCCESS", "REROUTED_TRANSPORT"}:
-                reachable.append(s)
-        shops = reachable
-        state["transit_audit"].append(
-            _dj("right_now_mode_filtered", reachable=len(shops), origin_anchor=now_from)
-        )
-
-    # Phase 1: Heuristic Filter (tag-aware, fast pre-ranking to top-15 candidates)
-    state["transit_audit"].append(_dj("hybrid_phase1_heuristic_filter", phase="start"))
-    nearby_counts = {
-        "燃えよ麺助": 1,
-        "Harbs 大丸京都": 5,
-        "一蘭 京都河原町": 6,
-        "喫茶ソワレ": 2,
-        "松籟庵": 1,
-        "Wildcard Izakaya": 4,
-    }
-    heuristic_scored: list[RankedShop] = []
-    must_have_set = {t.lower() for t in must_have_tags}
-    for s in shops:
-        if must_have_set and not any(str(t).lower() in must_have_set for t in s.tags):
-            continue
-        if appetite_light_mode and float(getattr(s, "portion_strictness", 0.5)) > 0.9 and not getattr(
-            s, "has_small_portion", False
-        ):
-            continue
-        alpha = DensityScanner.scan_isolation_factor(nearby_counts.get(s.name, 3))
-        score, pref_match, _ = ScoringEngine.score_with_isolation(
-            s,
-            user_pref,
-            active_weight_profile,
-            isolation_factor=alpha,
-            isolation_threshold=0.7,
-        )
-        penalty = max(0.0, float(_feedback_penalties.get(s.name, 0.0)))
-        score = max(0.0, score - penalty)
-        if appetite_light_mode and getattr(s, "has_small_portion", False):
-            score *= 1.15
-        heuristic_scored.append(RankedShop(shop=s, final_score=float(score), preference_match_score=float(pref_match)))
-    heuristic_scored.sort(key=lambda x: x.final_score, reverse=True)
-    requested_slots = meal_slots_eff
-    requested_meal_count = _requested_meal_count(query_text)
-    slot_required_tags = _slot_level_required_tags(query_text)
-    if slot_required_tags:
-        state["transit_audit"].append(
-            _dj(
-                "slot_specific_tags",
-                slots={k: sorted(v) for k, v in slot_required_tags.items()},
-            )
-        )
-    if requested_slots:
-        state["transit_audit"].append(
-            _dj("meal_slot_partitioning", slots=requested_slots)
-        )
-    phase_cap = max(22, len(requested_slots) + 18) if requested_slots else 22
-    phase1_candidates = _inject_slot_anchor_rankeds_into_phase1(
-        core_head=heuristic_scored[:15],
-        full_scores=heuristic_scored,
-        seed_profiles=seed_shops,
-        slots=requested_slots,
-        query=query_text,
-        cap=phase_cap,
-    )
-    phase1_shops = [x.shop for x in phase1_candidates]
-    state["transit_audit"].append(
-        _dj(
-            "hybrid_phase1_heuristic_filter",
-            phase="done",
-            kept=len(phase1_candidates),
-            slot_injection=max(0, len(phase1_candidates) - min(15, len(heuristic_scored))),
-        )
-    )
-
-    ranked, rejected_list = RankingEngine.generate_top_picks(
-        shops=phase1_shops,
-        preference=user_pref,
-        minefield=minefield,
-        weight_profile=active_weight_profile,
-        nearby_counts=nearby_counts,
-        isolation_threshold=0.7,
-        mode=mode,
-        health_tracker=health_tracker,
-        selection_strategy=strategy,
-        learner=_pref_learner if ml_ready else None,
-        skip_semantic_mines=(mode == OptimizationMode.RIGHT_NOW),
-        shop_penalties=_feedback_penalties,
-        must_have_tags=must_have_tags,
-        taste_max_blacklist=_taste_max_blacklist,
-        appetite_light_mode=appetite_light_mode,
-    )
-    if mode == OptimizationMode.TASTE_MAX:
-        authority_hit_count = sum(
-            1
-            for r in ranked
-            if (
-                r.shop.authority_data.michelin_star > 0
-                or "百名店" in r.shop.authority_data.tablelog_medal
-                or len(r.shop.authority_data.chef_lineage) > 0
-            )
-        )
-        state["transit_audit"].append(
-            _dj(
-                "taste_authority_scan",
-                ranked=len(ranked),
-                authority_hits=authority_hit_count,
-            )
-        )
-    if not ml_ready:
-        state["transit_audit"].append(
-            _dj(
-                "feedback_model_pending",
-                collected_samples=_feedback_samples_seen,
-                required_samples=_MIN_FEEDBACK_FOR_ML,
-            )
-        )
-    if appetite_light_mode:
-        state["transit_audit"].append(_dj("appetite_light_mode", enabled=True))
-    feedback_applied = bool(_feedback_penalties) or bool(state.get("feedback_updates"))
-    state["transit_audit"].append(
-        _dj(
-            "plan_mode_summary",
-            mode=mode.value,
-            feedback_applied=feedback_applied,
-            meal_slot_optimized=bool(requested_slots),
-        )
-    )
     # ------------------------------------------------------------------
-    # MOCK DP / Synthesis – skip all graph building and cooldown.
-    # Pick top N shops from phase1_candidates and assign fixed timestamps.
+    # Dummy planner – skips all graph building, scoring, and timing.
+    # Picks up to 3 shops from the researcher candidates or fallback pool,
+    # assigns fixed timestamps, and returns output matching the original schema.
     # ------------------------------------------------------------------
-    take_n = max(1, min(3, len(phase1_candidates)))
-    ranked = phase1_candidates[:take_n]
-    state["transit_audit"].append(
-        _dj("mock_plan", mode="skip_dp_graph", slots=len(ranked))
-    )
-    # Build a fake SynthesisResult with fixed time slots.
-    slot_timings = [("11:30", "12:30"), ("13:00", "14:00"), ("14:30", "15:30")]
+    candidate_names: list[str] = []
+    # Try researcher candidates first.
+    res_names = state.get("researcher_candidate_names") or []
+    if res_names:
+        candidate_names = res_names[:3]
+    else:
+        # fallback: dynamic shop pool
+        pool = list(state.get("dynamic_shop_pool") or [])
+        names = [str(p.get("name", "")).strip() for p in pool if p.get("name")]
+        candidate_names = names[:3]
+    if not candidate_names:
+        candidate_names = ["Dummy Shop A", "Dummy Shop B", "Dummy Shop C"][:3]
+
+    fixed_times = [("11:30", "13:00"), ("13:30", "15:00"), ("17:30", "19:00")]
+
+    mock_date = datetime.now(_APP_TZ).date()
     from decision_engine import SynthesisNode, SynthesisResult as _SynthesisResult
-    mock_date = synth_start_time.date()
+
     nodes = []
-    for i, r in enumerate(ranked):
-        if i >= len(slot_timings):
+    report_lines = []
+    report_lines.append("## Travel Agent - Live Run\n")
+    report_lines.append("### Itinerary (dummy planner – no DP)\n")
+    report_lines.append("| Time | Shop | Note |\n|---|---|---|\n")
+
+    for i, name in enumerate(candidate_names):
+        if i >= len(fixed_times):
             break
-        start_str, end_str = slot_timings[i]
+        start_str, end_str = fixed_times[i]
         sh, sm = map(int, start_str.split(":"))
         eh, em = map(int, end_str.split(":"))
-        start_dt = datetime(mock_date.year, mock_date.month, mock_date.day, sh, sm, tzinfo=synth_start_time.tzinfo)
-        end_dt = datetime(mock_date.year, mock_date.month, mock_date.day, eh, em, tzinfo=synth_start_time.tzinfo)
+        start_dt = datetime(mock_date.year, mock_date.month, mock_date.day, sh, sm, tzinfo=_APP_TZ)
+        end_dt = datetime(mock_date.year, mock_date.month, mock_date.day, eh, em, tzinfo=_APP_TZ)
         nodes.append(SynthesisNode(
-            title=r.shop.name,
+            title=name,
             start_at=start_dt,
             end_at=end_dt,
-            shop_profile=r.shop,
+            shop_profile=None,
             note="MOCK – fixed timing (no DP)",
         ))
+        report_lines.append(
+            f"| {start_dt.strftime('%H:%M')} - {end_dt.strftime('%H:%M')} | {name} | MOCK |\n"
+        )
+
     synthesized = _SynthesisResult(
         nodes=nodes,
         warnings=[],
@@ -3448,133 +2867,28 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         mermaid="",
     )
 
-    # Health_Check before commitment: if over budget, rollback to healthier backup.
-    if ranked:
-        top_shop = ranked[0].shop
-        projected_health = health_tracker.spent + ScoringEngine.optimized_health_impact(top_shop)
-        if projected_health > user_pref.health_budget_limit:
-            fallback = choose_health_backup([r.shop for r in ranked], top_shop)
-            if fallback is not None:
-                state["transit_audit"].append(
-                    _dj(
-                        "health_check_rollback",
-                        from_shop=top_shop.name,
-                        to_shop=fallback.name,
-                    )
-                )
-                report += (
-                    f"\n\n> Health_Check: `{top_shop.name}` 導致健康預算超標 "
-                    f"({projected_health:.2f} > {user_pref.health_budget_limit:.2f})，"
-                    f"已觸發 Saga 回滾並切換至 `{fallback.name}`。"
-                )
-            else:
-                state["transit_audit"].append(
-                    _dj("health_check_rollback", detail="no_fallback_found")
-                )
-                report += (
-                    f"\n\n> Health_Check: `{top_shop.name}` 導致健康預算超標，"
-                    "已觸發 Saga 回滾，但無可用健康備案。"
-                )
+    report_lines.append("\n### Summary\n")
+    report = "".join(report_lines)
 
-    report += f"\n\n## Section 1: 推薦排行榜 (Top Picks) — Mode: `{mode.value}`\n"
-    report += "| Rank | Shop | FinalScore | Note |\n|---|---|---:|---|\n"
-    for idx, item in enumerate(ranked, start=1):
-        note = "Wildcard" if item.is_wildcard else "Core Pick"
-        if item.rank_note:
-            note = f"{note}; {item.rank_note}"
-        alpha = getattr(item.shop, "_isolation_factor", 0.0)
-        if alpha >= 0.7:
-            note = f"{note}; IsolationFactor={alpha}"
-        report += f"| {idx} | {item.shop.name} | {item.final_score:.2f} | {note} |\n"
+    ui_cards = []
+    for name in candidate_names:
+        ui_cards.append({
+            "shop_name": name,
+            "address_hint": "",
+            "why_selected": "Dummy planner – no ranking",
+            "how_to_go": "Walk",
+            "reservation_hint": "",
+            "rank_note": "",
+            "insider_pick": False,
+            "warning_badge": "",
+            "warning_text": "",
+            "lat": None,
+            "lng": None,
+        })
 
-    report += "\n## Section 2: 韌性行程表 (Resilient Schedule)\n"
-    report += "| Time | Node | Note |\n|---|---|---|\n"
-    for n in synthesized.nodes:
-        report += (
-            f"| {n.start_at.strftime('%H:%M')} - {n.end_at.strftime('%H:%M')} | "
-            f"{n.title} | {n.note} |\n"
-        )
-    for warning in synthesized.warnings:
-        report += f"\n> {warning}\n"
-    if synthesized.backup_nodes:
-        report += f"\nBackupNode candidates: {', '.join(synthesized.backup_nodes)}\n"
-    report += "\n### Solver Diagnostics (Debug Only)\n"
-    transit_audit = state.get("transit_audit", [])
-    if not synthesized.solver_audit_log and not synthesized.graph_debug_traces and not transit_audit:
-        report += "- No solver diagnostics.\n"
-    else:
-        for audit in synthesized.solver_audit_log:
-            report += f"- [DP_AUDIT] `{audit}`\n"
-        for trace in synthesized.graph_debug_traces:
-            report += f"- [GRAPH_TRACE] `{trace}`\n"
-            explained = False
-            try:
-                g = json.loads(trace)
-                if isinstance(g, dict) and g.get("event") == "graph_rejected_edge":
-                    report += (
-                        f"  - {g.get('from_shop', '')} 之後無法接 {g.get('to_shop', '')}，"
-                        f"因為 {g.get('detail', '')}\n"
-                    )
-                    explained = True
-            except json.JSONDecodeError:
-                pass
-            if not explained:
-                m = re.search(r"\[REJECTED_EDGE\] 從 (.+?) 到 (.+?) 失敗：(.+)。", trace)
-                if m:
-                    from_shop, to_shop, reason = m.groups()
-                    report += f"  - {from_shop} 之後無法接 {to_shop}，因為 {reason}\n"
-        for audit in transit_audit:
-            report += f"- [FLOW_AUDIT] `{audit}`\n"
-
-    report += "\n## Section 3: 避雷報告 (Minefield Check)\n"
-    if not rejected_list:
-        report += "- No hard-drop entries.\n"
-    else:
-        report += "| Shop | EstimatedScore | FilterReason |\n|---|---:|---|\n"
-        for rj in rejected_list:
-            report += f"| {rj.shop_name} | {rj.estimated_score:.2f} | {rj.reason} |\n"
-
-    report += "\n## MinefieldAnalysis\n"
-    famous_rejected = [rj for rj in rejected_list if any(s.name == rj.shop_name and s.is_famous for s in shops)]
-    if not famous_rejected:
-        report += "- 無名店被語義地雷過濾。\n"
-    else:
-        for rj in famous_rejected:
-            report += f"- {rj.shop_name} 已過濾：{rj.reason}\n"
-
-    report += "\n---\n### Conversational rollback\n"
-    report += "Use graph thread checkpoints for rollback/time-travel.\n"
-    report += f"Thread ID: `{state.get('agent_run_id','')}`\n"
-    ui_cards: list[dict] = []
-    for item in ranked[:5]:
-        shop = item.shop
-        if getattr(item, "insider_pick", False):
-            why = "【老饕私藏】此店名氣較低，但味覺信號純粹，避開了權威獎項的行銷噪音"
-        else:
-            why = item.rank_note or (item.top_3_reasons[0] if item.top_3_reasons else "整體風險較低且口味匹配。")
-        to_go = "建議搭乘大眾運輸前往。"
-        if prefers_driving_mode:
-            to_go = "建議自駕或計程車，保留交通緩衝。"
-        reserve_hint = "可直接現場候位"
-        if shop.booking_type == BookingType.PHONE:
-            reserve_hint = f"建議電話預約 {shop.booking_phone}".strip()
-        elif shop.booking_type == BookingType.WEB:
-            reserve_hint = "建議先透過官網或平台訂位"
-        ui_cards.append(
-            {
-                "shop_name": shop.name,
-                "address_hint": shop.neighborhood or "未提供",
-                "why_selected": why,
-                "how_to_go": to_go,
-                "reservation_hint": reserve_hint,
-                "rank_note": item.rank_note,
-                "insider_pick": getattr(item, "insider_pick", False),
-                "warning_badge": "PREORDER_WARNING" if shop.name in shop_warning_badges else "",
-                "warning_text": shop_warning_badges.get(shop.name, ""),
-                "lat": shop.latitude,
-                "lng": shop.longitude,
-            }
-        )
+    state.setdefault("transit_audit", []).append(
+        _dj("dummy_planner", mode="skip_all", shops=candidate_names)
+    )
     state["ui_cards"] = ui_cards
     state["final_itinerary"] = report
     return state

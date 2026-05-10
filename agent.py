@@ -3434,6 +3434,40 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                     break
             if phase3_failed:
                 continue
+            # --- Quick timing validity check (reject paths that will trigger boundary skip) ---
+            timing_valid = True
+            for k in range(len(path_ordered) - 1):
+                a_node = path_ordered[k]
+                b_node = path_ordered[k + 1]
+                shop_a = ranked_by_name.get(a_node.shop_name)
+                shop_b = ranked_by_name.get(b_node.shop_name)
+                if shop_a is None or shop_b is None:
+                    continue
+                cooldown_m = ItinerarySynthesizer._calculate_cooldown(
+                    shop_a.shop,
+                    mode=mode,
+                    requested_meal_count=None,
+                    appetite_light_mode=False,
+                )
+                eat_end_min = (
+                    int(shop_a.shop.base_wait_minutes)
+                    + int(shop_a.shop.min_eat_minutes or shop_a.shop.avg_eat_minutes)
+                )
+                travel_m = 18 + (8 * a_node.slot_index)
+                ready_at_try = a_node.start_time + timedelta(minutes=eat_end_min + cooldown_m + travel_m)
+                b_open = ItinerarySynthesizer._shop_open_at(b_node.start_time, shop_b.shop)
+                if ready_at_try > b_node.start_time or b_node.start_time < b_open:
+                    timing_valid = False
+                    state["transit_audit"].append(
+                        _dj(
+                            "hybrid_phase3_reject_due_time",
+                            path_index=idx,
+                            detail=f"{shop_a.shop.name}→{shop_b.shop.name} timing conflict",
+                        )
+                    )
+                    break
+            if not timing_valid:
+                continue
             selected_ranked_path = [ranked_by_name[n] for n in path_names if n in ranked_by_name]
             state["transit_audit"].append(
                 _dj("hybrid_phase3_commit", path_index=idx, shops=path_names)

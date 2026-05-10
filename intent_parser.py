@@ -41,6 +41,7 @@ Design notes
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import re
@@ -865,7 +866,12 @@ def _llm_prompt_messages(
 
 
 def parse_intent_rules(
-    query: str, *, user_locale: str = "zh_TW", user_lat: Optional[float] = None, user_lng: Optional[float] = None
+    query: str,
+    *,
+    user_locale: str = "zh_TW",
+    user_lat: Optional[float] = None,
+    user_lng: Optional[float] = None,
+    previous_intent: Optional['Intent'] = None,
 ) -> Optional['Intent']:
     print(f"👉 [DEBUG-RULE] 快慢路徑攔截器收到的原始 query: {query!r}")
     
@@ -876,26 +882,42 @@ def parse_intent_rules(
         choice = option_match.group(1)
         mapping = {"A": "東京", "B": "大阪", "C": "京都", "D": "台北"}
         city = mapping[choice]
+        region = "jp" if city != "台北" else "tw"
         print(f"👉 [DEBUG-RULE] 攔截成功！選項 {choice} 映射為 {city}")
         
-        # 👇 這裡把 note 刪掉了
+        if previous_intent is not None:
+            base = copy.deepcopy(previous_intent)
+            base.city = city
+            base.region = region
+            base.is_actionable = True
+            base.confidence = 1.0
+            base.actionability_followup = None
+            return base
         return Intent(
             city=city,
-            region="jp" if city != "台北" else "tw",
+            region=region,
             is_actionable=True,
-            confidence=1.0
+            confidence=1.0,
         )
 
     known_cities = ["東京", "大阪", "京都", "台北"]
     if q in known_cities:
+        region = "jp" if q != "台北" else "tw"
         print(f"👉 [DEBUG-RULE] 攔截成功！關鍵字匹配為 {q}")
         
-        # 👇 這裡把 note 刪掉了
+        if previous_intent is not None:
+            base = copy.deepcopy(previous_intent)
+            base.city = q
+            base.region = region
+            base.is_actionable = True
+            base.confidence = 1.0
+            base.actionability_followup = None
+            return base
         return Intent(
             city=q,
-            region="jp" if q != "台北" else "tw",
+            region=region,
             is_actionable=True,
-            confidence=1.0
+            confidence=1.0,
         )
         
     print("👉 [DEBUG-RULE] 攔截失敗，準備進入 LLM...")
@@ -1004,7 +1026,8 @@ def parse_intent(
 
     # First, try rule-based fast path regardless of previous_intent
     rule_result = parse_intent_rules(
-        query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng
+        query, user_locale=user_locale, user_lat=user_lat, user_lng=user_lng,
+        previous_intent=previous_intent,
     )
     if rule_result is not None and rule_result.confidence >= 0.6:
         _stamp_geo_pins(rule_result)

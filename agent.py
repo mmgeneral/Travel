@@ -1,5 +1,9 @@
 from __future__ import annotations
-from catalog import _build_shop_catalog
+from catalog import (
+    _build_shop_catalog,
+    _build_shop_catalog_taipei,
+    _build_shop_catalog_tokyo,
+)
 import copy
 import json
 import asyncio

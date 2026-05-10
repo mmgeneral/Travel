@@ -1857,94 +1857,46 @@ def node_route_intent(state: AgentState) -> AgentState:
     """Parse intent once, store in state, and set routing flags."""
     q = state.get("query", "") or ""
 
-    # 1. Intercept "A/B/C/D" clarification answer (pure Python, no LLM)
+    # 1. 追問選項攔截器
     if state.get("awaiting_intent_clarification"):
-        _city_map = {"a": "東京", "b": "大阪", "c": "京都", "d": "台北"}
-        _q_lower = q.strip().lower().lstrip("(").rstrip(")")
-        if _q_lower in _city_map:
-            city = _city_map[_q_lower]
-            state["intent"] = {
-                "city": city,
-                "region": "jp" if city in ("東京", "京都", "大阪") else "tw",
-                "meal_slots": [],
-                "time_window": [None, None],
-                "category_tags": [],
-                "dietary_hints": None,
-                "excluded_shops": [],
-                "excluded_tags": [],
-                "must_include_shops": [],
-                "must_exclude_shops": [],
-                "mode": "balanced",
-                "explicit_constraints": [],
-                "wants_flight": False,
-                "confidence": 0.9,
-                "is_revision": True,
-                "is_actionable": True,
-                "actionability_followup": None,
-            }
-            state.pop("awaiting_intent_clarification", None)
-            state.pop("clarification_broadcast", None)
-            state.setdefault("transit_audit", []).append(
-                _dj("intent_clarification_python_resolved", city=city)
-            )
-            return state
-        # If q contains a known city name directly
-        _direct = {"東京", "大阪", "京都", "台北"}
-        for _cn in _direct:
-            if _cn in q:
-                city = _cn
-                state["intent"] = {
-                    "city": city,
-                    "region": "jp" if city in ("東京", "京都", "大阪") else "tw",
-                    "meal_slots": [],
-                    "time_window": [None, None],
-                    "category_tags": [],
-                    "dietary_hints": None,
-                    "excluded_shops": [],
-                    "excluded_tags": [],
-                    "must_include_shops": [],
-                    "must_exclude_shops": [],
-                    "mode": "balanced",
-                    "explicit_constraints": [],
-                    "wants_flight": False,
-                    "confidence": 0.9,
-                    "is_revision": True,
-                    "is_actionable": True,
-                    "actionability_followup": None,
-                }
-                state.pop("awaiting_intent_clarification", None)
-                state.pop("clarification_broadcast", None)
-                state.setdefault("transit_audit", []).append(
-                    _dj("intent_clarification_python_resolved", city=city)
-                )
-                return state
+        q_upper = q.upper()
+        city_match = None
+        if "A" in q_upper or "東京" in q: city_match = "東京"
+        elif "B" in q_upper or "大阪" in q: city_match = "大阪"
+        elif "C" in q_upper or "京都" in q: city_match = "京都"
+        elif "D" in q_upper or "台北" in q: city_match = "台北"
 
-    # 2. Intercept revision (replace/remove shop)
-    _revision_pattern = re.compile(r"(?:換掉|不要|刪除|更換)\s*(.+)", re.UNICODE)
-    _rev_match = _revision_pattern.search(q)
-    if _rev_match and state.get("current_itinerary"):
-        _excluded_shop = _rev_match.group(1).strip().rstrip("。，,.")
-        if _excluded_shop:
-            intent = dict(state.get("intent") or {})
-            must_ex = list(intent.get("must_exclude_shops") or [])
-            if _excluded_shop not in must_ex:
-                must_ex.append(_excluded_shop)
-            intent["must_exclude_shops"] = must_ex
-            intent["is_actionable"] = True
-            intent["is_revision"] = True
-            if not intent.get("city"):
-                # inherit from previous intent if available
-                prev_hist = state.get("intent_history") or []
-                if prev_hist:
-                    last = prev_hist[-1]
-                    intent["city"] = last.get("city")
-                    intent["region"] = last.get("region", "unknown")
-            state["intent"] = intent
-            state.pop("awaiting_intent_clarification", None)
-            state.pop("clarification_broadcast", None)
-            state.setdefault("transit_audit", []).append(
-                _dj("revision_python_intercepted", excluded_shop=_excluded_shop)
-            )
+        if city_match:
+            curr_intent = state.get("intent") or {}
+            if not isinstance(curr_intent, dict):
+                curr_intent = curr_intent.as_dict() if hasattr(curr_intent, "as_dict") else {}
+            curr_intent["city"] = city_match
+            curr_intent["is_actionable"] = True
+            
+            state["intent"] = curr_intent
+            state["awaiting_intent_clarification"] = False
+            state["clarification_broadcast"] = None
+            return state
+
+    # 2. 行程修改 (Revision) 攔截器
+    if state.get("prev_itinerary") and any(k in q for k in ["換掉", "不要", "刪除", "更換"]):
+        import re
+        match = re.search(r'(?:換掉|不要|刪除|更換)\s*(\S+)', q)
+        if match:
+            shop_to_remove = match.group(1)
+            curr_intent = state.get("intent") or {}
+            if not isinstance(curr_intent, dict):
+                curr_intent = curr_intent.as_dict() if hasattr(curr_intent, "as_dict") else {}
+            
+            excludes = curr_intent.get("must_exclude_shops") or []
+            if shop_to_remove not in excludes:
+                excludes.append(shop_to_remove)
+            
+            curr_intent["must_exclude_shops"] = excludes
+            curr_intent["is_actionable"] = True
+            curr_intent["is_revision"] = True
+            
+            state["intent"] = curr_intent
             return state
 
     if _consume_pending_dietary_clarification_answer(state):

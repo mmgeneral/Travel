@@ -720,6 +720,14 @@ Output: {"city":null,"region":"unknown","meal_slots":[],"time_window":{"start":n
 Few-shot — ACTIONABLE with explicit city and mode:
 Query: '京都 TASTE_MAX'
 Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":1.0,"is_revision":false,"is_actionable":true,"actionability_followup":null}
+
+Few-shot — Missing Parameter Clarification (Needs meal slot):
+Query: '我想去京都吃燒肉'
+Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":null,"end":null},"category_tags":["yakiniku"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.8,"is_revision":false,"is_actionable":false,"actionability_followup":"請問您想安排在哪個時段享用呢？\\n(A) 午餐\\n(B) 晚餐\\n(C) 宵夜"}
+
+Few-shot — Self-Correction (User points out missed meal slot):
+Query: '我剛剛就說過要吃晚餐了'
+Output: {"city":null,"region":"unknown","meal_slots":["dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":false,"is_actionable":false,"actionability_followup":"非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"}
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\

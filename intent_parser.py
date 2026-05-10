@@ -753,6 +753,23 @@ Industry intent-refinement playbook
 * **Additive / supplement** (“也要有素食”“少油一點”“預算低”): Carry forward geography from `previous_intent`.
 * **Venue avoidance** (“不想吃XX”“換掉XX”): append to `excluded_shops`. `is_revision` true.
 * **Slot-level food swap** (“把午餐換成蕎麥麵”): Infer targeted `meal_slots`; update `category_tags` while carrying forward the rest. `is_revision` true.
+
+MULTI-TURN SHORT REPLY RESOLUTION (answer to previous actionability_followup)
+-------------------------------------------------------------------------------
+When the user’s new message is SHORT (e.g. "A", "B", "第一個", "東京", "大阪") and
+`previous_intent.is_actionable` is False and `previous_intent.actionability_followup` is set:
+
+1) Examine the (A)(B)(C)(D) options that the model previously wrote in `previous_intent.actionability_followup`.
+2) Map the user’s short answer to one of those options.  For example:
+   - Input "A" or "(A)" or "選A" ⇒ the first option.
+   - Input a city name (e.g. "東京") ⇒ the option containing that city.
+3) Once a concrete city is identified, set:
+   - `"city"` to that city name (e.g. "東京").
+   - `"region"` appropriately ("tw" for Taipei, "jp" for Japanese cities).
+   - `"is_actionable"` = true
+   - `"actionability_followup"` = null
+4) Carry forward any other fields that were already set in `previous_intent` (dietary_hints, category_tags, …).
+   The `is_revision` flag should be true.
 """
 
 def _prev_itinerary_system_addon(prev_itinerary: str | None) -> str:

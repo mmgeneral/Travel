@@ -3406,6 +3406,43 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             _dj("hybrid_phase2_dp_solver", phase="done", paths=len(k_paths))
         )
 
+        # --- Hard Lock Constraints (must_include / must_exclude) ---
+        _intent_hard = state.get("intent") or {}
+        must_include: list[str] = [
+            str(s).strip() for s in _intent_hard.get("must_include_shops", []) if str(s).strip()
+        ]
+        must_exclude: list[str] = [
+            str(s).strip() for s in _intent_hard.get("must_exclude_shops", []) if str(s).strip()
+        ]
+        if must_include or must_exclude:
+            state["transit_audit"].append(
+                _dj(
+                    "hard_lock_constraints",
+                    must_include=must_include,
+                    must_exclude=must_exclude,
+                    before_filter=len(k_paths),
+                )
+            )
+            filtered_paths: list[list[GraphNode]] = []
+            for path in k_paths:
+                path_names = {n.shop_name for n in path}
+                if must_include and not must_include.issubset(path_names):
+                    continue
+                if must_exclude and path_names & set(must_exclude):
+                    continue
+                filtered_paths.append(path)
+            rejected_count = len(k_paths) - len(filtered_paths)
+            if rejected_count > 0:
+                state["transit_audit"].append(
+                    _dj(
+                        "hard_lock_filtered",
+                        kept=len(filtered_paths),
+                        rejected=rejected_count,
+                    )
+                )
+            k_paths = filtered_paths
+        # ----------------------------------------------------------
+
         # Phase 3: Saga Commitment (SNS probe + flight lock), fallback to next-best path on failure.
         state["transit_audit"].append(_dj("hybrid_phase3_saga_commitment", phase="start"))
         ranked_by_name = {r.shop.name: r for r in phase1_candidates}

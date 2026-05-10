@@ -73,6 +73,10 @@ class Intent:
     dietary_hints: str | None = None
     excluded_shops: list[str] = field(default_factory=list)
     excluded_tags: list[str] = field(default_factory=list)
+    #: Hard lock: shops that MUST appear in the final DP itinerary.
+    must_include_shops: list[str] = field(default_factory=list)
+    #: Hard lock: shops that MUST be excluded from the final DP itinerary.
+    must_exclude_shops: list[str] = field(default_factory=list)
     mode: str = "balanced"
     explicit_constraints: list[str] = field(default_factory=list)
     wants_flight: bool = False
@@ -95,6 +99,8 @@ class Intent:
             "dietary_hints": self.dietary_hints,
             "excluded_shops": list(self.excluded_shops),
             "excluded_tags": list(self.excluded_tags),
+            "must_include_shops": list(self.must_include_shops),
+            "must_exclude_shops": list(self.must_exclude_shops),
             "mode": self.mode,
             "explicit_constraints": list(self.explicit_constraints),
             "wants_flight": self.wants_flight,
@@ -132,6 +138,8 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
                 if x is not None and len(str(x).strip()) >= 2
             )
         ),
+        must_include_shops=[str(x) for x in (d.get("must_include_shops") or []) if x is not None],
+        must_exclude_shops=[str(x) for x in (d.get("must_exclude_shops") or []) if x is not None],
         mode=str(d.get("mode") or "balanced"),
         explicit_constraints=[str(x) for x in (d.get("explicit_constraints") or []) if x is not None],
         wants_flight=bool(d.get("wants_flight", False)),
@@ -450,6 +458,8 @@ class _LLMIntentSchema(BaseModel):
     dietary_hints: str | None = None
     excluded_shops: list[str] = []
     excluded_tags: list[str] = []
+    must_include_shops: list[str] = []
+    must_exclude_shops: list[str] = []
     mode: str = "balanced"
     explicit_constraints: list[str] = []
     wants_flight: bool = False
@@ -555,6 +565,8 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
         dietary_hints=s.dietary_hints,
         excluded_shops=list(s.excluded_shops),
         excluded_tags=list(s.excluded_tags),
+        must_include_shops=list(s.must_include_shops),
+        must_exclude_shops=list(s.must_exclude_shops),
         mode=str(s.mode),
         explicit_constraints=list(s.explicit_constraints),
         wants_flight=bool(s.wants_flight),
@@ -779,6 +791,22 @@ When the user’s new message is SHORT (e.g. "A", "B", "第一個", "東京", "�
    - `"actionability_followup"` = null
 4) Carry forward any other fields that were already set in `previous_intent` (dietary_hints, category_tags, …).
    The `is_revision` flag should be true.
+
+CRITICAL RULE 4 — MUST INCLUDE / MUST EXCLUDE (HARD LOCK)
+-----------------------------------------------------------
+When `is_revision` is true, carefully examine the user's new message and identify any shops the
+user explicitly wants to keep (e.g. "保留 XX" / "keep XX") and any shops they want to remove
+(e.g. "換掉 XX" / "不要 XX").  Fill `must_include_shops` with the shop name(s) they explicitly
+mandate to keep, and `must_exclude_shops` with shop name(s) they mandate to drop.
+If no such explicit mandates exist, leave both as empty lists.
+
+CRITICAL RULE 4 — MUST INCLUDE / MUST EXCLUDE (HARD LOCK)
+-----------------------------------------------------------
+When `is_revision` is true, carefully examine the user's new message and identify any shops the
+user explicitly wants to keep (e.g. "保留 XX" / "keep XX") and any shops they want to remove
+(e.g. "換掉 XX" / "不要 XX").  Fill `must_include_shops` with the shop name(s) they explicitly
+mandate to keep, and `must_exclude_shops` with shop name(s) they mandate to drop.
+If no such explicit mandates exist, leave both as empty lists.
 """
 
 def _prev_itinerary_system_addon(prev_itinerary: str | None) -> str:

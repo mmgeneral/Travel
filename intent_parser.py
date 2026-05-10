@@ -541,10 +541,7 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
     actionable = bool(s.is_actionable)
     fu = (s.actionability_followup or "").strip()
     if not actionable and not fu:
-        fu = (
-            "資訊不足以開始規劃，請選擇或補充：\n"
-            "(A) 北海道\n(B) 關東（東京）\n(C) 關西（大阪／京都）\n(D) 九州／沖繩"
-        )
+        fu = "請告訴我您具體想去的城市或國家，以便我為您規劃。"
     city_val = _strip_city_optional(s.city)
     reg = str(s.region or "unknown")
     if reg not in _VALID_REGIONS:
@@ -636,9 +633,13 @@ Set is_actionable=false when ANY of these hold:
 
 When is_actionable=false you MUST set actionability_followup to a concise question in the user's language (Traditional Chinese for zh requests).
 The follow-up MUST list exactly four reply choices labeled (A) (B) (C) (D) on separate lines or clearly separated.
-Examples of valid patterns:
-- Japan-only trip: ask which macro region with (A)–(D) areas.
-- Food-only with no place: ask which city with (A)–(D) cities or 「請輸入城市名」 as one option.
+You MUST write the FULL TEXT of each choice, NOT just letters. For example:
+(A) 關東地區（如東京）
+(B) 關西地區（如大阪、京都）
+(C) 北海道
+(D) 其他（請自行輸入）
+Never output only letters like "(A) (B) (C) (D)" without explanatory content.
+Replace the above example with options appropriate to the user's context (country, region, etc.). Do not hardcode Japanese cities for a non-Japan query.
 
 When is_actionable=true, set actionability_followup to null.
 
@@ -745,6 +746,7 @@ CRITICAL RULE 3 — NO CITY GUESSING (ABSOLUTE)
 ----------------------------------------------
 Same as cold extraction: never invent or default a city. If the user still names only a country/region without ONE concrete city,
 keep `"city": null`, set `is_actionable` false, and supply (A)(B)(C)(D) in `actionability_followup`.
+You MUST write the FULL TEXT of each choice, NOT just letters. Provide concrete options suitable for the user's context (e.g., city or region names). Never output only letters.
 
 Industry intent-refinement playbook
 -----------------------------------

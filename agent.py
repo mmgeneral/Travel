@@ -1779,6 +1779,12 @@ def node_route_intent(state: AgentState) -> AgentState:
             previous_intent=prev_model,
             prev_itinerary=str(state.get("prev_itinerary") or ""),
         )
+        # ▼▼▼ [新增 DEBUG 1：印出 LLM 解析出的完整 JSON] ▼▼▼
+        print("\n" + "="*50)
+        print("👉 [DEBUG] LLM 解析出的 Intent 原始內容：")
+        print(json.dumps(intent.as_dict(), indent=2, ensure_ascii=False))
+        print("="*50 + "\n")
+        # ▲▲▲ ===================================== ▲▲▲
     except Exception as exc:
         _attach_node_error(state, "route_intent", exc)
         state["intent_history"] = hist
@@ -1793,6 +1799,11 @@ def node_route_intent(state: AgentState) -> AgentState:
     state["intent"] = intent.as_dict()
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()
+
+        # ▼▼▼ [新增 DEBUG 2：看看準備廣播的 msg 長怎樣] ▼▼▼
+        print(f"👉 [DEBUG] 準備廣播的追問訊息: {msg!r}")
+        # ▲▲▲ ===================================== ▲▲▲
+        
         if not msg:
             msg = "請告訴我您具體想去的城市或國家，以便我為您規劃。"
         state["awaiting_intent_clarification"] = True

@@ -107,14 +107,16 @@ def compute_marketing_noise_score(shop: "ShopProfile") -> float:
 @dataclass
 class ShopProfile:
     name: str
-    #: 0=Monday, 6=Sunday
-    closed_weekdays: list[int] = field(default_factory=list)
     close_time: str  # HH:MM
     booking_type: BookingType
     queue_strategy: QueueStrategy
     last_call_offset: int  # minutes before close
     is_cash_only: bool
     sns_handle: str
+    #: 0=Monday, 6=Sunday
+    closed_weekdays: list[int] = field(default_factory=list)
+    #: 0=Monday, 6=Sunday
+    closed_weekdays: list[int] = field(default_factory=list)
     avg_eat_minutes: int = 50
     # Lower bound for aggressive schedule compression.
     # If omitted, defaults to ~40% of avg_eat_minutes.

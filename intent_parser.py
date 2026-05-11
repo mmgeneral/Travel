@@ -48,6 +48,20 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
+# ---------------------------------------------------------------------------
+# Global schedule (mock) for slot collision detection
+# ---------------------------------------------------------------------------
+_GLOBAL_SCHEDULE: dict[str, str] = {}
+
+def set_global_schedule(schedule: dict[str, str]) -> None:
+    """Set the global schedule (e.g., {"lunch": "拉麵", "dinner": "燒肉"})."""
+    global _GLOBAL_SCHEDULE
+    _GLOBAL_SCHEDULE = dict(schedule)
+
+def get_global_schedule() -> dict[str, str]:
+    """Return a copy of the current global schedule."""
+    return dict(_GLOBAL_SCHEDULE)
+
 from pydantic import BaseModel, field_validator, model_validator
 
 from observability import record_llm_call, _get_tracer
@@ -91,6 +105,8 @@ class Intent:
     #: Additional metadata about intent source
     #: Pending mutation awaiting user confirmation (e.g., meal_slots change).
     pending_mutation: dict | None = None
+    #: Pending replacement awaiting user confirmation (slot collision with global schedule).
+    pending_replacement: dict | None = None
     metadata: dict = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
@@ -114,6 +130,7 @@ class Intent:
             "is_actionable": self.is_actionable,
             "actionability_followup": self.actionability_followup,
             "pending_mutation": self.pending_mutation,
+            "pending_replacement": self.pending_replacement,
             "metadata": self.metadata,
         }
 
@@ -159,6 +176,7 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
             else str(d.get("actionability_followup")).strip() or None
         ),
         pending_mutation=d.get("pending_mutation"),
+        pending_replacement=d.get("pending_replacement"),
         metadata=dict(d.get("metadata", {})),
     )
 
@@ -625,10 +643,10 @@ def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
     # Start from a copy of previous
     merged = copy.deepcopy(previous)
 
-    # If there is already a pending mutation, do not apply any meal_slots changes
+    # If there is already a pending mutation or pending replacement, do not apply any meal_slots changes
     # (the user must confirm or reject the pending change first).
-    if previous.pending_mutation is not None:
-        # Keep the pending mutation; ignore any meal_slots from new.
+    if previous.pending_mutation is not None or previous.pending_replacement is not None:
+        # Keep the pending state; ignore any meal_slots from new.
         # Still merge other fields as usual.
         pass
     else:
@@ -651,6 +669,23 @@ def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
             if new.meal_slots and new.meal_slots != previous.meal_slots:
                 print(f"[State Manager] Detected meal_slots overwrite: {previous.meal_slots} -> {new.meal_slots}")
                 merged.meal_slots = list(new.meal_slots)
+
+    # After merging meal_slots, check for slot collisions with global schedule
+    # (only if no pending mutation/replacement already)
+    if merged.pending_mutation is None and merged.pending_replacement is None:
+        global_schedule = get_global_schedule()
+        for slot in merged.meal_slots:
+            if slot in global_schedule:
+                existing = global_schedule[slot]
+                print(f"[State Manager] Slot collision detected: {slot} already has {existing}")
+                merged.is_actionable = False
+                merged.pending_replacement = {"slot": slot, "existing": existing}
+                merged.actionability_followup = (
+                    f"【{slot}】已排定【{existing}】，請問要換掉原本的行程嗎？\n"
+                    f"(A) 換掉\n(B) 取消"
+                )
+                # Do not apply any further changes; return early
+                return merged
 
     # Merge dietary_hints (prefer new if non-null, else keep previous)
     if new.dietary_hints is not None:
@@ -707,6 +742,9 @@ def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
 
 def _iterative_actionability_check(intent: Intent) -> None:
     """Force is_actionable=False if city or meal_slots are missing after merge."""
+    # Skip if there is a pending replacement (already handled by collision detection)
+    if intent.pending_replacement is not None:
+        return
     if intent.is_actionable:
         missing = []
         if intent.city is None:
@@ -1065,6 +1103,40 @@ def parse_intent_rules(
                 base.actionability_followup = None
                 base.confidence = 1.0
                 print(f"👉 [DEBUG-RULE] 使用者拒絕變更，清除 pending_mutation")
+                return base
+    
+    # Handle pending replacement confirmation (A/B)
+    if previous_intent is not None and previous_intent.pending_replacement is not None:
+        option_match = re.match(r"^[(（]?\s*([A-B])\s*[)）]?(?:\s|$|.)", q)
+        if option_match:
+            choice = option_match.group(1)
+            base = copy.deepcopy(previous_intent)
+            if choice == "A":
+                # Apply pending replacement: update global schedule
+                replacement = base.pending_replacement
+                slot = replacement.get("slot")
+                # The new meal_slots are already in base.meal_slots (from previous intent)
+                # We need to update global schedule with the new slot's category_tags? 
+                # For simplicity, we just clear the pending_replacement and set is_actionable=True.
+                # The actual global schedule update should be done by the caller (agent.py).
+                # We'll just clear the pending state.
+                base.pending_replacement = None
+                base.is_actionable = True
+                base.actionability_followup = None
+                base.confidence = 1.0
+                print(f"👉 [DEBUG-RULE] 使用者確認換掉，清除 pending_replacement")
+                return base
+            else:  # choice == "B"
+                # Reject pending replacement: keep existing schedule, remove the slot from meal_slots
+                replacement = base.pending_replacement
+                slot = replacement.get("slot")
+                if slot in base.meal_slots:
+                    base.meal_slots.remove(slot)
+                base.pending_replacement = None
+                base.is_actionable = True
+                base.actionability_followup = None
+                base.confidence = 1.0
+                print(f"👉 [DEBUG-RULE] 使用者取消換掉，移除 slot {slot}")
                 return base
     
     option_match = re.match(r"^[(（]?\s*([A-D])\s*[)）]?(?:\s|$|.)", q)

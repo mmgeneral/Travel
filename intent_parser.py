@@ -113,6 +113,8 @@ class Intent:
             "is_revision": self.is_revision,
             "is_actionable": self.is_actionable,
             "actionability_followup": self.actionability_followup,
+            "pending_mutation": self.pending_mutation,
+            "metadata": self.metadata,
         }
 
 

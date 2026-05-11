@@ -107,6 +107,8 @@ def compute_marketing_noise_score(shop: "ShopProfile") -> float:
 @dataclass
 class ShopProfile:
     name: str
+    #: 0=Monday, 6=Sunday
+    closed_days: list[int] = field(default_factory=list)
     close_time: str  # HH:MM
     booking_type: BookingType
     queue_strategy: QueueStrategy

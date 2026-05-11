@@ -42,6 +42,7 @@ Design notes
 from __future__ import annotations
 
 import copy
+from datetime import datetime
 import json
 import os
 import re
@@ -846,6 +847,43 @@ def _check_global_schedule_collision(intent: Intent, global_schedule: dict | Non
     return intent
 
 
+def _audit_itinerary_for_closed_days(
+    prev_itinerary: list[dict],
+    new_start_date: str,
+    catalog: dict[str, "ShopProfile"],
+) -> list[dict]:
+    """Check each shop in prev_itinerary against its closed_days for the new date.
+
+    Returns a list of conflict dicts: {"day": int, "shop_name": str, "weekday": int}.
+    """
+    from datetime import datetime, timedelta
+    conflicts: list[dict] = []
+    try:
+        start_dt = datetime.strptime(new_start_date, "%Y-%m-%d")
+    except (ValueError, TypeError):
+        return conflicts
+    for entry in prev_itinerary:
+        day_offset = entry.get("day", 0)
+        shop_name = entry.get("shop_name", "")
+        if not shop_name:
+            continue
+        shop = catalog.get(shop_name)
+        if shop is None:
+            continue
+        closed = getattr(shop, "closed_days", [])
+        if not closed:
+            continue
+        target_date = start_dt + timedelta(days=day_offset)
+        weekday = target_date.weekday()
+        if weekday in closed:
+            conflicts.append({
+                "day": day_offset,
+                "shop_name": shop_name,
+                "weekday": weekday,
+            })
+    return conflicts
+
+
 # ---------------------------------------------------------------------------
 # Public parse functions
 # ---------------------------------------------------------------------------
@@ -1146,11 +1184,17 @@ def parse_intent_rules(
         if option_match:
             choice = option_match.group(1)
             base = copy.deepcopy(previous_intent)
+            mutation = base.pending_mutation
             if choice == "A":
                 # Apply pending mutation
-                mutation = base.pending_mutation
                 if "meal_slots" in mutation:
                     base.meal_slots = list(mutation["meal_slots"])
+                elif "remove_shops" in mutation:
+                    # Remove those shops from the itinerary (mark as excluded)
+                    remove_shops = mutation["remove_shops"]
+                    base.excluded_shops = list(
+                        dict.fromkeys(base.excluded_shops + remove_shops)
+                    )
                 base.pending_mutation = None
                 base.is_actionable = True
                 base.actionability_followup = None
@@ -1362,6 +1406,8 @@ def parse_intent(
     previous_intent: Intent | None = None,
     prev_itinerary: str | None = None,
     global_schedule: dict | None = None,
+    catalog: dict[str, "ShopProfile"] | None = None,
+    new_start_date: str | None = None,
 ) -> Intent:
     """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.
 
@@ -1376,6 +1422,41 @@ def parse_intent(
         if geo is not None:
             intent_obj.city = geo[0]
             intent_obj.region = geo[1]
+
+    # --- Closed‑day audit when date changes ---
+    if previous_intent is not None and new_start_date is not None and catalog is not None:
+        prev_date = previous_intent.metadata.get("trip_start_date")
+        if prev_date is not None and prev_date != new_start_date:
+            import json
+            try:
+                itinerary_list = json.loads(prev_itinerary) if prev_itinerary else []
+            except (json.JSONDecodeError, TypeError):
+                itinerary_list = []
+            if itinerary_list:
+                conflicts = _audit_itinerary_for_closed_days(
+                    itinerary_list, new_start_date, catalog
+                )
+                if conflicts:
+                    lines = [f"已幫您將出發日更改為 {new_start_date}。但注意："]
+                    for c in conflicts:
+                        day_num = c["day"] + 1
+                        lines.append(
+                            f"原本排在 Day {day_num} 的【{c['shop_name']}】剛好遇到公休！"
+                        )
+                    lines.append("")
+                    lines.append("請問要幫您把這家店取消換成別的，還是要維持原日期呢？")
+                    lines.append("(A) 幫我取消公休的店並重排")
+                    lines.append("(B) 算了，維持原本的日期")
+                    followup = "\n".join(lines)
+                    remove_shops = [c["shop_name"] for c in conflicts]
+                    pending = {"remove_shops": remove_shops}
+                    result = copy.deepcopy(previous_intent)
+                    result.is_actionable = False
+                    result.actionability_followup = followup
+                    result.pending_mutation = pending
+                    result.metadata["trip_start_date"] = new_start_date
+                    _sanitize_intent(result)
+                    return result
 
     # First, try rule-based fast path regardless of previous_intent
     rule_result = parse_intent_rules(
@@ -1411,6 +1492,8 @@ def parse_intent(
                 previous_intent=None,
                 prev_itinerary=prev_itinerary,
                 global_schedule=global_schedule,
+                catalog=catalog,
+                new_start_date=new_start_date,
             )
 
     try:

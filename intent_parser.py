@@ -51,7 +51,7 @@ from typing import Any, Optional
 # ---------------------------------------------------------------------------
 # Global schedule (mock) for slot collision detection
 # ---------------------------------------------------------------------------
-_GLOBAL_SCHEDULE: dict[str, str] = {}
+_GLOBAL_SCHEDULE: dict[str, list[str]] = {"dinner": ["yakiniku"]}
 
 def set_global_schedule(schedule: dict[str, str]) -> None:
     """Set the global schedule (e.g., {"lunch": "拉麵", "dinner": "燒肉"})."""
@@ -673,19 +673,10 @@ def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
     # After merging meal_slots, check for slot collisions with global schedule
     # (only if no pending mutation/replacement already)
     if merged.pending_mutation is None and merged.pending_replacement is None:
-        global_schedule = get_global_schedule()
-        for slot in merged.meal_slots:
-            if slot in global_schedule:
-                existing = global_schedule[slot]
-                print(f"[State Manager] Slot collision detected: {slot} already has {existing}")
-                merged.is_actionable = False
-                merged.pending_replacement = {"slot": slot, "existing": existing}
-                merged.actionability_followup = (
-                    f"【{slot}】已排定【{existing}】，請問要換掉原本的行程嗎？\n"
-                    f"(A) 換掉\n(B) 取消"
-                )
-                # Do not apply any further changes; return early
-                return merged
+        merged = _check_global_schedule_collision(merged)
+        if merged.pending_replacement is not None:
+            # Collision was detected; return early without applying other changes.
+            return merged
 
     # Merge dietary_hints (prefer new if non-null, else keep previous)
     if new.dietary_hints is not None:
@@ -783,6 +774,50 @@ def _sanitize_intent(intent: Intent) -> None:
         intent.region = "unknown"
     # Ensure city is None if empty string
     intent.city = _strip_city_optional(intent.city)
+
+
+def _check_global_schedule_collision(intent: Intent) -> Intent:
+    """Detect slot collisions with the global schedule and create pending_replacement if needed.
+
+    If a meal slot is already occupied in the global schedule and the new category_tags
+    introduce tags not already present, the intent is marked non-actionable and a
+    two‑phase commit (A/B) is set up.
+    """
+    # If there is already a pending replacement, do not create another.
+    if intent.pending_replacement is not None:
+        return intent
+
+    global_schedule = get_global_schedule()
+    for slot in intent.meal_slots:
+        if slot not in global_schedule:
+            continue
+        existing_tags = set(global_schedule[slot])
+        new_tags = set(intent.category_tags)
+        # If the new tags are already covered by the existing tags, no collision.
+        if new_tags.issubset(existing_tags):
+            continue
+
+        # Collision detected – block the intent and set up pending replacement.
+        print(f"[State Manager] Slot collision: {slot} already has {existing_tags}, new tags {new_tags}")
+        intent.is_actionable = False
+        intent.pending_replacement = {
+            "meal_slots": [slot],
+            "category_tags": list(new_tags),
+        }
+        # Restore category_tags to the existing tags (keep state clean).
+        intent.category_tags = list(existing_tags)
+        # Generate the A/B follow‑up.
+        existing_str = "、".join(existing_tags)
+        new_str = "、".join(new_tags)
+        intent.actionability_followup = (
+            f"【{slot}】時段已排定【{existing_str}】相關行程。"
+            f"請問您要將【{slot}】換成【{new_str}】嗎？\n"
+            f"(A) 換掉原本【{slot}】\n"
+            f"(B) 取消本次操作"
+        )
+        return intent
+
+    return intent
 
 
 # ---------------------------------------------------------------------------
@@ -1111,26 +1146,26 @@ def parse_intent_rules(
         if option_match:
             choice = option_match.group(1)
             base = copy.deepcopy(previous_intent)
+            replacement = base.pending_replacement
+            slot = replacement.get("meal_slots", [None])[0]
+            new_tags = replacement.get("category_tags", [])
             if choice == "A":
                 # Apply pending replacement: update global schedule
-                replacement = base.pending_replacement
-                slot = replacement.get("slot")
-                # The new meal_slots are already in base.meal_slots (from previous intent)
-                # We need to update global schedule with the new slot's category_tags? 
-                # For simplicity, we just clear the pending_replacement and set is_actionable=True.
-                # The actual global schedule update should be done by the caller (agent.py).
-                # We'll just clear the pending state.
+                global_schedule = get_global_schedule()
+                if slot is not None:
+                    global_schedule[slot] = list(new_tags)
+                    set_global_schedule(global_schedule)
+                # Apply the new tags to the intent
+                base.category_tags = list(new_tags)
                 base.pending_replacement = None
                 base.is_actionable = True
                 base.actionability_followup = None
                 base.confidence = 1.0
-                print(f"👉 [DEBUG-RULE] 使用者確認換掉，清除 pending_replacement")
+                print(f"👉 [DEBUG-RULE] 使用者確認換掉，更新 global_schedule slot {slot} -> {new_tags}")
                 return base
             else:  # choice == "B"
                 # Reject pending replacement: keep existing schedule, remove the slot from meal_slots
-                replacement = base.pending_replacement
-                slot = replacement.get("slot")
-                if slot in base.meal_slots:
+                if slot is not None and slot in base.meal_slots:
                     base.meal_slots.remove(slot)
                 base.pending_replacement = None
                 base.is_actionable = True
@@ -1324,6 +1359,7 @@ def parse_intent(
     try:
         llm_result = parse_intent_llm(query, llm_router, prev_itinerary=prev_itinerary)
         _stamp_geo_pins(llm_result)
+        llm_result = _check_global_schedule_collision(llm_result)
         _iterative_actionability_check(llm_result)
         _sanitize_intent(llm_result)
         _clamp_missing_city_if_actionable(llm_result)

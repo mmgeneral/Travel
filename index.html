@@ -56,6 +56,8 @@
   .btn.active{background:rgba(124,106,247,.28);border-color:var(--purple);color:var(--purple2);box-shadow:0 0 0 1px rgba(124,106,247,.25) inset;}
   .btn.send{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:500;}
   .btn.send:hover{background:#6357d4;}
+  .option-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+  .option-buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
   .btn.mic.rec{background:var(--red);border-color:var(--red);color:#fff;}
   .conv-banner{font-size:11px;color:var(--muted);padding:6px 2px;line-height:1.4;border-bottom:1px solid rgba(42,42,50,.6);margin-bottom:4px;}
   .conv-banner-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
@@ -526,6 +528,66 @@ function setOutcomeLamp(outcome,semanticStatus){
   const detail=semanticStatus?`${label} · ${semanticStatus}`:label;
   setStatus(dotState,detail);
 }
+
+function _addOptionButtons(text){
+  const stream=document.getElementById('stream');
+  if(!stream)return;
+  // Remove any existing option buttons
+  const existing=stream.querySelector('.option-buttons');
+  if(existing)existing.remove();
+  if(!text)return;
+  const hasA=text.includes('(A)');
+  const hasB=text.includes('(B)');
+  if(!hasA||!hasB)return;
+  const container=document.createElement('div');
+  container.className='option-buttons';
+  // Extract option texts (simple heuristic)
+  const aMatch=text.match(/\(A\)\s*([^(\n]+)/);
+  const bMatch=text.match(/\(B\)\s*([^(\n]+)/);
+  const aText=aMatch?aMatch[1].trim():'取消重排';
+  const bText=bMatch?bMatch[1].trim():'維持原樣';
+  const btnA=document.createElement('button');
+  btnA.className='btn dc-opt';
+  btnA.textContent=`(A) ${aText}`;
+  btnA.onclick=function(){this.disabled=true;this.style.opacity='0.5';send('A');};
+  const btnB=document.createElement('button');
+  btnB.className='btn dc-opt';
+  btnB.textContent=`(B) ${bText}`;
+  btnB.onclick=function(){this.disabled=true;this.style.opacity='0.5';send('B');};
+  container.appendChild(btnA);
+  container.appendChild(btnB);
+  stream.appendChild(container);
+}
+
+function _addOptionButtons(text){
+  const stream=document.getElementById('stream');
+  if(!stream)return;
+  // Remove any existing option buttons
+  const existing=stream.querySelector('.option-buttons');
+  if(existing)existing.remove();
+  if(!text)return;
+  const hasA=text.includes('(A)');
+  const hasB=text.includes('(B)');
+  if(!hasA||!hasB)return;
+  const container=document.createElement('div');
+  container.className='option-buttons';
+  // Extract option texts (simple heuristic)
+  const aMatch=text.match(/\(A\)\s*([^(\n]+)/);
+  const bMatch=text.match(/\(B\)\s*([^(\n]+)/);
+  const aText=aMatch?aMatch[1].trim():'取消重排';
+  const bText=bMatch?bMatch[1].trim():'維持原樣';
+  const btnA=document.createElement('button');
+  btnA.className='btn dc-opt';
+  btnA.textContent=`(A) ${aText}`;
+  btnA.onclick=function(){this.disabled=true;this.style.opacity='0.5';send('A');};
+  const btnB=document.createElement('button');
+  btnB.className='btn dc-opt';
+  btnB.textContent=`(B) ${bText}`;
+  btnB.onclick=function(){this.disabled=true;this.style.opacity='0.5';send('B');};
+  container.appendChild(btnA);
+  container.appendChild(btnB);
+  stream.appendChild(container);
+}
 async function send(presetQuery){
   const input=document.getElementById('msg');
   const rawQ=presetQuery!=null?String(presetQuery):input.value;
@@ -651,6 +713,8 @@ async function send(presetQuery){
           const itinText=data.itinerary||'';
           const debugText=advancedMode?stream.textContent:'';
           stream.textContent=(debugText?debugText+'\n':'')+'── 最終行程 ──\n'+itinText;
+          // Add option buttons if the text contains (A) and (B)
+          _addOptionButtons(stream.textContent);
           if(data.outcome||data.semantic_status){setOutcomeLamp(data.outcome||'SUCCESS',data.semantic_status||'');}
           else{setStatus('ok','完成');}
           document.getElementById('pause-btn').style.display='none';

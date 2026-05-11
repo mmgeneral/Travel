@@ -678,6 +678,28 @@ def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | No
             # Collision was detected; return early without applying other changes.
             return merged
 
+        # Check for category_tags conflict (unreasonable expansion)
+        old_tags = set(previous.category_tags)
+        new_tags = set(new.category_tags)
+        if old_tags and not old_tags.issuperset(new_tags):
+            added_tags = list(new_tags - old_tags)
+            print(f"[State Manager] Detected category_tags conflict: old={old_tags}, new={new_tags}, added={added_tags}")
+            merged.is_actionable = False
+            merged.pending_replacement = {
+                "category_tags": added_tags,
+            }
+            old_str = "、".join(old_tags)
+            new_str = "、".join(added_tags)
+            merged.actionability_followup = (
+                f"您稍早想安排【{old_str}】，現在又提到【{new_str}】。\n"
+                f"請問是要把行程換成【{new_str}】嗎？\n"
+                f"(A) 換成{new_str}\n"
+                f"(B) 維持{old_str}"
+            )
+            # Restore category_tags to the old tags (keep state clean).
+            merged.category_tags = list(old_tags)
+            return merged
+
     # Merge dietary_hints (prefer new if non-null, else keep previous)
     if new.dietary_hints is not None:
         merged.dietary_hints = new.dietary_hints
@@ -1151,9 +1173,9 @@ def parse_intent_rules(
             slot = replacement.get("meal_slots", [None])[0]
             new_tags = replacement.get("category_tags", [])
             if choice == "A":
-                # Apply pending replacement: update global schedule
-                global_schedule = get_global_schedule()
+                # Apply pending replacement: update global schedule if slot present
                 if slot is not None:
+                    global_schedule = get_global_schedule()
                     global_schedule[slot] = list(new_tags)
                     set_global_schedule(global_schedule)
                 # Apply the new tags to the intent
@@ -1165,7 +1187,7 @@ def parse_intent_rules(
                 print(f"👉 [DEBUG-RULE] 使用者確認換掉，更新 global_schedule slot {slot} -> {new_tags}")
                 return base
             else:  # choice == "B"
-                # Reject pending replacement: keep existing schedule, remove the slot from meal_slots
+                # Reject pending replacement: keep existing schedule, remove the slot from meal_slots if present
                 if slot is not None and slot in base.meal_slots:
                     base.meal_slots.remove(slot)
                 base.pending_replacement = None

@@ -364,7 +364,7 @@ async function refreshDaySyncBadges(){
 }
 async function selectDay(day){
   selectedDay=day;
-  document.querySelectorAll('#days-container .day-btn').forEach((b,idx)=>b.classList.toggle('active',idx===day-1));
+  document.querySelectorAll('.day-tab').forEach((b,idx)=>b.classList.toggle('active',idx===day-1));
   document.getElementById('day-title').textContent=`Day ${day} · ${onboardingProfile.city}`;
   const slots=document.getElementById('slots-container');
   const stream=document.getElementById('stream');

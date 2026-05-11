@@ -121,7 +121,7 @@
     <div class="conv-banner-row">
       <span id="conv-banner-text">新對話（尚未建立 thread）</span>
       <button type="button" class="btn new-chat" onclick="startNewConversation()">新對話</button>
-      <button type="button" class="btn" onclick="sessionStorage.removeItem('travel_thread_id');location.reload();">➕ 新行程 (清除紀錄)</button>
+      <button type="button" class="btn" onclick="startNewConversation()">➕ 新行程 (清除紀錄)</button>
     </div>
   </div>
   <div class="input-row">
@@ -457,14 +457,32 @@ function refreshConversationBanner(){
     : `新對話（尚未建立 thread） · 輪數 ${conversationRound}`;
 }
 function startNewConversation(){
-  currentThreadId=null;
-  conversationRound=0;
-  try{
-    localStorage.removeItem(THREAD_ID_KEY);
-  }catch{}
+  currentThreadId = 'thread_' + Date.now();
+  conversationRound = 0;
+  // Clear chat display
+  const stream = document.getElementById('stream');
+  if (stream) {
+    stream.textContent = '';
+    stream.className = 'stream-box active';
+  }
+  const cards = document.getElementById('cards-container');
+  if (cards) cards.innerHTML = '';
+  const slots = document.getElementById('slots-container');
+  if (slots) slots.innerHTML = '';
+  // Remove any existing option buttons
+  const existing = stream ? stream.querySelector('.option-buttons') : null;
+  if (existing) existing.remove();
+  // Show greeting
+  if (stream) {
+    stream.textContent = '🆕 已開始全新對話！請輸入您的需求。';
+  }
+  // Update session storage
+  try {
+    sessionStorage.setItem('travel_thread_id', currentThreadId);
+  } catch (e) {}
   refreshConversationBanner();
-  document.getElementById('pause-btn').style.display='none';
-  setStatus('ok','已開始新對話');
+  document.getElementById('pause-btn').style.display = 'none';
+  setStatus('ok', '已開始新對話');
 }
 function showIntentRevisionToast(message){
   const el=document.getElementById('intent-revision-toast');

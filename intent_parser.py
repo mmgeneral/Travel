@@ -89,6 +89,8 @@ class Intent:
     #: User-facing follow-up when ``is_actionable`` is false; must include (A)(B)(C)(D) options.
     actionability_followup: str | None = None
     #: Additional metadata about intent source
+    #: Pending mutation awaiting user confirmation (e.g., meal_slots change).
+    pending_mutation: dict | None = None
     metadata: dict = field(default_factory=dict)
 
     def as_dict(self) -> dict[str, Any]:
@@ -154,6 +156,7 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
             if d.get("actionability_followup") in (None, "")
             else str(d.get("actionability_followup")).strip() or None
         ),
+        pending_mutation=d.get("pending_mutation"),
         metadata=dict(d.get("metadata", {})),
     )
 
@@ -620,10 +623,32 @@ def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
     # Start from a copy of previous
     merged = copy.deepcopy(previous)
 
-    # Overwrite meal_slots if changed
-    if new.meal_slots and new.meal_slots != previous.meal_slots:
-        print(f"[State Manager] Detected meal_slots overwrite: {previous.meal_slots} -> {new.meal_slots}")
-        merged.meal_slots = list(new.meal_slots)
+    # If there is already a pending mutation, do not apply any meal_slots changes
+    # (the user must confirm or reject the pending change first).
+    if previous.pending_mutation is not None:
+        # Keep the pending mutation; ignore any meal_slots from new.
+        # Still merge other fields as usual.
+        pass
+    else:
+        # Detect meal_slots conflict and create pending mutation
+        if new.meal_slots and previous.meal_slots and new.meal_slots != previous.meal_slots:
+            print(f"[State Manager] Detected meal_slots conflict: {previous.meal_slots} -> {new.meal_slots}")
+            merged.is_actionable = False
+            merged.pending_mutation = {"meal_slots": list(new.meal_slots)}
+            merged.actionability_followup = (
+                f"您稍早的設定是【{previous.meal_slots[0]}】，"
+                f"確定要變更為【{new.meal_slots[0]}】嗎？\n"
+                f"(A) 是的，確定更改\n"
+                f"(B) 不，維持原設定"
+            )
+            # Do not apply the new meal_slots yet; keep previous.
+            # Return early with the pending mutation.
+            return merged
+        else:
+            # Overwrite meal_slots if changed (no conflict)
+            if new.meal_slots and new.meal_slots != previous.meal_slots:
+                print(f"[State Manager] Detected meal_slots overwrite: {previous.meal_slots} -> {new.meal_slots}")
+                merged.meal_slots = list(new.meal_slots)
 
     # Merge dietary_hints (prefer new if non-null, else keep previous)
     if new.dietary_hints is not None:
@@ -1013,6 +1038,32 @@ def parse_intent_rules(
     print(f"👉 [DEBUG-RULE] 快慢路徑攔截器收到的原始 query: {query!r}")
     
     q = query.strip().upper()
+    
+    # Handle pending mutation confirmation (A/B)
+    if previous_intent is not None and previous_intent.pending_mutation is not None:
+        option_match = re.match(r"^[(（]?\s*([A-B])\s*[)）]?(?:\s|$|.)", q)
+        if option_match:
+            choice = option_match.group(1)
+            base = copy.deepcopy(previous_intent)
+            if choice == "A":
+                # Apply pending mutation
+                mutation = base.pending_mutation
+                if "meal_slots" in mutation:
+                    base.meal_slots = list(mutation["meal_slots"])
+                base.pending_mutation = None
+                base.is_actionable = True
+                base.actionability_followup = None
+                base.confidence = 1.0
+                print(f"👉 [DEBUG-RULE] 使用者確認變更，套用 pending_mutation: {mutation}")
+                return base
+            else:  # choice == "B"
+                # Reject pending mutation
+                base.pending_mutation = None
+                base.is_actionable = True
+                base.actionability_followup = None
+                base.confidence = 1.0
+                print(f"👉 [DEBUG-RULE] 使用者拒絕變更，清除 pending_mutation")
+                return base
     
     option_match = re.match(r"^[(（]?\s*([A-D])\s*[)）]?(?:\s|$|.)", q)
     if option_match:

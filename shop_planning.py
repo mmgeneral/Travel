@@ -115,8 +115,6 @@ class ShopProfile:
     sns_handle: str
     #: 0=Monday, 6=Sunday
     closed_weekdays: list[int] = field(default_factory=list)
-    #: 0=Monday, 6=Sunday
-    closed_weekdays: list[int] = field(default_factory=list)
     avg_eat_minutes: int = 50
     # Lower bound for aggressive schedule compression.
     # If omitted, defaults to ~40% of avg_eat_minutes.

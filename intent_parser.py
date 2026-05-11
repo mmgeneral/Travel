@@ -635,7 +635,7 @@ def _clamp_missing_city_if_actionable(intent: Intent) -> None:
         intent.actionability_followup = _DEFAULT_MISSING_CITY_FOLLOWUP
 
 
-def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
+def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | None = None) -> Intent:
     """Merge new revision intent into previous, applying state reconciliation rules."""
     if not new.is_revision:
         return new
@@ -673,7 +673,7 @@ def _reconcile_intents(previous: Intent, new: Intent) -> Intent:
     # After merging meal_slots, check for slot collisions with global schedule
     # (only if no pending mutation/replacement already)
     if merged.pending_mutation is None and merged.pending_replacement is None:
-        merged = _check_global_schedule_collision(merged)
+        merged = _check_global_schedule_collision(merged, global_schedule=global_schedule)
         if merged.pending_replacement is not None:
             # Collision was detected; return early without applying other changes.
             return merged
@@ -776,7 +776,7 @@ def _sanitize_intent(intent: Intent) -> None:
     intent.city = _strip_city_optional(intent.city)
 
 
-def _check_global_schedule_collision(intent: Intent) -> Intent:
+def _check_global_schedule_collision(intent: Intent, global_schedule: dict | None = None) -> Intent:
     """Detect slot collisions with the global schedule and create pending_replacement if needed.
 
     If a meal slot is already occupied in the global schedule and the new category_tags
@@ -787,7 +787,8 @@ def _check_global_schedule_collision(intent: Intent) -> Intent:
     if intent.pending_replacement is not None:
         return intent
 
-    global_schedule = get_global_schedule()
+    if global_schedule is None:
+        global_schedule = get_global_schedule()
     for slot in intent.meal_slots:
         if slot not in global_schedule:
             continue
@@ -1306,6 +1307,7 @@ def parse_intent(
     user_lng: float | None = None,
     previous_intent: Intent | None = None,
     prev_itinerary: str | None = None,
+    global_schedule: dict | None = None,
 ) -> Intent:
     """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.
 
@@ -1340,7 +1342,7 @@ def parse_intent(
                 prev_itinerary=prev_itinerary,
             )
             _stamp_geo_pins(llm_result)
-            llm_result = _reconcile_intents(previous_intent, llm_result)
+            llm_result = _reconcile_intents(previous_intent, llm_result, global_schedule=global_schedule)
             _iterative_actionability_check(llm_result)
             _sanitize_intent(llm_result)
             _clamp_missing_city_if_actionable(llm_result)
@@ -1354,12 +1356,13 @@ def parse_intent(
                 user_lng=user_lng,
                 previous_intent=None,
                 prev_itinerary=prev_itinerary,
+                global_schedule=global_schedule,
             )
 
     try:
         llm_result = parse_intent_llm(query, llm_router, prev_itinerary=prev_itinerary)
         _stamp_geo_pins(llm_result)
-        llm_result = _check_global_schedule_collision(llm_result)
+        llm_result = _check_global_schedule_collision(llm_result, global_schedule=global_schedule)
         _iterative_actionability_check(llm_result)
         _sanitize_intent(llm_result)
         _clamp_missing_city_if_actionable(llm_result)

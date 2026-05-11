@@ -102,10 +102,11 @@
 </style>
 </head>
 <body>
-<nav class="days">
-  <h2>行程天數</h2>
-  <div id="days-container"></div>
-</nav>
+<div id="trip-config-panel" style="display: flex; gap: 15px; align-items: center; padding: 10px; background: var(--surface); border-bottom: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0;">
+  <label style="color: var(--text); font-size: 0.9em;">出發日期：<input type="date" id="trip-start-date" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 5px; border-radius: 4px;"></label>
+  <label style="color: var(--text); font-size: 0.9em;">總天數：<input type="number" id="trip-days-count" min="1" max="14" value="3" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 5px; border-radius: 4px; width: 60px;"></label>
+</div>
+<div id="day-tabs-container" style="display: flex; gap: 10px; padding: 10px; background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto;"></div>
 <main class="itinerary">
   <div class="itin-header" id="day-title">請先設定旅程</div>
   <div id="cards-container" class="cards"></div>
@@ -317,17 +318,33 @@ function renderMap(cards){
   }
   _leafletMap.fitBounds(L.latLngBounds(latlngs),{padding:[24,24]});
 }
-function renderDays(){
-  const daysEl=document.getElementById('days-container');
-  daysEl.innerHTML='';
-  for(let d=1;d<=onboardingProfile.days;d++){
-    const btn=document.createElement('button');
-    btn.className=`day-btn ${d===selectedDay?'active':''} draft`;
-    btn.innerHTML=`<div class="label">Day ${d}</div><div class="sub">讀取中…</div>`;
-    btn.onclick=()=>selectDay(d);
-    daysEl.appendChild(btn);
+function renderDayTabs() {
+  const container = document.getElementById('day-tabs-container');
+  container.innerHTML = '';
+  const startDateInput = document.getElementById('trip-start-date');
+  const daysCountInput = document.getElementById('trip-days-count');
+  const startDate = startDateInput.value;
+  const daysCount = parseInt(daysCountInput.value, 10) || 3;
+  for (let i = 1; i <= daysCount; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'btn day-tab';
+    btn.dataset.day = i;
+    let label = `Day ${i}`;
+    if (startDate) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + (i - 1));
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      label += ` (${mm}/${dd})`;
+    }
+    btn.textContent = label;
+    btn.addEventListener('click', () => selectDay(i));
+    container.appendChild(btn);
   }
+  selectDay(1);
 }
+document.getElementById('trip-start-date').addEventListener('change', renderDayTabs);
+document.getElementById('trip-days-count').addEventListener('change', renderDayTabs);
 async function refreshDaySyncBadges(){
   const buttons=[...document.querySelectorAll('#days-container .day-btn')];
   for(let i=0;i<buttons.length;i++){

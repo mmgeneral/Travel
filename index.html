@@ -226,42 +226,7 @@
     </div>
   </div>
 </div>
-<div id="dietary-modal" class="modal" onclick="if(event.target===this)closeDietaryModal()">
-  <div class="modal-card">
-    <div class="modal-title">飲食限制設定</div>
-    <div class="field">
-      <label for="diet-ethics">飲食型態</label>
-      <select id="diet-ethics">
-        <option value="unspecified">未指定（由系統自行判斷）</option>
-        <option value="omnivore">一般（omnivore）</option>
-        <option value="pescatarian">海鮮素（pescatarian）</option>
-        <option value="vegetarian">蛋奶素（vegetarian）</option>
-        <option value="vegan">全素（vegan）</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>過敏原</label>
-      <div class="chips" id="allergen-chips"></div>
-    </div>
-    <div class="field">
-      <label for="diet-religious">宗教限制</label>
-      <select id="diet-religious">
-        <option value="none">無（none）</option>
-        <option value="halal">清真（halal）</option>
-        <option value="kosher">猶太潔食（kosher）</option>
-        <option value="hindu_veg">印度素食（hindu_veg）</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>醫療限制</label>
-      <div class="chips" id="medical-chips"></div>
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeDietaryModal()">取消</button>
-      <button class="btn send" onclick="saveDietary()">儲存</button>
-    </div>
-  </div>
-</div>
+
 <script>
 let _leafletMap=null;
 let _leafletLayerGroup=null;
@@ -388,7 +353,7 @@ async function selectDay(day){
   const stream=document.getElementById('stream');
   renderCards([]);
   renderMap([]);
-  stream.className=advancedMode?'stream-box active':'stream-box';
+  stream.className='stream-box active';
   stream.textContent='載入中...';
   slots.innerHTML='';
   try{
@@ -398,6 +363,7 @@ async function selectDay(day){
       stream.textContent=`Day ${day} 尚未同步，請輸入需求後按「發送」。`;
       return;
     }
+    stream.className='stream-box active';
     stream.textContent=data.itinerary||'Day '+day+' 沒有可顯示內容';
     if(data.ui_cards&&data.ui_cards.length){
       renderCards(data.ui_cards);
@@ -664,7 +630,10 @@ async function send(presetQuery){
         }
         else if(event==='done'){
           renderCards(data.ui_cards||[]);
-          if(advancedMode)stream.textContent+='\n── 最終行程 ──\n'+data.itinerary;
+          stream.className='stream-box active';
+          const itinText=data.itinerary||'';
+          const debugText=advancedMode?stream.textContent:'';
+          stream.textContent=(debugText?debugText+'\n':'')+'── 最終行程 ──\n'+itinText;
           if(data.outcome||data.semantic_status){setOutcomeLamp(data.outcome||'SUCCESS',data.semantic_status||'');}
           else{setStatus('ok','完成');}
           document.getElementById('pause-btn').style.display='none';

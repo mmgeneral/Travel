@@ -121,6 +121,7 @@
     <div class="conv-banner-row">
       <span id="conv-banner-text">新對話（尚未建立 thread）</span>
       <button type="button" class="btn new-chat" onclick="startNewConversation()">新對話</button>
+      <button type="button" class="btn" onclick="sessionStorage.removeItem('travel_thread_id');location.reload();">➕ 新行程 (清除紀錄)</button>
     </div>
   </div>
   <div class="input-row">
@@ -511,9 +512,11 @@ async function fetchTurnCheckpoints(threadId){
     return data.checkpoints||[];
   }catch{return null;}
 }
-let currentThreadId=(function(){
-  try{return localStorage.getItem(THREAD_ID_KEY)||null;}catch{return null;}
-})();  // LangGraph thread_id (same as agent_run_id server-side)
+let currentThreadId = sessionStorage.getItem('travel_thread_id');
+if (!currentThreadId) {
+    currentThreadId = crypto.randomUUID();
+    sessionStorage.setItem('travel_thread_id', currentThreadId);
+}
 function setStatus(state,text){
   document.getElementById('dot').className='dot '+state;
   const statusEl=document.getElementById('status-text');

@@ -686,15 +686,18 @@ def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | No
             print(f"[State Manager] Detected category_tags conflict: old={old_tags}, new={new_tags}, added={added_tags}")
             merged.is_actionable = False
             merged.pending_replacement = {
-                "category_tags": added_tags,
+                "added_tags": added_tags,
+                "old_tags": list(old_tags),
             }
             old_str = "、".join(old_tags)
             new_str = "、".join(added_tags)
             merged.actionability_followup = (
                 f"您稍早想安排【{old_str}】，現在又提到【{new_str}】。\n"
-                f"請問是要把行程換成【{new_str}】嗎？\n"
-                f"(A) 換成{new_str}\n"
-                f"(B) 維持{old_str}"
+                f"請問您打算怎麼安排呢？\n"
+                f"(A) 換成【{new_str}】（取消原本的）\n"
+                f"(B) 維持【{old_str}】（忽略這次的新增）\n"
+                f"(C) 兩個都吃！把【{new_str}】排在【{old_str}】之前\n"
+                f"(D) 兩個都吃！把【{new_str}】排在【{old_str}】之後"
             )
             # Restore category_tags to the old tags (keep state clean).
             merged.category_tags = list(old_tags)
@@ -1163,30 +1166,31 @@ def parse_intent_rules(
                 print(f"👉 [DEBUG-RULE] 使用者拒絕變更，清除 pending_mutation")
                 return base
     
-    # Handle pending replacement confirmation (A/B)
+    # Handle pending replacement confirmation (A/B/C/D)
     if previous_intent is not None and previous_intent.pending_replacement is not None:
-        option_match = re.match(r"^[(（]?\s*([A-B])\s*[)）]?(?:\s|$|.)", q)
+        option_match = re.match(r"^[(（]?\s*([A-D])\s*[)）]?(?:\s|$|.)", q)
         if option_match:
             choice = option_match.group(1)
             base = copy.deepcopy(previous_intent)
             replacement = base.pending_replacement
             slot = replacement.get("meal_slots", [None])[0]
-            new_tags = replacement.get("category_tags", [])
+            added_tags = replacement.get("added_tags", [])
+            old_tags = replacement.get("old_tags", [])
             if choice == "A":
                 # Apply pending replacement: update global schedule if slot present
                 if slot is not None:
                     global_schedule = get_global_schedule()
-                    global_schedule[slot] = list(new_tags)
+                    global_schedule[slot] = list(added_tags)
                     set_global_schedule(global_schedule)
                 # Apply the new tags to the intent
-                base.category_tags = list(new_tags)
+                base.category_tags = list(added_tags)
                 base.pending_replacement = None
                 base.is_actionable = True
                 base.actionability_followup = None
                 base.confidence = 1.0
-                print(f"👉 [DEBUG-RULE] 使用者確認換掉，更新 global_schedule slot {slot} -> {new_tags}")
+                print(f"👉 [DEBUG-RULE] 使用者確認換掉，更新 global_schedule slot {slot} -> {added_tags}")
                 return base
-            else:  # choice == "B"
+            elif choice == "B":
                 # Reject pending replacement: keep existing schedule, remove the slot from meal_slots if present
                 if slot is not None and slot in base.meal_slots:
                     base.meal_slots.remove(slot)
@@ -1195,6 +1199,34 @@ def parse_intent_rules(
                 base.actionability_followup = None
                 base.confidence = 1.0
                 print(f"👉 [DEBUG-RULE] 使用者取消換掉，移除 slot {slot}")
+                return base
+            elif choice == "C":
+                # Both: new tags before old tags
+                base.category_tags = list(old_tags) + list(added_tags)
+                new_str = "、".join(added_tags)
+                old_str = "、".join(old_tags)
+                ec = list(base.explicit_constraints)
+                ec.append(f"必須將 {new_str} 安排在 {old_str} 之前")
+                base.explicit_constraints = ec
+                base.pending_replacement = None
+                base.is_actionable = True
+                base.actionability_followup = None
+                base.confidence = 1.0
+                print(f"👉 [DEBUG-RULE] 使用者選擇兩個都吃，{new_str} 排在 {old_str} 之前")
+                return base
+            elif choice == "D":
+                # Both: new tags after old tags
+                base.category_tags = list(old_tags) + list(added_tags)
+                new_str = "、".join(added_tags)
+                old_str = "、".join(old_tags)
+                ec = list(base.explicit_constraints)
+                ec.append(f"必須將 {new_str} 安排在 {old_str} 之後")
+                base.explicit_constraints = ec
+                base.pending_replacement = None
+                base.is_actionable = True
+                base.actionability_followup = None
+                base.confidence = 1.0
+                print(f"👉 [DEBUG-RULE] 使用者選擇兩個都吃，{new_str} 排在 {old_str} 之後")
                 return base
     
     option_match = re.match(r"^[(（]?\s*([A-D])\s*[)）]?(?:\s|$|.)", q)

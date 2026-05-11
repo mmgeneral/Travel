@@ -485,7 +485,7 @@ class AgentOrchestrator:
                                         },
                                     }
                                     if (
-                                        node_name == "clarify_constraint"
+                                        node_name in ("clarify_constraint", "route_intent")
                                         and isinstance(frag.get("clarification_broadcast"), dict)
                                         and frag["clarification_broadcast"].get("question")
                                     ):
@@ -538,7 +538,9 @@ class AgentOrchestrator:
                         "agent_run_id": tid,
                         "thread_id": tid,
                     }
-                    if resolved_final.get("awaiting_dietary_clarification"):
+                    if resolved_final.get("awaiting_dietary_clarification") or resolved_final.get(
+                        "awaiting_intent_clarification"
+                    ):
                         done_body["awaiting_clarification"] = True
                     err = resolved_final.get("error")
                     if err:

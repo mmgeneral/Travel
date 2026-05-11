@@ -1628,7 +1628,7 @@ async def _llm_broad_geo_search_queries(
                 {"role": "system", "content": system_msg},
                 {"role": "user", "content": user_msg},
             ],
-            temperature=0.35,
+            temperature=0.0,
             max_tokens=450,
         )
         txt = str(payload["choices"][0]["message"]["content"] or "").strip()
@@ -2183,7 +2183,7 @@ async def _call_researcher_prompt(
                     {"role": "system", "content": sys_msg},
                     {"role": "user", "content": user_msg},
                 ],
-                temperature=0.2,
+                temperature=0.0,
                 max_tokens=520,
             )
             txt = str(resp_json["choices"][0]["message"]["content"] or "").strip()

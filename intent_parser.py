@@ -870,7 +870,7 @@ def _audit_itinerary_for_closed_days(
         shop = catalog.get(shop_name)
         if shop is None:
             continue
-        closed = getattr(shop, "closed_days", [])
+        closed = getattr(shop, "closed_weekdays", [])
         if not closed:
             continue
         target_date = start_dt + timedelta(days=day_offset)

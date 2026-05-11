@@ -106,6 +106,7 @@ def _merge_continuation_invoke_state(
     user_locale: str | None,
     user_lat: float | None,
     user_lng: float | None,
+    global_schedule: dict | None = None,
 ) -> dict[str, Any]:
     """Fresh planning turn on an existing thread — keep learned weights & pool, reset loop fields."""
     dietary = dietary_profile if dietary_profile is not None else (prev.get("dietary_profile") or None)
@@ -119,8 +120,9 @@ def _merge_continuation_invoke_state(
         user_lat=user_lat if user_lat is not None else prev.get("user_lat"),
         user_lng=user_lng if user_lng is not None else prev.get("user_lng"),
         checkpoint_thread_id=ctid,
+        global_schedule=global_schedule,
     )
-    for key in ("learned_weight_profile", "feedback_updates", "dynamic_shop_pool"):
+    for key in ("learned_weight_profile", "feedback_updates", "dynamic_shop_pool", "global_schedule"):
         v = prev.get(key)
         if v:
             merged[key] = v
@@ -233,6 +235,7 @@ class AgentOrchestrator:
         user_locale: str | None = None,
         user_lat: float | None = None,
         user_lng: float | None = None,
+        global_schedule: dict | None = None,
         checkpointer: Any | None = None,
         checkpoint_conn: Any | None = None,
     ) -> AsyncIterator[dict[str, Any]]:
@@ -250,6 +253,7 @@ class AgentOrchestrator:
                 user_locale=user_locale,
                 user_lat=user_lat,
                 user_lng=user_lng,
+                global_schedule=global_schedule,
                 checkpointer=checkpointer,
                 checkpoint_conn=checkpoint_conn,
             ):
@@ -271,6 +275,7 @@ class AgentOrchestrator:
         user_locale: str | None,
         user_lat: float | None,
         user_lng: float | None,
+        global_schedule: dict | None,
         checkpointer: Any | None,
         checkpoint_conn: Any | None,
     ) -> AsyncIterator[dict[str, Any]]:
@@ -361,6 +366,7 @@ class AgentOrchestrator:
                         user_locale=user_locale,
                         user_lat=user_lat,
                         user_lng=user_lng,
+                        global_schedule=global_schedule,
                     )
                 else:
                     stream_input = make_initial_state(
@@ -372,6 +378,7 @@ class AgentOrchestrator:
                         user_lat=user_lat,
                         user_lng=user_lng,
                         checkpoint_thread_id=requested_tid,
+                        global_schedule=global_schedule,
                     )
             else:
                 stream_input = make_initial_state(
@@ -383,6 +390,7 @@ class AgentOrchestrator:
                     user_lat=user_lat,
                     user_lng=user_lng,
                     checkpoint_thread_id=requested_tid or None,
+                    global_schedule=global_schedule,
                 )
 
         start_body = {

@@ -441,6 +441,8 @@ class AgentState(TypedDict):
     runtime_services: dict[str, Any]
     #: Count of how many times the critic node has been executed in the current turn.
     critic_retry_count: int
+    #: Global schedule (slot -> list of tags) passed from the frontend for collision detection.
+    global_schedule: dict[str, list[str]] | None
 
 
 class AgentStateModel(BaseModel):
@@ -481,6 +483,7 @@ class AgentStateModel(BaseModel):
     error: dict[str, Any] | None = None
     runtime_services: dict[str, Any] = Field(default_factory=dict)
     critic_retry_count: int = 0
+    global_schedule: dict[str, list[str]] | None = None
 
 
 class AtomicCommitFailure(Exception):
@@ -614,6 +617,7 @@ def make_initial_state(
     *,
     checkpoint_thread_id: str | None = None,
     prev_itinerary: str = "",
+    global_schedule: dict[str, list[str]] | None = None,
 ) -> dict:
     run_id = agent_run_id or uuid.uuid4().hex
     ctid = (checkpoint_thread_id or "").strip()
@@ -627,6 +631,7 @@ def make_initial_state(
         user_lng=user_lng,
         checkpoint_thread_id=ctid,
         prev_itinerary=(prev_itinerary or ""),
+        global_schedule=global_schedule,
     )
     return model.model_dump(mode="json")
 
@@ -1934,6 +1939,7 @@ def node_route_intent(state: AgentState) -> AgentState:
             user_lng=state.get("user_lng"),
             previous_intent=prev_model,
             prev_itinerary=str(state.get("prev_itinerary") or ""),
+            global_schedule=state.get("global_schedule"),
         )
         # ▼▼▼ [新增 DEBUG 1：印出 LLM 解析出的完整 JSON] ▼▼▼
         print("\n" + "="*50)

@@ -208,6 +208,50 @@ class DietaryProfileRequest(BaseModel):
     medical: list[str] = []
 
 
+class TravelTimeRequest(BaseModel):
+    start: list[float] = Field(..., min_items=2, max_items=2)
+    end: list[float] = Field(..., min_items=2, max_items=2)
+    mode: str = Field(default="car")
+
+
+async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient) -> dict:
+    base_url = os.getenv("GRAPHHOPPER_BASE_URL", "http://localhost:8989")
+    params = {
+        "point": [f"{req.start[1]},{req.start[0]}", f"{req.end[1]},{req.end[0]}"],
+        "profile": profile,
+    }
+    try:
+        resp = await client.get(f"{base_url}/route", params=params)
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail=f"GraphHopper unreachable: {exc}")
+    if resp.status_code != 200:
+        raise HTTPException(
+            status_code=502,
+            detail=f"GraphHopper returned {resp.status_code}: {resp.text}",
+        )
+    data = resp.json()
+    paths = data.get("paths")
+    if not paths:
+        raise HTTPException(status_code=404, detail="No route found")
+
+    path = paths[0]
+    time_ms = path.get("time")
+    distance_m = path.get("distance")
+    if time_ms is None or distance_m is None:
+        raise HTTPException(
+            status_code=502, detail="Missing time/distance in GraphHopper response"
+        )
+
+    estimated_seconds = int(time_ms / 1000)
+    distance_meters = int(distance_m)
+    confidence = "high"
+    return {
+        "estimated_seconds": estimated_seconds,
+        "distance_meters": distance_meters,
+        "confidence": confidence,
+    }
+
+
 @app.get("/healthz")
 async def healthz() -> dict:
     return {"status": "ok"}
@@ -242,6 +286,22 @@ async def readyz(request: Request) -> dict:
         checks["duffel_connectivity"] = f"error:{exc.__class__.__name__}"
     ready = checks["saga_dir_writable"] == "ok"
     return {"status": "ready" if ready else "degraded", "checks": checks}
+
+
+@app.post("/api/v1/tte")
+async def travel_time_estimate(
+    req: TravelTimeRequest,
+    request: Request,
+    x_api_token: str = Header(default=""),
+) -> dict:
+    _require_api_token(x_api_token)
+    mode_map = {"car": "car", "bike": "bike", "foot": "foot"}
+    profile = mode_map.get(req.mode, "car")
+    client = getattr(request.app.state, "http_client", None)
+    if client is None:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=5.0)) as temp_client:
+            return await _do_tte(req, profile, temp_client)
+    return await _do_tte(req, profile, client)
 
 
 async def _stream_agent(

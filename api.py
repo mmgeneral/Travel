@@ -217,7 +217,7 @@ class TravelTimeRequest(BaseModel):
 async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient) -> dict:
     base_url = os.getenv("GRAPHHOPPER_BASE_URL", "http://localhost:8989")
     params = {
-        "point": [f"{req.start[1]},{req.start[0]}", f"{req.end[1]},{req.end[0]}"],
+        "point": [f"{req.start[0]},{req.start[1]}", f"{req.end[0]},{req.end[1]}"],
         "profile": profile,
     }
     try:

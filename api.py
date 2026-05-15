@@ -59,6 +59,8 @@ from graph_checkpoint_utils import (
 )
 from saga import SagaEngine
 from duffel import DuffelService
+import h3
+import redis.asyncio as aioredis
 from acl import ActionOutcome, SagaActionResult
 
 # Align with agent._SAGA_DIR (graph SQLite lives here, not saga_holds).
@@ -82,6 +84,12 @@ async def lifespan(app: FastAPI):
         # Shared async HTTP client avoids per-request TLS handshakes; never block with sync requests.*.
         async with httpx.AsyncClient(timeout=httpx.Timeout(15.0, connect=5.0)) as http_client:
             app.state.http_client = http_client
+            try:
+                redis_client = aioredis.Redis(host="redis", port=6379, decode_responses=True)
+                app.state.redis_client = redis_client
+            except Exception:
+                logger.warning("Redis unavailable – falling back to direct GraphHopper", exc_info=True)
+                app.state.redis_client = None
             app.state.checkpoint_conn = None
             async with aiosqlite.connect(str(_GRAPH_SAGA_DIR / "graph_checkpoints.sqlite")) as conn:
                 app.state.checkpoint_conn = conn
@@ -89,6 +97,9 @@ async def lifespan(app: FastAPI):
                 yield
             app.state.checkpoint_conn = None
             app.state.checkpointer = None
+            if app.state.redis_client is not None:
+                await app.state.redis_client.close()
+            app.state.redis_client = None
             app.state.http_client = None
     finally:
         shutdown_langfuse()
@@ -214,7 +225,22 @@ class TravelTimeRequest(BaseModel):
     mode: str = Field(default="car")
 
 
-async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient) -> dict:
+async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient, redis_client: aioredis.Redis | None = None) -> dict:
+    start_h3 = h3.geo_to_cell(req.start[0], req.start[1], 9)
+    end_h3 = h3.geo_to_cell(req.end[0], req.end[1], 9)
+    cache_key = f"TTE:{profile}:{start_h3}:{end_h3}"
+
+    # Try cache
+    if redis_client is not None:
+        try:
+            cached = await redis_client.get(cache_key)
+        except Exception:
+            cached = None
+        if cached is not None:
+            result = json.loads(cached)
+            result["cache"] = "hit"
+            return result
+
     base_url = os.getenv("GRAPHHOPPER_BASE_URL", "http://localhost:8989")
     params = {
         "point": [f"{req.start[0]},{req.start[1]}", f"{req.end[0]},{req.end[1]}"],
@@ -250,11 +276,21 @@ async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClien
         confidence = "medium"
     else:
         confidence = "low"
-    return {
+    result = {
         "estimated_seconds": estimated_seconds,
         "distance_meters": distance_meters,
         "confidence": confidence,
+        "cache": "miss",
     }
+
+    # Store in cache
+    if redis_client is not None:
+        try:
+            await redis_client.setex(cache_key, 3600, json.dumps(result))
+        except Exception:
+            logger.warning("Failed to store TTE in Redis", exc_info=True)
+
+    return result
 
 
 @app.get("/healthz")
@@ -329,10 +365,11 @@ async def travel_time_estimate(
     profile = mode_map[req.mode]
 
     client = getattr(request.app.state, "http_client", None)
+    redis_client = getattr(request.app.state, "redis_client", None)
     if client is None:
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=5.0)) as temp_client:
-            return await _do_tte(req, profile, temp_client)
-    return await _do_tte(req, profile, client)
+            return await _do_tte(req, profile, temp_client, redis_client=redis_client)
+    return await _do_tte(req, profile, client, redis_client=redis_client)
 
 
 async def _stream_agent(

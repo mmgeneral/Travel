@@ -12,7 +12,11 @@ RUN pip install --no-cache-dir \
     openai \
     pynvml \
     langgraph \
-    python-dotenv
+    python-dotenv \
+    fastapi \
+    uvicorn \
+    httpx \
+    pydantic
 
 COPY . .
 

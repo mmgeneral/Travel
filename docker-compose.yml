@@ -1,38 +1,28 @@
+version: '3.8'
+
 services:
-  vllm-brain:
-    image: vllm/vllm-openai:v0.7.1
-    container_name: travel_vllm
-    runtime: nvidia
-    env_file:
-      - .env                      # Create this file: echo "HF_TOKEN=hf_xxx" > .env
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - VLLM_USE_V1=0
+  graphhopper:
+    image: israelhikingmap/graphhopper:latest
+    container_name: graphhopper
+    command: --input /data/hsinchu.osm.pbf --host 0.0.0.0 --port 8989
+    ports:
+      - "8989:8989"
     volumes:
-      - /ssd/mmg/models:/root/.cache/huggingface
+      - ./data:/data
+    restart: unless-stopped
+
+  fastapi:
+    build: .
+    container_name: fastapi
+    command: uvicorn api:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
-    command: >
-      --model google/gemma-2-9b-it
-      --quantization fp8
-      --gpu-memory-utilization 0.75
-      --max-model-len 4096
-      --host 0.0.0.0
-      --port 8000
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-
-  travel-app:
-    build: .
-    container_name: travel_agent_logic
-    depends_on:
-      - vllm-brain
+    env_file:
+      - .env
     environment:
-      - VLLM_URL=http://vllm-brain:8000/v1
+      - GRAPHHOPPER_BASE_URL=http://graphhopper:8989
     volumes:
       - .:/app
+    depends_on:
+      - graphhopper
+    restart: unless-stopped

@@ -244,7 +244,12 @@ async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClien
 
     estimated_seconds = int(time_ms / 1000)
     distance_meters = int(distance_m)
-    confidence = "high"
+    if distance_meters < 5000:
+        confidence = "high"
+    elif distance_meters < 20000:
+        confidence = "medium"
+    else:
+        confidence = "low"
     return {
         "estimated_seconds": estimated_seconds,
         "distance_meters": distance_meters,
@@ -295,8 +300,34 @@ async def travel_time_estimate(
     x_api_token: str = Header(default=""),
 ) -> dict:
     _require_api_token(x_api_token)
+
+    # 1. mode validation
+    valid_modes = {"car", "bike", "foot"}
+    if req.mode not in valid_modes:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid mode '{req.mode}'. Allowed: {', '.join(sorted(valid_modes))}"
+        )
+
+    # 2. coordinate range validation (Hsinchu bounding box)
+    lat_min, lat_max = 24.5, 25.0
+    lon_min, lon_max = 120.7, 121.2
+    for name, coord in [("start", req.start), ("end", req.end)]:
+        lat, lon = coord[0], coord[1]
+        if not (lat_min <= lat <= lat_max and lon_min <= lon <= lon_max):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"{name} coordinate ({lat}, {lon}) is outside the allowed"
+                    f" Hsinchu bounding box:"
+                    f" lat {lat_min}..{lat_max}, lon {lon_min}..{lon_max}"
+                )
+            )
+
+    # 3. profile mapping (safe after validation)
     mode_map = {"car": "car", "bike": "bike", "foot": "foot"}
-    profile = mode_map.get(req.mode, "car")
+    profile = mode_map[req.mode]
+
     client = getattr(request.app.state, "http_client", None)
     if client is None:
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=5.0)) as temp_client:

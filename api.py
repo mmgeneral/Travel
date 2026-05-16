@@ -226,8 +226,8 @@ class TravelTimeRequest(BaseModel):
 
 
 async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient, redis_client: aioredis.Redis | None = None) -> dict:
-    start_h3 = h3.geo_to_cell(req.start[0], req.start[1], 9)
-    end_h3 = h3.geo_to_cell(req.end[0], req.end[1], 9)
+    start_h3 = h3.latlng_to_cell(req.start[0], req.start[1], 9)
+    end_h3 = h3.latlng_to_cell(req.end[0], req.end[1], 9)
     cache_key = f"TTE:{profile}:{start_h3}:{end_h3}"
 
     # Try cache

@@ -42,6 +42,8 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 from observability import init_tracing, traced
+import joblib
+import pandas as pd
 
 init_tracing("travel-agent")
 
@@ -94,6 +96,14 @@ async def lifespan(app: FastAPI):
             async with aiosqlite.connect(str(_GRAPH_SAGA_DIR / "graph_checkpoints.sqlite")) as conn:
                 app.state.checkpoint_conn = conn
                 app.state.checkpointer = AsyncSqliteSaver(conn)
+                # Load TTE model
+                tte_model_path = os.path.join(BASE_DIR, "tte_model.pkl")
+                try:
+                    app.state.tte_model = joblib.load(tte_model_path)
+                    logger.info("Loaded TTE model from %s", tte_model_path)
+                except Exception:
+                    app.state.tte_model = None
+                    logger.warning("TTE model not found at %s", tte_model_path)
                 yield
             app.state.checkpoint_conn = None
             app.state.checkpointer = None
@@ -225,7 +235,7 @@ class TravelTimeRequest(BaseModel):
     mode: str = Field(default="car")
 
 
-async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient, redis_client: aioredis.Redis | None = None) -> dict:
+async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient, redis_client: aioredis.Redis | None = None, model=None) -> dict:
     start_h3 = h3.latlng_to_cell(req.start[0], req.start[1], 9)
     end_h3 = h3.latlng_to_cell(req.end[0], req.end[1], 9)
     cache_key = f"TTE:{profile}:{start_h3}:{end_h3}"
@@ -282,6 +292,20 @@ async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClien
         "confidence": confidence,
         "cache": "miss",
     }
+
+    # Apply TTE model correction if available
+    if model is not None:
+        from datetime import datetime
+        now = datetime.now(_APP_TZ)
+        hour = now.hour
+        weekday = now.weekday()
+        is_peak = 1 if hour in (8, 9, 17, 18) else 0
+        is_weekend = 1 if weekday >= 5 else 0
+        feature_df = pd.DataFrame([[estimated_seconds, distance_meters, hour, weekday, is_peak, is_weekend]],
+                                  columns=["graphhopper_seconds","distance_meters","hour","weekday","is_peak","is_weekend"])
+        pred_seconds = model.predict(feature_df)[0]
+        result["estimated_seconds"] = int(pred_seconds)
+        result["model_corrected"] = True
 
     # Store in cache
     if redis_client is not None:
@@ -366,10 +390,11 @@ async def travel_time_estimate(
 
     client = getattr(request.app.state, "http_client", None)
     redis_client = getattr(request.app.state, "redis_client", None)
+    tte_model = getattr(request.app.state, "tte_model", None)
     if client is None:
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=5.0)) as temp_client:
-            return await _do_tte(req, profile, temp_client, redis_client=redis_client)
-    return await _do_tte(req, profile, client, redis_client=redis_client)
+            return await _do_tte(req, profile, temp_client, redis_client=redis_client, model=tte_model)
+    return await _do_tte(req, profile, client, redis_client=redis_client, model=tte_model)
 
 
 async def _stream_agent(

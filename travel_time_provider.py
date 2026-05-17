@@ -188,7 +188,7 @@ class GraphHopperProvider(TravelTimeProvider):
 # --------------------------------------------------------------------------- #
 
 class OTPProvider(TravelTimeProvider):
-    """Travel‑time from local OpenTripPlanner REST API (transit)."""
+    """Travel‑time from local OpenTripPlanner GraphQL API (transit)."""
 
     def __init__(
         self,
@@ -197,14 +197,16 @@ class OTPProvider(TravelTimeProvider):
     ) -> None:
         self._client = client
         self._base_url = base_url.rstrip("/")
-        self._plan_url = f"{self._base_url}/otp/routers/default/plan"
+        self._graphql_url = f"{self._base_url}/otp/gtfs/v1"
 
     async def is_available(self) -> bool:
-        # A simple status request (the plan endpoint returns 400 without params)
         try:
-            resp = await self._client.get(self._plan_url, params={"fromPlace": "0,0", "toPlace": "0,0"}, timeout=3)
-            # 400 is acceptable (missing params) – 200 is fine
-            return resp.status_code in (200, 400, 202)
+            query = "{ agencies { name } }"
+            payload = {"query": query}
+            resp = await self._client.post(
+                self._graphql_url, json=payload, timeout=3
+            )
+            return resp.status_code == 200
         except Exception:
             return False
 
@@ -223,26 +225,51 @@ class OTPProvider(TravelTimeProvider):
         date_str = dt.strftime("%Y-%m-%d")
         time_str = dt.strftime("%H:%M:%S")
 
-        params = {
-            "fromPlace": f"{start[0]},{start[1]}",
-            "toPlace": f"{end[0]},{end[1]}",
-            "date": date_str,
-            "time": time_str,
-            "mode": "TRANSIT,WALK",
-            "arriveBy": "false",
-            "numItineraries": 1,
-        }
-        resp = await self._client.get(self._plan_url, params=params, timeout=15)
+        # 2. build GraphQL query
+        query = (
+            '{'
+            '  plan('
+            '    from: {lat: %f, lon: %f}'
+            '    to: {lat: %f, lon: %f}'
+            '    date: "%s"'
+            '    time: "%s"'
+            '  ) {'
+            '    itineraries {'
+            '      duration'
+            '      legs {'
+            '        mode'
+            '        duration'
+            '        distance'
+            '        from { name }'
+            '        to { name }'
+            '      }'
+            '    }'
+            '  }'
+            '}'
+        ) % (
+            start[0], start[1],
+            end[0], end[1],
+            date_str,
+            time_str,
+        )
+
+        payload = {"query": query}
+        resp = await self._client.post(
+            self._graphql_url, json=payload, timeout=15
+        )
         resp.raise_for_status()
         data = resp.json()
-        plan = data.get("plan", {})
+
+        # 3. navigate GraphQL response
+        plan = (data.get("data", {})
+                    .get("plan", {}))
         itineraries = plan.get("itineraries", [])
         if not itineraries:
             raise RuntimeError("OTP returned no itineraries")
 
         itinerary = itineraries[0]
 
-        # 2. extract legs
+        # 4. extract legs
         legs_raw: list[dict] = itinerary.get("legs", [])
         legs: list[dict] = []
         total_seconds = 0
@@ -268,7 +295,7 @@ class OTPProvider(TravelTimeProvider):
 
         distance_meters = int(total_distance)
 
-        # 3. confidence (simplified)
+        # 5. confidence (simplified)
         if distance_meters < 5000:
             confidence = "high"
         elif distance_meters < 20000:

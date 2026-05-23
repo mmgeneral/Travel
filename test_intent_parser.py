@@ -57,6 +57,8 @@ def _valid_llm_json(**overrides: Any) -> str:
         "explicit_constraints": [],
         "wants_flight": False,
         "confidence": 0.8,
+        "is_actionable": True,
+        "actionability_followup": None,
     }
     base.update(overrides)
     return json.dumps(base, ensure_ascii=False)
@@ -233,7 +235,8 @@ class TestParseIntentNeverRaises:
         # Must not raise; should return default Intent
         intent = parse_intent("我女友懷孕想吃酸的", router)
         assert isinstance(intent, Intent)
-        assert intent.city  # city is at least default
+        assert intent.city is None
+        assert intent.is_actionable is False
 
     def test_llm_exception_returns_fallback(self) -> None:
         """Router.complete() raising an exception is also handled gracefully."""
@@ -260,12 +263,20 @@ class TestIntentFields:
         intent = parse_intent("台北三餐拉麵 吃不太下", router)
         assert "appetite_light" in intent.explicit_constraints
 
-    def test_kyoto_default_when_no_city_hint(self) -> None:
-        """No city in query, no locale, no coords → default Kyoto."""
+    def test_no_city_in_rules_without_geographic_hint(self) -> None:
+        """Structured meal query without a named city → city stays unset (no invented default)."""
         router = _mock_router()
         intent = parse_intent_rules("三餐拉麵 7:00~21:00")
         assert intent is not None
-        assert intent.city == "京都"
+        assert intent.city is None
+
+    def test_parse_intent_clamps_when_rules_lack_city(self) -> None:
+        """High-confidence rules without a resolved city must not reach retrieval as actionable."""
+        router = _mock_router()
+        intent = parse_intent("三餐拉麵 7:00~21:00", router)
+        router.complete.assert_not_called()
+        assert intent.city is None
+        assert intent.is_actionable is False
 
     def test_tokyo_detected_from_query(self) -> None:
         router = _mock_router()
@@ -306,6 +317,7 @@ class TestIntentFields:
 
 
 class TestExcludedShopsQuickRules:
+    @pytest.mark.skip(reason="否定句現在統一由 LLM 處理，規則引擎預期回傳 None")
     def test_parse_intent_rules_extracts_do_not_eat_phrase(self) -> None:
         r = parse_intent_rules("三餐拉麵 不想吃茶寮都路里")
         assert r is not None

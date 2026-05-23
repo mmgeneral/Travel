@@ -23,7 +23,7 @@ def test_geo_location_drives_taipei_seed_catalog() -> None:
     """
     graph = build_graph()
     st = make_initial_state(
-        "附近有什麼好吃",
+        "幫我排今天台北晚餐行程",
         user_locale=None,
         user_lat=25.03,
         user_lng=121.56,

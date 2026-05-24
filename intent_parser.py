@@ -66,6 +66,7 @@ def get_global_schedule() -> dict[str, str]:
 from pydantic import BaseModel, field_validator, model_validator
 
 from observability import record_llm_call, _get_tracer
+from shop_planning import ShopProfile
 
 
 def _strip_city_optional(raw: str | None) -> str | None:
@@ -850,7 +851,7 @@ def _check_global_schedule_collision(intent: Intent, global_schedule: dict | Non
 def _audit_itinerary_for_closed_days(
     prev_itinerary: list[dict],
     new_start_date: str,
-    catalog: dict[str, "ShopProfile"],
+    catalog: dict[str, ShopProfile],
 ) -> list[dict]:
     """Check each shop in prev_itinerary against its closed_days for the new date.
 
@@ -1407,7 +1408,7 @@ def parse_intent(
     previous_intent: Intent | None = None,
     prev_itinerary: str | None = None,
     global_schedule: dict | None = None,
-    catalog: dict[str, "ShopProfile"] | None = None,
+    catalog: dict[str, ShopProfile] | None = None,
     new_start_date: str | None = None,
 ) -> Intent:
     """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.

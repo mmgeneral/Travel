@@ -933,8 +933,9 @@ When is_actionable=true, set actionability_followup to null.
 
 MISSING PARAMETER CLARIFICATION (meal_slots)
 --------------------------------------------
-If the user has provided a city (city is non-null) and category_tags (non-empty), but meal_slots is empty AND time_window is {"start":null,"end":null}, you MUST set is_actionable=false and ask for the meal slot in actionability_followup.
-Example: "請問您想安排在哪個時段享用呢？\\n(A) 午餐\\n(B) 晚餐\\n(C) 宵夜"
+If the user's query implies a FULL-DAY trip or itinerary (e.g. "一日行程", "排行程", "整天", "一天", "full day"), set meal_slots=["breakfast","lunch","tea","dinner"] and is_actionable=true. Do NOT ask about meal slots for full-day queries.
+
+Only ask about meal slots when the user clearly wants a SINGLE meal (e.g. "吃拉麵", "找晚餐", "午餐去哪") but has not specified which meal slot. In that case set is_actionable=false and ask with (A)(B)(C)(D) options.
 
 CRITICAL RULE — NO CITY GUESSING (ABSOLUTE)
 -------------------------------------------

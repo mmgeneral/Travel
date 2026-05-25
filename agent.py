@@ -484,6 +484,9 @@ class AgentStateModel(BaseModel):
     runtime_services: dict[str, Any] = Field(default_factory=dict)
     critic_retry_count: int = 0
     global_schedule: dict[str, list[str]] | None = None
+    itinerary_slots: list[dict] = Field(default_factory=list)
+    #: Stable UUID-keyed slots; each entry: {slot_id, meal_type, shop_name, locked}
+    itinerary_slots: list[dict]
 
 
 class AtomicCommitFailure(Exception):
@@ -2883,6 +2886,22 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     )
     state["ui_cards"] = ui_cards
     state["final_itinerary"] = report
+
+    # Build stable UUID-keyed slots from candidate_names and fixed_times.
+    meal_type_map = {0: "lunch", 1: "tea", 2: "dinner"}
+    itinerary_slots: list[dict] = []
+    for i, name in enumerate(candidate_names):
+        if i >= len(fixed_times):
+            break
+        meal_type = meal_type_map.get(i, "meal")
+        itinerary_slots.append({
+            "slot_id": str(uuid.uuid4()),
+            "meal_type": meal_type,
+            "shop_name": name,
+            "locked": False,
+        })
+    state["itinerary_slots"] = itinerary_slots
+
     return state
 
 

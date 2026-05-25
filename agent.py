@@ -1907,6 +1907,32 @@ def node_route_intent(state: AgentState) -> AgentState:
             curr_intent["is_actionable"] = True
             curr_intent["is_revision"] = True
             
+            # 1. 把 revision_op 寫入 intent
+            curr_intent["revision_op"] = {
+                "op_type": "replace",
+                "target_shop": shop_to_remove,
+                "new_shop": None,
+                "slot_id": None,
+            }
+
+            # 2. 從 itinerary_slots 找到 target_shop，填入 slot_id
+            slots = state.get("itinerary_slots") or []
+            for slot in slots:
+                if slot.get("shop_name") == shop_to_remove:
+                    curr_intent["revision_op"]["slot_id"] = slot["slot_id"]
+                    break
+
+            # 3. 把非 target_shop 的 slot 標記 locked=True
+            updated_slots = []
+            for slot in slots:
+                updated_slot = dict(slot)
+                if slot.get("shop_name") != shop_to_remove:
+                    updated_slot["locked"] = True
+                else:
+                    updated_slot["locked"] = False
+                updated_slots.append(updated_slot)
+            state["itinerary_slots"] = updated_slots
+
             state["intent"] = curr_intent
             return state
 

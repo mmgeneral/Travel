@@ -81,6 +81,14 @@ def _strip_city_optional(raw: str | None) -> str | None:
 # ---------------------------------------------------------------------------
 
 @dataclass
+class RevisionOp:
+    op_type: str          # "replace" | "remove" | "insert" | "swap"
+    target_shop: str      # 被操作的店名（replace/remove/swap 用）
+    new_shop: str | None  # replace/swap 的替換目標；其餘為 None
+    slot_id: str | None   # 對應 stable UUID；初始為 None，由 agent 填入
+
+
+@dataclass
 class Intent:
     city: str | None = None
     region: str = "unknown"
@@ -98,6 +106,7 @@ class Intent:
     explicit_constraints: list[str] = field(default_factory=list)
     wants_flight: bool = False
     confidence: float = 0.0
+    revision_op: RevisionOp | None = None
     #: True when this intent updates a stored prior snapshot (refinement turn).
     is_revision: bool = False
     #: False when the query is too vague to run retrieval/planning without clarification.
@@ -113,6 +122,14 @@ class Intent:
 
     def as_dict(self) -> dict[str, Any]:
         """JSON-serialisable representation for AgentState storage."""
+        rev_op = None
+        if self.revision_op is not None:
+            rev_op = {
+                "op_type": self.revision_op.op_type,
+                "target_shop": self.revision_op.target_shop,
+                "new_shop": self.revision_op.new_shop,
+                "slot_id": self.revision_op.slot_id,
+            }
         return {
             "city": self.city,
             "region": self.region,
@@ -133,6 +150,7 @@ class Intent:
             "actionability_followup": self.actionability_followup,
             "pending_mutation": self.pending_mutation,
             "pending_replacement": self.pending_replacement,
+            "revision_op": rev_op,
             "metadata": self.metadata,
         }
 
@@ -998,6 +1016,13 @@ Output: {"city":"京都","region":"jp","meal_slots":[],"time_window":{"start":nu
 Few-shot — Self-Correction (User points out missed meal slot):
 Query: '我剛剛就說過要吃晚餐了'
 Output: {"city":null,"region":"unknown","meal_slots":["dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":false,"is_actionable":false,"actionability_followup":"非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"}
+
+# Revision operations
+- "把燃えよ麺助換掉" → revision_op: {op_type: "replace", target_shop: "燃えよ麺助", new_shop: null, slot_id: null}
+- "不要第二餐" → revision_op: {op_type: "remove", target_shop: "<第二個 slot 的 shop_name>", new_shop: null, slot_id: null}
+- "把燃えよ麺助換成麵屋武士" → revision_op: {op_type: "replace", target_shop: "燃えよ麺助", new_shop: "麵屋武士", slot_id: null}
+
+若非修改行程的 query，revision_op 輸出 null。
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\

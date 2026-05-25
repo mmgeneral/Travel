@@ -1889,52 +1889,6 @@ def node_route_intent(state: AgentState) -> AgentState:
             state["clarification_broadcast"] = None
             return state
 
-    # 2. 行程修改 (Revision) 攔截器
-    if state.get("prev_itinerary") and any(k in q for k in ["換掉", "不要", "刪除", "更換"]):
-        import re
-        match = re.search(r'(?:換掉|不要|刪除|更換)\s*(\S+)', q)
-        if match:
-            shop_to_remove = match.group(1)
-            curr_intent = state.get("intent") or {}
-            if not isinstance(curr_intent, dict):
-                curr_intent = curr_intent.as_dict() if hasattr(curr_intent, "as_dict") else {}
-            
-            excludes = curr_intent.get("must_exclude_shops") or []
-            if shop_to_remove not in excludes:
-                excludes.append(shop_to_remove)
-            
-            curr_intent["must_exclude_shops"] = excludes
-            curr_intent["is_actionable"] = True
-            curr_intent["is_revision"] = True
-            
-            # 1. 把 revision_op 寫入 intent
-            curr_intent["revision_op"] = {
-                "op_type": "replace",
-                "target_shop": shop_to_remove,
-                "new_shop": None,
-                "slot_id": None,
-            }
-
-            # 2. 從 itinerary_slots 找到 target_shop，填入 slot_id
-            slots = state.get("itinerary_slots") or []
-            for slot in slots:
-                if slot.get("shop_name") == shop_to_remove:
-                    curr_intent["revision_op"]["slot_id"] = slot["slot_id"]
-                    break
-
-            # 3. 把非 target_shop 的 slot 標記 locked=True
-            updated_slots = []
-            for slot in slots:
-                updated_slot = dict(slot)
-                if slot.get("shop_name") != shop_to_remove:
-                    updated_slot["locked"] = True
-                else:
-                    updated_slot["locked"] = False
-                updated_slots.append(updated_slot)
-            state["itinerary_slots"] = updated_slots
-
-            state["intent"] = curr_intent
-            return state
 
     if _consume_pending_dietary_clarification_answer(state):
         return state
@@ -1988,6 +1942,26 @@ def node_route_intent(state: AgentState) -> AgentState:
         return state
     state["intent_history"] = hist
     state["intent"] = intent.as_dict()
+
+    # Execute slot locking from revision_op (set by LLM or rule path)
+    rev_op = state["intent"].get("revision_op")
+    if rev_op and isinstance(rev_op, dict):
+        target_shop = rev_op.get("target_shop") or ""
+        slots = list(state.get("itinerary_slots") or [])
+        if slots and target_shop:
+            # Back-fill slot_id into intent
+            for slot in slots:
+                if slot.get("shop_name") == target_shop:
+                    state["intent"]["revision_op"]["slot_id"] = slot["slot_id"]
+                    break
+            # Lock all slots except the target
+            updated_slots = []
+            for slot in slots:
+                s = dict(slot)
+                s["locked"] = (s.get("shop_name") != target_shop)
+                updated_slots.append(s)
+            state["itinerary_slots"] = updated_slots
+
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()
 

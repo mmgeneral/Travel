@@ -167,6 +167,15 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
     else:
         tw = (None, None)
     rc = d.get("city")
+    rev_op_raw = d.get("revision_op")
+    rev_op_instance = None
+    if rev_op_raw is not None and isinstance(rev_op_raw, dict):
+        rev_op_instance = RevisionOp(
+            op_type=str(rev_op_raw.get("op_type")),
+            target_shop=str(rev_op_raw.get("target_shop")),
+            new_shop=rev_op_raw.get("new_shop"),
+            slot_id=rev_op_raw.get("slot_id"),
+        )
     return Intent(
         city=_strip_city_optional(str(rc) if rc is not None else None),
         region=str(d.get("region") or "unknown"),
@@ -197,6 +206,7 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
         ),
         pending_mutation=d.get("pending_mutation"),
         pending_replacement=d.get("pending_replacement"),
+        revision_op=rev_op_instance,
         metadata=dict(d.get("metadata", {})),
     )
 

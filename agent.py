@@ -443,6 +443,8 @@ class AgentState(TypedDict):
     critic_retry_count: int
     #: Global schedule (slot -> list of tags) passed from the frontend for collision detection.
     global_schedule: dict[str, list[str]] | None
+    #: Stable UUID-keyed slots; each entry: {slot_id, meal_type, shop_name, locked}
+    itinerary_slots: list[dict]
 
 
 class AgentStateModel(BaseModel):

@@ -484,8 +484,6 @@ class AgentStateModel(BaseModel):
     runtime_services: dict[str, Any] = Field(default_factory=dict)
     critic_retry_count: int = 0
     global_schedule: dict[str, list[str]] | None = None
-    #: Stable UUID-keyed slots; each entry: {slot_id, meal_type, shop_name, locked}
-    itinerary_slots: list[dict]
     itinerary_slots: list[dict] = Field(default_factory=list)
 
 

@@ -799,6 +799,10 @@ def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | No
     merged.is_actionable = new.is_actionable
     merged.actionability_followup = new.actionability_followup
 
+    # Override revision_op from new if present
+    if new.revision_op is not None:
+        merged.revision_op = new.revision_op
+
     return merged
 
 

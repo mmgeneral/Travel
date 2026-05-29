@@ -524,6 +524,7 @@ class _LLMIntentSchema(BaseModel):
     is_revision: bool = False
     is_actionable: bool = True
     actionability_followup: str | None = None
+    revision_op: dict | None = None
 
     @field_validator("city", mode="before")
     @classmethod
@@ -603,6 +604,20 @@ class _LLMIntentSchema(BaseModel):
         return self
 
 
+def _parse_revision_op(raw: dict | None) -> RevisionOp | None:
+    if not raw or not isinstance(raw, dict):
+        return None
+    op_type = raw.get("op_type")
+    if not op_type:
+        return None
+    return RevisionOp(
+        op_type=str(op_type),
+        target_shop=str(raw.get("target_shop") or ""),
+        new_shop=raw.get("new_shop"),
+        slot_id=raw.get("slot_id"),
+    )
+
+
 def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
     tw = s.time_window or {}
     actionable = bool(s.is_actionable)
@@ -631,6 +646,7 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
         is_revision=bool(s.is_revision),
         is_actionable=actionable,
         actionability_followup=fu if fu else None,
+        revision_op=_parse_revision_op(s.revision_op),
     )
 
 

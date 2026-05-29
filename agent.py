@@ -2887,13 +2887,11 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     state["ui_cards"] = ui_cards
     state["final_itinerary"] = report
 
-    # Build stable UUID-keyed slots from candidate_names and fixed_times.
-    meal_type_map = {0: "lunch", 1: "tea", 2: "dinner"}
+    # Build stable UUID-keyed slots zip(intent["meal_slots"], candidate_names)
+    intent_dict = state.get("intent") or {}
+    meal_slots_from_intent = intent_dict.get("meal_slots") or []
     itinerary_slots: list[dict] = []
-    for i, name in enumerate(candidate_names):
-        if i >= len(fixed_times):
-            break
-        meal_type = meal_type_map.get(i, "meal")
+    for meal_type, name in zip(meal_slots_from_intent, candidate_names):
         itinerary_slots.append({
             "slot_id": str(uuid.uuid4()),
             "meal_type": meal_type,

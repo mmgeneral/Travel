@@ -2890,14 +2890,37 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     # Build stable UUID-keyed slots zip(intent["meal_slots"], candidate_names)
     intent_dict = state.get("intent") or {}
     meal_slots_from_intent = intent_dict.get("meal_slots") or []
-    itinerary_slots: list[dict] = []
-    for meal_type, name in zip(meal_slots_from_intent, candidate_names):
-        itinerary_slots.append({
-            "slot_id": str(uuid.uuid4()),
-            "meal_type": meal_type,
-            "shop_name": name,
-            "locked": False,
-        })
+    existing_slots = list(state.get("itinerary_slots") or [])
+    locked_slots = [s for s in existing_slots if s.get("locked") is True]
+
+    if locked_slots:
+        # Partial revision: inherit locked slots, only rebuild unlocked ones
+        new_candidates = iter(candidate_names)
+        itinerary_slots: list[dict] = []
+        for slot in existing_slots:
+            if slot.get("locked") is True:
+                # Preserve UUID and all fields
+                itinerary_slots.append(dict(slot))
+            else:
+                # Replace with next candidate, keep meal_type
+                name = next(new_candidates, slot.get("shop_name", ""))
+                itinerary_slots.append({
+                    "slot_id": str(uuid.uuid4()),
+                    "meal_type": slot.get("meal_type", ""),
+                    "shop_name": name,
+                    "locked": False,
+                })
+    else:
+        # Fresh plan: build all slots from scratch
+        itinerary_slots: list[dict] = []
+        for meal_type, name in zip(meal_slots_from_intent, candidate_names):
+            itinerary_slots.append({
+                "slot_id": str(uuid.uuid4()),
+                "meal_type": meal_type,
+                "shop_name": name,
+                "locked": False,
+            })
+
     state["itinerary_slots"] = itinerary_slots
 
     return state

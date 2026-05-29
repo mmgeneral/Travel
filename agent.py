@@ -1954,11 +1954,15 @@ def node_route_intent(state: AgentState) -> AgentState:
                 if slot.get("shop_name") == target_shop:
                     state["intent"]["revision_op"]["slot_id"] = slot["slot_id"]
                     break
+            # Clear any previous session_locked before applying new lock
+            for slot in slots:
+                slot["session_locked"] = False
             # Lock all slots except the target
             updated_slots = []
             for slot in slots:
                 s = dict(slot)
-                s["locked"] = (s.get("shop_name") != target_shop)
+                s["session_locked"] = (s.get("shop_name") != target_shop)
+                # user_locked stays as is
                 updated_slots.append(s)
             state["itinerary_slots"] = updated_slots
 
@@ -2891,14 +2895,14 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     intent_dict = state.get("intent") or {}
     meal_slots_from_intent = intent_dict.get("meal_slots") or []
     existing_slots = list(state.get("itinerary_slots") or [])
-    locked_slots = [s for s in existing_slots if s.get("locked") is True]
+    locked_slots = [s for s in existing_slots if s.get("session_locked") is True or s.get("user_locked") is True]
 
     if locked_slots:
         # Partial revision: inherit locked slots, only rebuild unlocked ones
         new_candidates = iter(candidate_names)
         itinerary_slots: list[dict] = []
         for slot in existing_slots:
-            if slot.get("locked") is True:
+            if slot.get("session_locked") is True or slot.get("user_locked") is True:
                 # Preserve UUID and all fields
                 itinerary_slots.append(dict(slot))
             else:
@@ -2908,7 +2912,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                     "slot_id": str(uuid.uuid4()),
                     "meal_type": slot.get("meal_type", ""),
                     "shop_name": name,
-                    "locked": False,
+                    "user_locked": False,
+                    "session_locked": False,
                 })
     else:
         # Fresh plan: build all slots from scratch
@@ -2918,7 +2923,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 "slot_id": str(uuid.uuid4()),
                 "meal_type": meal_type,
                 "shop_name": name,
-                "locked": False,
+                "user_locked": False,
+                "session_locked": False,
             })
 
     state["itinerary_slots"] = itinerary_slots

@@ -242,13 +242,13 @@ async def test_scenario3_swap_lunch_preserve_others():
 
     # lunch slot should be locked=False
     lunch_slot2 = next(s for s in slots2 if s.get("meal_type") == "lunch")
-    assert lunch_slot2.get("locked") is False, (
-        f"lunch slot locked={lunch_slot2.get('locked')}"
+    assert lunch_slot2.get("session_locked") is False, (
+        f"lunch slot session_locked={lunch_slot2.get('session_locked')}"
     )
 
     # Non‑lunch slots should be locked=True
     for s in slots2:
         if s.get("meal_type") != "lunch":
-            assert s.get("locked") is True, (
-                f"slot {s.get('meal_type')} locked={s.get('locked')}"
+            assert s.get("session_locked") is True, (
+                f"slot {s.get('meal_type')} session_locked={s.get('session_locked')}"
             )

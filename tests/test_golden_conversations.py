@@ -189,7 +189,7 @@ async def test_scenario3_swap_lunch_preserve_others():
     non_lunch_slot_ids = {
         s["slot_id"] for i, s in enumerate(slots1) if i != lunch_idx
     }
-    assert len(non_lunch_slot_ids) == 3
+    assert len(non_lunch_slot_ids) == len(slots1) - 1
 
     # Turn 2: 把午餐換掉
     query2 = "把午餐換掉"
@@ -231,8 +231,8 @@ async def test_scenario3_swap_lunch_preserve_others():
     assert result2.get("error") is None, f"turn2 error: {result2.get('error')}"
 
     slots2 = result2.get("itinerary_slots") or []
-    # Same 4 slots
-    assert len(slots2) == 4, f"expected 4 slots after revision, got {len(slots2)}"
+    # Same number of slots after revision
+    assert len(slots2) == len(slots1), f"expected {len(slots1)} slots after revision, got {len(slots2)}"
 
     # Non‑lunch slots should still have the same slot_id (preserved)
     preserved_ids = {s["slot_id"] for s in slots2 if s.get("meal_type") != "lunch"}

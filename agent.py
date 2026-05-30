@@ -445,6 +445,8 @@ class AgentState(TypedDict):
     global_schedule: dict[str, list[str]] | None
     #: Stable UUID-keyed slots; each entry: {slot_id, meal_type, shop_name, locked}
     itinerary_slots: list[dict]
+    #: key=(meal_type, frozenset(tags)) serialized as str, value=list[str]
+    candidate_cache: dict[str, Any]
 
 
 class AgentStateModel(BaseModel):
@@ -487,6 +489,7 @@ class AgentStateModel(BaseModel):
     critic_retry_count: int = 0
     global_schedule: dict[str, list[str]] | None = None
     itinerary_slots: list[dict] = Field(default_factory=list)
+    candidate_cache: dict[str, Any] = Field(default_factory=dict)
 
 
 class AtomicCommitFailure(Exception):
@@ -637,6 +640,12 @@ def make_initial_state(
         global_schedule=global_schedule,
     )
     return model.model_dump(mode="json")
+
+
+def invalidate_candidate_cache(state: dict) -> dict:
+    """Call this when shop catalog is updated."""
+    state["candidate_cache"] = {}
+    return state
 
 
 def _cleanup_old_txn_logs(retention_days: int = 30) -> None:
@@ -1830,6 +1839,15 @@ def _reliability_cutoff_for_region(region: str) -> float:
     return 60.0
 
 
+def _make_cache_key(meal_type: str, intent_dict: dict) -> str:
+    tags = frozenset(
+        (intent_dict.get("excluded_tags") or []) +
+        (intent_dict.get("category_tags") or []) +
+        ([intent_dict["dietary_hints"]] if intent_dict.get("dietary_hints") else [])
+    )
+    return str((meal_type, tuple(sorted(tags))))
+
+
 @traced
 def node_clarify_constraint(state: AgentState) -> AgentState:
     """Prompt strict vs loose for single-hint dietary exclusions before retrieval (non-revision only)."""
@@ -2049,6 +2067,24 @@ async def node_retriever(state: AgentState) -> AgentState:
     """
     if state.get("error"):
         return state
+
+    intent_dict = state.get("intent") or {}
+    meal_slots = intent_dict.get("meal_slots") or []
+    cache = dict(state.get("candidate_cache") or {})
+    all_hit = all(
+        _make_cache_key(mt, intent_dict) in cache
+        for mt in meal_slots
+    )
+    if all_hit and meal_slots:
+        candidate_names = []
+        for mt in meal_slots:
+            key = _make_cache_key(mt, intent_dict)
+            candidates = cache.get(key) or []
+            if candidates:
+                candidate_names.append(candidates[0])
+        state["researcher_candidate_names"] = candidate_names
+        return state
+
     print(_dj("debug_print", node="node_retriever", message="RetrieverAgent starting"))
     try:
         agent = RetrieverAgent(llm_router=_svc_llm_router(state))
@@ -2091,6 +2127,18 @@ async def node_retriever(state: AgentState) -> AgentState:
             gaps=report.gaps,
         )
     )
+
+    # Write to candidate cache
+    candidate_names = state.get("researcher_candidate_names") or []
+    cache = dict(state.get("candidate_cache") or {})
+    for mt, name in zip(meal_slots, candidate_names):
+        key = _make_cache_key(mt, intent_dict)
+        if key not in cache:
+            cache[key] = [name]
+        elif name not in cache[key]:
+            cache[key].append(name)
+    state["candidate_cache"] = cache
+
     return state
 
 

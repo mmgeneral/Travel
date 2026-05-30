@@ -1848,6 +1848,61 @@ def _make_cache_key(meal_type: str, intent_dict: dict) -> str:
     return str((meal_type, tuple(sorted(tags))))
 
 
+def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
+    """
+    Assign start_time to each slot sequentially.
+    Default start: 09:00, duration: 90 min per slot.
+    Travel time between slots: use haversine distance estimate
+    (2 min per km, minimum 5 min).
+    """
+    import math
+    DEFAULT_START = "09:00"
+    DEFAULT_DURATION = 90  # minutes
+    SPEED_MIN_PER_KM = 2   # walking/transit rough estimate
+
+    def haversine_km(lat1, lon1, lat2, lon2):
+        R = 6371
+        dlat = math.radians(lat2 - lat1)
+        dlon = math.radians(lon2 - lon1)
+        a = (math.sin(dlat/2)**2 +
+             math.cos(math.radians(lat1)) *
+             math.cos(math.radians(lat2)) *
+             math.sin(dlon/2)**2)
+        return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+    def travel_minutes(shop_a: str, shop_b: str) -> int:
+        a = shop_catalog.get(shop_a, {})
+        b = shop_catalog.get(shop_b, {})
+        lat_a = getattr(a, "latitude", None) or getattr(a, "lat", None)
+        lon_a = getattr(a, "longitude", None) or getattr(a, "lng", None)
+        lat_b = getattr(b, "latitude", None) or getattr(b, "lat", None)
+        lon_b = getattr(b, "longitude", None) or getattr(b, "lng", None)
+        if None in (lat_a, lon_a, lat_b, lon_b):
+            return 15  # fallback
+        km = haversine_km(lat_a, lon_a, lat_b, lon_b)
+        return max(5, int(km * SPEED_MIN_PER_KM))
+
+    current_time = datetime.strptime(DEFAULT_START, "%H:%M")
+    for i, slot in enumerate(slots):
+        if slot.get("user_locked") and slot.get("start_time"):
+            # 使用者鎖定且有指定時間，不動
+            try:
+                current_time = datetime.strptime(slot["start_time"], "%H:%M")
+                current_time += timedelta(minutes=slot.get("duration_minutes") or DEFAULT_DURATION)
+            except ValueError:
+                pass
+            continue
+        slot["start_time"] = current_time.strftime("%H:%M")
+        slot["duration_minutes"] = slot.get("duration_minutes") or DEFAULT_DURATION
+        current_time += timedelta(minutes=slot["duration_minutes"])
+        # 加上到下一個 slot 的交通時間
+        if i + 1 < len(slots):
+            next_shop = slots[i + 1].get("shop_name", "")
+            current_shop = slot.get("shop_name", "")
+            current_time += timedelta(minutes=travel_minutes(current_shop, next_shop))
+    return slots
+
+
 @traced
 def node_clarify_constraint(state: AgentState) -> AgentState:
     """Prompt strict vs loose for single-hint dietary exclusions before retrieval (non-revision only)."""
@@ -2962,6 +3017,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                     "shop_name": name,
                     "user_locked": False,
                     "session_locked": False,
+                    "start_time": None,
+                    "duration_minutes": 90,
                 })
     else:
         # Fresh plan: build all slots from scratch
@@ -2973,7 +3030,20 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 "shop_name": name,
                 "user_locked": False,
                 "session_locked": False,
+                "start_time": None,
+                "duration_minutes": 90,
             })
+
+    # Build catalog for distance estimation
+    seed_profiles = _researcher_seed_catalog(state)
+    _intent = state.get("intent") or {}
+    region = _intent.get("region") or "jp"
+    dynamic_profiles = [_build_dynamic_shop_profile(p, region=region) for p in (state.get("dynamic_shop_pool") or [])]
+    shop_catalog = {}
+    for sp in seed_profiles + dynamic_profiles:
+        shop_catalog[sp.name] = sp
+
+    itinerary_slots = _schedule_slots(itinerary_slots, shop_catalog)
 
     state["itinerary_slots"] = itinerary_slots
 

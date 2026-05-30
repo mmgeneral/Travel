@@ -447,6 +447,8 @@ class AgentState(TypedDict):
     itinerary_slots: list[dict]
     #: key=(meal_type, frozenset(tags)) serialized as str, value=list[str]
     candidate_cache: dict[str, Any]
+    #: Conflict found during revision transport check; None if no conflict.
+    conflict: dict | None
 
 
 class AgentStateModel(BaseModel):
@@ -490,6 +492,7 @@ class AgentStateModel(BaseModel):
     global_schedule: dict[str, list[str]] | None = None
     itinerary_slots: list[dict] = Field(default_factory=list)
     candidate_cache: dict[str, Any] = Field(default_factory=dict)
+    conflict: dict | None = None
 
 
 class AtomicCommitFailure(Exception):
@@ -1903,6 +1906,130 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
     return slots
 
 
+def _get_shop_catalog(state: AgentState) -> dict:
+    """
+    Build a catalog dict keyed by shop name with latitude/longitude fields.
+    Reuses the same pattern as _node_plan_core.
+    """
+    seed_profiles = _researcher_seed_catalog(state)
+    _intent = state.get("intent") or {}
+    region = _intent.get("region") or "jp"
+    dynamic_profiles = [_build_dynamic_shop_profile(p, region=region) for p in (state.get("dynamic_shop_pool") or [])]
+    catalog = {}
+    for sp in seed_profiles + dynamic_profiles:
+        catalog[sp.name] = sp
+    return catalog
+
+
+def _conflict_check_travel(
+    slots: list[dict],
+    target_slot_id: str,
+    shop_catalog: dict,
+) -> dict | None:
+    """
+    Check if the target slot's travel time to/from adjacent slots is feasible.
+    Returns None if OK, or a conflict dict if not feasible.
+
+    conflict dict:
+    {
+        "conflict_type": "transport",
+        "slot_id": str,
+        "prev_shop": str | None,
+        "next_shop": str | None,
+        "feasible_window": {"earliest": "HH:MM", "latest": "HH:MM"} | None,
+        "message": str,
+    }
+    """
+    SPEED_MIN_PER_KM = 2
+    MIN_TRAVEL = 5
+
+    def travel_min(shop_a: str, shop_b: str) -> int:
+        a = shop_catalog.get(shop_a, {})
+        b = shop_catalog.get(shop_b, {})
+        lat_a = getattr(a, "latitude", None) or getattr(a, "lat", None)
+        lon_a = getattr(a, "longitude", None) or getattr(a, "lng", None)
+        lat_b = getattr(b, "latitude", None) or getattr(b, "lat", None)
+        lon_b = getattr(b, "longitude", None) or getattr(b, "lng", None)
+        if None in (lat_a, lon_a, lat_b, lon_b):
+            return MIN_TRAVEL
+        km = _haversine_km(lat_a, lon_a, lat_b, lon_b)
+        return max(MIN_TRAVEL, int(km * SPEED_MIN_PER_KM))
+
+    # 找 target slot 的 index
+    idx = next((i for i, s in enumerate(slots) if s.get("slot_id") == target_slot_id), None)
+    if idx is None:
+        return None
+
+    target = slots[idx]
+    target_start = target.get("start_time")
+    target_dur = target.get("duration_minutes") or 90
+
+    prev_slot = slots[idx - 1] if idx > 0 else None
+    next_slot = slots[idx + 1] if idx < len(slots) - 1 else None
+
+    from datetime import datetime, timedelta
+
+    def parse_t(t: str | None):
+        if not t:
+            return None
+        try:
+            return datetime.strptime(t, "%H:%M")
+        except ValueError:
+            return None
+
+    target_dt = parse_t(target_start)
+    conflicts = []
+
+    # 檢查前一個 slot → target
+    if prev_slot and target_dt:
+        prev_end_dt = parse_t(prev_slot.get("start_time"))
+        if prev_end_dt:
+            prev_end_dt += timedelta(minutes=prev_slot.get("duration_minutes") or 90)
+            available = (target_dt - prev_end_dt).total_seconds() / 60
+            needed = travel_min(prev_slot.get("shop_name", ""), target.get("shop_name", ""))
+            if available < needed:
+                conflicts.append(f"從 {prev_slot.get('shop_name')} 過來需要 {needed} 分鐘，但只有 {int(available)} 分鐘")
+
+    # 檢查 target → 下一個 slot
+    if next_slot and target_dt:
+        next_start_dt = parse_t(next_slot.get("start_time"))
+        if next_start_dt:
+            target_end_dt = target_dt + timedelta(minutes=target_dur)
+            available = (next_start_dt - target_end_dt).total_seconds() / 60
+            needed = travel_min(target.get("shop_name", ""), next_slot.get("shop_name", ""))
+            if available < needed:
+                conflicts.append(f"到 {next_slot.get('shop_name')} 需要 {needed} 分鐘，但只有 {int(available)} 分鐘")
+
+    if not conflicts:
+        return None
+
+    # 計算可行時間窗口
+    feasible_window = None
+    if prev_slot and next_slot:
+        prev_end_dt = parse_t(prev_slot.get("start_time"))
+        next_start_dt = parse_t(next_slot.get("start_time"))
+        if prev_end_dt and next_start_dt:
+            prev_end_dt += timedelta(minutes=prev_slot.get("duration_minutes") or 90)
+            travel_from_prev = travel_min(prev_slot.get("shop_name", ""), target.get("shop_name", ""))
+            travel_to_next = travel_min(target.get("shop_name", ""), next_slot.get("shop_name", ""))
+            earliest = prev_end_dt + timedelta(minutes=travel_from_prev)
+            latest = next_start_dt - timedelta(minutes=travel_to_next + target_dur)
+            if earliest <= latest:
+                feasible_window = {
+                    "earliest": earliest.strftime("%H:%M"),
+                    "latest": latest.strftime("%H:%M"),
+                }
+
+    return {
+        "conflict_type": "transport",
+        "slot_id": target_slot_id,
+        "prev_shop": prev_slot.get("shop_name") if prev_slot else None,
+        "next_shop": next_slot.get("shop_name") if next_slot else None,
+        "feasible_window": feasible_window,
+        "message": "；".join(conflicts),
+    }
+
+
 @traced
 def node_clarify_constraint(state: AgentState) -> AgentState:
     """Prompt strict vs loose for single-hint dietary exclusions before retrieval (non-revision only)."""
@@ -2038,6 +2165,32 @@ def node_route_intent(state: AgentState) -> AgentState:
                 # user_locked stays as is
                 updated_slots.append(s)
             state["itinerary_slots"] = updated_slots
+
+            # Conflict detection
+            slot_id = rev_op.get("slot_id")
+            if slot_id:
+                catalog = _get_shop_catalog(state)
+                conflict = _conflict_check_travel(
+                    updated_slots,
+                    slot_id,
+                    catalog,
+                )
+                if conflict:
+                    state["conflict"] = conflict
+                    fw = conflict.get("feasible_window")
+                    if fw:
+                        msg = (
+                            f"交通時間有點趕：{conflict['message']}。\n"
+                            f"{fw['earliest']}～{fw['latest']} 到都來得及，"
+                            f"你想要什麼時候去？"
+                        )
+                    else:
+                        msg = (
+                            f"交通時間有點趕：{conflict['message']}。\n"
+                            f"建議調整行程順序或時間。"
+                        )
+                    state["clarification_required"] = True
+                    state["clarification_prompt"] = msg
 
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()

@@ -38,8 +38,26 @@ import os
 import httpx
 import aiosqlite
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from pydantic import BaseModel
+
+class TTEResponse(BaseModel):
+    estimated_seconds: int
+    distance_meters: int
+    confidence: str
+    cache: str
+    model_corrected: bool = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Module-level TTE model (fallback if lifespan doesn't set app.state)
+_TTE_MODEL = None
+try:
+    _tte_model_path = os.path.join(BASE_DIR, "tte_model.pkl")
+    if os.path.exists(_tte_model_path):
+        import joblib as _joblib
+        _TTE_MODEL = _joblib.load(_tte_model_path)
+except Exception:
+    pass
 
 from observability import init_tracing, traced
 import joblib
@@ -233,12 +251,14 @@ class TravelTimeRequest(BaseModel):
     start: list[float] = Field(..., min_items=2, max_items=2)
     end: list[float] = Field(..., min_items=2, max_items=2)
     mode: str = Field(default="car")
+    departure_time: datetime | None = None  # 不填就用現在時間
 
 
 async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClient, redis_client: aioredis.Redis | None = None, model=None) -> dict:
     start_h3 = h3.latlng_to_cell(req.start[0], req.start[1], 9)
     end_h3 = h3.latlng_to_cell(req.end[0], req.end[1], 9)
-    cache_key = f"TTE:{profile}:{start_h3}:{end_h3}"
+    hour_slot = (req.departure_time or datetime.now(_APP_TZ)).hour // 3  # 每3小時一個時段
+    cache_key = f"TTE:{profile}:{start_h3}:{end_h3}:{hour_slot}"
 
     # Try cache
     if redis_client is not None:
@@ -295,8 +315,7 @@ async def _do_tte(req: TravelTimeRequest, profile: str, client: httpx.AsyncClien
 
     # Apply TTE model correction if available
     if model is not None:
-        from datetime import datetime
-        now = datetime.now(_APP_TZ)
+        now = req.departure_time or datetime.now(_APP_TZ)
         hour = now.hour
         weekday = now.weekday()
         is_peak = 1 if hour in (8, 9, 17, 18) else 0
@@ -353,7 +372,7 @@ async def readyz(request: Request) -> dict:
     return {"status": "ready" if ready else "degraded", "checks": checks}
 
 
-@app.post("/api/v1/tte")
+@app.post("/api/v1/tte", response_model=TTEResponse)
 async def travel_time_estimate(
     req: TravelTimeRequest,
     request: Request,
@@ -390,7 +409,7 @@ async def travel_time_estimate(
 
     client = getattr(request.app.state, "http_client", None)
     redis_client = getattr(request.app.state, "redis_client", None)
-    tte_model = getattr(request.app.state, "tte_model", None)
+    tte_model = getattr(request.app.state, "tte_model", None) or _TTE_MODEL
     if client is None:
         async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=5.0)) as temp_client:
             return await _do_tte(req, profile, temp_client, redis_client=redis_client, model=tte_model)

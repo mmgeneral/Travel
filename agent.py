@@ -78,6 +78,7 @@ from tracing import trace_agent_stage
 from llm_router import TaskType, LLMRouter as _LLMRouter
 from agents.retriever import RetrieverAgent
 from agents.critic import CriticAgent
+from checkpoint_entry import StandardCheckpointEntry, entries_from_state, entries_to_state
 from agents.synthesizer import SynthesizerAgent, SynthesisReport
 from observability import traced
 
@@ -428,7 +429,7 @@ class AgentState(TypedDict):
     #: (intent + dietary profile); set in ``route_intent`` before retriever/plan consume candidates.
     plan_excluded_shop_tags: list[str]
     #: LangGraph checkpoint IDs (one entry per finished user/query round); used for undo / history UX.
-    turn_checkpoints: list[str]
+    turn_checkpoints: list[dict]
     dietary_clarification_resolved: dict[str, str]
     pending_dietary_clarification: dict[str, Any] | None
     awaiting_dietary_clarification: bool
@@ -479,7 +480,7 @@ class AgentStateModel(BaseModel):
     retrieval_history: list[dict] = Field(default_factory=list)
     critique_history: list[dict] = Field(default_factory=list)
     synthesis_history: list[dict] = Field(default_factory=list)
-    turn_checkpoints: list[str] = Field(default_factory=list)
+    turn_checkpoints: list[dict] = Field(default_factory=list)
     plan_excluded_shop_tags: list[str] = Field(default_factory=list)
     dietary_clarification_resolved: dict[str, str] = Field(default_factory=dict)
     pending_dietary_clarification: dict[str, Any] | None = None
@@ -3094,7 +3095,9 @@ async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) 
     print(_dj("debug_print", node="node_plan", message="Generating outcome report"))
     if state.get("error"):
         out = _finalize_plan_on_agent_error(state)
-        extend_turn_checkpoint_in_state(out, config)
+        query = state.get("query") or ""
+        entry_type = "user_turn"
+        extend_turn_checkpoint_in_state(out, config, entry_type=entry_type, description=query[:80])
         return out
     try:
         out = await _node_plan_core(state)
@@ -3102,7 +3105,9 @@ async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) 
         logger.exception("node_plan failed agent_run_id=%s", state.get("agent_run_id"))
         _attach_node_error(state, "plan", exc)
         out = _finalize_plan_on_agent_error(state)
-    extend_turn_checkpoint_in_state(out, config)
+    query = state.get("query") or ""
+    entry_type = "user_turn"
+    extend_turn_checkpoint_in_state(out, config, entry_type=entry_type, description=query[:80])
     return out
 
 

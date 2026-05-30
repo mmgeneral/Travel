@@ -40,7 +40,7 @@ def _checkpoint_id_from_state_snapshot(snap: Any) -> str | None:
 
 def turn_checkpoints_trimmed_to_checkpoint_id(
     head_turn_checkpoints: Any, rewind_checkpoint_id: str
-) -> list[str] | None:
+) -> list[dict] | None:
     """Return a prefix of ``head_turn_checkpoints`` ending at ``rewind_checkpoint_id`` (inclusive).
 
     ``None`` means the rewind id is not found on the head list — caller should keep snapshot values.
@@ -48,16 +48,22 @@ def turn_checkpoints_trimmed_to_checkpoint_id(
     rew = str(rewind_checkpoint_id or "").strip()
     if not rew:
         return None
-    tcp = [str(x).strip() for x in (head_turn_checkpoints or []) if x is not None and str(x).strip()]
-    if not tcp:
+    entries = [entry_from_raw(x) for x in (head_turn_checkpoints or []) if x is not None]
+    if not entries:
         return None
-    for i, cid in enumerate(tcp):
-        if cid == rew:
-            return tcp[: i + 1]
+    for i, entry in enumerate(entries):
+        if entry.get_id() == rew:
+            return entries_to_state(entries[: i + 1])
     return None
 
 
-def extend_turn_checkpoint_in_state(state_vals: MutableMapping[str, Any], config: Any) -> None:
+def extend_turn_checkpoint_in_state(
+    state_vals: MutableMapping[str, Any],
+    config: Any,
+    *,
+    entry_type: str = "user_turn",
+    description: str = "",
+) -> None:
     """Append ``configurable.checkpoint_id`` to ``turn_checkpoints`` if new (mutates ``state_vals``).
 
     Used by :func:`node_plan` after itinerary synthesis so each completed planning turn has one
@@ -66,12 +72,13 @@ def extend_turn_checkpoint_in_state(state_vals: MutableMapping[str, Any], config
     cid = _checkpoint_id_from_runnable_config(config)
     if not cid:
         return
-    raw_tcp = state_vals.get("turn_checkpoints") or []
-    tcp = [str(x) for x in raw_tcp if x is not None]
-    if tcp and tcp[-1] == cid:
+    entries = entries_from_state(state_vals)
+    if entries and entries[-1].get_id() == cid:
         return
-    tcp.append(cid)
-    state_vals["turn_checkpoints"] = tcp
+    entries.append(StandardCheckpointEntry(
+        id=cid, type=entry_type, description=description
+    ))
+    state_vals["turn_checkpoints"] = entries_to_state(entries)
 
 
 async def _graph_persist_turn_checkpoint(graph: Any, cfg: dict[str, Any]) -> None:
@@ -91,13 +98,14 @@ async def _graph_persist_turn_checkpoint(graph: Any, cfg: dict[str, Any]) -> Non
         )
         return
     vals = dict(getattr(snap, "values", None) or {})
-    raw_tcp = vals.get("turn_checkpoints") or []
-    tcp = [str(x) for x in raw_tcp if x is not None]
-    if tcp and tcp[-1] == cid:
+    entries = entries_from_state(vals)
+    if entries and entries[-1].get_id() == cid:
         return
-    tcp.append(cid)
+    entries.append(StandardCheckpointEntry(
+        id=cid, type="user_turn", description=""
+    ))
     try:
-        await _graph_update_state(graph, snap.config, {"turn_checkpoints": tcp})
+        await _graph_update_state(graph, snap.config, {"turn_checkpoints": entries_to_state(entries)})
     except Exception:
         logger.exception("_graph_persist_turn_checkpoint update_state failed")
 
@@ -135,9 +143,7 @@ async def _graph_resolve_checkpoint_snapshot(graph: Any, thread_id: str, ref: st
             try:
                 snap_cur = await _graph_get_state(graph, {"configurable": {"thread_id": thread_id}})
                 vals_cur = dict(getattr(snap_cur, "values", None) or {})
-                turn_cp_ids = [
-                    str(x) for x in (vals_cur.get("turn_checkpoints") or []) if x is not None
-                ]
+                turn_cp_ids = [e.get_id() for e in entries_from_state(vals_cur)]
             except Exception:
                 logger.exception("resolve cp_*: failed to read turn_checkpoints thread_id=%s", thread_id)
                 turn_cp_ids = []

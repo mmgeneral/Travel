@@ -13,6 +13,7 @@ import logging
 import traceback
 import uuid
 from typing import Any, AsyncIterator
+from checkpoint_entry import entry_from_raw, entries_to_state
 
 from agent import build_graph, make_initial_state
 from tracing import agent_run, update_agent_run_output
@@ -148,8 +149,10 @@ def _merge_continuation_invoke_state(
     prev_itinerary = prev.get("final_itinerary") or ""
     if prev_itinerary:
         merged["prev_itinerary"] = prev_itinerary
-    tcp_prev = prev.get("turn_checkpoints")
-    merged["turn_checkpoints"] = [str(x) for x in tcp_prev] if isinstance(tcp_prev, list) else []
+    tcp_prev = prev.get("turn_checkpoints") or []
+    merged["turn_checkpoints"] = entries_to_state(
+        [entry_from_raw(x) for x in tcp_prev if x is not None]
+    )
     return merged
 
 

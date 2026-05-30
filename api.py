@@ -70,6 +70,7 @@ from tracing import ensure_langfuse_env, init_langfuse, shutdown_langfuse
 from agent import build_graph, make_initial_state, node_synthesizer
 from orchestrator import AgentOrchestrator
 from agents.synthesizer import SynthesisReport
+from checkpoint_entry import entries_from_state
 from graph_checkpoint_utils import (
     _graph_get_state,
     _graph_resolve_checkpoint_snapshot,
@@ -514,15 +515,17 @@ async def agent_history(
         except Exception:
             snap_head = None
         vals = dict(getattr(snap_head, "values", None) or {}) if snap_head else {}
-        turn_ids = [str(x) for x in (vals.get("turn_checkpoints") or []) if x is not None]
-        for i, cid in enumerate(turn_ids, start=1):
-            resolved = await _graph_resolve_checkpoint_snapshot(graph, thread_id, cid)
+        entries = entries_from_state(vals)
+        for i, entry in enumerate(entries, start=1):
+            resolved = await _graph_resolve_checkpoint_snapshot(graph, thread_id, entry.get_id())
             prev = dict(getattr(resolved, "values", None) or {}) if resolved else {}
             checkpoints.append(
                 {
-                    "checkpoint_id": cid,
+                    "checkpoint_id": entry.get_id(),
                     "label": f"cp_{i:03d}",
-                    "ts": _snapshot_ts_iso(resolved) if resolved else _now_iso(),
+                    "type": entry.get_type(),
+                    "description": entry.get_description(),
+                    "ts": entry.get_ts() or (_snapshot_ts_iso(resolved) if resolved else _now_iso()),
                     "summary": _turn_checkpoint_summary(prev),
                     "turn": str(i),
                 }

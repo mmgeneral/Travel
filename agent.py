@@ -2166,6 +2166,24 @@ def node_route_intent(state: AgentState) -> AgentState:
                 updated_slots.append(s)
             state["itinerary_slots"] = updated_slots
 
+            # Apply user_locked from must_include_shops
+            must_include = state["intent"].get("must_include_shops") or []
+            if must_include:
+                slots = list(state.get("itinerary_slots") or [])
+                for slot in slots:
+                    if slot.get("shop_name") in must_include:
+                        slot["user_locked"] = True
+                state["itinerary_slots"] = slots
+
+            # Apply user_locked from must_exclude_shops (unlock)
+            must_exclude = state["intent"].get("must_exclude_shops") or []
+            if must_exclude:
+                slots = list(state.get("itinerary_slots") or [])
+                for slot in slots:
+                    if slot.get("shop_name") in must_exclude:
+                        slot["user_locked"] = False
+                state["itinerary_slots"] = slots
+
             # Conflict detection
             slot_id = rev_op.get("slot_id")
             if slot_id:

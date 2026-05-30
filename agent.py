@@ -1873,13 +1873,16 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
              math.sin(dlon/2)**2)
         return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
+    def _get_coord(shop_obj, lat_key="latitude", lng_key="longitude"):
+        if isinstance(shop_obj, dict):
+            return shop_obj.get(lat_key), shop_obj.get(lng_key)
+        return getattr(shop_obj, lat_key, None), getattr(shop_obj, lng_key, None)
+
     def travel_minutes(shop_a: str, shop_b: str) -> int:
         a = shop_catalog.get(shop_a, {})
         b = shop_catalog.get(shop_b, {})
-        lat_a = getattr(a, "latitude", None) or getattr(a, "lat", None)
-        lon_a = getattr(a, "longitude", None) or getattr(a, "lng", None)
-        lat_b = getattr(b, "latitude", None) or getattr(b, "lat", None)
-        lon_b = getattr(b, "longitude", None) or getattr(b, "lng", None)
+        lat_a, lon_a = _get_coord(a)
+        lat_b, lon_b = _get_coord(b)
         if None in (lat_a, lon_a, lat_b, lon_b):
             return 15  # fallback
         km = haversine_km(lat_a, lon_a, lat_b, lon_b)
@@ -1943,13 +1946,16 @@ def _conflict_check_travel(
     SPEED_MIN_PER_KM = 2
     MIN_TRAVEL = 5
 
+    def _get_coord(shop_obj, lat_key="latitude", lng_key="longitude"):
+        if isinstance(shop_obj, dict):
+            return shop_obj.get(lat_key), shop_obj.get(lng_key)
+        return getattr(shop_obj, lat_key, None), getattr(shop_obj, lng_key, None)
+
     def travel_min(shop_a: str, shop_b: str) -> int:
         a = shop_catalog.get(shop_a, {})
         b = shop_catalog.get(shop_b, {})
-        lat_a = a.get("latitude") or a.get("lat")
-        lon_a = a.get("longitude") or a.get("lng")
-        lat_b = b.get("latitude") or b.get("lat")
-        lon_b = b.get("longitude") or b.get("lng")
+        lat_a, lon_a = _get_coord(a)
+        lat_b, lon_b = _get_coord(b)
         if None in (lat_a, lon_a, lat_b, lon_b):
             return MIN_TRAVEL
         km = _haversine_km(lat_a, lon_a, lat_b, lon_b)

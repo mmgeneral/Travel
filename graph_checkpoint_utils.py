@@ -77,6 +77,8 @@ def extend_turn_checkpoint_in_state(
         return
     entries = entries_from_state(state_vals)
     if entries and entries[-1].get_id() == cid:
+        # 仍然正規化，確保 state 裡是 list[dict]
+        state_vals["turn_checkpoints"] = entries_to_state(entries)
         return
     entries.append(StandardCheckpointEntry(
         id=cid, type=entry_type, description=description

@@ -5,7 +5,8 @@ from graph_checkpoint_utils import turn_checkpoints_trimmed_to_checkpoint_id
 
 
 def test_trim_preserves_prefix_through_target() -> None:
-    assert turn_checkpoints_trimmed_to_checkpoint_id(["a", "b", "c"], "b") == ["a", "b"]
+    result = turn_checkpoints_trimmed_to_checkpoint_id(["a", "b", "c"], "b")
+    assert [e["id"] for e in result] == ["a", "b"]
 
 
 def test_trim_missing_returns_none() -> None:

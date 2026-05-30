@@ -14,9 +14,9 @@ from orchestrator import _merge_continuation_invoke_state
 def test_extend_turn_checkpoint_dedupes_and_append() -> None:
     s = {"turn_checkpoints": ["a"], "final_itinerary": "x"}
     extend_turn_checkpoint_in_state(s, {"configurable": {"checkpoint_id": "a"}})
-    assert s["turn_checkpoints"] == ["a"]
+    assert [e["id"] for e in s["turn_checkpoints"]] == ["a"]
     extend_turn_checkpoint_in_state(s, {"configurable": {"checkpoint_id": "b"}})
-    assert s["turn_checkpoints"] == ["a", "b"]
+    assert [e["id"] for e in s["turn_checkpoints"]] == ["a", "b"]
 
 
 def test_extend_turn_checkpoint_missing_config_noop() -> None:
@@ -45,7 +45,7 @@ def test_merge_continuation_preserves_turn_checkpoints() -> None:
         user_lat=None,
         user_lng=None,
     )
-    assert merged["turn_checkpoints"] == ["a1f2-b3", "c4d5-e6"]
+    assert [e["id"] for e in merged["turn_checkpoints"]] == ["a1f2-b3", "c4d5-e6"]
 
 
 @pytest.mark.asyncio

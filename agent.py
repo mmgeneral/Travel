@@ -1946,10 +1946,10 @@ def _conflict_check_travel(
     def travel_min(shop_a: str, shop_b: str) -> int:
         a = shop_catalog.get(shop_a, {})
         b = shop_catalog.get(shop_b, {})
-        lat_a = getattr(a, "latitude", None) or getattr(a, "lat", None)
-        lon_a = getattr(a, "longitude", None) or getattr(a, "lng", None)
-        lat_b = getattr(b, "latitude", None) or getattr(b, "lat", None)
-        lon_b = getattr(b, "longitude", None) or getattr(b, "lng", None)
+        lat_a = a.get("latitude") or a.get("lat")
+        lon_a = a.get("longitude") or a.get("lng")
+        lat_b = b.get("latitude") or b.get("lat")
+        lon_b = b.get("longitude") or b.get("lng")
         if None in (lat_a, lon_a, lat_b, lon_b):
             return MIN_TRAVEL
         km = _haversine_km(lat_a, lon_a, lat_b, lon_b)

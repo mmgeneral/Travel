@@ -450,6 +450,8 @@ class AgentState(TypedDict):
     candidate_cache: dict[str, Any]
     #: Conflict found during revision transport check; None if no conflict.
     conflict: dict | None
+    #: key=shop_name, value=[checkpoint_id, ...] 按時間排序
+    shop_checkpoint_index: dict[str, list[str]]
 
 
 class AgentStateModel(BaseModel):
@@ -494,6 +496,7 @@ class AgentStateModel(BaseModel):
     itinerary_slots: list[dict] = Field(default_factory=list)
     candidate_cache: dict[str, Any] = Field(default_factory=dict)
     conflict: dict | None = None
+    shop_checkpoint_index: dict[str, list[str]] = Field(default_factory=dict)
 
 
 class AtomicCommitFailure(Exception):
@@ -3105,9 +3108,53 @@ async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) 
         logger.exception("node_plan failed agent_run_id=%s", state.get("agent_run_id"))
         _attach_node_error(state, "plan", exc)
         out = _finalize_plan_on_agent_error(state)
+
     query = state.get("query") or ""
-    entry_type = "user_turn"
-    extend_turn_checkpoint_in_state(out, config, entry_type=entry_type, description=query[:80])
+
+    # Router：判斷 checkpoint entry type
+    intent_dict = out.get("intent") or {}
+    is_revision = intent_dict.get("is_revision", False)
+    confirm_op = intent_dict.get("confirm_op")
+
+    if confirm_op:
+        entry_type = "user_confirmed"
+        description = confirm_op.get("message") or query[:80]
+    elif is_revision and (out.get("itinerary_slots") != state.get("itinerary_slots")):
+        entry_type = "slot_change"
+        changed = [
+            s["shop_name"] for s in (out.get("itinerary_slots") or [])
+            if s not in (state.get("itinerary_slots") or [])
+        ]
+        description = "換了：" + "、".join(changed[:3]) if changed else query[:80]
+    else:
+        entry_type = "user_turn"
+        description = query[:80]
+
+    # parent_id = 上一個 checkpoint 的 id
+    prev_entries = entries_from_state(out)
+    parent_id = prev_entries[-1].get_id() if prev_entries else None
+
+    extend_turn_checkpoint_in_state(
+        out, config,
+        entry_type=entry_type,
+        description=description,
+        parent_id=parent_id,
+    )
+
+    # 更新 shop_checkpoint_index
+    new_entries = entries_from_state(out)
+    if new_entries:
+        new_cp_id = new_entries[-1].get_id()
+        idx = dict(out.get("shop_checkpoint_index") or {})
+        for slot in (out.get("itinerary_slots") or []):
+            shop = slot.get("shop_name") or ""
+            if shop:
+                if shop not in idx:
+                    idx[shop] = []
+                if not idx[shop] or idx[shop][-1] != new_cp_id:
+                    idx[shop].append(new_cp_id)
+        out["shop_checkpoint_index"] = idx
+
     return out
 
 

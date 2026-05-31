@@ -20,6 +20,9 @@ class CheckpointEntry(ABC):
     def get_ts(self) -> str: ...
 
     @abstractmethod
+    def get_parent_id(self) -> str | None: ...
+
+    @abstractmethod
     def to_dict(self) -> dict[str, Any]: ...
 
     @classmethod
@@ -36,6 +39,7 @@ class StandardCheckpointEntry(CheckpointEntry):
         type: str,
         description: str = "",
         ts: str | None = None,
+        parent_id: str | None = None,
     ) -> None:
         if type not in VALID_TYPES:
             raise ValueError(f"Invalid checkpoint type: {type!r}")
@@ -43,6 +47,7 @@ class StandardCheckpointEntry(CheckpointEntry):
         self._type = type
         self._description = description
         self._ts = ts or datetime.now(timezone.utc).isoformat()
+        self._parent_id = parent_id
 
     def get_id(self) -> str:
         return self._id
@@ -56,12 +61,16 @@ class StandardCheckpointEntry(CheckpointEntry):
     def get_ts(self) -> str:
         return self._ts
 
+    def get_parent_id(self) -> str | None:
+        return self._parent_id
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "id": self._id,
             "type": self._type,
             "description": self._description,
             "ts": self._ts,
+            "parent_id": self._parent_id,
         }
 
     @classmethod
@@ -74,6 +83,7 @@ class StandardCheckpointEntry(CheckpointEntry):
             type=str(d.get("type") or "user_turn"),
             description=str(d.get("description") or ""),
             ts=d.get("ts"),
+            parent_id=d.get("parent_id"),
         )
 
 

@@ -66,6 +66,7 @@ def extend_turn_checkpoint_in_state(
     *,
     entry_type: str = "user_turn",
     description: str = "",
+    parent_id: str | None = None,
 ) -> None:
     """Append ``configurable.checkpoint_id`` to ``turn_checkpoints`` if new (mutates ``state_vals``).
 
@@ -81,7 +82,7 @@ def extend_turn_checkpoint_in_state(
         state_vals["turn_checkpoints"] = entries_to_state(entries)
         return
     entries.append(StandardCheckpointEntry(
-        id=cid, type=entry_type, description=description
+        id=cid, type=entry_type, description=description, parent_id=parent_id,
     ))
     state_vals["turn_checkpoints"] = entries_to_state(entries)
 

@@ -107,6 +107,8 @@ class Intent:
     wants_flight: bool = False
     confidence: float = 0.0
     revision_op: RevisionOp | None = None
+    confirm_op: dict | None = None
+    #: {"message": "..."} when user says 「幫我存檔」
     #: True when this intent updates a stored prior snapshot (refinement turn).
     is_revision: bool = False
     #: False when the query is too vague to run retrieval/planning without clarification.
@@ -151,6 +153,7 @@ class Intent:
             "pending_mutation": self.pending_mutation,
             "pending_replacement": self.pending_replacement,
             "revision_op": rev_op,
+            "confirm_op": self.confirm_op,
             "metadata": self.metadata,
         }
 
@@ -207,6 +210,7 @@ def intent_from_snapshot_dict(d: dict[str, Any]) -> Intent:
         pending_mutation=d.get("pending_mutation"),
         pending_replacement=d.get("pending_replacement"),
         revision_op=rev_op_instance,
+        confirm_op=d.get("confirm_op"),
         metadata=dict(d.get("metadata", {})),
     )
 
@@ -525,6 +529,7 @@ class _LLMIntentSchema(BaseModel):
     is_actionable: bool = True
     actionability_followup: str | None = None
     revision_op: dict | None = None
+    confirm_op: dict | None = None
 
     @field_validator("city", mode="before")
     @classmethod
@@ -647,6 +652,7 @@ def _schema_to_intent(s: _LLMIntentSchema) -> Intent:
         is_actionable=actionable,
         actionability_followup=fu if fu else None,
         revision_op=_parse_revision_op(s.revision_op),
+        confirm_op=s.confirm_op,
     )
 
 
@@ -802,6 +808,10 @@ def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | No
     # Override revision_op from new if present
     if new.revision_op is not None:
         merged.revision_op = new.revision_op
+
+    # Override confirm_op from new if present
+    if new.confirm_op is not None:
+        merged.confirm_op = new.confirm_op
 
     return merged
 
@@ -1173,6 +1183,11 @@ Few-shot — Self-Correction during revision:
 previous_intent: {"city": "京都", "category_tags": ["yakiniku"], "meal_slots": [], ...}
 Query: '我上一句就說過我要吃晚餐了啊，你沒看到嗎'
 Output: {"city":"京都","region":"jp","meal_slots":["dinner"],"time_window":{"start":null,"end":null},"category_tags":["yakiniku"],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":true,"is_actionable":true,"actionability_followup":"非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"}
+
+# Confirm / save itinerary
+- 「這樣滿意了，幫我存檔，京都第一天」→ confirm_op: {message: "京都第一天"}
+- 「OK存起來」→ confirm_op: {message: ""}
+- 若非存檔請求，confirm_op 輸出 null。
 """
 
 def _prev_itinerary_system_addon(prev_itinerary: str | None) -> str:

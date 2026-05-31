@@ -514,7 +514,7 @@ class TestNodeCritic:
         mock_report.iteration = 0
         mock_report.as_dict.return_value = {"verdict": "request_more", "accepted_names": [], "rejected_with_reason": [], "requests_for_retriever": ["test"], "score_table": {}, "fame_damped_table": {}, "accolade_table": {}, "llm_analysis": "", "iteration": 0}
 
-        with patch("agent.CriticAgent") as MockCA:
+        with patch("dp_solver.CriticAgent") as MockCA:
             MockCA.return_value.run.return_value = mock_report
             state = self._base_state()
             result = node_critic(state)
@@ -536,7 +536,7 @@ class TestNodeCritic:
         mock_report.iteration = 2
         mock_report.as_dict.return_value = {"verdict": "deadlock", "accepted_names": [], "rejected_with_reason": [], "requests_for_retriever": [], "score_table": {}, "fame_damped_table": {}, "accolade_table": {}, "llm_analysis": "deadlock", "iteration": 2}
 
-        with patch("agent.CriticAgent") as MockCA:
+        with patch("dp_solver.CriticAgent") as MockCA:
             MockCA.return_value.run.return_value = mock_report
             state = self._base_state()
             result = node_critic(state)
@@ -558,7 +558,7 @@ class TestNodeCritic:
         mock_report.iteration = 0
         mock_report.as_dict.return_value = {"verdict": "satisfied", "accepted_names": ["在地隱藏版"], "rejected_with_reason": [], "requests_for_retriever": [], "score_table": {"在地隱藏版": 72.5}, "fame_damped_table": {"在地隱藏版": 72.5}, "accolade_table": {"在地隱藏版": 0.0}, "llm_analysis": "pool looks great", "iteration": 0}
 
-        with patch("agent.CriticAgent") as MockCA:
+        with patch("dp_solver.CriticAgent") as MockCA:
             MockCA.return_value.run.return_value = mock_report
             state = self._base_state()
             result = node_critic(state)

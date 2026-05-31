@@ -44,7 +44,7 @@ def test_requested_meal_slots_five_meals_morning_dots_start():
 def test_combine_itinerary_clock_maps_cross_midnight_roll_to_excursion_day():
     from datetime import datetime
 
-    from agent import _combine_itinerary_clock
+    from dp_solver import _combine_itinerary_clock
 
     trip = datetime(2026, 5, 2, 7, 0)
     rolled = datetime(2026, 5, 3, 7, 15)

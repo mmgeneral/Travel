@@ -1063,6 +1063,11 @@ Output: {"city":null,"region":"unknown","meal_slots":["dinner"],"time_window":{"
 - "把燃えよ麺助換成麵屋武士" → revision_op: {op_type: "replace", target_shop: "燃えよ麺助", new_shop: "麵屋武士", slot_id: null}
 
 若非修改行程的 query，revision_op 輸出 null。
+
+# Confirm / save itinerary
+- 「這樣滿意了，幫我存檔，京都第一天」→ confirm_op: {message: "京都第一天"}
+- 「OK存起來」→ confirm_op: {message: ""}
+- 若非存檔請求，confirm_op 輸出 null。
 """
 
 _LLM_REFINEMENT_SYSTEM_PROMPT = """\

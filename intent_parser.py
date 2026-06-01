@@ -1403,14 +1403,14 @@ def parse_intent_rules(
     # Full-day itinerary pattern: 排 X 行程 / 幫我排 / 安排行程
     import re as _re
     _ITINERARY_PATTERNS = [
-        r'排.*行程',
-        r'安排.*行程',
-        r'規劃.*行程',
-        r'幫我排',
-        r'幫我安排',
+        r'排.{0,10}行程',
+        r'安排.{0,10}行程',
+        r'規劃.{0,10}行程',
+        r'幫我排.{0,10}行程',
+        r'幫我安排.{0,10}行程',
         r'一日遊',
-        r'整天',
-        r'全天',
+        r'整天行程',
+        r'全天行程',
     ]
     if any(_re.search(p, query) for p in _ITINERARY_PATTERNS):
         # Extract city from query if present

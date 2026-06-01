@@ -528,6 +528,7 @@ async def agent_history(
                     "ts": entry.get_ts() or (_snapshot_ts_iso(resolved) if resolved else _now_iso()),
                     "summary": _turn_checkpoint_summary(prev),
                     "turn": str(i),
+                    "parent_id": entry.get_parent_id(),
                 }
             )
     return {"thread_id": thread_id, "checkpoint_source": "turn_checkpoints", "checkpoints": checkpoints}

@@ -2225,8 +2225,12 @@ def node_route_intent(state: AgentState) -> AgentState:
                             f"交通時間有點趕：{conflict['message']}。\n"
                             f"建議調整行程順序或時間。"
                         )
-                    state["clarification_required"] = True
-                    state["clarification_prompt"] = msg
+                    state["clarification_broadcast"] = {
+                        "type": "travel_conflict",
+                        "question": msg,
+                        "hint": "travel_time",
+                        "feasible_window": conflict.get("feasible_window"),
+                    }
 
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()

@@ -1400,6 +1400,36 @@ def parse_intent_rules(
             confidence=1.0,
         )
         
+    # Full-day itinerary pattern: 排 X 行程 / 幫我排 / 安排行程
+    import re as _re
+    _ITINERARY_PATTERNS = [
+        r'排.*行程',
+        r'安排.*行程',
+        r'規劃.*行程',
+        r'幫我排',
+        r'幫我安排',
+        r'一日遊',
+        r'整天',
+        r'全天',
+    ]
+    if any(_re.search(p, query) for p in _ITINERARY_PATTERNS):
+        # Extract city from query if present
+        city, region, _ = _resolve_city(query, user_locale, user_lat, user_lng)
+        if city:
+            result = Intent(
+                city=city,
+                region=region,
+                meal_slots=["breakfast", "lunch", "tea", "dinner"],
+                is_actionable=True,
+                confidence=0.9,
+            )
+            # Carry forward previous_intent constraints if available
+            if previous_intent is not None:
+                result.excluded_tags = list(previous_intent.excluded_tags or [])
+                result.dietary_hints = previous_intent.dietary_hints
+                result.mode = previous_intent.mode or "balanced"
+            return result
+
     print("👉 [DEBUG-RULE] 攔截失敗，準備進入 LLM...")
     return None
 

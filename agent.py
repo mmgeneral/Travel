@@ -96,6 +96,7 @@ from dietary_utils import (
     _build_plan_excluded_shop_tags,
     _canonical_dietary_hints_list,
     _ambiguous_dietary_hint_for_clarification,
+    _DIETARY_CLARIFICATION_QUESTIONS,
     _parse_dietary_clarification_reply,
     _strip_dietary_hint_key_from_intent,
     _consume_pending_dietary_clarification_answer,

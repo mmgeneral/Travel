@@ -134,6 +134,7 @@ from query_utils import (
     _plan_dynamic_place_queries,
     _is_appetite_light_intent,
     _feedback_complains_fame_unreliable,
+    _SLOT_FORCED_PLACES_QUERY,
 )
 
 _RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph

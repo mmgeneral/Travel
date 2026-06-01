@@ -8,6 +8,7 @@ from typing import Any
 
 from shop_planning import ShopProfile
 from decision_engine import WeightProfile, RankedShop
+from dietary_utils import _user_negates_food_category_in_query
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +92,8 @@ def _has_strong_ramen_intent(query: str) -> bool:
     # Strong intent: ramen keyword + explicit meal-planning context
     if not _is_ramen_intent(query):
         return False
-    requested_n = _requested_meal_count(query)
+    from agent import _requested_meal_count as _rmc
+    requested_n = _rmc(query)
     if requested_n is not None:
         return True
     q = (query or "").lower()

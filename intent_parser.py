@@ -1057,6 +1057,13 @@ Few-shot — Self-Correction (User points out missed meal slot):
 Query: '我剛剛就說過要吃晚餐了'
 Output: {"city":null,"region":"unknown","meal_slots":["dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":false,"is_actionable":false,"actionability_followup":"非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您處理。"}
 
+Few-shot — Full-day itinerary with implicit meal slots:
+Query: '排京都美食行程'
+Output: {"city":"京都","region":"jp","meal_slots":["breakfast","lunch","tea","dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"mode":"taste_max","explicit_constraints":[],"wants_flight":false,"confidence":0.95,"is_revision":false,"is_actionable":true,"actionability_followup":null}
+
+Query: '幫我排台北一日行程 不要咖啡廳'
+Output: {"city":"台北","region":"tw","meal_slots":["breakfast","lunch","tea","dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":["cafe","coffee"],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.95,"is_revision":false,"is_actionable":true,"actionability_followup":null}
+
 # Revision operations
 - "把燃えよ麺助換掉" → revision_op: {op_type: "replace", target_shop: "燃えよ麺助", new_shop: null, slot_id: null}
 - "不要第二餐" → revision_op: {op_type: "remove", target_shop: "<第二個 slot 的 shop_name>", new_shop: null, slot_id: null}

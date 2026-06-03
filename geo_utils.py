@@ -5,6 +5,8 @@ import math
 import logging
 from typing import Any
 
+from query_utils import _requested_meal_slots
+
 logger = logging.getLogger(__name__)
 
 
@@ -94,7 +96,6 @@ def _fallback_broad_geo_queries(query: str, city: str, region: str) -> list[str]
     """Deterministic wider-area queries when LLM is unavailable or fails."""
     # Lazy imports to avoid circular dependency
     from query_utils import _extract_search_category_keywords, _SLOT_FORCED_PLACES_QUERY
-    from agent import _requested_meal_slots
 
     locality = (city or "").strip() or "Kyoto"
     area_hint = "Taiwan" if region == "tw" else "Japan"

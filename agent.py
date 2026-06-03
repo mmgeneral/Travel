@@ -135,6 +135,9 @@ from query_utils import (
     _is_appetite_light_intent,
     _feedback_complains_fame_unreliable,
     _SLOT_FORCED_PLACES_QUERY,
+    _requested_meal_count,
+    _requested_meal_slots,
+    _effective_plan_meal_slots,
 )
 
 from geo_utils import (
@@ -562,93 +565,6 @@ def _query_implied_dietary_ethics(query: str) -> str | None:
     return None
 
 
-def _requested_meal_count(query: str) -> int | None:
-    q = (query or "").lower()
-    patterns = [
-        r"([1-5])\s*餐",
-        r"([1-5])\s*meals?",
-        r"(一|二|三|四|五)\s*餐",
-        r"(一|二|三|四|五)\s*[頓顿]",
-    ]
-    cn_map = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5}
-    for pat in patterns:
-        m = re.search(pat, q)
-        if not m:
-            continue
-        token = m.group(1)
-        if token.isdigit():
-            return max(1, min(5, int(token)))
-        if token in cn_map:
-            return cn_map[token]
-    return None
-
-
-def _requested_meal_slots(query: str) -> list[str]:
-    """
-    Infer which named meal slots appear in the query / count expansion.
-    Per-slot tag OR-groups (tea/dinner, etc.) are enforced separately via
-    `_slot_level_required_tags`; global intent tags use `explicit_category_tags`.
-    """
-    q = (query or "").lower()
-    requested_count = _requested_meal_count(query)
-    slots: list[str] = []
-    rules: list[tuple[str, tuple[str, ...]]] = [
-        ("breakfast", ("早餐", "早午餐", "morning", "breakfast", "brunch")),
-        ("lunch", ("午餐", "中餐", "lunch", "noon")),
-        ("tea", ("下午茶", "茶點", "tea", "cafe", "coffee break")),
-        ("dinner", ("晚餐", "晚飯", "dinner", "supper")),
-        ("late_night", ("消夜", "宵夜", "late night", "late_night", "midnight snack")),
-    ]
-    for slot, keys in rules:
-        if any(k in q for k in keys):
-            slots.append(slot)
-    tr = _extract_user_time_window(query)
-    forced_start_hhmm = tr.start
-    morning_start = False
-    if forced_start_hhmm:
-        hh, mm = [int(x) for x in forced_start_hhmm.split(":", 1)]
-        morning_start = (hh, mm) <= (10, 30)
-    if morning_start and "breakfast" not in slots:
-        slots = ["breakfast", *slots]
-
-    # De-duplicate while preserving order.
-    deduped_slots: list[str] = []
-    seen_slots: set[str] = set()
-    for s in slots:
-        if s not in seen_slots:
-            deduped_slots.append(s)
-            seen_slots.add(s)
-    slots = deduped_slots
-
-    if requested_count is not None:
-        target = max(1, min(5, requested_count))
-        morning_hint = morning_start or any(k in q for k in ("早上", "清晨", "早餐", "morning", "breakfast"))
-        ramen_hint = _is_ramen_intent(query)
-        if target == 3 and ramen_hint and morning_hint:
-            return ["breakfast", "lunch", "dinner"]
-
-        default_order = (
-            ["breakfast", "lunch", "tea", "dinner", "late_night"]
-            if morning_hint
-            else ["lunch", "tea", "dinner", "breakfast", "late_night"]
-        )
-        for slot in default_order:
-            if len(slots) >= target:
-                break
-            if slot not in slots:
-                slots.append(slot)
-        return slots[:target]
-    return slots
-
-
-def _effective_plan_meal_slots(intent: dict, query: str) -> list[str]:
-    """Prefer explicit planner intent; otherwise derive from `_requested_meal_slots` query expansion."""
-    raw = intent.get("meal_slots") if isinstance(intent.get("meal_slots"), list) else None
-    if isinstance(raw, list) and raw:
-        base = list(raw)
-    else:
-        base = _requested_meal_slots(query)
-    return ItinerarySynthesizer._normalize_slot_sequence(base)
 
 
 def _inject_slot_anchor_rankeds_into_phase1(

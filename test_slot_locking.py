@@ -88,7 +88,7 @@ def test_must_include_sets_user_locked():
         metadata={},
     )
 
-    with patch("agent.parse_intent", return_value=mock_intent):
+    with patch("agent._parse_intent", return_value=mock_intent):
         result = node_route_intent(state)
 
     slots_out = result["itinerary_slots"]
@@ -129,7 +129,7 @@ def test_must_exclude_unlocks():
         metadata={},
     )
 
-    with patch("agent.parse_intent", return_value=mock_intent):
+    with patch("agent._parse_intent", return_value=mock_intent):
         result = node_route_intent(state)
 
     slots_out = result["itinerary_slots"]
@@ -179,7 +179,7 @@ def test_session_locked_cleared():
         metadata={},
     )
 
-    with patch("agent.parse_intent", return_value=mock_intent):
+    with patch("agent._parse_intent", return_value=mock_intent):
         result = node_route_intent(state)
 
     slots_out = result["itinerary_slots"]
@@ -224,7 +224,7 @@ def test_user_locked_persists():
         metadata={},
     )
 
-    with patch("agent.parse_intent", return_value=mock_intent):
+    with patch("agent._parse_intent", return_value=mock_intent):
         result = node_route_intent(state)
 
     slots_out = result["itinerary_slots"]

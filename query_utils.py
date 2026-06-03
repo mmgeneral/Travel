@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Any
 
 from shop_planning import ShopProfile
-from decision_engine import WeightProfile, RankedShop
+from decision_engine import WeightProfile, RankedShop, ItinerarySynthesizer
 from dietary_utils import _user_negates_food_category_in_query
 
 logger = logging.getLogger(__name__)

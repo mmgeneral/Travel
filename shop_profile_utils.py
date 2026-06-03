@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 import math
 import logging
+from datetime import datetime, timedelta
 from typing import Any
 
 from shop_planning import ShopProfile, BookingType, QueueStrategy, FlavorCategory, AuthorityData

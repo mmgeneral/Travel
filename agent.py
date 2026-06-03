@@ -147,6 +147,18 @@ from geo_utils import (
     _is_flight_booking_intent,
     _fallback_broad_geo_queries,
 )
+from shop_profile_utils import (
+    _clamp_hhmm_token,
+    _infer_close_time,
+    _infer_open_time,
+    _resolve_dynamic_open_time,
+    _is_dynamic_time_unknown,
+    _build_dynamic_shop_profile,
+    _dynamic_pool_row_from_place,
+    _reliability_cutoff_for_region,
+    _make_cache_key,
+    _schedule_slots,
+)
 
 _RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph
 

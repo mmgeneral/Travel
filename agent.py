@@ -954,6 +954,24 @@ def node_route_intent(state: AgentState) -> AgentState:
                         "feasible_window": conflict.get("feasible_window"),
                     }
 
+    # Apply user_locked from must_include_shops
+    must_include = state["intent"].get("must_include_shops") or []
+    if must_include:
+        slots = list(state.get("itinerary_slots") or [])
+        for slot in slots:
+            if slot.get("shop_name") in must_include:
+                slot["user_locked"] = True
+        state["itinerary_slots"] = slots
+
+    # Apply user_locked from must_exclude_shops (unlock)
+    must_exclude = state["intent"].get("must_exclude_shops") or []
+    if must_exclude:
+        slots = list(state.get("itinerary_slots") or [])
+        for slot in slots:
+            if slot.get("shop_name") in must_exclude:
+                slot["user_locked"] = False
+        state["itinerary_slots"] = slots
+
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()
 

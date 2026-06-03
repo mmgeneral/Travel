@@ -142,7 +142,8 @@ def test_must_exclude_unlocks():
 
 
 def test_session_locked_cleared():
-    """Case 3: revision_op with replace … clear session_locked for all slots"""
+    """Case 3: 上一輪的 session_locked 被清掉後，
+    根據這輪 revision_op 重新設定——target slot False，其他 True"""
     slots = [
         make_slot("s1", "ShopA", meal_type="lunch", session_locked=True),
         make_slot("s2", "ShopB", meal_type="dinner", session_locked=True),
@@ -183,8 +184,15 @@ def test_session_locked_cleared():
         result = node_route_intent(state)
 
     slots_out = result["itinerary_slots"]
-    for s in slots_out:
-        assert s["session_locked"] is False, f"{s['shop_name']} still session_locked"
+    shopA = next(s for s in slots_out if s["shop_name"] == "ShopA")
+    shopB = next(s for s in slots_out if s["shop_name"] == "ShopB")
+    shopC = next(s for s in slots_out if s["shop_name"] == "ShopC")
+
+    # target slot (ShopC) 這輪不鎖
+    assert shopC["session_locked"] is False
+    # 非 target slot 這輪重新鎖起來（取代上一輪的 session_locked）
+    assert shopA["session_locked"] is True
+    assert shopB["session_locked"] is True
 
 
 def test_user_locked_persists():

@@ -75,3 +75,77 @@ def test_from_dict_roundtrip():
     d = e.to_dict()
     e2 = StandardCheckpointEntry.from_dict(d)
     assert e2
+
+
+def test_from_dict_backward_compat_bare_string():
+    e = StandardCheckpointEntry.from_dict("legacy-uuid-string")
+    assert e.get_id() == "legacy-uuid-string"
+    assert e.get_type() == "user_turn"
+    assert e.get_description() == ""
+    assert e.get_parent_id() is None
+
+
+def test_from_dict_checkpoint_id_fallback_key():
+    d = {"checkpoint_id": "old-uuid", "type": "user_turn", "description": ""}
+    e = StandardCheckpointEntry.from_dict(d)
+    assert e.get_id() == "old-uuid"
+
+
+def test_from_dict_parent_id_preserved():
+    d = {"id": "child-uuid", "type": "slot_change", "description": "", "parent_id": "parent-uuid"}
+    e = StandardCheckpointEntry.from_dict(d)
+    assert e.get_parent_id() == "parent-uuid"
+
+
+def test_from_dict_missing_type_defaults_to_user_turn():
+    d = {"id": "uuid-001"}
+    e = StandardCheckpointEntry.from_dict(d)
+    assert e.get_type() == "user_turn"
+
+
+def test_entry_from_raw_dict():
+    d = {"id": "uuid-001", "type": "slot_change", "description": "換午餐"}
+    e = entry_from_raw(d)
+    assert e.get_id() == "uuid-001"
+    assert e.get_type() == "slot_change"
+
+
+def test_entry_from_raw_str():
+    e = entry_from_raw("legacy-str")
+    assert e.get_id() == "legacy-str"
+    assert e.get_type() == "user_turn"
+
+
+def test_entries_from_state_empty():
+    result = entries_from_state({})
+    assert result == []
+
+
+def test_entries_from_state_mixed_list():
+    state = {
+        "turn_checkpoints": [
+            "legacy-str",
+            {"id": "new-uuid", "type": "slot_change", "description": "換午餐"},
+        ]
+    }
+    entries = entries_from_state(state)
+    assert len(entries) == 2
+    assert entries[0].get_id() == "legacy-str"
+    assert entries[0].get_type() == "user_turn"
+    assert entries[1].get_id() == "new-uuid"
+    assert entries[1].get_type() == "slot_change"
+
+
+def test_entries_to_state_roundtrip():
+    entries = [
+        StandardCheckpointEntry(id="a", type="user_turn", description="q1"),
+        StandardCheckpointEntry(id="b", type="slot_change", description="換店", parent_id="a"),
+    ]
+    serialized = entries_to_state(entries)
+    assert len(serialized) == 2
+    assert serialized[0]["id"] == "a"
+    assert serialized[1]["id"] == "b"
+    assert serialized[1]["parent_id"] == "a"
+    restored = entries_from_state({"turn_checkpoints": serialized})
+    assert [e.get_id() for e in restored] == ["a", "b"]
+    assert restored[1].get_parent_id() == "a"

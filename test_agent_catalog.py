@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from agent import (
+from catalog import (
     _build_shop_catalog,
     _build_shop_catalog_taipei,
     _build_shop_catalog_tokyo,

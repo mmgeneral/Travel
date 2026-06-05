@@ -28,10 +28,10 @@ GRAPHOPPER_BASE = "http://localhost:8989"
 
 # Bounding‑box of Hsinchu City (approximate)
 BBOX = {
-    "min_lat": 24.5,
-    "max_lat": 25.0,
-    "min_lon": 120.7,
-    "max_lon": 121.2,
+    "min_lat": 24.75,
+    "max_lat": 24.85,
+    "min_lon": 120.93,
+    "max_lon": 121.02,
 }
 
 NUM_PAIRS = 100

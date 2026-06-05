@@ -40,7 +40,7 @@
       ],
       "neighborhood": "Karasuma Kawaramachi",
       "region": "jp",
-      "closed_weekdays": [],
+      "closed_weekdays": [0],
       "latitude": 35.00335,
       "longitude": 135.76894
     },

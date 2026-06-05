@@ -103,8 +103,7 @@ class GraphHopperProvider(TravelTimeProvider):
     async def is_available(self) -> bool:
         try:
             resp = await self._client.get(f"{self._base_url}/route", params={"point": ["0,0", "0,0"], "profile": "car"}, timeout=3)
-            resp.raise_for_status()
-            return True
+            return resp.status_code in (200, 400)
         except Exception:
             return False
 

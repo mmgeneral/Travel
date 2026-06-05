@@ -4,3 +4,12 @@ travel/.env
 __pycache__/
 *.pyc
 *.sqlite
+.aider*
+*.db
+*.pkl
+*.csv*.osm.pbf
+*.jar
+otp_nyc/
+mta_gtfs.zip
+.coverage
+data/default-gh/

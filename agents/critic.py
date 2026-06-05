@@ -181,6 +181,20 @@ Critic rules — you MUST follow these:
   (e.g., the city has no catalog at all, or requested vegan in all-meat pool).
 * requests must reference specific gaps (e.g. "Add local breakfast shops with
   <200 reviews") — never generic ("Find more restaurants").
+* ABSOLUTE RULE — When verdict is "deadlock" OR "request_more", the string field
+  "analysis" (surfaced downstream as llm_analysis) MUST include an explicit
+  multiple-choice block for the user: exactly four options labeled (A), (B),
+  (C), (D). Adapt meal count N and wording to the actual conflict (tight
+  schedule, too many meals / stops, impossible spacing, etc.). Example pattern to
+  follow (rewrite N and reasons concretely): (A) keep N meals but switch to
+  nearby types that avoid long queues; (B) reduce to N−1 meals; (C) extend the
+  overall itinerary time window for the day; (D) other (user specifies). If you
+  emit deadlock or request_more without such (A)–(D) choices in analysis, the
+  output is invalid.
+* 【絕對規則／Chinese UX anchor】當 verdict 為 deadlock（例如時間緊湊、無法排滿指定餐數／行程）
+  或 request_more 時，analysis 必須包含具體選擇題供使用者挑選，並提供 (A)(B)(C)(D)，例如：
+  (A) 維持 N 餐但換成附近不需排隊的類型、(B) 減少一餐改為 N−1 餐、(C) 延長總行程時間、
+  (D) 其他（請自行填寫）。請依實際情境調整 N 與描述。
 
 Output ONLY a JSON object — no markdown, no preamble:
 {
@@ -360,8 +374,8 @@ class CriticAgent:
 
     def run(self, state: dict) -> CritiqueReport:
         intent = state.get("intent") or {}
-        city = intent.get("city") or "京都"
-        region = intent.get("region") or "jp"
+        city = (str(intent.get("city") or "").strip())
+        region = (str(intent.get("region") or "").strip()) or "unknown"
         iteration = int(state.get("research_iteration", 0))
 
         # 1. Latest retrieval report

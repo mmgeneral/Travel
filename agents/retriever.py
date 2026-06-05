@@ -273,8 +273,8 @@ class RetrieverAgent:
     def run(self, state: dict) -> RetrievalReport:
         """Discover candidates and produce reasoning notes for downstream agents."""
         intent = state.get("intent") or {}
-        city = intent.get("city") or "京都"
-        region = intent.get("region") or "jp"
+        city = (str(intent.get("city") or "").strip())
+        region = (str(intent.get("region") or "").strip()) or "unknown"
         meal_slots: list[str] = list(intent.get("meal_slots") or [])
         category_tags: list[str] = list(intent.get("category_tags") or [])
         query = state.get("query") or ""

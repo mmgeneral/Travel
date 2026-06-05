@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Travel Agent</title>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#0f0f11;--surface:#1a1a1f;--border:#2a2a32;--purple:#7c6af7;
+    --purple2:#a594fa;--text:#e8e6f0;--muted:#6b6880;--green:#4ade80;
+    --amber:#fbbf24;--red:#f87171;--radius:12px;
+  }
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;height:100dvh;display:grid;grid-template-columns:280px 1fr;grid-template-rows:1fr auto;gap:10px;padding:10px;overflow:hidden;}
+  .days{grid-column:1;grid-row:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;}
+  .days h2{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:6px;padding-left:4px;}
+  .day-btn{background:none;border:1px solid transparent;border-radius:8px;padding:12px;text-align:left;cursor:pointer;color:var(--text);transition:all .15s;width:100%;min-height:58px;}
+  .day-btn:hover{background:rgba(124,106,247,.12);border-color:var(--border);}
+  .day-btn.active{background:rgba(124,106,247,.20);border-color:var(--purple);}
+  .day-btn .label{font-size:14px;font-weight:500;}
+  .day-btn .sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .day-btn.draft .sub::before{content:"● ";color:var(--amber);}
+  .day-btn.synced .sub::before{content:"● ";color:var(--green);}
+  .itinerary{grid-column:2;grid-row:1 / span 2;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;overflow-y:auto;display:flex;flex-direction:column;}
+  .itin-header{font-size:18px;font-weight:600;margin-bottom:18px;color:var(--purple2);}
+  .slot{display:grid;grid-template-columns:72px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .slot:last-of-type{border-bottom:none;}
+  .slot-time{font-size:12px;color:var(--muted);line-height:1.6;}
+  .slot-time b{display:block;font-size:15px;color:var(--text);font-weight:600;}
+  .slot-name{font-size:15px;font-weight:500;margin-bottom:4px;}
+  .slot-note{font-size:13px;color:var(--muted);line-height:1.55;}
+  .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;margin-top:6px;margin-right:4px;}
+  .tag-warn{background:rgba(251,191,36,.15);color:var(--amber);}
+  .tag-cash{background:rgba(232,230,240,.08);color:var(--muted);}
+  .stream-box{background:rgba(124,106,247,.06);border:1px solid rgba(124,106,247,.2);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-word;margin-top:16px;color:var(--text);display:none;}
+  .stream-box.active{display:block;}
+  .cards{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+  .card{border:1px solid var(--border);border-radius:10px;padding:12px;background:rgba(255,255,255,.02);}
+  .card h3{font-size:15px;margin-bottom:6px;}
+  .card p{font-size:12px;color:var(--muted);line-height:1.5;margin:2px 0;}
+  .badge-warn{display:inline-block;background:rgba(248,113,113,.18);color:var(--red);border:1px solid rgba(248,113,113,.45);border-radius:14px;padding:2px 8px;font-size:11px;margin-bottom:6px;}
+  .map{margin-top:10px;border:1px solid var(--border);border-radius:10px;height:260px;overflow:hidden;}
+  .input-area{grid-column:1;grid-row:2;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;gap:8px;}
+  .input-row{display:flex;gap:6px;flex-wrap:wrap;}
+  textarea{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;padding:10px 12px;resize:none;height:42px;line-height:1.4;outline:none;transition:border-color .15s;}
+  textarea:focus{border-color:var(--purple);}
+  textarea::placeholder{color:var(--muted);}
+  .btn{border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;padding:0 14px;height:42px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+  .btn:hover{border-color:var(--purple);color:var(--purple2);}
+  .btn.active{background:rgba(124,106,247,.28);border-color:var(--purple);color:var(--purple2);box-shadow:0 0 0 1px rgba(124,106,247,.25) inset;}
+  .btn.send{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:500;}
+  .btn.send:hover{background:#6357d4;}
+  .btn.mic.rec{background:var(--red);border-color:var(--red);color:#fff;}
+  .conv-banner{font-size:11px;color:var(--muted);padding:6px 2px;line-height:1.4;border-bottom:1px solid rgba(42,42,50,.6);margin-bottom:4px;}
+  .conv-banner-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+  .conv-banner-row .btn.new-chat{font-size:11px;height:28px;padding:0 10px;min-height:28px;}
+  .intent-toast{
+    position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(8px);
+    max-width:min(92vw,340px);padding:8px 14px;border-radius:20px;font-size:12px;line-height:1.45;
+    background:rgba(26,26,31,.92);border:1px solid rgba(124,106,247,.35);color:var(--purple2);
+    box-shadow:0 4px 24px rgba(0,0,0,.35);z-index:60;opacity:0;pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+  }
+  .intent-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+  .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+  .dot.ok{background:var(--green);}
+  .dot.busy{background:var(--amber);animation:pulse 1s infinite;}
+  .dot.err{background:var(--red);}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:14px;}
+  .modal.show{display:flex;}
+  .modal-card{width:min(520px,100%);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  .modal-title{font-size:16px;font-weight:600;color:var(--purple2);}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:12px;color:var(--muted);}
+  .field select{background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 10px;font-size:14px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chips label{font-size:12px;border:1px solid var(--border);border-radius:16px;padding:5px 9px;display:flex;gap:5px;align-items:center;background:rgba(255,255,255,.02);}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
+  .hold-panel{margin-top:10px;border:1px solid var(--border);border-radius:10px;padding:10px;background:rgba(255,255,255,.02);display:none;flex-direction:column;gap:8px;}
+  .hold-title{font-size:13px;color:var(--purple2);font-weight:600;}
+  .hold-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .hold-row input{background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 10px;font-size:12px;min-width:110px;}
+  .hold-log{font-size:12px;color:var(--muted);white-space:pre-wrap;word-break:break-word;line-height:1.45;}
+  .dietary-clarify-panel{font-size:13px;line-height:1.55;color:var(--text);margin-bottom:4px;}
+  .dietary-clarify-panel .dc-q{white-space:pre-wrap;margin-bottom:10px;color:var(--purple2);}
+  .dietary-clarify-panel .dc-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .dietary-clarify-panel button.dc-opt{flex:1;min-width:120px;}
+  @media(max-width:600px){
+    body{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;}
+    .days{grid-column:1;grid-row:1;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:10px;}
+    .days h2{display:none;}
+    .day-btn{min-width:90px;}
+    .itinerary{grid-column:1;grid-row:2;}
+    .input-area{grid-column:1;grid-row:3;}
+  }
+</style>
+</head>
+<body>
+<nav class="days">
+  <h2>行程天數</h2>
+  <div id="days-container"></div>
+</nav>
+<main class="itinerary">
+  <div class="itin-header" id="day-title">請先設定旅程</div>
+  <div id="cards-container" class="cards"></div>
+  <div id="map-container" class="map"></div>
+  <div id="slots-container"></div>
+  <div class="stream-box" id="stream"></div>
+</main>
+<div class="input-area">
+  <div id="conv-banner" class="conv-banner">
+    <div class="conv-banner-row">
+      <span id="conv-banner-text">新對話（尚未建立 thread）</span>
+      <button type="button" class="btn new-chat" onclick="startNewConversation()">新對話</button>
+    </div>
+  </div>
+  <div class="input-row">
+    <textarea id="msg" placeholder="輸入需求或調整⋯（可多輪對話。「回到第2輪」或 undo 可 time-travel）"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
+  </div>
+  <div id="dietary-clarify-panel" class="dietary-clarify-panel" style="display:none" role="dialog" aria-live="polite"></div>
+  <div class="input-row">
+    <button class="btn mic" id="mic" onclick="toggleMic()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="2" width="6" height="12" rx="3"/>
+        <path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3"/>
+      </svg>
+      <span id="mic-label">語音</span>
+    </button>
+    <button class="btn" onclick="editDietary()">飲食限制</button>
+    <button class="btn" id="mode-btn" onclick="toggleAdvancedMode()">放寬限制</button>
+    <button class="btn" id="foodie-btn" onclick="toggleFoodieMode()">美食家</button>
+    <button class="btn pause-btn" id="pause-btn" onclick="pauseAgent()" style="display:none" title="暫停並讀取目前共識摘要">⏸ 暫停</button>
+    <button class="btn send" onclick="send()">發送</button>
+  </div>
+  <div class="status-bar">
+    <span class="dot ok" id="dot"></span>
+    <span id="status-text">就緒</span>
+  </div>
+  <!-- Synthesis panel — shown when user pauses -->
+  <div id="synthesis-panel" style="display:none;margin:10px 0;padding:12px 16px;border:1px solid #444;border-radius:8px;background:#1a1a2e;font-size:0.88em;line-height:1.6">
+    <div style="font-weight:600;margin-bottom:8px;color:#a0c4ff">⚖️ 目前共識摘要</div>
+    <div id="synthesis-loading" style="color:#888">正在分析討論記錄…</div>
+    <div id="synthesis-content" style="display:none">
+      <div style="margin-bottom:6px"><span style="color:#90ee90;font-weight:600">✅ 共識：</span><ul id="syn-consensus" style="margin:4px 0 0 18px;padding:0"></ul></div>
+      <div style="margin-bottom:6px"><span style="color:#ffb347;font-weight:600">⚡ 未解決：</span><ul id="syn-unresolved" style="margin:4px 0 0 18px;padding:0"></ul></div>
+      <div style="margin-bottom:6px"><span style="color:#87ceeb;font-weight:600">🔭 待探索：</span><ul id="syn-frontier" style="margin:4px 0 0 18px;padding:0"></ul></div>
+      <div style="color:#aaa;font-size:0.82em">討論新鮮度：<span id="syn-freshness" style="font-weight:600"></span></div>
+    </div>
+    <div style="margin-top:8px">
+      <button class="btn" onclick="resumeAgent()" id="resume-btn" style="display:none">▶ 繼續</button>
+      <button class="btn" onclick="closeSynthesis()" style="margin-left:6px">✕ 關閉</button>
+    </div>
+  </div>
+  <div class="hold-panel">
+    <div class="hold-title">Duffel Hold 24 小時（先保留票價）</div>
+    <div class="hold-row">
+      <input id="flight-origin" value="TPE" placeholder="Origin (TPE)">
+      <input id="flight-destination" value="NRT" placeholder="Destination (NRT)">
+      <input id="flight-date" type="date">
+      <button class="btn" onclick="searchFlightOffer()">搜尋票價</button>
+    </div>
+    <div class="hold-row">
+      <input id="offer-id" placeholder="offer_id">
+      <input id="passenger-id" placeholder="passenger_id">
+      <button class="btn" onclick="holdFlight()">Hold 24 小時</button>
+    </div>
+    <div class="hold-row">
+      <input id="order-id" placeholder="order_id（hold 後自動填入）" style="min-width:240px">
+      <button class="btn" onclick="confirmPurchase()">確認購買</button>
+      <button class="btn" onclick="cancelHold()">取消 Hold</button>
+    </div>
+    <div class="hold-log" id="hold-log">尚未操作航班 hold。</div>
+  </div>
+</div>
+<div id="intent-revision-toast" class="intent-toast" role="status" aria-live="polite"></div>
+<div id="onboarding-modal" class="modal" onclick="if(event.target===this){}">
+  <div class="modal-card">
+    <div class="modal-title">建立你的旅程</div>
+    <div class="field">
+      <label for="trip-start-date">出發日期</label>
+      <input id="trip-start-date" type="date" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px 10px;font-size:14px;">
+    </div>
+    <div class="field">
+      <label for="trip-city">城市</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select id="trip-city" style="flex:1;">
+          <option value="Kyoto">京都 Kyoto</option>
+          <option value="Osaka">大阪 Osaka</option>
+          <option value="Nara">奈良 Nara</option>
+          <option value="Taipei">台北 Taipei</option>
+          <option value="Tokyo">東京 Tokyo</option>
+        </select>
+        <button class="btn" type="button" onclick="useCurrentLocation()">📍 使用目前位置</button>
+      </div>
+      <div id="geo-hint" style="font-size:11px;color:var(--muted);">尚未取得定位</div>
+    </div>
+    <div class="field">
+      <label for="trip-party-size">人數</label>
+      <select id="trip-party-size">
+        <option value="1">1 人</option>
+        <option value="2" selected>2 人</option>
+        <option value="3">3 人</option>
+        <option value="4">4 人</option>
+        <option value="5">5+ 人</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="trip-days">天數</label>
+      <select id="trip-days">
+        <option value="1">1 天</option>
+        <option value="2">2 天</option>
+        <option value="3" selected>3 天</option>
+        <option value="4">4 天</option>
+        <option value="5">5 天</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn send" onclick="saveOnboarding()">開始規劃</button>
+    </div>
+  </div>
+</div>
+<div id="dietary-modal" class="modal" onclick="if(event.target===this)closeDietaryModal()">
+  <div class="modal-card">
+    <div class="modal-title">飲食限制設定</div>
+    <div class="field">
+      <label for="diet-ethics">飲食型態</label>
+      <select id="diet-ethics">
+        <option value="unspecified">未指定（由系統自行判斷）</option>
+        <option value="omnivore">一般（omnivore）</option>
+        <option value="pescatarian">海鮮素（pescatarian）</option>
+        <option value="vegetarian">蛋奶素（vegetarian）</option>
+        <option value="vegan">全素（vegan）</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>過敏原</label>
+      <div class="chips" id="allergen-chips"></div>
+    </div>
+    <div class="field">
+      <label for="diet-religious">宗教限制</label>
+      <select id="diet-religious">
+        <option value="none">無（none）</option>
+        <option value="halal">清真（halal）</option>
+        <option value="kosher">猶太潔食（kosher）</option>
+        <option value="hindu_veg">印度素食（hindu_veg）</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>醫療限制</label>
+      <div class="chips" id="medical-chips"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDietaryModal()">取消</button>
+      <button class="btn send" onclick="saveDietary()">儲存</button>
+    </div>
+  </div>
+</div>
+<script>
+let _leafletMap=null;
+let _leafletLayerGroup=null;
+const API=window.location.hostname==='localhost'?'http://localhost:8080':window.location.origin;
+const USER_ID_KEY='travel_user_id';
+const USER_ID=localStorage.getItem(USER_ID_KEY)||(`user_${crypto.randomUUID()}`);
+localStorage.setItem(USER_ID_KEY,USER_ID);
+const ALLOWED_ALLERGENS=['shellfish','peanuts','tree_nuts','egg','dairy','soy','wheat','fish','sesame'];
+const ALLOWED_MEDICAL=['pregnant','low_sodium','low_sugar','low_purine','gluten_sensitive'];
+const ALLERGEN_ALIAS={shrimp:'shellfish',prawn:'shellfish',crab:'shellfish',lobster:'shellfish',nuts:'tree_nuts',nut:'tree_nuts',milk:'dairy'};
+const API_TOKEN=localStorage.getItem('travel_api_token')||'';
+const THREAD_ID_KEY='travel_agent_thread_id';
+let _intentToastTimer=null;
+function apiHeaders(extra){
+  const h=Object.assign({},extra||{});
+  if(API_TOKEN)h['X-Api-Token']=API_TOKEN;
+  h['X-User-Id']=USER_ID;
+  return h;
+}
+let onboardingProfile={start_date:'',city:'Kyoto',party_size:2,days:3,user_lat:null,user_lng:null};
+let selectedDay=1;
+let advancedMode=localStorage.getItem('advanced_mode')==='1';
+let foodieMode=localStorage.getItem('foodie_mode')==='1';
+function refreshModeUi(){
+  const modeBtn=document.getElementById('mode-btn');
+  const foodieBtn=document.getElementById('foodie-btn');
+  modeBtn.textContent='放寬限制';
+  foodieBtn.textContent='美食家';
+  modeBtn.classList.toggle('active',advancedMode);
+  foodieBtn.classList.toggle('active',foodieMode);
+  const stream=document.getElementById('stream');
+  if(!advancedMode)stream.className='stream-box';
+}
+function toggleAdvancedMode(){
+  advancedMode=!advancedMode;
+  localStorage.setItem('advanced_mode',advancedMode?'1':'0');
+  refreshModeUi();
+}
+function toggleFoodieMode(){
+  foodieMode=!foodieMode;
+  localStorage.setItem('foodie_mode',foodieMode?'1':'0');
+  refreshModeUi();
+}
+function renderCards(cards){
+  const c=document.getElementById('cards-container');
+  if(!cards||!cards.length){c.innerHTML='';return;}
+  c.innerHTML=cards.map((x,idx)=>`
+    <div class="card">
+      ${x.warning_badge?`<div class="badge-warn">⚠ ${x.warning_badge}</div>`:''}
+      <h3>#${idx+1} ${x.shop_name||'未命名店家'}</h3>
+      <p>地點：${x.address_hint||'未提供'}</p>
+      <p>為什麼選它：${x.why_selected||x.rank_note||'整體風險較低'}</p>
+      <p>怎麼去：${x.how_to_go||'依導航前往'}</p>
+      <p>訂位建議：${x.reservation_hint||'可現場候位'}</p>
+      ${x.warning_text?`<p style="color:#f87171;">${x.warning_text}</p>`:''}
+    </div>
+  `).join('');
+  renderMap(cards);
+}
+function renderMap(cards){
+  const points=(cards||[])
+    .filter(x=>Number.isFinite(Number(x.lat))&&Number.isFinite(Number(x.lng)))
+    .map(x=>({name:x.shop_name,lat:Number(x.lat),lng:Number(x.lng)}));
+  const mapEl=document.getElementById('map-container');
+  if(!window.L||!mapEl){
+    mapEl.style.display='none';
+    return;
+  }
+  mapEl.style.display=points.length?'block':'none';
+  if(!points.length)return;
+  if(!_leafletMap){
+    _leafletMap=L.map('map-container',{zoomControl:true});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19,
+      attribution:'&copy; OpenStreetMap',
+    }).addTo(_leafletMap);
+    _leafletLayerGroup=L.layerGroup().addTo(_leafletMap);
+  }
+  _leafletLayerGroup.clearLayers();
+  const latlngs=[];
+  points.forEach((p,idx)=>{
+    const ll=[p.lat,p.lng];
+    latlngs.push(ll);
+    L.marker(ll).addTo(_leafletLayerGroup).bindPopup(`#${idx+1} ${p.name}`);
+  });
+  if(latlngs.length>=2){
+    L.polyline(latlngs,{color:'#7c6af7',weight:4,opacity:0.8}).addTo(_leafletLayerGroup);
+  }
+  _leafletMap.fitBounds(L.latLngBounds(latlngs),{padding:[24,24]});
+}
+function renderDays(){
+  const daysEl=document.getElementById('days-container');
+  daysEl.innerHTML='';
+  for(let d=1;d<=onboardingProfile.days;d++){
+    const btn=document.createElement('button');
+    btn.className=`day-btn ${d===selectedDay?'active':''} draft`;
+    btn.innerHTML=`<div class="label">Day ${d}</div><div class="sub">讀取中…</div>`;
+    btn.onclick=()=>selectDay(d);
+    daysEl.appendChild(btn);
+  }
+}
+async function refreshDaySyncBadges(){
+  const buttons=[...document.querySelectorAll('#days-container .day-btn')];
+  for(let i=0;i<buttons.length;i++){
+    const day=i+1;
+    try{
+      const res=await fetch(`${API}/agent/itinerary?day=${day}`,{headers:{'X-User-Id':USER_ID},signal:AbortSignal.timeout(4000)});
+      const data=await res.json();
+      const synced=!!data.synced;
+      buttons[i].classList.toggle('synced',synced);
+      buttons[i].classList.toggle('draft',!synced);
+      buttons[i].querySelector('.sub').textContent=synced?'已同步':'待同步';
+    }catch{
+      buttons[i].classList.add('draft');
+      buttons[i].querySelector('.sub').textContent='待同步';
+    }
+  }
+}
+async function selectDay(day){
+  selectedDay=day;
+  document.querySelectorAll('#days-container .day-btn').forEach((b,idx)=>b.classList.toggle('active',idx===day-1));
+  document.getElementById('day-title').textContent=`Day ${day} · ${onboardingProfile.city}`;
+  const slots=document.getElementById('slots-container');
+  const stream=document.getElementById('stream');
+  renderCards([]);
+  renderMap([]);
+  stream.className='stream-box active';
+  stream.textContent='載入中...';
+  slots.innerHTML='';
+  try{
+    const res=await fetch(`${API}/agent/itinerary?day=${day}`,{headers:{'X-User-Id':USER_ID},signal:AbortSignal.timeout(5000)});
+    const data=await res.json();
+    if(!data.synced){
+      stream.textContent=`Day ${day} 尚未同步，請輸入需求後按「發送」。`;
+      return;
+    }
+    stream.className='stream-box active';
+    stream.textContent=data.itinerary||'Day '+day+' 沒有可顯示內容';
+    if(data.ui_cards&&data.ui_cards.length){
+      renderCards(data.ui_cards);
+    }
+  }catch{
+    stream.textContent='讀取行程失敗，請稍後再試。';
+  }
+}
+const NODE_LABELS={
+  route_intent:'正在解析您的旅遊意圖',
+  clarify_constraint:'正在確認飲食限制解讀方式',
+  retriever:'正在搜尋候選餐廳',
+  critic:'Critic 正在審查餐廳組合',
+  search:'正在查詢航班與候選資料',
+  researcher:'Researcher 正在產生候選行程',
+  auditor:'Auditor 正在審查物理邊界與品味',
+  audit:'正在確認交易與風險',
+  collect_feedback:'正在套用你的偏好回饋',
+  plan:'正在規劃餐廳與交通'
+};
+let dietaryProfile={ethics:'unspecified',allergens:[],religious:'none',medical:[]};
+function hideDietaryClarifyPanel(){
+  const p=document.getElementById('dietary-clarify-panel');
+  if(!p)return;
+  p.style.display='none';
+  p.innerHTML='';
+}
+function showClarifyPanel(data){
+  const p=document.getElementById('dietary-clarify-panel');
+  if(!p)return;
+  p.style.display='block';
+  p.innerHTML='';
+  const q=document.createElement('div');
+  q.className='dc-q';
+  q.textContent=data.question||'請提供更多資訊';
+  p.appendChild(q);
+  const row=document.createElement('div');
+  row.className='dc-row';
+  if(data.type==='dietary'){
+    const mk=(label,val)=>{
+      const b=document.createElement('button');
+      b.type='button'; b.className='btn dc-opt';
+      b.textContent=label;
+      b.onclick=()=>{hideDietaryClarifyPanel();send(val);};
+      row.appendChild(b);
+    };
+    mk('(A) 嚴格（菜單完全不能有）','A');
+    mk('(B) 寬鬆（自己不點即可）','B');
+  } else {
+    const inp=document.createElement('input');
+    inp.type='text'; inp.className='input';
+    inp.style.flex='1'; inp.style.minWidth='180px';
+    inp.placeholder=data.placeholder||'請輸入...';
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='btn'; btn.textContent='確認';
+    btn.onclick=()=>{const v=inp.value.trim();if(!v)return;hideDietaryClarifyPanel();send(v);};
+    inp.onkeydown=(e)=>{if(e.key==='Enter')btn.onclick();};
+    row.appendChild(inp); row.appendChild(btn);
+  }
+  p.appendChild(row);
+}
+function showDietaryClarifyPanel(data){showClarifyPanel({...data,type:'dietary'});}
+let conversationRound=0;
+function refreshConversationBanner(){
+  const el=document.getElementById('conv-banner-text');
+  const tid = currentThreadId;
+  el.textContent = tid
+    ? (conversationRound > 0
+        ? `第 ${conversationRound} 輪 · thread_id: ${tid}`
+        : `續接對話 · thread_id: ${tid}`)
+    : `新對話（尚未建立 thread） · 輪數 ${conversationRound}`;
+}
+function startNewConversation(){
+  currentThreadId=null;
+  conversationRound=0;
+  try{
+    localStorage.removeItem(THREAD_ID_KEY);
+  }catch{}
+  refreshConversationBanner();
+  document.getElementById('pause-btn').style.display='none';
+  setStatus('ok','已開始新對話');
+}
+function showIntentRevisionToast(message){
+  const el=document.getElementById('intent-revision-toast');
+  el.textContent=message;
+  el.classList.add('show');
+  clearTimeout(_intentToastTimer);
+  _intentToastTimer=setTimeout(()=>{el.classList.remove('show');},4200);
+}
+/** @param {string[]} logs */
+function intentRevisionMessageFromResearchLog(logs){
+  if(!Array.isArray(logs))return null;
+  for(let i=logs.length-1;i>=0;i--){
+    const line=String(logs[i]||'');
+    if(!line.includes('使用者修正意圖'))continue;
+    const cm=line.match(/→\s*city=([^\s\r\n]+)/);
+    if(cm&&cm[1])return `已為您更新行程：${cm[1]}`;
+    return '已為您更新行程意向';
+  }
+  return null;
+}
+async function fetchUndoCheckpointId(){
+  if(!currentThreadId)return null;
+  try{
+    const res=await fetch(`${API}/agent/history/${encodeURIComponent(currentThreadId)}`,{
+      headers:apiHeaders({}),
+      signal:AbortSignal.timeout(8000),
+    });
+    if(!res.ok)return null;
+    const data=await res.json();
+    const cps=data.checkpoints||[];
+    if(cps.length<2)return null;
+    return cps[cps.length-2].checkpoint_id;
+  }catch{return null;}
+}
+/** @returns {Promise<{checkpoint_id:string,label?:string,turn?:string,ts?:string}[]|null>} */
+async function fetchTurnCheckpoints(threadId){
+  if(!threadId)return null;
+  try{
+    const res=await fetch(`${API}/agent/history/${encodeURIComponent(threadId)}`,{
+      headers:apiHeaders({}),
+      signal:AbortSignal.timeout(8000),
+    });
+    if(!res.ok)return null;
+    const data=await res.json();
+    return data.checkpoints||[];
+  }catch{return null;}
+}
+let currentThreadId=(function(){
+  try{return localStorage.getItem(THREAD_ID_KEY)||null;}catch{return null;}
+})();  // LangGraph thread_id (same as agent_run_id server-side)
+function setStatus(state,text){
+  document.getElementById('dot').className='dot '+state;
+  const statusEl=document.getElementById('status-text');
+  statusEl.textContent=text;
+  statusEl.title=text;
+}
+function setOutcomeLamp(outcome,semanticStatus){
+  const normalized=(outcome||'').toUpperCase();
+  const isGreen=normalized==='SUCCESS'||normalized==='ALREADY_DONE';
+  const dotState=isGreen?'ok':(normalized==='RETRYABLE'?'busy':'err');
+  const label=isGreen?'已同步':'需處理';
+  const detail=semanticStatus?`${label} · ${semanticStatus}`:label;
+  setStatus(dotState,detail);
+}
+async function send(presetQuery){
+  const input=document.getElementById('msg');
+  const rawQ=presetQuery!=null?String(presetQuery):input.value;
+  const query=rawQ.trim();if(!query)return;
+  if(presetQuery==null)input.value='';
+  const queryUpper=query.toUpperCase();
+  const hasTasteMaxKeyword=(
+    queryUpper.includes('TASTE_MAX')||
+    query.includes('好吃第一')||
+    query.includes('不計代價')||
+    query.includes('老饕')||
+    query.includes('美食狂熱')
+  );
+  const finalQuery=(foodieMode&&!hasTasteMaxKeyword)?`${query} TASTE_MAX`:query;
+
+  let rewindCp=null;
+  let effectiveQuery=finalQuery;
+  const rewindMatch=effectiveQuery.match(/^\s*回到第\s*(\d+)\s*輪\s*/);
+  if(rewindMatch){
+    const roundN=parseInt(rewindMatch[1],10);
+    effectiveQuery=effectiveQuery.slice(rewindMatch[0].length).trim();
+    if(!currentThreadId){
+      alert('「回到第N輪」需已有對話：請先有至少一輪完成後在同一 thread。');
+      return;
+    }
+    const turns=await fetchTurnCheckpoints(currentThreadId);
+    if(!turns||!(roundN>=1)||roundN>turns.length){
+      alert(`找不到第 ${rewindMatch[1]} 輪紀錄（目前有 ${turns?turns.length:0} 個可跳轉輪次）。`);
+      return;
+    }
+    rewindCp=turns[roundN-1].checkpoint_id;
+  }
+  if(/^\s*undo\b/i.test(effectiveQuery)){
+    if(!rewindCp){
+      const cpUndo=await fetchUndoCheckpointId();
+      if(!cpUndo){
+        alert('undo：找不到上一個 checkpoint（需在同一 thread_id 且有歷史）。');
+        return;
+      }
+      rewindCp=cpUndo;
+    }
+    effectiveQuery=effectiveQuery.replace(/^\s*undo\s*/i,'').trim();
+  }
+  if(!effectiveQuery.trim()){
+    effectiveQuery='請依先前偏好繼續規劃或微調行程';
+  }
+
+  input.value='';
+  const stream=document.getElementById('stream');
+  hideDietaryClarifyPanel();
+  stream.className=advancedMode?'stream-box active':'stream-box';stream.textContent='';
+  renderCards([]);
+  renderMap([]);
+  setStatus('busy','連線中…');
+  try{
+    const payload={
+      query:effectiveQuery,
+      day:selectedDay,
+      thread_id:currentThreadId || null,
+      rewind_to_checkpoint:rewindCp,
+      dietary_profile:dietaryProfile,
+      advanced_mode:advancedMode,
+      user_locale:onboardingProfile.city||null,
+      user_lat:onboardingProfile.user_lat,
+      user_lng:onboardingProfile.user_lng,
+    };
+    const res=await fetch(`${API}/agent/query`,{
+      method:'POST',
+      headers:apiHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify(payload)
+    });
+    if(!res.ok){
+      let msg=`請求失敗（HTTP ${res.status}）`;
+      try{
+        const j=await res.json();
+        const d=j.detail;
+        msg=(typeof d==='string'?d:(d!=null?JSON.stringify(d):''))||(j.message||msg);
+      }catch{}
+      stream.textContent+=`\n❌ ${msg}`;
+      setStatus('err',msg);
+      return;
+    }
+    const reader=res.body.getReader(),decoder=new TextDecoder();
+    let buf='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=decoder.decode(value,{stream:true});
+      const frames=buf.split('\n\n');buf=frames.pop();
+      for(const frame of frames){
+        const evMatch=frame.match(/^event:\s*(.+)/m),dataMatch=frame.match(/^data:\s*(.+)/ms);
+        if(!dataMatch)continue;
+        const event=evMatch?evMatch[1].trim():'message';
+        let data;try{data=JSON.parse(dataMatch[1]);}catch{continue;}
+        if(event==='start'){
+          setStatus('busy','開始規劃行程');
+          const nextTid=data.thread_id||data.agent_run_id||currentThreadId;
+          currentThreadId=nextTid;
+          if(currentThreadId){
+            try{localStorage.setItem(THREAD_ID_KEY,currentThreadId);}catch{}
+          }
+          refreshConversationBanner();
+          if(currentThreadId){document.getElementById('pause-btn').style.display='';}
+          closeSynthesis();
+          if(advancedMode){
+            stream.textContent+=rewindCp?`↩ rewind → ${rewindCp}\n`:'';
+            stream.textContent+=`▶ ${data.query}\n\n`;
+          }
+        }
+        else if(event==='clarification'){
+          if(data&&data.question)showClarifyPanel(data);
+          setStatus('busy',data&&data.type==='dietary'?'請確認飲食限制':'請提供更多資訊');
+        }
+        else if(event==='node'){
+          const label=NODE_LABELS[data.node]||'正在處理';
+          if(advancedMode)stream.textContent+=`• ${label}\n`;
+          setStatus('busy',label);
+          const revisionMsg=intentRevisionMessageFromResearchLog(data.state&&data.state.research_log);
+          if(revisionMsg)showIntentRevisionToast(revisionMsg);
+        }
+        else if(event==='done'){
+          renderCards(data.ui_cards||[]);
+          stream.className='stream-box active';
+          const itinText=data.itinerary||'';
+          const debugText=advancedMode?stream.textContent:'';
+          stream.textContent=(debugText?debugText+'\n':'')+'── 最終行程 ──\n'+itinText;
+          if(data.outcome||data.semantic_status){setOutcomeLamp(data.outcome||'SUCCESS',data.semantic_status||'');}
+          else{setStatus('ok','完成');}
+          document.getElementById('pause-btn').style.display='none';
+          if(!data.awaiting_clarification){conversationRound+=1;}
+          if(data.awaiting_clarification){
+            setStatus('ok','請選擇 (A) 或 (B) 以繼續規劃');
+          }
+          refreshConversationBanner();
+          refreshDaySyncBadges();
+        }
+        else if(event==='error'){
+          const detailStr=(typeof data.detail==='string'&&data.detail)?data.detail.trim():'';
+          const msg=(
+            data.user_message
+            ||data.message
+            ||(data.error?String(data.error):'')
+            ||(detailStr?detailStr.slice(0,400):'')
+            ||(data.exc_type?`${data.exc_type}（見伺服器紀錄）`:'')
+            ||'服務暫時不穩，請稍後重試'
+          );
+          stream.textContent+=`\n❌ ${msg}`;
+          setStatus('err',msg);
+        }
+        stream.scrollTop=stream.scrollHeight;
+      }
+    }
+  }catch(e){document.getElementById('stream').textContent+=`\n❌ 連線失敗：${e.message}`;setStatus('err','連線失敗');}
+}
+// ── Pause / Resume / Synthesis ────────────────────────────────────────────
+async function pauseAgent(){
+  if(!currentThreadId){alert('目前沒有進行中的行程，請先發送查詢。');return;}
+  const panel=document.getElementById('synthesis-panel');
+  const loading=document.getElementById('synthesis-loading');
+  const content=document.getElementById('synthesis-content');
+  panel.style.display='';
+  loading.style.display='';
+  content.style.display='none';
+  document.getElementById('resume-btn').style.display='';
+  setStatus('busy','正在暫停並分析討論記錄…');
+  try{
+    const res=await fetch(`${API}/agent/pause/${currentThreadId}`,{
+      method:'POST',
+      headers:apiHeaders({})
+    });
+    if(!res.ok){const e=await res.json();loading.textContent='暫停失敗：'+(e.detail||res.status);return;}
+    const data=await res.json();
+    const syn=data.synthesis||{};
+    const fillList=(id,items)=>{
+      const ul=document.getElementById(id);ul.innerHTML='';
+      (items||[]).forEach(txt=>{const li=document.createElement('li');li.textContent=txt;ul.appendChild(li);});
+    };
+    fillList('syn-consensus',syn.consensus);
+    fillList('syn-unresolved',syn.unresolved);
+    fillList('syn-frontier',syn.frontier);
+    const f=syn.discussion_freshness??null;
+    const freshnessEl=document.getElementById('syn-freshness');
+    if(f!==null){
+      const label=f<0.3?'低（討論已趨於重複）':f<0.6?'中（部分新觀點）':'高（活躍探索中）';
+      freshnessEl.textContent=`${(f*100).toFixed(0)}% — ${label}`;
+      freshnessEl.style.color=f<0.3?'#ff7070':f<0.6?'#ffb347':'#90ee90';
+    }else{freshnessEl.textContent='無資料';}
+    loading.style.display='none';
+    content.style.display='';
+    setStatus('ok','已暫停');
+  }catch(e){loading.textContent='暫停失敗：'+e.message;setStatus('err','暫停失敗');}
+}
+async function resumeAgent(){
+  if(!currentThreadId){closeSynthesis();return;}
+  closeSynthesis();
+  setStatus('busy','恢復行程規劃…');
+  try{
+    const res=await fetch(`${API}/agent/resume/${currentThreadId}`,{
+      method:'POST',
+      headers:apiHeaders({})
+    });
+    const reader=res.body.getReader(),decoder=new TextDecoder();
+    const stream=document.getElementById('stream');
+    let buf='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      buf+=decoder.decode(value,{stream:true});
+      const frames=buf.split('\n\n');buf=frames.pop();
+      for(const frame of frames){
+        const evMatch=frame.match(/^event:\s*(.+)/m),dataMatch=frame.match(/^data:\s*(.+)/ms);
+        if(!dataMatch)continue;
+        const event=evMatch?evMatch[1].trim():'message';
+        let data;try{data=JSON.parse(dataMatch[1]);}catch{continue;}
+        if(event==='step'){
+          const label=NODE_LABELS[data.node]||data.node;
+          if(advancedMode)stream.textContent+=`• [resume] ${label}\n`;
+          setStatus('busy',label);
+        }else if(event==='done'){
+          setStatus('ok','完成');
+          document.getElementById('pause-btn').style.display='none';
+        }
+        stream.scrollTop=stream.scrollHeight;
+      }
+    }
+  }catch(e){setStatus('err','恢復失敗：'+e.message);}
+}
+function closeSynthesis(){
+  document.getElementById('synthesis-panel').style.display='none';
+}
+// ── end Pause / Resume ─────────────────────────────────────────────────────
+function editDietary(){
+  openDietaryModal();
+}
+function normalizeProfile(p){
+  const raw=p||{};
+  const ethics=['unspecified','omnivore','pescatarian','vegetarian','vegan'].includes(raw.ethics)?raw.ethics:'unspecified';
+  const religious=['none','halal','kosher','hindu_veg'].includes(raw.religious)?raw.religious:'none';
+  const allergens=(raw.allergens||[]).map(x=>String(x).trim().toLowerCase()).map(x=>ALLERGEN_ALIAS[x]||x).filter(x=>ALLOWED_ALLERGENS.includes(x));
+  const medical=(raw.medical||[]).map(x=>String(x).trim().toLowerCase()).filter(x=>ALLOWED_MEDICAL.includes(x));
+  return {
+    ethics,
+    religious,
+    allergens:[...new Set(allergens)],
+    medical:[...new Set(medical)],
+  };
+}
+function renderChipGroup(containerId, options, selected){
+  const c=document.getElementById(containerId);
+  c.innerHTML=options.map(opt=>{
+    const checked=selected.includes(opt)?'checked':'';
+    return `<label><input type="checkbox" value="${opt}" ${checked}/> ${opt}</label>`;
+  }).join('');
+}
+function collectChecked(containerId){
+  return [...document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`)].map(x=>x.value);
+}
+function openDietaryModal(){
+  const p=normalizeProfile(dietaryProfile);
+  document.getElementById('diet-ethics').value=p.ethics;
+  document.getElementById('diet-religious').value=p.religious;
+  renderChipGroup('allergen-chips',ALLOWED_ALLERGENS,p.allergens);
+  renderChipGroup('medical-chips',ALLOWED_MEDICAL,p.medical);
+  document.getElementById('dietary-modal').classList.add('show');
+}
+function closeDietaryModal(){
+  document.getElementById('dietary-modal').classList.remove('show');
+}
+async function saveDietary(){
+  const profile=normalizeProfile({
+    ethics:document.getElementById('diet-ethics').value,
+    religious:document.getElementById('diet-religious').value,
+    allergens:collectChecked('allergen-chips'),
+    medical:collectChecked('medical-chips'),
+  });
+  try{
+    const res=await fetch(`${API}/profile/dietary`,{
+      method:'PUT',
+      headers:apiHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify(profile),
+    });
+    if(!res.ok)throw new Error('儲存失敗');
+    const data=await res.json();
+    dietaryProfile=normalizeProfile(data.dietary_profile||profile);
+    localStorage.setItem('dietaryProfile',JSON.stringify(dietaryProfile));
+    closeDietaryModal();
+    setStatus('ok','已更新飲食限制（雲端）');
+  }catch{
+    dietaryProfile=profile;
+    localStorage.setItem('dietaryProfile',JSON.stringify(dietaryProfile));
+    closeDietaryModal();
+    setStatus('err','雲端儲存失敗，已暫存本機');
+  }
+}
+async function loadDietaryProfile(){
+  const fallback=JSON.parse(localStorage.getItem('dietaryProfile')||'{"ethics":"unspecified","allergens":[],"religious":"none","medical":[]}');
+  dietaryProfile=normalizeProfile(fallback);
+  try{
+    const res=await fetch(`${API}/profile/dietary`,{
+      headers:apiHeaders(),
+      signal:AbortSignal.timeout(4000),
+    });
+    if(!res.ok)return;
+    const data=await res.json();
+    dietaryProfile=normalizeProfile(data.dietary_profile||dietaryProfile);
+    localStorage.setItem('dietaryProfile',JSON.stringify(dietaryProfile));
+  }catch{
+    // Keep local fallback silently.
+  }
+}
+function openOnboardingModal(prefill){
+  const p=prefill||onboardingProfile;
+  document.getElementById('trip-start-date').value=p.start_date||new Date().toISOString().slice(0,10);
+  document.getElementById('trip-city').value=p.city||'Kyoto';
+  document.getElementById('trip-party-size').value=String(p.party_size||2);
+  document.getElementById('trip-days').value=String(p.days||3);
+  const hint=document.getElementById('geo-hint');
+  if(p.user_lat!=null&&p.user_lng!=null)hint.textContent=`定位：${Number(p.user_lat).toFixed(4)}, ${Number(p.user_lng).toFixed(4)}`;
+  else hint.textContent='尚未取得定位';
+  document.getElementById('onboarding-modal').classList.add('show');
+}
+function closeOnboardingModal(){
+  document.getElementById('onboarding-modal').classList.remove('show');
+}
+async function saveOnboarding(){
+  const payload={
+    start_date:document.getElementById('trip-start-date').value,
+    city:document.getElementById('trip-city').value,
+    party_size:Number(document.getElementById('trip-party-size').value||2),
+    days:Number(document.getElementById('trip-days').value||3),
+    user_lat:onboardingProfile.user_lat,
+    user_lng:onboardingProfile.user_lng,
+  };
+  try{
+    const res=await fetch(`${API}/profile/onboarding`,{
+      method:'PUT',
+      headers:apiHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify(payload),
+    });
+    if(!res.ok)throw new Error('save failed');
+    const data=await res.json();
+    onboardingProfile=data.profile||payload;
+    closeOnboardingModal();
+    renderDays();
+    await refreshDaySyncBadges();
+    await selectDay(1);
+  }catch{
+    setStatus('err','旅程設定儲存失敗');
+  }
+}
+async function useCurrentLocation(){
+  const hint=document.getElementById('geo-hint');
+  if(!navigator.geolocation){
+    hint.textContent='此瀏覽器不支援定位';
+    return;
+  }
+  hint.textContent='定位中...';
+  navigator.geolocation.getCurrentPosition(
+    (pos)=>{
+      const lat=Number(pos.coords.latitude);
+      const lng=Number(pos.coords.longitude);
+      onboardingProfile.user_lat=lat;
+      onboardingProfile.user_lng=lng;
+      if(lat>=24.8&&lat<=25.3&&lng>=121.3&&lng<=121.8){
+        document.getElementById('trip-city').value='Taipei';
+      }else if(lat>=35.4&&lat<=36.0&&lng>=139.4&&lng<=140.1){
+        document.getElementById('trip-city').value='Tokyo';
+      }
+      hint.textContent=`定位成功：${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    },
+    (err)=>{
+      hint.textContent=`定位失敗：${err.message||'未知錯誤'}`;
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:300000}
+  );
+}
+async function loadOnboardingProfile(){
+  try{
+    const res=await fetch(`${API}/profile/onboarding`,{headers:apiHeaders(),signal:AbortSignal.timeout(4000)});
+    if(!res.ok){openOnboardingModal();return;}
+    const data=await res.json();
+    if(!data.profile){openOnboardingModal();return;}
+    onboardingProfile=data.profile;
+    renderDays();
+    await refreshDaySyncBadges();
+    await selectDay(1);
+  }catch{
+    openOnboardingModal();
+  }
+}
+function setHoldLog(msg){
+  document.getElementById('hold-log').textContent=msg;
+}
+async function searchFlightOffer(){
+  const origin=document.getElementById('flight-origin').value.trim().toUpperCase()||'TPE';
+  const destination=document.getElementById('flight-destination').value.trim().toUpperCase()||'NRT';
+  const date=document.getElementById('flight-date').value||new Date().toISOString().slice(0,10);
+  setHoldLog('正在搜尋可 hold 票價...');
+  try{
+    const res=await fetch(`${API}/duffel/search`,{
+      method:'POST',
+      headers:apiHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({origin,destination,date}),
+    });
+    if(!res.ok)throw new Error(`search failed (${res.status})`);
+    const data=await res.json();
+    document.getElementById('offer-id').value=data.offer_id||'';
+    document.getElementById('passenger-id').value=data.passenger_id||'';
+    setHoldLog(`找到票價：${origin}→${destination} ${date}\nprice=${data.price||'?'} ${data.currency||''}\noffer_id=${data.offer_id||''}`);
+  }catch(e){
+    setHoldLog(`搜尋失敗：${e.message}`);
+  }
+}
+async function holdFlight(){
+  const offer_id=document.getElementById('offer-id').value.trim();
+  const passenger_id=document.getElementById('passenger-id').value.trim();
+  if(!offer_id||!passenger_id){setHoldLog('請先搜尋票價，或手動填 offer_id / passenger_id。');return;}
+  setHoldLog('正在建立 hold...');
+  try{
+    const res=await fetch(`${API}/duffel/hold`,{
+      method:'POST',
+      headers:apiHeaders({'Content-Type':'application/json'}),
+      body:JSON.stringify({offer_id,passenger_id}),
+    });
+    if(!res.ok)throw new Error(`hold failed (${res.status})`);
+    const data=await res.json();
+    document.getElementById('order-id').value=data.order_id||'';
+    setHoldLog(`Hold 成功（約 24 小時）\norder_id=${data.order_id||''}\nidem_key=${data.idem_key||''}`);
+  }catch(e){
+    setHoldLog(`Hold 失敗：${e.message}`);
+  }
+}
+async function cancelHold(){
+  const order_id=document.getElementById('order-id').value.trim();
+  if(!order_id){setHoldLog('請先輸入 order_id。');return;}
+  setHoldLog(`正在取消 hold：${order_id} ...`);
+  try{
+    const res=await fetch(`${API}/duffel/orders/${encodeURIComponent(order_id)}`,{
+      method:'DELETE',
+      headers:apiHeaders(),
+    });
+    if(!res.ok)throw new Error(`cancel failed (${res.status})`);
+    const data=await res.json();
+    setHoldLog(`取消完成\noutcome=${data.outcome||''}\nsemantic=${data.semantic_status||''}`);
+  }catch(e){
+    setHoldLog(`取消失敗：${e.message}`);
+  }
+}
+function confirmPurchase(){
+  const order_id=document.getElementById('order-id').value.trim();
+  if(!order_id){setHoldLog('請先 hold 一筆訂單。');return;}
+  setHoldLog(
+    `已記錄要確認購買：${order_id}\n`+
+    '目前後端僅開放 hold / cancel。\n'+
+    '下一步可加 /duffel/confirm 來做正式出票（capture）。'
+  );
+}
+let recognition=null,recording=false;
+function initSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return null;
+  const r=new SR();r.continuous=false;r.interimResults=true;r.lang='zh-TW';
+  r.onresult=e=>{let t='';for(let i=e.resultIndex;i<e.results.length;i++)t+=e.results[i][0].transcript;document.getElementById('msg').value=t;};
+  r.onend=()=>{
+    recording=false;
+    document.getElementById('mic').classList.remove('rec');
+    document.getElementById('mic-label').textContent='語音';
+    setStatus('ok','就緒');
+    const ta=document.getElementById('msg');
+    requestAnimationFrame(()=>{
+      ta.focus();
+      const len=ta.value.length;
+      try{ta.setSelectionRange(len,len);}catch{}
+    });
+  };
+  r.onerror=e=>setStatus('err','語音錯誤：'+e.error);
+  return r;
+}
+function toggleMic(){
+  if(!recognition)recognition=initSpeech();
+  if(!recognition){setStatus('err','此瀏覽器不支援語音輸入');return;}
+  if(recording){recognition.stop();}
+  else{recognition.start();recording=true;document.getElementById('mic').classList.add('rec');document.getElementById('mic-label').textContent='停止';setStatus('busy','聆聽中…');}
+}
+(async()=>{
+  if(currentThreadId){
+    const pb=document.getElementById('pause-btn');
+    if(pb)pb.style.display='';
+  }
+  if(!document.getElementById('flight-date').value){
+    document.getElementById('flight-date').value=new Date(Date.now()+86400000).toISOString().slice(0,10);
+  }
+  refreshModeUi();
+  refreshConversationBanner();
+  await loadDietaryProfile();
+  await loadOnboardingProfile();
+  try{const r=await fetch(`${API}/healthz`,{signal:AbortSignal.timeout(4000)});setStatus(r.ok?'ok':'err',r.ok?'API 已連線':'API 回應異常');}
+  catch{setStatus('err','API 離線');}
+})();
+</script>
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+</body>
+</html>

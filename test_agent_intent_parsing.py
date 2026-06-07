@@ -51,3 +51,90 @@ def test_combine_itinerary_clock_maps_cross_midnight_roll_to_excursion_day():
     aligned = _combine_itinerary_clock(trip, rolled)
     assert aligned == datetime(2026, 5, 2, 7, 15)
 
+
+from query_utils import (
+    _is_appetite_light_intent,
+    _feedback_complains_fame_unreliable,
+    _clamp_hhmm_token,
+    _is_ramen_intent,
+    _has_strong_ramen_intent,
+)
+
+
+# ── _clamp_hhmm_token ────────────────────────────────────
+
+def test_clamp_valid_time():
+    assert _clamp_hhmm_token("07:00") == "07:00"
+
+
+def test_clamp_invalid_returns_none():
+    assert _clamp_hhmm_token("25:00") is None
+
+
+def test_clamp_none_returns_none():
+    assert _clamp_hhmm_token(None) is None
+
+
+def test_clamp_empty_string_returns_none():
+    assert _clamp_hhmm_token("") is None
+
+
+# ── _is_ramen_intent ─────────────────────────────────────
+
+def test_is_ramen_intent_true():
+    assert _is_ramen_intent("吃拉麵") is True
+
+
+def test_is_ramen_intent_false():
+    assert _is_ramen_intent("吃壽司") is False
+
+
+def test_is_ramen_intent_english():
+    assert _is_ramen_intent("ramen") is True
+
+
+def test_is_ramen_intent_empty():
+    assert _is_ramen_intent("") is False
+
+
+# ── _has_strong_ramen_intent ─────────────────────────────
+
+def test_has_strong_ramen_intent_true():
+    assert _has_strong_ramen_intent("我要吃特濃豚骨拉麵") is True
+
+
+def test_has_strong_ramen_intent_false():
+    assert _has_strong_ramen_intent("隨便吃點東西") is False
+
+
+def test_has_strong_ramen_intent_weak_mention():
+    assert _has_strong_ramen_intent("有拉麵嗎") is False
+
+
+# ── _is_appetite_light_intent ────────────────────────────
+
+def test_is_appetite_light_intent_true():
+    assert _is_appetite_light_intent("簡單吃") is True
+
+
+def test_is_appetite_light_intent_false():
+    assert _is_appetite_light_intent("吃很多") is False
+
+
+def test_is_appetite_light_intent_empty():
+    assert _is_appetite_light_intent("") is False
+
+
+# ── _feedback_complains_fame_unreliable ──────────────────
+
+def test_feedback_complains_fame_unreliable_true():
+    assert _feedback_complains_fame_unreliable("聽說那家其實不好吃") is True
+
+
+def test_feedback_complains_fame_unreliable_false():
+    assert _feedback_complains_fame_unreliable("很滿意") is False
+
+
+def test_feedback_complains_fame_unreliable_not_related():
+    assert _feedback_complains_fame_unreliable("排隊太久") is False
+

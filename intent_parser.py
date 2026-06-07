@@ -687,7 +687,91 @@ def _clamp_missing_city_if_actionable(intent: Intent) -> None:
         intent.actionability_followup = _DEFAULT_MISSING_CITY_FOLLOWUP
 
 
-def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | None = None) -> Intent:
+def _llm_clarification_strategy(
+    query: str,
+    previous: "Intent",
+    new: "Intent",
+    removed: list[str],
+    added: list[str],
+    llm_router: Any,
+) -> tuple[str, str]:
+    """
+    Ask LLM to decide clarification strategy for meal_slots conflict.
+    Returns (strategy, followup_question).
+    strategy: "auto_fix" | "ask" | "disambiguate"
+    followup_question: empty string if auto_fix
+    """
+    MEAL_LABEL = {
+        "breakfast": "早餐",
+        "lunch": "午餐",
+        "tea": "下午茶",
+        "dinner": "晚餐",
+        "late_night": "宵夜",
+    }
+    removed_str = "、".join(MEAL_LABEL.get(s, s) for s in removed)
+    added_str = "、".join(MEAL_LABEL.get(s, s) for s in added)
+    prev_str = "、".join(MEAL_LABEL.get(s, s) for s in previous.meal_slots)
+    new_str = "、".join(MEAL_LABEL.get(s, s) for s in new.meal_slots)
+
+    prompt = f"""你是旅遊規劃助手的 State Manager。
+
+使用者說：「{query}」
+前一輪行程包含：{prev_str}
+LLM 解析出的新行程包含：{new_str}
+消失的餐次：{removed_str if removed_str else "無"}
+新增的餐次：{added_str if added_str else "無"}
+
+判斷這個差異的原因，並選擇處理策略：
+
+A. auto_fix：LLM 自己解析時漏掉了（False Negative），
+   使用者沒有要求取消，直接恢復原本的行程，不問使用者。
+   適用：使用者的 query 沒有提到要刪除某個餐次，但它消失了。
+
+B. ask：需要向使用者確認一件事（是非題）。
+   適用：使用者的 query 涉及到消失的餐次，但不確定是要換還是取消。
+
+C. disambiguate：使用者意圖有歧義，需要給選項（單選題）。
+   適用：無法從 query 判斷使用者真正的意圖。
+
+只回傳 JSON，格式如下，不要其他文字：
+{{"strategy": "auto_fix"}}
+或
+{{"strategy": "ask", "question": "（繁體中文問題，結尾給 (A)(B) 選項）"}}
+或
+{{"strategy": "disambiguate", "question": "（繁體中文問題，結尾給 (A)(B)(C) 選項）"}}
+"""
+    messages = [{"role": "user", "content": prompt}]
+    try:
+        from llm_router import TaskType  # local import to avoid circular deps at module load
+        response = llm_router.complete(TaskType.INTENT_PARSING, messages)
+        raw = (response.content or "").strip()
+        if raw.startswith("```"):
+            raw = re.sub(r"^```[a-z]*\n?", "", raw)
+            raw = re.sub(r"\n?```$", "", raw)
+        data = json.loads(raw)
+        strategy = data.get("strategy", "ask")
+        question = data.get("question", "")
+        if strategy not in ("auto_fix", "ask", "disambiguate"):
+            strategy = "ask"
+        return strategy, question
+    except Exception:
+        # fallback: 保守地問使用者
+        removed_label = "、".join(MEAL_LABEL.get(s, s) for s in removed)
+        fallback_q = (
+            f"我注意到【{removed_label}】從行程中消失了。\n"
+            f"(A) 對，取消【{removed_label}】\n"
+            f"(B) 不，請保留【{removed_label}】"
+        )
+        return "ask", fallback_q
+
+
+def _reconcile_intents(
+    previous: Intent,
+    new: Intent,
+    global_schedule: dict | None = None,
+    query: str = "",
+    llm_router: Any = None,
+) -> Intent:
     """Merge new revision intent into previous, applying state reconciliation rules."""
     if not new.is_revision:
         return new
@@ -704,18 +788,34 @@ def _reconcile_intents(previous: Intent, new: Intent, global_schedule: dict | No
     else:
         # Detect meal_slots conflict and create pending mutation
         if new.meal_slots and previous.meal_slots and new.meal_slots != previous.meal_slots:
-            print(f"[State Manager] Detected meal_slots conflict: {previous.meal_slots} -> {new.meal_slots}")
-            merged.is_actionable = False
-            merged.pending_mutation = {"meal_slots": list(new.meal_slots)}
-            merged.actionability_followup = (
-                f"您稍早的設定是【{previous.meal_slots[0]}】，"
-                f"確定要變更為【{new.meal_slots[0]}】嗎？\n"
-                f"(A) 是的，確定更改\n"
-                f"(B) 不，維持原設定"
-            )
-            # Do not apply the new meal_slots yet; keep previous.
-            # Return early with the pending mutation.
-            return merged
+            removed = [s for s in previous.meal_slots if s not in new.meal_slots]
+            added = [s for s in new.meal_slots if s not in previous.meal_slots]
+            print(f"[State Manager] Detected meal_slots diff: removed={removed}, added={added}")
+
+            if llm_router and (removed or added):
+                strategy, followup = _llm_clarification_strategy(
+                    query, previous, new, removed, added, llm_router
+                )
+            else:
+                # fallback without LLM
+                strategy = "ask"
+                MEAL_LABEL = {"breakfast":"早餐","lunch":"午餐","tea":"下午茶","dinner":"晚餐","late_night":"宵夜"}
+                removed_label = "、".join(MEAL_LABEL.get(s, s) for s in removed)
+                followup = (
+                    f"我注意到【{removed_label}】從行程中消失了。\n"
+                    f"(A) 對，取消【{removed_label}】\n"
+                    f"(B) 不，請保留【{removed_label}】"
+                ) if removed else ""
+
+            if strategy == "auto_fix":
+                # False Negative：直接恢復，不問使用者
+                merged.meal_slots = list(previous.meal_slots)
+            else:
+                # ask or disambiguate：問使用者
+                merged.is_actionable = False
+                merged.pending_mutation = {"meal_slots": list(new.meal_slots)}
+                merged.actionability_followup = followup
+                return merged
         else:
             # Overwrite meal_slots if changed (no conflict)
             if new.meal_slots and new.meal_slots != previous.meal_slots:
@@ -1591,7 +1691,12 @@ def parse_intent(
                 prev_itinerary=prev_itinerary,
             )
             _stamp_geo_pins(llm_result)
-            llm_result = _reconcile_intents(previous_intent, llm_result, global_schedule=global_schedule)
+            llm_result = _reconcile_intents(
+                previous_intent, llm_result,
+                global_schedule=global_schedule,
+                query=query,
+                llm_router=llm_router,
+            )
             _iterative_actionability_check(llm_result)
             _sanitize_intent(llm_result)
             _clamp_missing_city_if_actionable(llm_result)

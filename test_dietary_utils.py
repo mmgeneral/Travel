@@ -6,6 +6,7 @@ from dietary_utils import (
     _dietary_keys_from_query_and_intent_signals,
     _build_plan_excluded_shop_tags,
     _parse_dietary_clarification_reply,
+    _strip_dietary_hint_key_from_intent,
 )
 
 
@@ -139,3 +140,25 @@ def test_parse_reply_full_text_strict():
 
 def test_parse_reply_full_text_loose():
     assert _parse_dietary_clarification_reply("我自己不點牛肉") == "loose"
+
+
+# ── _strip_dietary_hint_key_from_intent ─────────────────
+
+
+def test_strip_dietary_hint_removes_target_key():
+    intent = {"dietary_hints": "no_beef,no_pork"}
+    _strip_dietary_hint_key_from_intent(intent, "no_beef")
+    assert "no_beef" not in (intent["dietary_hints"] or "")
+    assert "no_pork" in (intent["dietary_hints"] or "")
+
+
+def test_strip_dietary_hint_single_key_sets_none():
+    intent = {"dietary_hints": "no_beef"}
+    _strip_dietary_hint_key_from_intent(intent, "no_beef")
+    assert intent["dietary_hints"] is None
+
+
+def test_strip_dietary_hint_empty_sets_none():
+    intent = {"dietary_hints": None}
+    _strip_dietary_hint_key_from_intent(intent, "no_beef")
+    assert intent["dietary_hints"] is None

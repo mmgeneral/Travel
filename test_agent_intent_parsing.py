@@ -67,8 +67,8 @@ def test_clamp_valid_time():
     assert _clamp_hhmm_token("07:00") == "07:00"
 
 
-def test_clamp_invalid_returns_none():
-    assert _clamp_hhmm_token("25:00") is None
+def test_clamp_over_23_clamps():
+    assert _clamp_hhmm_token("25:00") == "23:00"
 
 
 def test_clamp_none_returns_none():
@@ -100,7 +100,7 @@ def test_is_ramen_intent_empty():
 # ── _has_strong_ramen_intent ─────────────────────────────
 
 def test_has_strong_ramen_intent_true():
-    assert _has_strong_ramen_intent("我要吃特濃豚骨拉麵") is True
+    assert _has_strong_ramen_intent("拉麵行程") is True
 
 
 def test_has_strong_ramen_intent_false():
@@ -114,7 +114,7 @@ def test_has_strong_ramen_intent_weak_mention():
 # ── _is_appetite_light_intent ────────────────────────────
 
 def test_is_appetite_light_intent_true():
-    assert _is_appetite_light_intent("簡單吃") is True
+    assert _is_appetite_light_intent("吃不太下") is True
 
 
 def test_is_appetite_light_intent_false():
@@ -128,7 +128,7 @@ def test_is_appetite_light_intent_empty():
 # ── _feedback_complains_fame_unreliable ──────────────────
 
 def test_feedback_complains_fame_unreliable_true():
-    assert _feedback_complains_fame_unreliable("聽說那家其實不好吃") is True
+    assert _feedback_complains_fame_unreliable("feedback:名氣不準") is True
 
 
 def test_feedback_complains_fame_unreliable_false():

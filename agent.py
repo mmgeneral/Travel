@@ -1469,6 +1469,39 @@ async def _node_plan_core(state: AgentState) -> AgentState:
 
     state["itinerary_slots"] = itinerary_slots
 
+    # Build ui_cards from itinerary_slots（帶 meal_type）
+    MEAL_LABEL = {
+        "breakfast": "早餐",
+        "lunch": "午餐",
+        "tea": "下午茶",
+        "dinner": "晚餐",
+        "late_night": "宵夜",
+    }
+    ui_cards = []
+    for slot in itinerary_slots:
+        meal_label = MEAL_LABEL.get(slot.get("meal_type", ""), slot.get("meal_type", ""))
+        ui_cards.append({
+            "shop_name": slot.get("shop_name", ""),
+            "meal_type": slot.get("meal_type", ""),
+            "meal_label": meal_label,
+            "slot_id": slot.get("slot_id", ""),
+            "user_locked": slot.get("user_locked", False),
+            "session_locked": slot.get("session_locked", False),
+            "start_time": slot.get("start_time"),
+            "duration_minutes": slot.get("duration_minutes", 90),
+            "address_hint": "",
+            "why_selected": "",
+            "how_to_go": "",
+            "reservation_hint": "",
+            "rank_note": "",
+            "insider_pick": False,
+            "warning_badge": "",
+            "warning_text": "",
+            "lat": None,
+            "lng": None,
+        })
+    state["ui_cards"] = ui_cards
+
     return state
 
 

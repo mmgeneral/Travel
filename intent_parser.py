@@ -782,6 +782,65 @@ C. disambiguate：使用者意圖有歧義，需要給選項（單選題）。
         return "ask", fallback_q
 
 
+def _extract_shop_lock_ops(
+    query: str,
+    itinerary_slots: list[dict] | None,
+    intent: "Intent",
+) -> None:
+    """
+    Rule-based post-processor: 從 query 抽取明確的 must_include / must_exclude 指令。
+    直接修改 intent（in-place）。
+    
+    Patterns:
+      must_include: 「XX 不要動」「不要動 XX」「保留 XX」「keep XX」
+      must_exclude: 「把 XX 換掉」「換掉 XX」「不要 XX（店名）」
+    """
+    if not query or not itinerary_slots:
+        return
+
+    q = query.strip()
+    shop_names = [s.get("shop_name", "") for s in itinerary_slots if s.get("shop_name")]
+    if not shop_names:
+        return
+
+    must_include: list[str] = list(intent.must_include_shops or [])
+    must_exclude: list[str] = list(intent.must_exclude_shops or [])
+
+    for shop in shop_names:
+        if not shop:
+            continue
+        # must_include patterns
+        if (
+            f"{shop}不要動" in q
+            or f"{shop} 不要動" in q
+            or f"不要動{shop}" in q
+            or f"不要動 {shop}" in q
+            or f"保留{shop}" in q
+            or f"保留 {shop}" in q
+            or f"keep {shop}" in q.lower()
+        ):
+            if shop not in must_include:
+                must_include.append(shop)
+
+        # must_exclude patterns（只在店名前面有明確換掉指令）
+        if (
+            f"把{shop}換掉" in q
+            or f"把 {shop} 換掉" in q
+            or f"換掉{shop}" in q
+            or f"換掉 {shop}" in q
+            or f"不要{shop}" in q
+            or f"不要 {shop}" in q
+        ):
+            if shop not in must_exclude:
+                must_exclude.append(shop)
+            # 如果同時在 must_include，移除（矛盾時以 exclude 優先）
+            if shop in must_include:
+                must_include.remove(shop)
+
+    intent.must_include_shops = must_include
+    intent.must_exclude_shops = must_exclude
+
+
 def _reconcile_intents(
     previous: Intent,
     new: Intent,
@@ -1725,6 +1784,9 @@ def parse_intent(
                 llm_router=llm_router,
                 itinerary_slots=itinerary_slots,
             )
+            # Rule-based shop lock post-processor
+            if llm_result.is_revision:
+                _extract_shop_lock_ops(query, itinerary_slots, llm_result)
             _iterative_actionability_check(llm_result)
             _sanitize_intent(llm_result)
             _clamp_missing_city_if_actionable(llm_result)

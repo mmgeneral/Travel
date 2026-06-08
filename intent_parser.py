@@ -1276,15 +1276,6 @@ user explicitly wants to keep (e.g. "保留 XX" / "keep XX") and any shops they 
 (e.g. "換掉 XX" / "不要 XX").  Fill `must_include_shops` with the shop name(s) they explicitly
 mandate to keep, and `must_exclude_shops` with shop name(s) they mandate to drop.
 If no such explicit mandates exist, leave both as empty lists.
-
-CRITICAL RULE 4 — MUST INCLUDE / MUST EXCLUDE (HARD LOCK)
------------------------------------------------------------
-When `is_revision` is true, carefully examine the user's new message and identify any shops the
-user explicitly wants to keep (e.g. "保留 XX" / "keep XX") and any shops they want to remove
-(e.g. "換掉 XX" / "不要 XX").  Fill `must_include_shops` with the shop name(s) they explicitly
-mandate to keep, and `must_exclude_shops` with shop name(s) they mandate to drop.
-If no such explicit mandates exist, leave both as empty lists.
-
 CRITICAL RULE — SELF-CORRECTION
 -------------------------------
 If the user's query has a complaining or corrective tone, pointing out that you overlooked previously provided information (e.g., "我上一句就說過我要吃晚餐了啊", "你沒看到嗎"), you MUST:
@@ -1292,6 +1283,18 @@ If the user's query has a complaining or corrective tone, pointing out that you 
 - Extract the correct meal slot(s) and place them in meal_slots (e.g., ["dinner"]).
 - Set is_actionable=true (because the conditions are now complete; the system must continue planning). As a special case, even though is_actionable is true, you MUST still output an apology in actionability_followup, for example: "非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您規劃。"
 - In actionability_followup output an apology, for example: "非常抱歉，我漏看了您已經指定了晚餐時段！我立刻為您規劃。"
+
+Few-shot — 「不要動」= 保留（must_include_shops），「不要」= 排除（excluded_shops）:
+previous_intent: {"city": "京都", "meal_slots": ["breakfast", "lunch", "tea", "dinner"], ...}
+Query: '松籟庵不要動，換晚餐'
+Output: {"city":"京都","region":"jp","meal_slots":["breakfast","lunch","tea","dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_shops":[],"excluded_tags":[],"must_include_shops":["松籟庵"],"must_exclude_shops":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":true,"is_actionable":true,"actionability_followup":null,"revision_op":{"op_type":"replace","target_shop":null,"new_shop":null,"slot_id":null},"confirm_op":null,"metadata":{}}
+說明：「不要動」= 保留，放進 must_include_shops。excluded_shops 保持空。
+
+Few-shot — 「不要 XX」= 排除（excluded_shops）:
+previous_intent: {"city": "京都", "meal_slots": ["breakfast", "lunch", "tea", "dinner"], ...}
+Query: '不要拉麵店，換午餐'
+Output: {"city":"京都","region":"jp","meal_slots":["breakfast","lunch","tea","dinner"],"time_window":{"start":null,"end":null},"category_tags":[],"dietary_hints":null,"excluded_tags":["ramen","noodle"],"excluded_shops":[],"must_include_shops":[],"must_exclude_shops":[],"mode":"balanced","explicit_constraints":[],"wants_flight":false,"confidence":0.9,"is_revision":true,"is_actionable":true,"actionability_followup":null,"revision_op":null,"confirm_op":null,"metadata":{}}
+說明：「不要拉麵店」是食材/類型排除，放進 excluded_tags，不影響 excluded_shops。
 
 Few-shot — Self-Correction during revision:
 previous_intent: {"city": "京都", "category_tags": ["yakiniku"], "meal_slots": [], ...}

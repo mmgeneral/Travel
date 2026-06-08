@@ -56,6 +56,18 @@
     margin-bottom: 6px;
     letter-spacing: 0.5px;
   }
+  .lock-badge {
+    display: inline-block;
+    background: rgba(251,191,36,0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(251,191,36,0.4);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+    margin-bottom: 6px;
+    margin-left: 4px;
+  }
   .map{margin-top:10px;border:1px solid var(--border);border-radius:10px;height:260px;overflow:hidden;}
   .input-area{grid-column:1;grid-row:2;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;flex-direction:column;gap:8px;}
   .input-row{display:flex;gap:6px;flex-wrap:wrap;}
@@ -359,7 +371,11 @@ function renderCards(cards){
   c.innerHTML=cards.map((x,idx)=>`
     <div class="card">
       ${x.warning_badge?`<div class="badge-warn">⚠ ${x.warning_badge}</div>`:''}
-      ${x.meal_label?`<div class="meal-tag">${x.meal_label}</div>`:''}
+      <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:4px;">
+        ${x.meal_label?`<span class="meal-tag">${x.meal_label}</span>`:''}
+        ${x.user_locked?`<span class="lock-badge">🔒 已鎖定</span>`:''}
+        ${x.session_locked?`<span class="lock-badge" style="color:#a78bfa;border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.1);">⏳ 本輪保留</span>`:''}
+      </div>
       <h3>#${idx+1} ${x.shop_name||'未命名店家'}</h3>
       <p>地點：${x.address_hint||'未提供'}</p>
       <p>為什麼選它：${x.why_selected||x.rank_note||'整體風險較低'}</p>

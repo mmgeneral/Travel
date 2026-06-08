@@ -397,6 +397,53 @@ class ClaudeBackend(BaseBackend):
             "cost_usd": 0.0,
         }
 
+class DeepSeekBackend(BaseBackend):
+    """DeepSeek API (OpenAI-compatible).
+    
+    Env vars:
+        DEEPSEEK_API_KEY  — required
+        DEEPSEEK_MODEL    — default: deepseek-chat (V3, non-reasoning)
+                            use deepseek-reasoner for R1 (thinking mode)
+    """
+    name = "deepseek"
+
+    def __init__(self, api_key: str | None = None, model: str | None = None) -> None:
+        import os
+        self._api_key = api_key or os.getenv("DEEPSEEK_API_KEY", "")
+        self._model = model or os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+        self._url = "https://api.deepseek.com/v1/chat/completions"
+
+    def is_available(self) -> bool:
+        return bool(self._api_key)
+
+    def complete(self, messages: list[dict], **kwargs) -> "LLMResponse":
+        import requests, time
+        headers = {
+            "Authorization": f"Bearer {self._api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": self._model,
+            "messages": messages,
+            "max_tokens": kwargs.get("max_tokens", 1024),
+            "temperature": kwargs.get("temperature", 0.1),
+        }
+        t0 = time.monotonic()
+        resp = requests.post(self._url, json=payload, headers=headers, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+        latency_ms = int((time.monotonic() - t0) * 1000)
+        content = data["choices"][0]["message"]["content"]
+        usage = data.get("usage", {})
+        return LLMResponse(
+            content=content,
+            model_used=self._model,
+            tokens_in=usage.get("prompt_tokens", 0),
+            tokens_out=usage.get("completion_tokens", 0),
+            latency_ms=latency_ms,
+            cost_usd=0.0,
+        )
+
 
 # ---------------------------------------------------------------------------
 # LLMRouter  — fallback-chain orchestrator
@@ -422,6 +469,7 @@ class LLMRouter:
         vllm_backend: VLLMBackend | None = None,
         gemini_backend: GeminiBackend | None = None,
         claude_backend: ClaudeBackend | None = None,
+        deepseek_backend: DeepSeekBackend | None = None,
         # Backward-compat kwarg name used by existing callsites
         local_backend: OllamaBackend | None = None,
     ) -> None:
@@ -439,8 +487,8 @@ class LLMRouter:
     def _backend_chain(self, task: TaskType) -> list[BaseBackend]:
         """Return ordered list of backends to try for a given task."""
         if task == TaskType.INTENT_PARSING:
-            # Simple classification — local 7B is sufficient; cloud is overkill
-            return [self.ollama_backend, self.gemini_backend]
+            # DeepSeek V3 優先（更強的語意理解），fallback 到 Ollama
+            return [self.deepseek_backend, self.ollama_backend, self.gemini_backend]
 
         if task == TaskType.CRITIQUE:
             # Needs strong reasoning: on-demand 4090 > cloud > local 7B fallback

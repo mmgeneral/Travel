@@ -488,8 +488,11 @@ class LLMRouter:
     def _backend_chain(self, task: TaskType) -> list[BaseBackend]:
         """Return ordered list of backends to try for a given task."""
         if task == TaskType.INTENT_PARSING:
-            # DeepSeek V3 優先（更強的語意理解），fallback 到 Ollama
-            return [self.deepseek_backend, self.ollama_backend, self.gemini_backend]
+            chain = []
+            if self.deepseek_backend.is_available():
+                chain.append(self.deepseek_backend)
+            chain.extend([self.ollama_backend, self.gemini_backend])
+            return chain
 
         if task == TaskType.CRITIQUE:
             # Needs strong reasoning: on-demand 4090 > cloud > local 7B fallback

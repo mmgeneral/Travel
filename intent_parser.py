@@ -750,6 +750,7 @@ C. disambiguate：使用者意圖有歧義，需要給選項（單選題）。
         if raw.startswith("```"):
             raw = re.sub(r"^```[a-z]*\n?", "", raw)
             raw = re.sub(r"\n?```$", "", raw)
+        print(f"[Clarification LLM] raw response: {raw!r}")
         data = json.loads(raw)
         strategy = data.get("strategy", "ask")
         question = data.get("question", "")

@@ -480,6 +480,7 @@ class LLMRouter:
         self.vllm_backend: VLLMBackend = vllm_backend or VLLMBackend()
         self.gemini_backend: GeminiBackend = gemini_backend or GeminiBackend()
         self.claude_backend: ClaudeBackend = claude_backend or ClaudeBackend()
+        self.deepseek_backend: DeepSeekBackend = deepseek_backend or DeepSeekBackend()
 
         # Expose legacy attribute name so existing code doesn't break
         self.local_backend = self.ollama_backend

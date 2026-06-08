@@ -694,6 +694,7 @@ def _llm_clarification_strategy(
     removed: list[str],
     added: list[str],
     llm_router: Any,
+    itinerary_slots: list[dict] | None = None,
 ) -> tuple[str, str]:
     """
     Ask LLM to decide clarification strategy for meal_slots conflict.
@@ -713,13 +714,26 @@ def _llm_clarification_strategy(
     prev_str = "、".join(MEAL_LABEL.get(s, s) for s in previous.meal_slots)
     new_str = "、".join(MEAL_LABEL.get(s, s) for s in new.meal_slots)
 
+    # 建立實際行程描述
+    if itinerary_slots:
+        slot_desc = "、".join(
+            f"{MEAL_LABEL.get(s.get('meal_type',''), s.get('meal_type',''))}：{s.get('shop_name','（未安排）')}"
+            for s in itinerary_slots
+        )
+    else:
+        slot_desc = "（尚無行程）"
+
     prompt = f"""你是旅遊規劃助手的 State Manager。
 
 使用者說：「{query}」
-前一輪行程包含：{prev_str}
-LLM 解析出的新行程包含：{new_str}
+前一輪設定的餐次：{prev_str}
+LLM 解析出的新餐次：{new_str}
 消失的餐次：{removed_str if removed_str else "無"}
 新增的餐次：{added_str if added_str else "無"}
+目前實際已排行程：{slot_desc}
+
+注意：「前一輪設定的餐次」是 intent 的設定，不代表每個餐次都已經有餐廳。
+請根據「目前實際已排行程」判斷哪些餐次真的有被安排，哪些還是空的。
 
 判斷這個差異的原因，並選擇處理策略：
 
@@ -774,6 +788,7 @@ def _reconcile_intents(
     global_schedule: dict | None = None,
     query: str = "",
     llm_router: Any = None,
+    itinerary_slots: list[dict] | None = None,
 ) -> Intent:
     """Merge new revision intent into previous, applying state reconciliation rules."""
     if not new.is_revision:
@@ -797,7 +812,8 @@ def _reconcile_intents(
 
             if llm_router and (removed or added):
                 strategy, followup = _llm_clarification_strategy(
-                    query, previous, new, removed, added, llm_router
+                    query, previous, new, removed, added, llm_router,
+                    itinerary_slots=itinerary_slots,
                 )
             else:
                 # fallback without LLM
@@ -1628,6 +1644,7 @@ def parse_intent(
     global_schedule: dict | None = None,
     catalog: dict[str, ShopProfile] | None = None,
     new_start_date: str | None = None,
+    itinerary_slots: list[dict] | None = None,
 ) -> Intent:
     """Hybrid parser: refinement LLM path when ``previous_intent`` is supplied; else rules → LLM.
 
@@ -1702,6 +1719,7 @@ def parse_intent(
                 global_schedule=global_schedule,
                 query=query,
                 llm_router=llm_router,
+                itinerary_slots=itinerary_slots,
             )
             _iterative_actionability_check(llm_result)
             _sanitize_intent(llm_result)

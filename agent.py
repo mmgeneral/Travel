@@ -881,6 +881,7 @@ def node_route_intent(state: AgentState) -> AgentState:
             previous_intent=prev_model,
             prev_itinerary=str(state.get("prev_itinerary") or ""),
             global_schedule=state.get("global_schedule"),
+            itinerary_slots=list(state.get("itinerary_slots") or []),
         )
         # ▼▼▼ [新增 DEBUG 1：印出 LLM 解析出的完整 JSON] ▼▼▼
         print("\n" + "="*50)

@@ -212,7 +212,7 @@ class TestLLMRouterInstrumentation:
     def test_intent_parsing_routes_to_local_backend(self) -> None:
         exp = _make_exporter()
 
-        from llm_router import LLMRouter, TaskType, LocalQwenBackend, GeminiBackend, ClaudeBackend
+        from llm_router import LLMRouter, TaskType, LocalQwenBackend, GeminiBackend, ClaudeBackend, DeepSeekBackend
         from llm_router import OllamaBackend
 
         fn = self._make_mock_backend_fn()
@@ -222,7 +222,8 @@ class TestLLMRouterInstrumentation:
             claude_backend=ClaudeBackend(request_fn=fn),
         )
 
-        with patch.object(OllamaBackend, "is_available", return_value=True):
+        with patch.object(OllamaBackend, "is_available", return_value=True), \
+             patch.object(DeepSeekBackend, "is_available", return_value=False):
             router.complete(TaskType.INTENT_PARSING, [{"role": "user", "content": "hi"}])
 
         span = _find_span(exp, "llm.INTENT_PARSING")

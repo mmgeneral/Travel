@@ -84,6 +84,7 @@ def _router(
     r.vllm_backend = vllm or _mock_backend(available=False, name="VLLMBackend")
     r.gemini_backend = gemini or _mock_backend(name="GeminiBackend")
     r.claude_backend = claude or _mock_backend(name="ClaudeBackend")
+    r.deepseek_backend = _mock_backend(available=False, name="DeepSeekBackend")
     r.local_backend = r.ollama_backend
     return r
 

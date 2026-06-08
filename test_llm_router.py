@@ -31,7 +31,10 @@ def test_routing_logic_intent_goes_local() -> None:
     claude = ClaudeBackend(request_fn=lambda **_: calls.append("claude") or _ok_response("claude"))
     r = LLMRouter(local_backend=local, gemini_backend=gemini, claude_backend=claude)
 
-    out = r.complete(TaskType.INTENT_PARSING, [{"role": "user", "content": "hi"}])
+    from llm_router import DeepSeekBackend
+    from unittest.mock import patch
+    with patch.object(DeepSeekBackend, "is_available", return_value=False):
+        out = r.complete(TaskType.INTENT_PARSING, [{"role": "user", "content": "hi"}])
     assert out.content == "ok:local"
     assert calls == ["local"]
 

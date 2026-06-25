@@ -1354,129 +1354,159 @@ async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) 
 
 async def _node_plan_core(state: AgentState) -> AgentState:
     # ------------------------------------------------------------------
-    # Dummy planner – skips all graph building, scoring, and timing.
-    # Picks up to 3 shops from the researcher candidates or fallback pool,
-    # assigns fixed timestamps, and returns output matching the original schema.
+    # DP planner – uses actual DP solver for unlocked slots.
+    # Locked slots are kept unchanged. `_schedule_slots` assigns times.
     # ------------------------------------------------------------------
-    candidate_names: list[str] = []
-    # Try researcher candidates first.
-    res_names = state.get("researcher_candidate_names") or []
-    if res_names:
-        candidate_names = res_names[:3]
-    else:
-        # fallback: dynamic shop pool
-        pool = list(state.get("dynamic_shop_pool") or [])
-        names = [str(p.get("name", "")).strip() for p in pool if p.get("name")]
-        candidate_names = names[:3]
-    if not candidate_names:
-        candidate_names = ["Dummy Shop A", "Dummy Shop B", "Dummy Shop C"][:3]
-
-    fixed_times = [("11:30", "13:00"), ("13:30", "15:00"), ("17:30", "19:00")]
-
-    mock_date = datetime.now(_APP_TZ).date()
-
-    report_lines = []
-    report_lines.append("## Travel Agent - Live Run\n")
-    report_lines.append("### Itinerary (dummy planner – no DP)\n")
-    report_lines.append("| Time | Shop | Note |\n|---|---|---|\n")
-
-    for i, name in enumerate(candidate_names):
-        if i >= len(fixed_times):
-            break
-        start_str, end_str = fixed_times[i]
-        sh, sm = map(int, start_str.split(":"))
-        eh, em = map(int, end_str.split(":"))
-        start_dt = datetime(mock_date.year, mock_date.month, mock_date.day, sh, sm, tzinfo=_APP_TZ)
-        end_dt = datetime(mock_date.year, mock_date.month, mock_date.day, eh, em, tzinfo=_APP_TZ)
-        report_lines.append(
-            f"| {start_dt.strftime('%H:%M')} - {end_dt.strftime('%H:%M')} | {name} | MOCK |\n"
-        )
-
-    report_lines.append("\n### Summary\n")
-    report = "".join(report_lines)
-
-    ui_cards = []
-    for name in candidate_names:
-        ui_cards.append({
-            "shop_name": name,
-            "address_hint": "",
-            "why_selected": "Dummy planner – no ranking",
-            "how_to_go": "Walk",
-            "reservation_hint": "",
-            "rank_note": "",
-            "insider_pick": False,
-            "warning_badge": "",
-            "warning_text": "",
-            "lat": None,
-            "lng": None,
-        })
-
-    state.setdefault("transit_audit", []).append(
-        _dj("dummy_planner", mode="skip_all", shops=candidate_names)
-    )
-    state["ui_cards"] = ui_cards
-    state["final_itinerary"] = report
-
-    # Build stable UUID-keyed slots zip(intent["meal_slots"], candidate_names)
     intent_dict = state.get("intent") or {}
     meal_slots_from_intent = intent_dict.get("meal_slots") or []
     existing_slots = list(state.get("itinerary_slots") or [])
     locked_slots = [s for s in existing_slots if s.get("session_locked") is True or s.get("user_locked") is True]
 
-    if locked_slots:
-        # Partial revision: inherit locked slots, only rebuild unlocked ones
-        new_candidates = iter(candidate_names)
-        itinerary_slots: list[dict] = []
-        for slot in existing_slots:
-            if slot.get("session_locked") is True or slot.get("user_locked") is True:
-                # Preserve UUID and all fields
-                itinerary_slots.append(dict(slot))
-            else:
-                # Replace with next candidate, keep meal_type
-                name = next(new_candidates, slot.get("shop_name", ""))
+    # ---------- 1. candidate pool ----------
+    seed_profiles = _researcher_seed_catalog(state)
+    region = intent_dict.get("region") or "jp"
+    dynamic_profiles = [_build_dynamic_shop_profile(p, region=region)
+                        for p in (state.get("dynamic_shop_pool") or [])]
+    candidate_pool = seed_profiles + dynamic_profiles
+
+    # ---------- 2. Rank candidates ----------
+    preference = UserPreference(
+        preferred_tags=list(intent_dict.get("category_tags") or []),
+        avoid_tags=[],
+        dietary_preference=(state.get("dietary_profile") or {}).get("ethics") or "regular",
+        max_wait_minutes=35,
+        health_budget_limit=1.2,
+        max_total_minutes=120,
+        max_budget_impact=0.75,
+    )
+    minefield = UserMinefield()
+    ranked, rejected = RankingEngine.rank(candidate_pool, preference, minefield)
+    if not ranked:
+        state.setdefault("transit_audit", []).append(
+            _dj("dp_planner_no_ranked_shops",
+                candidate_count=len(candidate_pool),
+                rejected_count=len(rejected))
+        )
+        state["itinerary_slots"] = existing_slots
+        state["final_itinerary"] = "## 行程無法生成\n\n無法取得任何評分候選店家。"
+        state["ui_cards"] = []
+        return state
+
+    # ---------- 3. DP selection for unlocked slots ----------
+    required_length = len(meal_slots_from_intent) - len(locked_slots)
+
+    if required_length <= 0:
+        # all locked – keep existing slots unchanged
+        itinerary_slots = list(existing_slots)
+        state.setdefault("transit_audit", []).append(
+            _dj("dp_planner_all_locked", reason="required_length_zero_or_negative")
+        )
+    else:
+        start_time = datetime.now(_APP_TZ)
+        traffic = MockTrafficProvider()
+        locked_shop_names = {s.get("shop_name") for s in locked_slots if s.get("shop_name")}
+
+        # temporarily patch GraphBuilder.build_graph to use the pinned version
+        original_build = GraphBuilder.build_graph
+        GraphBuilder.build_graph = _dp_graph_builder_with_itinerary_day_pin
+        try:
+            graph = GraphBuilder.build_graph(
+                ranked, traffic, start_time,
+                meal_slots=meal_slots_from_intent,  # full order
+                mode=OptimizationMode.BALANCED,
+                requested_meal_count=required_length,
+                slot_required_tags=None,
+                excluded_shop_tags=frozenset(state.get("plan_excluded_shop_tags") or []),
+            )
+        finally:
+            GraphBuilder.build_graph = original_build
+
+        banned_node_ids: set[str] = set()
+        for n in graph.nodes:
+            if n.shop_name in locked_shop_names:
+                banned_node_ids.add(n.node_id)
+
+        resolved_path = agent_dp_find_optimal_path_no_shop_repeat(
+            graph,
+            required_length=required_length,
+            must_have_tags=set(),
+            banned_node_ids=banned_node_ids,
+            solver_audit_log=state.setdefault("transit_audit", []),
+            excluded_shop_tags=frozenset(state.get("plan_excluded_shop_tags") or []),
+        )
+
+        if len(resolved_path) < required_length:
+            state.setdefault("transit_audit", []).append(
+                _dj("dp_planner_degraded",
+                    requested=required_length,
+                    achieved=len(resolved_path))
+            )
+
+        # ---------- 4. Assemble itinerary_slots ----------
+        if locked_slots:
+            path_iter = iter(resolved_path)
+            itinerary_slots = []
+            for slot in existing_slots:
+                if slot.get("session_locked") is True or slot.get("user_locked") is True:
+                    itinerary_slots.append(dict(slot))
+                else:
+                    node = next(path_iter, None)
+                    if node is None:
+                        itinerary_slots.append(dict(slot))
+                        continue
+                    itinerary_slots.append({
+                        "slot_id": str(uuid.uuid4()),
+                        "meal_type": slot.get("meal_type", ""),
+                        "shop_name": node.shop_name,
+                        "user_locked": False,
+                        "session_locked": False,
+                        "start_time": None,
+                        "duration_minutes": 90,
+                    })
+        else:
+            itinerary_slots = []
+            for meal_type, node in zip(meal_slots_from_intent, resolved_path):
                 itinerary_slots.append({
                     "slot_id": str(uuid.uuid4()),
-                    "meal_type": slot.get("meal_type", ""),
-                    "shop_name": name,
+                    "meal_type": meal_type,
+                    "shop_name": node.shop_name,
                     "user_locked": False,
                     "session_locked": False,
                     "start_time": None,
                     "duration_minutes": 90,
                 })
-    else:
-        # Fresh plan: build all slots from scratch
-        itinerary_slots: list[dict] = []
-        for meal_type, name in zip(meal_slots_from_intent, candidate_names):
-            itinerary_slots.append({
-                "slot_id": str(uuid.uuid4()),
-                "meal_type": meal_type,
-                "shop_name": name,
-                "user_locked": False,
-                "session_locked": False,
-                "start_time": None,
-                "duration_minutes": 90,
-            })
+            if len(resolved_path) < len(meal_slots_from_intent):
+                missing = meal_slots_from_intent[len(resolved_path):]
+                state.setdefault("transit_audit", []).append(
+                    _dj("dp_planner_missing_slots", missing_meal_types=missing)
+                )
 
-    # Build catalog for distance estimation
-    seed_profiles = _researcher_seed_catalog(state)
-    _intent = state.get("intent") or {}
-    region = _intent.get("region") or "jp"
-    dynamic_profiles = [_build_dynamic_shop_profile(p, region=region) for p in (state.get("dynamic_shop_pool") or [])]
+    # ---------- 5. Schedule times ----------
     shop_catalog = {}
     for sp in seed_profiles + dynamic_profiles:
         shop_catalog[sp.name] = sp
-
     itinerary_slots = _schedule_slots(itinerary_slots, shop_catalog)
-
     state["itinerary_slots"] = itinerary_slots
 
-    # Build ui_cards from itinerary_slots（帶 meal_type）
+    # ---------- 6. Build report and ui_cards ----------
+    report_lines = [
+        "## Travel Agent - Live Run\n",
+        "### Itinerary (DP planner)\n",
+        "| Time | Shop | Note |\n|---|---|---|\n",
+    ]
+    locked_names = {s.get("shop_name") for s in locked_slots if s.get("shop_name")}
+    for slot in itinerary_slots:
+        start_time_field = slot.get("start_time") or "??"
+        shop_name = slot.get("shop_name") or "??"
+        tag = "LOCKED" if (slot.get("session_locked") or slot.get("user_locked")) else "DP"
+        report_lines.append(f"| {start_time_field} | {shop_name} | {tag} |\n")
+    report_lines.append("\n### Summary\n")
+    report = "".join(report_lines)
+    state["final_itinerary"] = report
+
     MEAL_LABEL = {
-        "breakfast": "早餐",
-        "lunch": "午餐",
-        "tea": "下午茶",
-        "dinner": "晚餐",
-        "late_night": "宵夜",
+        "breakfast": "早餐", "lunch": "午餐", "tea": "下午茶",
+        "dinner": "晚餐", "late_night": "宵夜",
     }
     ui_cards = []
     for slot in itinerary_slots:

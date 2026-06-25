@@ -1675,15 +1675,28 @@ class GraphBuilder:
     Slot indices encode meal-order / affinity layers only, not fixed clock windows per slot label.
     """
 
+    #: Clock anchor (hour, minute) for each meal‑slot type.
+    #: Used by _slot_anchor_times to give each slot a semantically meaningful default time.
+    SLOT_CLOCK_HOUR_MINUTE: dict[str, tuple[int, int]] = {
+        "breakfast": (8, 0),
+        "lunch": (12, 0),
+        "tea": (15, 0),
+        "dinner": (18, 30),
+        "late_night": (21, 30),
+    }
+
     @staticmethod
     def _slot_anchor_times(start_time: datetime, meal_slots: list[str] | None, node_count: int) -> list[datetime]:
         normalized = ItinerarySynthesizer._normalize_slot_sequence(meal_slots)
         if normalized:
             anchors: list[datetime] = []
-            cursor = start_time
-            for _slot in normalized:
-                anchors.append(cursor)
-                cursor = cursor + timedelta(minutes=60)
+            for slot_name in normalized:
+                hh, mm = GraphBuilder.SLOT_CLOCK_HOUR_MINUTE.get(slot_name, (start_time.hour, start_time.minute))
+                anchor = start_time.replace(hour=hh, minute=mm, second=0, microsecond=0)
+                # keep anchor in the future if it's already passed today
+                if anchor < start_time:
+                    anchor = anchor + timedelta(days=1)
+                anchors.append(anchor)
             return anchors
         return [start_time + timedelta(minutes=90 * i) for i in range(max(1, node_count))]
 

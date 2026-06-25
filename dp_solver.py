@@ -19,6 +19,7 @@ from decision_engine import (
     SpatioTemporalGraph,
     WeightProfile,
 )
+from feasibility_utils import can_transition, calculate_cooldown, estimate_travel_minutes
 from shop_planning import ShopProfile
 from typing import TYPE_CHECKING
 
@@ -126,23 +127,31 @@ def _relay_layer_one_edges_inplace(
                     shop_a = shop_index.get(a.shop_name)
                     if shop_a is None:
                         continue
-                    cooldown_m = ItinerarySynthesizer._calculate_cooldown(
-                        shop_a, mode=mode, requested_meal_count=None, appetite_light_mode=False,
-                    )
                     for b in to_nodes:
                         if a.shop_name == b.shop_name:
                             continue
                         shop_b = shop_index.get(b.shop_name)
                         if shop_b is None:
                             continue
-                        travel_m = 18 + (8 * i)
-                        fastest_finish_at = a.start_time + timedelta(
-                            minutes=int(shop_a.base_wait_minutes)
-                            + int(shop_a.min_eat_minutes or shop_a.avg_eat_minutes)
+                        # unified feasibility check
+                        feasible, reason = can_transition(
+                            a.start_time, shop_a,
+                            b.start_time, shop_b,
+                            mode=mode,
+                            requested_meal_count=None,
+                            appetite_light_mode=False,
                         )
-                        ready_at = fastest_finish_at + timedelta(minutes=cooldown_m) + timedelta(minutes=travel_m)
-                        open_b = ItinerarySynthesizer._shop_open_at(b.start_time, shop_b)
-                        if ready_at <= b.start_time and b.start_time >= open_b:
+                        if feasible:
+                            # compute edge weight with same method as before
+                            travel_min = estimate_travel_minutes(shop_a, shop_b)
+                            cooldown_m = calculate_cooldown(
+                                shop_a, mode=mode, requested_meal_count=None, appetite_light_mode=False,
+                            )
+                            fastest_finish_at = a.start_time + timedelta(
+                                minutes=int(shop_a.base_wait_minutes)
+                                + int(shop_a.min_eat_minutes or shop_a.avg_eat_minutes)
+                            )
+                            ready_at = fastest_finish_at + timedelta(minutes=cooldown_m) + timedelta(minutes=travel_min)
                             status = traffic.get_route_status(a.shop_name, b.shop_name)
                             queue_risk = min(1.0, max(0.0, float(shop_b.base_wait_minutes) / 45.0))
                             slack_m = max(0.0, (b.start_time - ready_at).total_seconds() / 60.0)
@@ -155,22 +164,12 @@ def _relay_layer_one_edges_inplace(
                             )
                             edges.append(GraphEdge(from_node_id=a.node_id, to_node_id=b.node_id, weight=weight))
                         else:
-                            reasons: list[str] = []
-                            if ready_at > b.start_time:
-                                reasons.append(
-                                    f"準備時間 (ready_at with cooldown) {ready_at.strftime('%H:%M')} > 開始時間 (B.start) {b.start_time.strftime('%H:%M')}"
-                                )
-                            if b.start_time < open_b:
-                                reasons.append(
-                                    f"B.start {b.start_time.strftime('%H:%M')} < B.open_time {open_b.strftime('%H:%M')}"
-                                )
-                            reason_text = "；".join(reasons) if reasons else "未知原因"
                             debug_traces.append(
                                 _dj(
                                     "graph_rejected_edge",
                                     from_shop=a.shop_name,
                                     to_shop=b.shop_name,
-                                    detail=reason_text,
+                                    detail=reason,
                                 )
                             )
     graph.edges = edges

@@ -199,41 +199,38 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
     Default start: 09:00, duration: 90 min per slot.
     Travel time between slots: use haversine distance estimate
     (2 min per km, minimum 5 min).
+    Now also checks feasibility (cooldown, open time) and records warnings.
     """
+    from feasibility_utils import can_transition, estimate_travel_minutes
     import math
     DEFAULT_START = "09:00"
     DEFAULT_DURATION = 90  # minutes
-    SPEED_MIN_PER_KM = 2   # walking/transit rough estimate
 
-    def haversine_km(lat1, lon1, lat2, lon2):
-        R = 6371
-        dlat = math.radians(lat2 - lat1)
-        dlon = math.radians(lon2 - lon1)
-        a = (math.sin(dlat/2)**2 +
-             math.cos(math.radians(lat1)) *
-             math.cos(math.radians(lat2)) *
-             math.sin(dlon/2)**2)
-        return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    def _get_shop_obj(name: str):
+        obj = shop_catalog.get(name)
+        if isinstance(obj, dict):
+            return _dict_to_shop(obj) if "name" in obj else None
+        return obj  # Assume it's already a ShopProfile
 
-    def _get_coord(shop_obj, lat_key="latitude", lng_key="longitude"):
-        if isinstance(shop_obj, dict):
-            return shop_obj.get(lat_key), shop_obj.get(lng_key)
-        return getattr(shop_obj, lat_key, None), getattr(shop_obj, lng_key, None)
-
-    def travel_minutes(shop_a: str, shop_b: str) -> int:
-        a = shop_catalog.get(shop_a, {})
-        b = shop_catalog.get(shop_b, {})
-        lat_a, lon_a = _get_coord(a)
-        lat_b, lon_b = _get_coord(b)
-        if None in (lat_a, lon_a, lat_b, lon_b):
-            return 15  # fallback
-        km = haversine_km(lat_a, lon_a, lat_b, lon_b)
-        return max(5, int(km * SPEED_MIN_PER_KM))
+    def _dict_to_shop(d: dict) -> object:
+        from shop_planning import ShopProfile, BookingType, QueueStrategy, FlavorCategory, AuthorityData
+        # minimal conversion to get coordinates and basic fields needed for feasibility
+        return type("_", (), {
+            "name": d.get("name",""),
+            "open_time": d.get("open_time",""),
+            "close_time": d.get("close_time",""),
+            "base_wait_minutes": int(d.get("base_wait_minutes",0)),
+            "min_eat_minutes": int(d.get("min_eat_minutes",d.get("avg_eat_minutes",60))),
+            "avg_eat_minutes": int(d.get("avg_eat_minutes",60)),
+            "latitude": float(d.get("latitude",0.0)),
+            "longitude": float(d.get("longitude",0.0)),
+            "flavor_category": FlavorCategory.LIGHT,
+            "has_small_portion": bool(d.get("has_small_portion",False)),
+        })()  # type: ignore
 
     current_time = datetime.strptime(DEFAULT_START, "%H:%M")
     for i, slot in enumerate(slots):
         if slot.get("user_locked") and slot.get("start_time"):
-            # 使用者鎖定且有指定時間，不動
             try:
                 current_time = datetime.strptime(slot["start_time"], "%H:%M")
                 current_time += timedelta(minutes=slot.get("duration_minutes") or DEFAULT_DURATION)
@@ -242,10 +239,39 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
             continue
         slot["start_time"] = current_time.strftime("%H:%M")
         slot["duration_minutes"] = slot.get("duration_minutes") or DEFAULT_DURATION
+        # advance clock after this meal starts
+        # but we add travel after this (see below)
+        # move to end of meal
         current_time += timedelta(minutes=slot["duration_minutes"])
-        # 加上到下一個 slot 的交通時間
+        # 加上到下一個 slot 的交通時間（同時使用可行性檢查）
         if i + 1 < len(slots):
-            next_shop = slots[i + 1].get("shop_name", "")
-            current_shop = slot.get("shop_name", "")
-            current_time += timedelta(minutes=travel_minutes(current_shop, next_shop))
+            next_shop_name = slots[i + 1].get("shop_name", "")
+            cur_shop_name = slot.get("shop_name", "")
+            if cur_shop_name and next_shop_name:
+                cur_shop_obj = _get_shop_obj(cur_shop_name)
+                next_shop_obj = _get_shop_obj(next_shop_name)
+                if cur_shop_obj is not None and next_shop_obj is not None:
+                    # compute start times as datetime objects (using current day)
+                    # The loop earlier set start_time of current slot (slot["start_time"])
+                    cur_start_dt = datetime.strptime(slot["start_time"], "%H:%M")
+                    # next slot's start time hasn't been set yet; we need an upper bound.
+                    # Use current_time (end of meal) plus minimal travel.
+                    next_start_dt = current_time + timedelta(minutes=5)  # placeholder
+                    feasible, reason = can_transition(
+                        cur_start_dt, cur_shop_obj,
+                        next_start_dt, next_shop_obj,
+                        mode="BALANCED",
+                        requested_meal_count=None,
+                        appetite_light_mode=False,
+                    )
+                    if not feasible:
+                        slot["feasibility_warning"] = reason
+                    # regardless, add travel time using haversine
+                    travel_min = estimate_travel_minutes(cur_shop_obj, next_shop_obj)
+                    current_time += timedelta(minutes=travel_min)
+                else:
+                    # fallback for missing shop data
+                    current_time += timedelta(minutes=15)
+            else:
+                current_time += timedelta(minutes=15)
     return slots

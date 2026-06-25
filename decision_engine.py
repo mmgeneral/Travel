@@ -933,34 +933,8 @@ class ItinerarySynthesizer:
         appetite_light_mode: bool = False,
     ) -> int:
         """Dynamic digestion gap after the previous meal (minutes)."""
-        if prev_shop is None:
-            return 90
-
-        cat = prev_shop.flavor_category
-        minutes: int
-        if cat == FlavorCategory.HEAVY:
-            # Never inflate digestion time just because the user said "吃不太下";
-            # only shorten when we explicitly model multi-meal appetite pressure.
-            if appetite_light_mode and requested_meal_count is not None and requested_meal_count >= 3:
-                minutes = 60
-            elif mode == OptimizationMode.TASTE_MAX and requested_meal_count is not None:
-                minutes = 75
-            else:
-                minutes = 90
-        elif cat == FlavorCategory.SWEET:
-            minutes = 30
-        elif cat == FlavorCategory.LIGHT:
-            minutes = 60
-        elif cat == FlavorCategory.REFRESHING:
-            minutes = 45
-        else:
-            minutes = 60
-
-        # 小盛／半份：實際胃負擔較小 → 冷卻不應拉長；可略縮短。
-        if bool(getattr(prev_shop, "has_small_portion", False)):
-            minutes = max(25, int(round(float(minutes) * 0.88)))
-
-        return minutes
+        from feasibility_utils import calculate_cooldown as _fc_cd
+        return _fc_cd(prev_shop, mode=mode, requested_meal_count=requested_meal_count, appetite_light_mode=appetite_light_mode)
 
     @staticmethod
     def _shop_last_call_at(base: datetime, shop: ShopProfile) -> datetime:
@@ -984,20 +958,13 @@ class ItinerarySynthesizer:
 
     @staticmethod
     def _shop_open_at(base: datetime, shop: ShopProfile) -> datetime:
-        raw = getattr(shop, "open_time", None) or "11:00"
-        parts = str(raw).strip().split(":", 1)
-        hh = int(parts[0])
-        mm = int(parts[1]) if len(parts) > 1 else 0
-        return base.replace(hour=hh, minute=mm, second=0, microsecond=0)
+        from feasibility_utils import shop_open_at as _fe_oa
+        return _fe_oa(base, shop)
 
     @staticmethod
     def _shop_open_close_window(base: datetime, shop: ShopProfile) -> tuple[datetime, datetime]:
-        open_at = ItinerarySynthesizer._shop_open_at(base, shop)
-        close_h, close_m = [int(x) for x in shop.close_time.split(":", 1)]
-        close_at = base.replace(hour=close_h, minute=close_m, second=0, microsecond=0)
-        if close_at <= open_at:
-            close_at = close_at + timedelta(days=1)
-        return open_at, close_at
+        from feasibility_utils import shop_open_close_window as _fe_ocw
+        return _fe_ocw(base, shop)
 
     @staticmethod
     def _scarcity_bonus(base: datetime, shop: ShopProfile) -> int:

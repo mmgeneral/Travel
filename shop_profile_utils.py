@@ -229,49 +229,71 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
         })()  # type: ignore
 
     current_time = datetime.strptime(DEFAULT_START, "%H:%M")
+    previous_start_dt: datetime | None = None
+    previous_shop_obj = None
+
     for i, slot in enumerate(slots):
+        cur_shop_name = slot.get("shop_name")
+        cur_shop_obj = _get_shop_obj(cur_shop_name)
+
+        # ----- locked slot (already has a fixed start_time) -----
         if slot.get("user_locked") and slot.get("start_time"):
             try:
                 current_time = datetime.strptime(slot["start_time"], "%H:%M")
                 current_time += timedelta(minutes=slot.get("duration_minutes") or DEFAULT_DURATION)
             except ValueError:
                 pass
-            continue
+            cur_start_dt = datetime.strptime(slot["start_time"], "%H:%M")
+
+            # check transition from previous slot to this locked slot
+            if i > 0 and previous_start_dt is not None and previous_shop_obj is not None and cur_shop_obj is not None:
+                feasible, reason = can_transition(
+                    previous_start_dt, previous_shop_obj,
+                    cur_start_dt, cur_shop_obj,
+                    mode="BALANCED",
+                    requested_meal_count=None,
+                    appetite_light_mode=False,
+                )
+                if not feasible:
+                    slot["feasibility_warning"] = reason
+
+            previous_start_dt = cur_start_dt
+            previous_shop_obj = cur_shop_obj
+            continue   # no further travel addition to maintain original behaviour
+
+        # ----- unlocked slot: assign start_time, duration -----
         slot["start_time"] = current_time.strftime("%H:%M")
         slot["duration_minutes"] = slot.get("duration_minutes") or DEFAULT_DURATION
-        # advance clock after this meal starts
-        # but we add travel after this (see below)
-        # move to end of meal
+        cur_start_dt = datetime.strptime(slot["start_time"], "%H:%M")
+        # advance clock after finishing this meal
         current_time += timedelta(minutes=slot["duration_minutes"])
-        # 加上到下一個 slot 的交通時間（同時使用可行性檢查）
+
+        # check transition from previous slot to this unlocked slot
+        if i > 0 and previous_start_dt is not None and previous_shop_obj is not None and cur_shop_obj is not None:
+            feasible, reason = can_transition(
+                previous_start_dt, previous_shop_obj,
+                cur_start_dt, cur_shop_obj,
+                mode="BALANCED",
+                requested_meal_count=None,
+                appetite_light_mode=False,
+            )
+            if not feasible:
+                slot["feasibility_warning"] = reason
+
+        previous_start_dt = cur_start_dt
+        previous_shop_obj = cur_shop_obj
+
+        # add travel time to the next slot (skipped for locked slots and for the very last slot)
         if i + 1 < len(slots):
             next_shop_name = slots[i + 1].get("shop_name", "")
-            cur_shop_name = slot.get("shop_name", "")
-            if cur_shop_name and next_shop_name:
-                cur_shop_obj = _get_shop_obj(cur_shop_name)
+            if cur_shop_name and next_shop_name and cur_shop_obj is not None:
                 next_shop_obj = _get_shop_obj(next_shop_name)
-                if cur_shop_obj is not None and next_shop_obj is not None:
-                    # compute start times as datetime objects (using current day)
-                    # The loop earlier set start_time of current slot (slot["start_time"])
-                    cur_start_dt = datetime.strptime(slot["start_time"], "%H:%M")
-                    # next slot's start time hasn't been set yet; we need an upper bound.
-                    # Use current_time (end of meal) plus minimal travel.
-                    next_start_dt = current_time + timedelta(minutes=5)  # placeholder
-                    feasible, reason = can_transition(
-                        cur_start_dt, cur_shop_obj,
-                        next_start_dt, next_shop_obj,
-                        mode="BALANCED",
-                        requested_meal_count=None,
-                        appetite_light_mode=False,
-                    )
-                    if not feasible:
-                        slot["feasibility_warning"] = reason
-                    # regardless, add travel time using haversine
+                if next_shop_obj is not None:
                     travel_min = estimate_travel_minutes(cur_shop_obj, next_shop_obj)
                     current_time += timedelta(minutes=travel_min)
                 else:
-                    # fallback for missing shop data
                     current_time += timedelta(minutes=15)
             else:
                 current_time += timedelta(minutes=15)
+
     return slots

@@ -27,6 +27,7 @@ class AgentState(TypedDict):
     venue_facts:      dict             # per-venue extracted + station-audited facts
     transit_audit:    List[str]        # verified leg-by-leg transit timings
     draft_slots:      List[dict]       # VenueSlot dicts (arrive/depart/notes/warnings)
+    itinerary_slots:  List[dict]       # Per-slot plan (shop_name, meal_type, locked state, start_time, duration); written by _node_plan_core, not interchangeable with draft_slots
     critic_report:    List[str]        # Validator + LLM reflexion findings
     final_itinerary:  str              # final markdown output
     version:          int              # itinerary version for optimistic concurrency

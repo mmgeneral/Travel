@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 from debug_json import debug_json as _dj
+from feasibility_utils import SLOT_CLOCK_HOUR_MINUTE
 from shop_planning import (
     FlavorCategory,
     ShopProfile,
@@ -1675,15 +1676,6 @@ class GraphBuilder:
     Slot indices encode meal-order / affinity layers only, not fixed clock windows per slot label.
     """
 
-    #: Clock anchor (hour, minute) for each meal‑slot type.
-    #: Used by _slot_anchor_times to give each slot a semantically meaningful default time.
-    SLOT_CLOCK_HOUR_MINUTE: dict[str, tuple[int, int]] = {
-        "breakfast": (8, 0),
-        "lunch": (12, 0),
-        "tea": (15, 0),
-        "dinner": (18, 30),
-        "late_night": (21, 30),
-    }
 
     @staticmethod
     def _slot_anchor_times(start_time: datetime, meal_slots: list[str] | None, node_count: int) -> list[datetime]:
@@ -1691,7 +1683,7 @@ class GraphBuilder:
         if normalized:
             anchors: list[datetime] = []
             for slot_name in normalized:
-                hh, mm = GraphBuilder.SLOT_CLOCK_HOUR_MINUTE.get(slot_name, (start_time.hour, start_time.minute))
+                hh, mm = SLOT_CLOCK_HOUR_MINUTE.get(slot_name, (start_time.hour, start_time.minute))
                 anchor = start_time.replace(hour=hh, minute=mm, second=0, microsecond=0)
                 # keep anchor in the future if it's already passed today
                 if anchor < start_time:

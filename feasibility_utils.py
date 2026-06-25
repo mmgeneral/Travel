@@ -7,6 +7,14 @@ from shop_planning import ShopProfile, FlavorCategory
 
 logger = logging.getLogger(__name__)
 
+SLOT_CLOCK_HOUR_MINUTE: dict[str, tuple[int, int]] = {
+    "breakfast": (8, 0),
+    "lunch": (12, 0),
+    "tea": (15, 0),
+    "dinner": (18, 30),
+    "late_night": (21, 30),
+}
+
 
 def calculate_cooldown(
     prev_shop: ShopProfile | None,

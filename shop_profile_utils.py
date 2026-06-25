@@ -201,7 +201,7 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
     (2 min per km, minimum 5 min).
     Now also checks feasibility (cooldown, open time) and records warnings.
     """
-    from feasibility_utils import can_transition, estimate_travel_minutes
+    from feasibility_utils import can_transition, estimate_travel_minutes, SLOT_CLOCK_HOUR_MINUTE
     import math
     DEFAULT_START = "09:00"
     DEFAULT_DURATION = 90  # minutes
@@ -262,6 +262,12 @@ def _schedule_slots(slots: list[dict], shop_catalog: dict) -> list[dict]:
             continue   # no further travel addition to maintain original behaviour
 
         # ----- unlocked slot: assign start_time, duration -----
+        meal_type = slot.get("meal_type", "")
+        if meal_type in SLOT_CLOCK_HOUR_MINUTE:
+            hh, mm = SLOT_CLOCK_HOUR_MINUTE[meal_type]
+            anchor_dt = current_time.replace(hour=hh, minute=mm, second=0, microsecond=0)
+            if current_time < anchor_dt:
+                current_time = anchor_dt
         slot["start_time"] = current_time.strftime("%H:%M")
         slot["duration_minutes"] = slot.get("duration_minutes") or DEFAULT_DURATION
         cur_start_dt = datetime.strptime(slot["start_time"], "%H:%M")

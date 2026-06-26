@@ -973,6 +973,25 @@ def node_route_intent(state: AgentState) -> AgentState:
                 slot["user_locked"] = False
         state["itinerary_slots"] = slots
 
+    # excluded_shops 觸發排除時，沒被點名的 slot 視為鎖定（partial slot invariance）
+    excluded_shop_names_for_lock = set(state["intent"].get("excluded_shops") or [])
+    rev_op_for_lock = state["intent"].get("revision_op")
+    if state["intent"].get("is_revision") and excluded_shop_names_for_lock and not rev_op_for_lock:
+        slots = list(state.get("itinerary_slots") or [])
+        if slots:
+            target_slot_ids = {
+                s.get("slot_id") for s in slots
+                if s.get("shop_name") in excluded_shop_names_for_lock
+            }
+            if target_slot_ids:
+                updated_slots = []
+                for slot in slots:
+                    s = dict(slot)
+                    if s.get("slot_id") not in target_slot_ids:
+                        s["session_locked"] = True
+                    updated_slots.append(s)
+                state["itinerary_slots"] = updated_slots
+
     if not intent.is_actionable:
         msg = (intent.actionability_followup or "").strip()
 

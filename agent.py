@@ -1360,6 +1360,16 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     intent_dict = state.get("intent") or {}
     meal_slots_from_intent = intent_dict.get("meal_slots") or []
     existing_slots = list(state.get("itinerary_slots") or [])
+    excluded_shop_names = set(intent_dict.get("excluded_shops") or [])
+
+    # 黑名單優先於鎖定：如果一個已鎖定的 slot，它的店家被加進黑名單，
+    # 解除這個 slot 的鎖定，讓它回到「可以被 DP 重排」的狀態
+    if excluded_shop_names:
+        for slot in existing_slots:
+            if slot.get("shop_name") in excluded_shop_names:
+                slot["session_locked"] = False
+                slot["user_locked"] = False
+
     locked_slots = [s for s in existing_slots if s.get("session_locked") is True or s.get("user_locked") is True]
 
     # ---------- 1. candidate pool ----------
@@ -1368,6 +1378,9 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     dynamic_profiles = [_build_dynamic_shop_profile(p, region=region)
                         for p in (state.get("dynamic_shop_pool") or [])]
     candidate_pool = seed_profiles + dynamic_profiles
+
+    if excluded_shop_names:
+        candidate_pool = [s for s in candidate_pool if s.name not in excluded_shop_names]
 
     # ---------- 2. Rank candidates ----------
     preference = UserPreference(
@@ -1424,6 +1437,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         banned_node_ids: set[str] = set()
         for n in graph.nodes:
             if n.shop_name in locked_shop_names:
+                banned_node_ids.add(n.node_id)
+            if n.shop_name in excluded_shop_names:
                 banned_node_ids.add(n.node_id)
 
         resolved_path = agent_dp_find_optimal_path_no_shop_repeat(

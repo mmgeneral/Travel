@@ -210,6 +210,7 @@ def agent_dp_find_optimal_path_no_shop_repeat(
     banned_node_ids: set[str] | None = None,
     solver_audit_log: list[str] | None = None,
     excluded_shop_tags: frozenset[str] | None = None,
+    allow_global_repeat: bool = False,
 ) -> list[GraphNode]:
     if solver_audit_log is not None:
         solver_audit_log.append(_dj("dp_start_agent", variant="unique_shops_soft_slot_tag_affinity",
@@ -276,7 +277,8 @@ def agent_dp_find_optimal_path_no_shop_repeat(
                 bonus = 1.3
         return float(node.final_score) * fidelity * bonus
 
-    KeyT = tuple[str, int, int, frozenset[str]]
+    # (node_id, length, mask, seen_shop_names, previous_shop_name) -> score
+    KeyT = tuple[str, int, int, frozenset[str], str | None]
     best: dict[KeyT, float] = {}
     prev: dict[KeyT, KeyT | None] = {}
 
@@ -284,7 +286,7 @@ def agent_dp_find_optimal_path_no_shop_repeat(
         node = node_by_id[nid]
         m = tag_mask(node)
         fshops = frozenset({node.shop_name})
-        key = (nid, 1, m, fshops)
+        key: KeyT = (nid, 1, m, fshops, node.shop_name)
         best[key] = node_objective_score(node)
         prev[key] = None
 
@@ -294,16 +296,22 @@ def agent_dp_find_optimal_path_no_shop_repeat(
         if not cur_states:
             continue
         for cur_key, cur_score in cur_states:
-            _, cur_len, cur_mask, fshops_cur = cur_key
+            _, cur_len, cur_mask, fshops_cur, cur_prev_shop = cur_key
             if cur_len >= required_length:
                 continue
             for e in outgoing:
                 to_node = node_by_id[e.to_node_id]
-                if to_node.shop_name in fshops_cur:
+                # hard rule: never allow immediately consecutive same shop
+                if to_node.shop_name == cur_prev_shop:
+                    continue
+                if not allow_global_repeat and to_node.shop_name in fshops_cur:
                     continue
                 next_mask = cur_mask | tag_mask(to_node)
-                fshops_next = frozenset(fshops_cur | {to_node.shop_name})
-                nxt: KeyT = (e.to_node_id, cur_len + 1, next_mask, fshops_next)
+                if not allow_global_repeat:
+                    fshops_next = frozenset(fshops_cur | {to_node.shop_name})
+                else:
+                    fshops_next = fshops_cur  # keep same set, do not force global uniqueness
+                nxt: KeyT = (e.to_node_id, cur_len + 1, next_mask, fshops_next, to_node.shop_name)
                 cand = cur_score + node_objective_score(to_node)
                 if cand > best.get(nxt, float("-inf")):
                     best[nxt] = cand

@@ -888,16 +888,8 @@ class ItinerarySynthesizer:
     def _normalize_slot_sequence(meal_slots: list[str] | None) -> list[str]:
         if not meal_slots:
             return []
-        deduped: list[str] = []
-        seen: set[str] = set()
-        for slot in meal_slots:
-            if slot not in ItinerarySynthesizer.SLOT_ORDER:
-                continue
-            if slot in seen:
-                continue
-            deduped.append(slot)
-            seen.add(slot)
-        return sorted(deduped, key=lambda s: ItinerarySynthesizer.SLOT_ORDER[s])
+        valid = [s for s in meal_slots if s in ItinerarySynthesizer.SLOT_ORDER]
+        return sorted(valid, key=lambda s: ItinerarySynthesizer.SLOT_ORDER[s])
 
     @staticmethod
     def _normalize_slot_required_tags(
@@ -1682,10 +1674,13 @@ class GraphBuilder:
         normalized = ItinerarySynthesizer._normalize_slot_sequence(meal_slots)
         if normalized:
             anchors: list[datetime] = []
+            occurrence_count: dict[str, int] = {}
             for slot_name in normalized:
                 hh, mm = SLOT_CLOCK_HOUR_MINUTE.get(slot_name, (start_time.hour, start_time.minute))
+                occurrence = occurrence_count.get(slot_name, 0)
+                occurrence_count[slot_name] = occurrence + 1
                 anchor = start_time.replace(hour=hh, minute=mm, second=0, microsecond=0)
-                # keep anchor in the future if it's already passed today
+                anchor = anchor + timedelta(minutes=70 * occurrence)
                 if anchor < start_time:
                     anchor = anchor + timedelta(days=1)
                 anchors.append(anchor)

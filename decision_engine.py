@@ -1002,11 +1002,15 @@ class ItinerarySynthesizer:
         solver_audit_log: list[str] | None = None,
         meal_slots: list[str] | None = None,
         excluded_shop_tags: frozenset[str] | None = None,
+        allow_global_repeat: bool = False,
     ) -> list[GraphNode]:
         """
         DAG longest-path with DP under fixed path length and tag-coverage constraints.
-        Each shop_name appears at most once per path. Optional meal_slots activates soft
-        slot–tag affinity (×1.3 when node.tags hits SLOT_PREFERRED_TAGS for that slot).
+        Each shop_name appears at most once per path when allow_global_repeat=False (default).
+        With allow_global_repeat=True, the same shop can appear at non‑adjacent positions,
+        but **immediately consecutive identical shop_name is always forbidden**.
+        Optional meal_slots activates soft slot–tag affinity (×1.3 when node.tags hits
+        SLOT_PREFERRED_TAGS for that slot).
         """
         if solver_audit_log is not None:
             solver_audit_log.append(
@@ -1121,8 +1125,8 @@ class ItinerarySynthesizer:
                 * _negative_tag_penalty(node)
             )
 
-        # (node_id, length, mask, seen_shop_names) -> score ; seen enforces distinct shops.
-        KeyT = tuple[str, int, int, frozenset[str]]
+        # (node_id, length, mask, seen_shop_names, previous_shop_name) -> score
+        KeyT = tuple[str, int, int, frozenset[str], str | None]
         best: dict[KeyT, float] = {}
         prev: dict[KeyT, KeyT | None] = {}
 
@@ -1130,7 +1134,7 @@ class ItinerarySynthesizer:
             node = node_by_id[nid]
             m = tag_mask(node)
             seen0 = frozenset({node.shop_name})
-            key: KeyT = (nid, 1, m, seen0)
+            key: KeyT = (nid, 1, m, seen0, node.shop_name)
             best[key] = node_objective_score(node)
             prev[key] = None
 
@@ -1141,16 +1145,19 @@ class ItinerarySynthesizer:
             if not cur_states:
                 continue
             for (cur_key, cur_score) in cur_states:
-                _, cur_len, cur_mask, cur_seen = cur_key
+                _, cur_len, cur_mask, cur_seen, cur_prev_shop = cur_key
                 if cur_len >= required_length:
                     continue
                 for e in outgoing:
                     to_node = node_by_id[e.to_node_id]
-                    if to_node.shop_name in cur_seen:
+                    # hard rule: never allow immediately consecutive same shop
+                    if to_node.shop_name == cur_prev_shop:
+                        continue
+                    if not allow_global_repeat and to_node.shop_name in cur_seen:
                         continue
                     next_mask = cur_mask | tag_mask(to_node)
-                    next_seen = frozenset(cur_seen | {to_node.shop_name})
-                    nxt: KeyT = (e.to_node_id, cur_len + 1, next_mask, next_seen)
+                    next_seen = frozenset(cur_seen | {to_node.shop_name}) if not allow_global_repeat else cur_seen
+                    nxt: KeyT = (e.to_node_id, cur_len + 1, next_mask, next_seen, to_node.shop_name)
                     cand = cur_score + node_objective_score(to_node)
                     if cand > best.get(nxt, float("-inf")):
                         best[nxt] = cand

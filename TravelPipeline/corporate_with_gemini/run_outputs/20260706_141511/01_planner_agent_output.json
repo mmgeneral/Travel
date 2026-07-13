@@ -1,0 +1,250 @@
+{
+  "destination_type": "international",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "名古屋",
+    "country_code": "JP",
+    "region_code": "Aichi",
+    "language_code": "zh-TW",
+    "travel_start_date": "2026-07-18",
+    "arrival_anchor": {
+      "name": "中部國際機場",
+      "place_query": "中部國際機場",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "中部國際機場",
+      "place_query": "中部國際機場",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "saturday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "saturday",
+          "start_time": "08:00",
+          "end_time": "12:00",
+          "time": "08:00~12:00",
+          "activity": "從台灣飛往名古屋並入境當地",
+          "slot_type": "flight",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "台灣",
+          "route_exit_place": "中部國際機場",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "saturday",
+          "start_time": "12:00",
+          "end_time": "13:30",
+          "time": "12:00~13:30",
+          "activity": "享用名古屋 Ogura Toast 早餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "Ogura Toast",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "saturday",
+          "start_time": "13:30",
+          "end_time": "14:00",
+          "time": "13:30~14:00",
+          "activity": "前往榮區",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "saturday",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "逛榮（Sakae）區",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "榮（Sakae）",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": "saturday",
+          "start_time": "17:00",
+          "end_time": "17:30",
+          "time": "17:00~17:30",
+          "activity": "前往餐廳",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot06",
+          "day_of_week": "saturday",
+          "start_time": "17:30",
+          "end_time": "19:00",
+          "time": "17:30~19:00",
+          "activity": "享用名古屋 Tebasaki 晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "Tebasaki",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "11:30",
+          "time": "09:00~11:30",
+          "activity": "體驗大須商圈",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "大須商圈",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "sunday",
+          "start_time": "11:30",
+          "end_time": "12:00",
+          "time": "11:30~12:00",
+          "activity": "探索街頭美食",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "大須街頭美食",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "sunday",
+          "start_time": "12:00",
+          "end_time": "12:30",
+          "time": "12:00~12:30",
+          "activity": "前往文化之道",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "sunday",
+          "start_time": "12:30",
+          "end_time": "15:00",
+          "time": "12:30~15:00",
+          "activity": "文化之道漫步",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "文化之道",
+          "route_entry_place": "Nagoya City Archives Museum",
+          "route_exit_place": "Shumokukan",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot05",
+          "day_of_week": "sunday",
+          "start_time": "15:00",
+          "end_time": "15:30",
+          "time": "15:00~15:30",
+          "activity": "在 Shumokukan 咖啡館休息",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "Shumokukan 咖啡館",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "monday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "monday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "自由活動或前往其他景點",
+          "slot_type": "flexible",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "熱田神宮或豐田博物館",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "monday",
+          "start_time": "11:00",
+          "end_time": "12:30",
+          "time": "11:00~12:30",
+          "activity": "結束行程並回台",
+          "slot_type": "flight",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "中部國際機場",
+          "route_exit_place": "台灣",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "7月夏季名古屋悶熱，記得防曬和補水。",
+    "大須商圈多數店鋪11:00營業，但寺廟可早訪。",
+    "文化之道開放時間與入場費注意規劃當天週一不開放的館。",
+    "搭乘 Meijo 線或 Sakura‑dori 線便捷參觀文化之道。"
+  ]
+}

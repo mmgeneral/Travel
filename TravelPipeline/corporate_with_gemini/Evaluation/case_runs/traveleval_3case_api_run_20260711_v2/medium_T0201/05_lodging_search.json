@@ -1,0 +1,3167 @@
+{
+  "lodging_search_version": "serpapi_google_hotels_v0.1",
+  "candidate_domain": "lodging",
+  "search_context": {
+    "destination": "上海",
+    "lodging_area": "景萊酒店·不舍",
+    "lodging_type": "飯店",
+    "query": "上海 景萊酒店·不舍 飯店",
+    "checkin_date": "2026-07-14",
+    "checkout_date": "2026-07-17",
+    "nights": 3,
+    "adults": 2,
+    "currency": "TWD",
+    "gl": "tw",
+    "hl": "zh-tw",
+    "budget_total": 5600.0,
+    "budget_per_night_cap": 653.33,
+    "lodging_preferences": [
+      "設計師酒店",
+      "地理位置"
+    ],
+    "avoid_areas": [],
+    "priority_order": [
+      3,
+      1,
+      2
+    ],
+    "can_search_live_price": true,
+    "live_price_date_adjustment": {
+      "reason": "TravelEval case date is in the past, but Google Hotels live price API requires a future check-in date.",
+      "original_checkin_date": "2024-11-15",
+      "original_checkout_date": "2024-11-18",
+      "live_api_checkin_date": "2026-07-14",
+      "live_api_checkout_date": "2026-07-17"
+    }
+  },
+  "candidate_count": 20,
+  "candidates": [
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB",
+      "property_token": "ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB",
+      "name": "上海 世 和 酒店",
+      "address": null,
+      "latitude": 31.2035,
+      "longitude": 121.48827,
+      "rating": 3.9,
+      "user_rating_count": 11,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Free parking",
+        "Air conditioning",
+        "Restaurant",
+        "Full-service laundry",
+        "Business center",
+        "Kid-friendly"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1759.0,
+        "total": 5277.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$1,759",
+          "extracted_lowest": 1759
+        },
+        "raw_total_rate": {
+          "lowest": "$5,277",
+          "extracted_lowest": 5277
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 1,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "上海 世 和 酒店",
+        "description": "附設餐廳的樸實飯店提供舒適客房，部分可看見市景，附設大廳酒吧和健身房。",
+        "link": "http://www.hundredcenturies.com/cn/contact_us/",
+        "property_token": "ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.2035,
+          "longitude": 121.48827
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$1,759",
+          "extracted_lowest": 1759
+        },
+        "total_rate": {
+          "lowest": "$5,277",
+          "extracted_lowest": 5277
+        },
+        "nearby_places": [
+          {
+            "name": "中华艺术宫",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "35 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/jEunSJgCUNI1FDrYSsGwTBJ6-Jgo_j7b2u7rkxZHbd_ituovkMCbxW1ukXJOeEzitCfaUEuRh5ORVEFgeczObh8q0M5_FrecAUO9FfuY17XxH2pMAdTfiPBIwU1zg7jfluqyd3YoxrKpvzVMqfnkqQSqacDW5Q=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/9e/c2/9ec2b813836e53dd2d4ea11bece88f953db934ba.jpeg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/lsR1gZV0utR9OJIEhyXoavnPtBlKuyac3KFH4dBMpnD5L4-uQk6eQVjQ9nrt_3Pe2jo5vD7E0gitS1qP8bBiu0-mpJj8Wd7f3DIyqY76qIRBQTBI3yxAJzP9pNJk7lNpG8nsM5FTmq8NNSr_RQf0K0RfxFBtP2A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/09/096286/096286a_hb_w_007_20260306_100749.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/k6VRhvU4RQGg2nX82syQWUxx8t9_RgSbPCTEnmi06IkmEPPJZmUiZwkkPRzRr_-PVHTdqQu1j-3E3D6ArHlD0PiU89f0er_9E8XdOoTS65Rl4fqc6_L3Z81cvx2xJ2cQWGIH6R_n57IjcZ2OlnqgXNZA8c5-bSc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/c3/71/c3717be77621961ac4a8c66f7127a833c74934ab.jpeg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/0JdxQMUta0H_doqnT1N3uCa5XPLSjduw6iuETTrS1v0aPagcDDMC4Ziqz6KPJzAJWJUZ9J32ojVHo3vQUTXO805uufxWQi2QFVLCIjas1svK4BL3Uh5R6ZZ1dPlAHU1EAI8SQkE6BWkY4Mx3FL0lVpIe3G5Xsg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/09/096286/096286a_hb_r_003_20260227_125027.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/QbBDMvBCWbPSornwyqcyWcSUDWlVM8xl5Yx_OHJJqNOglG2EC-3WW826rjwyzTQ_tg4sON5ltHN-rgX8f09aoQyYGNzqolxPcf2bjudSxitWPG0ERHzLkiDUh4Bq2VOlpCzQdFmEkhuqzzGvCbiQxpcsSme_6g=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/09/096286/096286a_hb_w_005_20260306_100748.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/aoj8TbFvH5i42GL2ByoXphsJicZpEaqZy8jAKllWcJugDOcjmH4l6WemgwoETiLPeQKBzlKmB2wFocmxKfPgA48hqs1rGp6G2Zx3WVnz7SoYAvxLRdP-V73fNIIDIfcEcgAkLxmDZqmaRq5mkGPeJag1q2o6Xfs=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/09/096286/096286a_hb_a_006.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/BrbvJmW_MWFK02fNd4YxS5o8XiEiXyUOvUy1h8HnJvytUylM2ERuV18I_20EcIGJsQ9Yd9qayX4QfXHE-otTbZ1Gsx1jDAZ-xvlv1mXwhvUEUKKtmEYOmJjxJoiNBIthl1YN2a0Gb9Jl13jDJFAkoe_Cqj98TQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/09/096286/096286a_hb_a_026.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/8RJ96PcC1WifVMrfls2OzBqBTz9wo7iQdch0fng5sEoqYdQVQdFMj3x5Oqw4dtszN3f0MOcJG0aaQkzKh4wqoWd-FEpbocZpJGGgdOhoEIrqOefE8rMQ9weRu_lPYiNfdK7hU2KFZBT3xlMAn2qde-gI_EAO9vM=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/09/096286/096286a_hb_a_007.jpg"
+          }
+        ],
+        "overall_rating": 3.9,
+        "reviews": 11,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 3
+          },
+          {
+            "stars": 4,
+            "count": 4
+          },
+          {
+            "stars": 3,
+            "count": 4
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Free parking",
+          "Air conditioning",
+          "Restaurant",
+          "Full-service laundry",
+          "Business center",
+          "Kid-friendly"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChgI4O3E3P2s0cTEARoLL2cvMXRma25ybTgQAQ",
+      "property_token": "ChgI4O3E3P2s0cTEARoLL2cvMXRma25ybTgQAQ",
+      "name": "錦江之星旅館",
+      "address": null,
+      "latitude": 31.21181,
+      "longitude": 121.483358,
+      "rating": 3.5,
+      "user_rating_count": 13,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Air conditioning",
+        "Restaurant",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1390.0,
+        "total": 4169.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$1,390",
+          "extracted_lowest": 1390
+        },
+        "raw_total_rate": {
+          "lowest": "$4,169",
+          "extracted_lowest": 4169
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 2,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.5
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "錦江之星旅館",
+        "property_token": "ChgI4O3E3P2s0cTEARoLL2cvMXRma25ybTgQAQ",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChgI4O3E3P2s0cTEARoLL2cvMXRma25ybTgQAQ&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.21181,
+          "longitude": 121.483358
+        },
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$1,390",
+          "extracted_lowest": 1390
+        },
+        "total_rate": {
+          "lowest": "$4,169",
+          "extracted_lowest": 4169
+        },
+        "nearby_places": [
+          {
+            "name": "田子坊",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "8 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "32 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/nyAYtDQ3C2B-4ELkewMnLQ0o3psamfhrY2LByTzdJYoNch5HbWUaTfFtmL9moNeT7Cc1zaNdGTjY1_381YMWYeYvIKI75ahxsOI0LdISFCn8nIQzLfWS5g41gW6Zyod371FI0aM9iUpqx1iYaPkQgVr-1vBZgfo=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_013.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/v0o4WlAUafeW9ovXskFhzOQcSMsZbyU3HLAMaDLB9H7uA6pliqcyy40Dxp22RX7KpZIBFzXbaDe6iR693kNwQTdWJU8S5Lwevu_ssxgNvqpPmTf1__YtA5PkIOTBZgx5LjRAwJ4LlnfRgVOHzJk5GeYr9rwlOis=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_010.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/9L8mZgK83s3UHFCGfVaF4Um8okIIj3g6IvRNUmCRan7Ig68AuMJA21YkzUqNKXZ-adJ5d4J8wEfop2j9Ajvty9BJVHAlK59Xxl9-x328o7TML3RH7xrTIFtfGEKzsE0eV_0a8AP4iI2a0yj-YefJQcOw7ZdPhw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_029_20260306_105354.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/BsLsf6hi1GypLAXfmLEndjgIcgDC8svvtSDTaXVFn-AyZYjYM9A59w9ouGpYWOLFXCzxp-zlxZH5WwR0aLnk0jF78M3VcPNkQYsddJF_Vy6TToTtxTvz9QOAGp0jflfY4WB7P7o_1EtMhmWyUisHTqaiAnCNvJc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_a_009.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/mbQoEJndJ5w44YjZfEu57dXmPd4TAbgEP2m3_onDI9LOAY_3UvvPokb6ljuNewI5MQyW-CF4Jt0iiyV208R3-C0vtZLdcv4oot9AMgvRQP4j9btmA3aWbtPaNOlLirFPzP5bzdt8_x9xI8BGTd2XqYQUiRJjCV4=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_008.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/1PUxJoDiuLIodPj6ANu3XQvYuNF3RH6oX0os377EJsLcH0SUZVUtOsPcGppNhgVzCobHy-ht9idlD-5CSmiYok_8F3xsFGlkwpzhbKpRBEzl0JAQl9pI8NFCwAmhVVpvPzAAnb-nLVBpVaZN2pj3xFHdxq-YtqY=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_007.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/q9WrSTzxZ9sBCljvmpaI9e15GCvPENgiVTvPGr29ioPjkxApDvFks_ZYLRSllqyihEV3iyHbvOVFOqj1_gtyu4bLAG8Qy0FwpUtkDveGGMJBwZ62TTXzz1JiBaw6Poo1BDKkJBCT8rhwUWqR6-9RAglEGSr-LkU=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_028_20260306_105353.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/Fv9ntYAS9At-voikxNOTEDQ9A5-JM7PnwFdsSthlx5wwFiquhAUSNzlpXx6Aw-PqJFW6M5G_Mw4gqmWPegP22cF480cqeb9jV8QQojlDRsEvJzKon6l_2J08216yv62l_UYavmtxKNhMicLkNZ0-Z_IOrRsFsw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_003.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/lZqHsAJ2RiK67toDNxy1OERWMpBVcy7PXOhKRxLl9HudE-NNvHb5KTepkBcGdpsoBj7sENx1m0-Y3M8xLisOTiEhrbKr22YT4omsUHpW0hfpgKOzGx9mU0P3xt00wGC2RMjlmUsjc6r-_Q3BX_oIwTgF35h3RnA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/32/328759/328759a_hb_w_021.jpg"
+          }
+        ],
+        "overall_rating": 3.5,
+        "reviews": 13,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 3
+          },
+          {
+            "stars": 4,
+            "count": 5
+          },
+          {
+            "stars": 3,
+            "count": 3
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 2
+          }
+        ],
+        "location_rating": 3.6,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Air conditioning",
+          "Restaurant",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChgI4O3E3P2s0cTEARoLL2cvMXRma25ybTgQAQ",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChgI4O3E3P2s0cTEARoLL2cvMXRma25ybTgQAQ"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkIi96yw_vNrbxgGg0vZy8xMXExZDAxcHIwEAE",
+      "property_token": "ChkIi96yw_vNrbxgGg0vZy8xMXExZDAxcHIwEAE",
+      "name": "SSAW Boutique Hotel Cheng Man",
+      "address": null,
+      "latitude": 31.205123999999998,
+      "longitude": 121.49779500000001,
+      "rating": 5,
+      "user_rating_count": 3,
+      "hotel_class": "4 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Pool",
+        "Restaurant",
+        "Full-service laundry"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 2079.0,
+        "total": 6238.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$2,079",
+          "extracted_lowest": 2079
+        },
+        "raw_total_rate": {
+          "lowest": "$6,238",
+          "extracted_lowest": 6238
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 3,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.3333
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "SSAW Boutique Hotel Cheng Man",
+        "property_token": "ChkIi96yw_vNrbxgGg0vZy8xMXExZDAxcHIwEAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkIi96yw_vNrbxgGg0vZy8xMXExZDAxcHIwEAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.205123999999998,
+          "longitude": 121.49779500000001
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$2,079",
+          "extracted_lowest": 2079
+        },
+        "total_rate": {
+          "lowest": "$6,238",
+          "extracted_lowest": 6238
+        },
+        "nearby_places": [
+          {
+            "name": "上海当代艺术博物馆",
+            "transportations": [
+              {
+                "type": "Walking",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "34 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "4 星級飯店",
+        "extracted_hotel_class": 4,
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/CvEtMHBNnFiDzK8kyIKJ23HD-_YsxgHDg0bNLeyhREwE2vH22xtAAfYBP201ctAgm-t53mWEOnAAZzTFrnzWXd9GawTR05fhkWWppJ8HcuMoHdbB_SUD6DYNnjfGXGv3bPiOmVW7OVuYIvTx7INvNYUE0aE5hA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_ro_004.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/Hn98JsDWm9GXwjlnLmSP-4VE6Zk9qu0m_Swr3r_goffv91nrCkxlXrvOdAF7C0yKd_Pxqebh5oR8imvmhoCVpJgJcdoWStkJHWOSotldgI9B8r8Trb5nRdv1Nkqo1XBpHBfGIgbCAevuaRYpNWYhiGyTqOOP09U=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_l_001.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/-NgqlKlIAyiuInZK9-YHRt-y23w_3Gjhasv2H3b_mfX9Onl8OOl0fEbJZnjaAkY1p7nAfaSQ-D4ua4lnpLSGBuG2TYckgLTDeDudjL2JyAcKpkPArfHqgIlkWm-6mYFW9UbjShuFElpy_99U5sf3y2hMq51a84k=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/114000000/113950000/113941400/113941382/e60d6636_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/dWj7fP6SfYQFfvj_zWsatT4n5990x0Nk3bM54xWsjD8eVb1Q7y0mNQ31hRVrkXhHQIUuUy8b0f1LmKv63b3nMXz0lXRZdhRnkumG71DLIUTIGiujC22Jqv5-SaNIno50y-fLrLXMJLNbHeL478tnax6-w-63fw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_ro_006.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/dlojX6yk-SCQWQwidchMqYSQWOgsS10aUpH_n4zcM14NksT5RjEv8EykMLLS96y4Edg720P5KYiyM4G9kZtcUuH5xbNdA8ri6vG14Ilao-rYfUOAjKlU03_DoJedyffXSWp7bcqAKTuoIpNYhneLljGIUd0aw3o=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_a_001.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/mjLAMYpSJFXaC6aqOIW7uL-BsHxJOCXXhu_sZ43hbo08oj5m3mCcd4mF9qEQLRzTeF-XFuDbZMAI_A-uPLUjyy2vmYWQQ_-2Z3J2iELI-OC_1VDZDcDaXJQ3DHnn_3K2izy21Wd77qbaTHrKjm2RJQh9XVH_Fg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/114000000/113950000/113941400/113941382/a8f024da_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/LcP3eC0Fyzg3jRcWvgpqG4x0dJPoRX9T474vd5eLfChPwRkLoZTKeHqMNzxm5nDlnNNAsIr4NvB_XUgXiIuzup67v0hbVCwBB9LojhniKWT0eQVPFRauim5ANJLWd8UCCkuwU8OgZTiyUhb3x8cmitrMA2yu-A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_ro_008.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/S_TjCTk8eRs6f3S89J8gGukO5acpTHH_yfPpYe7gU3RWQugzi_0HXbCg4wmV3RvJbGWa2-Lyml0Tia7tpqnjC8gr2s_PxXUW5vltWgzLkSlSkowJV9utfKnbvlE4FZazWeem-DXh2Mny7fcigZAAh-S8p098OQc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_ro_002.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/ZQEpjhf0KhVjxv3UihismxCWI4sJTyzOVvfrPo2fyGNylJGzmUB5rGtYvh9wZp9P-DFAUyAX6wKJcyy_57Ye5NERI9BJ7p-PSO-gA3rx-mptrHGa0YKRmFK5F2KdsdRMWHijSLJ-LLMrxFDDCdjKiY_4o9U=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1025048/1025048a_hb_ro_003.jpg"
+          }
+        ],
+        "overall_rating": 5,
+        "reviews": 3,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 3
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 0
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Pool",
+          "Restaurant",
+          "Full-service laundry"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkIi96yw_vNrbxgGg0vZy8xMXExZDAxcHIwEAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkIi96yw_vNrbxgGg0vZy8xMXExZDAxcHIwEAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB",
+      "property_token": "ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB",
+      "name": "Urside Hotel Shanghai",
+      "address": null,
+      "latitude": 31.202238,
+      "longitude": 121.497156,
+      "rating": 4.4,
+      "user_rating_count": 31,
+      "hotel_class": "4 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Bar",
+        "Restaurant",
+        "Airport shuttle",
+        "Full-service laundry",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 2733.0,
+        "total": 8200.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$2,733",
+          "extracted_lowest": 2733
+        },
+        "raw_total_rate": {
+          "lowest": "$8,200",
+          "extracted_lowest": 8200
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 4,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.25
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Urside Hotel Shanghai",
+        "link": "http://urside.theshanghaihotels.com/ja/",
+        "property_token": "ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.202238,
+          "longitude": 121.497156
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$2,733",
+          "extracted_lowest": 2733
+        },
+        "total_rate": {
+          "lowest": "$8,200",
+          "extracted_lowest": 8200
+        },
+        "nearby_places": [
+          {
+            "name": "上海当代艺术博物馆",
+            "transportations": [
+              {
+                "type": "Walking",
+                "duration": "3 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "33 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "4 星級飯店",
+        "extracted_hotel_class": 4,
+        "images": [
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/dz5Ik2gEiFripWkCQBWfb_8sNwqFAgym9XqtNn5Tk3HB2Q2_MkqLwoboco8Uh5-e0iwQ-qCviAeMA_pV0dCoH-MsGxo7_X0D7drhrN9iXyy-BC8SK2BkbKE9mKzT4goT0ncjJ_pGHggw3bJEPssDP0Rqep6kvao=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/31000000/30530000/30527200/30527113/0c48f136_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/0ffgDlS1B7iXoLmz20-TnJh51ix0kojUA_4hYJexZyq5RzbtL4kA9finukLodQ3XRvq5SMwHrDsXxz9RS7AeUvA4NHUKj88tYH6Vu9ytMMCySo0OVqIlCHwVzRAqBNDrzZRrgM5LgXnzZ6o5dPz4ityrKiITd5c=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/70/703056/703056a_hb_a_002.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/fA1Hx6F8Lkpj6G8zISN0NaxdqRyFsILdaFjoDr2L_A2Ef_Qn87pL7zCs1mqHWSP3yK9CNOoC_2eIwdegQdUX3Rm9BoFQ8kPlV4N4_tipSj6vPXV4h7MvP07qatz8B23JU5Yf874XqlXEZSr-68NBd97b0Kmi3xk=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/70/703056/703056a_hb_r_003_20260227_125800.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/NLbVkfOlnq8MseBSnsOmiElVvSBW4M-Qe96O044eqSMGW2_Tyt-eup98fnSYOnU8wjrl3bgawuri78bdnzkM49sl8ZDo1e3oz5UykHruuup4teBrtSbCsGb1le-R2-U_ER0GVkkUy_uI-YkhcLlovPOa7xiMXg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/ee/76/56/caption.jpg?w=2100&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGGj5EP2JmCWzE4Nxxzk-Y9gR8lZqhEs5b9OlBOZULtg9eOLEo7HZnmYfShpA9QHDC1nRH9Ri1i4wEG53NasK2WaH-ur2eGyOsPAKMAzPEuO1_hvhyoDRhdNG6U5pBC1lPnP5DS=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAGGj5EP2JmCWzE4Nxxzk-Y9gR8lZqhEs5b9OlBOZULtg9eOLEo7HZnmYfShpA9QHDC1nRH9Ri1i4wEG53NasK2WaH-ur2eGyOsPAKMAzPEuO1_hvhyoDRhdNG6U5pBC1lPnP5DS=s10000"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/jnZF9i08xrox46G0-U3FEZAkKBPy3sp-GewNpVqGeVpAYg3DYWAhrlIPDRmyVMCjk3WFeyzXO782u9SQyOcwiPoPvFUZZ4YMVKMI398DEfSQ4PbFxAgR4N1bK7Qa0TdavFyOOJLsvP6aFEt8oYHWh7sPfMfgDkk=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/70/703056/703056a_hb_a_001.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/_ipLDvbS8q_5QMiLwRQd69-DvvQbC-2jyiXmyTQUsX_JCCC7MvFSAi67s9jCr1Iak8QmoSOQAzSARNg-JrM4YcBWMFUfcuXcXoZyXGnhTZakGdwdL1cjtiZM7vL0apHiuOoHgdlkAC4qCkDLSNor2ncNCxxwOBU=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/70/703056/703056a_hb_r_004_20260227_125801.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/C3MTK17vAZIm-0zFS0FatdLITp5NwxhCNr2rw6Y2a2fyx2Eqwxd_44i6Zb-YXHAKwFdEv8jpw_JIuDWvRN4JuUSgUIthk5LTc2RcPHUmZFmJeytWULN4Q1S5aHO9w78wk1FRmeGPPRnPp6qOiB9Uqcdy7Ej1hzo=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/70/703056/703056a_hb_r_005_20260227_125802.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/chBLaSs9GddqiJP5slqBLhqlkIxcZMxFHQwXmseoheYmJNOTFZQtRQVyG1neqA2WpqO2wwDuOgIrf9LlrYQOPg6HOjU39ObcPUrpVgSx5ea2n0CkWlbKIJmTMUQotYjY51pN3HolAJAXnJzi1Y3ZLTSsowDUzzo=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/70/703056/703056a_hb_l_005_20260227_125801.jpg"
+          }
+        ],
+        "overall_rating": 4.4,
+        "reviews": 31,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 21
+          },
+          {
+            "stars": 4,
+            "count": 6
+          },
+          {
+            "stars": 3,
+            "count": 1
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 3
+          }
+        ],
+        "location_rating": 3.3,
+        "reviews_breakdown": [
+          {
+            "name": "早餐",
+            "description": "Breakfast",
+            "total_mentioned": 6,
+            "positive": 5,
+            "negative": 1,
+            "neutral": 0,
+            "category_token": "jrBeNnica1yRnFiSmp5fVDl5pVNRamJ2WmJxCcOyZ9NXvlwyAQDIXA5A",
+            "serpapi_link": "https://serpapi.com/search.json?category_token=jrBeNnica1yRnFiSmp5fVDl5pVNRamJ2WmJxCcOyZ9NXvlwyAQDIXA5A&engine=google_hotels_reviews&hl=en&property_token=ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB"
+          },
+          {
+            "name": "服務",
+            "description": "Service",
+            "total_mentioned": 5,
+            "positive": 4,
+            "negative": 1,
+            "neutral": 0,
+            "category_token": "2QVVXnica1yRnFiSmp5fVDl5eXBqUVlmcirDsmdzep92zwQAsBwNUQ",
+            "serpapi_link": "https://serpapi.com/search.json?category_token=2QVVXnica1yRnFiSmp5fVDl5eXBqUVlmcirDsmdzep92zwQAsBwNUQ&engine=google_hotels_reviews&hl=en&property_token=ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB"
+          },
+          {
+            "name": "設施",
+            "description": "Property",
+            "total_mentioned": 6,
+            "positive": 6,
+            "negative": 0,
+            "neutral": 0,
+            "category_token": "uucdiXica1yRnFiSmp5fVDl5RUBRfkFqUUklw7IXK9Y-m7YXAL8sDkQ",
+            "serpapi_link": "https://serpapi.com/search.json?category_token=uucdiXica1yRnFiSmp5fVDl5RUBRfkFqUUklw7IXK9Y-m7YXAL8sDkQ&engine=google_hotels_reviews&hl=en&property_token=ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB"
+          }
+        ],
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Bar",
+          "Restaurant",
+          "Airport shuttle",
+          "Full-service laundry",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoIsLLOpYj4yOiYARoNL2cvMTFnbjIxc2tiNRAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoIr5aT6b3YjoGyARoNL2cvMTFjczZsZjhsdxAB",
+      "property_token": "ChoIr5aT6b3YjoGyARoNL2cvMTFjczZsZjhsdxAB",
+      "name": "GreenTree Inn Shanghai Xietu E) Road Zhizaoju Road Express Hotel",
+      "address": null,
+      "latitude": 31.206598,
+      "longitude": 121.484985,
+      "rating": null,
+      "user_rating_count": null,
+      "hotel_class": "2 星級飯店",
+      "amenities": [
+        "Air conditioning"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1573.0,
+        "total": 4719.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$1,573",
+          "extracted_lowest": 1573
+        },
+        "raw_total_rate": {
+          "lowest": "$4,719",
+          "extracted_lowest": 4719
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 5,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.2
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "GreenTree Inn Shanghai Xietu E) Road Zhizaoju Road Express Hotel",
+        "property_token": "ChoIr5aT6b3YjoGyARoNL2cvMTFjczZsZjhsdxAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoIr5aT6b3YjoGyARoNL2cvMTFjczZsZjhsdxAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.206598,
+          "longitude": 121.484985
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$1,573",
+          "extracted_lowest": 1573
+        },
+        "total_rate": {
+          "lowest": "$4,719",
+          "extracted_lowest": 4719
+        },
+        "nearby_places": [
+          {
+            "name": "上海当代艺术博物馆",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "34 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "2 星級飯店",
+        "extracted_hotel_class": 2,
+        "images": [
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/WEr-yjqWxQKZyKed0j-hKSC7XD-a1qWJng2mjDnWMWH_Qz30PmoBrqeAmFutN6wmVYsl-xKj2kE6dnhheYW-ZCBx31Xz68VHnzFcsH_iSKLWnVp8Z2SpCYySqp2Iax6QkhRSXmksiC98gAVzfYzEdpNz6djkIA8=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_010.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/PGvtqzdJwuEl7naaKPTwt-LOdyrmWEHCVML039GovhhvXLoje93GGB7sdtb1l2G7MiR6v6OchmhSv_eqgAO3AAtWDIbB0cHqedhEHCFrxEEAkck9mZXiBi6bqa0tP2cyaax6NtrCdtAvSwYcslLjz72egA5coiQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_006.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/d2fL6WW2qPU8auNTKJeCQhO5VRIBowjZfuEwSlF_t0YxPfFJjaNU-iRNiEhxZGWa5TA9f8kbOLF-xMZzZOINKPsQRknGkZSmk607fIyFhGOHMe4d7tXhwuTa4Dprd0gXTP7uFJ7aCsHxa6mB4mTfDGGdw_UmygI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_w_003.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/CTnmzzh20whdKsiPyaV0qnqgWBIDwGyizEVftEJQ1cdmYpXsw8GV6Kfhg1iB6-Qm09WxmmyTASep5tDpz7NSI43JwtIBklz-5jaP4kNUiGEsMi20wyNyfB8xtdw0pBCqLdZnng5fg4MGH5f6oKa_EVSXACJFww=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/119000000/119000000/118991600/118991529/ab05e7a1_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/CNSg_o5qnabQjUMS1zY58xteepOT1J6zqVG0Fry5_8avp5_AW8o0gy49XYfC5LtYnzmq0iADDhIC_pXreBy_ELEY2SkM3_MGI9z1LsgNfbYcPdE-3p1ybKqHLUIB5kh3_SkspJxbDwI0rZPNKQt42F7R-CpUoQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_002.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/m5mN2ay5DTjSWMSPOo2U8065JHYqD1gQr1wpdPenvOPe52WB_V8dz46SlXNkJULx8MsyGUkmoz2muHQ9LO2uzgyYydAmffwxrovbex_xaDToWHyGqBHNDQcdQPMiNZ4_mvPmGYn8EjmS85WdXJw321W7YqO5oQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_004.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/TBQbc7sIIkpmI4I1R_Fm9WBTaTunHr1QHrkvOQdxl7s3gbbZl0fQRWsD4xKO3oG7uVfoPBXX_mlRiaNeAe6_w6VyHToeTD7wmbq9YbWZcRn9RCDdIIHH77ZpWWNfmPi_S7eA0m45AaqF5bcUKEVR0snSrDFmSg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_005.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/3Zp1NgXPpglEUcqtWE_2Z90T7RcCHRMv97Wv8kXnRdvof-JLSqk3aiyIiYyoIBbMRzX_YWDlzdgXPyIqgn1szv_qhiF4DuqYTjt1YpdUW9--fMdK0rZhGIfTkYVGFST-whEwZYANrTNb9H0aSJc1nGIlkUjsNA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_009.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/2r-yTwxxk8GDRaA18dx_fn2y4uWT349vfG5DkTQ0-hQVjxD3UsSq0pAQphd9sNUoXqFN9ZxbjfCeMKUXm5dZvfGAfnEHN0fdugolLR4AQIPaoJ9Kp8kqnOD6D0Qdf3_Bm_ezzskp7g6Y0UAXHd4F0DhyLLbTERo=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/71/717550/717550a_hb_a_007.jpg"
+          }
+        ],
+        "location_rating": 3.4,
+        "amenities": [
+          "Air conditioning"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoIr5aT6b3YjoGyARoNL2cvMTFjczZsZjhsdxAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoIr5aT6b3YjoGyARoNL2cvMTFjczZsZjhsdxAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoI7O7a0rrcsbe8ARoNL2cvMTFoN2c0dmtjcxAB",
+      "property_token": "ChoI7O7a0rrcsbe8ARoNL2cvMTFoN2c0dmtjcxAB",
+      "name": "ATOUR HOTEL SHANGHAI SOUTH BUND",
+      "address": null,
+      "latitude": 31.211129999999994,
+      "longitude": 121.50220999999999,
+      "rating": 5,
+      "user_rating_count": 3,
+      "hotel_class": "4 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Air conditioning",
+        "Restaurant"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 3202.0,
+        "total": 9607.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$3,202",
+          "extracted_lowest": 3202
+        },
+        "raw_total_rate": {
+          "lowest": "$9,607",
+          "extracted_lowest": 9607
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 6,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.1667
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "ATOUR HOTEL SHANGHAI SOUTH BUND",
+        "property_token": "ChoI7O7a0rrcsbe8ARoNL2cvMTFoN2c0dmtjcxAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoI7O7a0rrcsbe8ARoNL2cvMTFoN2c0dmtjcxAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.211129999999994,
+          "longitude": 121.50220999999999
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$3,202",
+          "extracted_lowest": 3202
+        },
+        "total_rate": {
+          "lowest": "$9,607",
+          "extracted_lowest": 9607
+        },
+        "nearby_places": [
+          {
+            "name": "上海城隍廟",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "8 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "35 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "4 星級飯店",
+        "extracted_hotel_class": 4,
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/wplOZ_8Zdqz0s0nq048q_h93yrzvrB1La_WWU5NFcnR_cYCUTLs_92RLV-SqqAz1sWrJyI-epD_UKyoR3fln_EUw_2jWP27DmmNAPKalERnU12B_3mvm_9o4w-yTp9n8Zp9VWOmmFpj5UMWZvvxsNlz_Xjwirw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/31/11/3111d8d822bfeff613e883b800d539c82e7bf60e.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/G6B4eYWL_OoqweZUlhqPGooHH9EBO21g1N56OTVpDLeaSxOkHDhJ3tMQIZ70iJ2feuyhxTTFEJeKtsJgYlW8uX6N_azXpyXoHM18PITJiNvZsindDV7ZFr_cl4rGojKvrNgkMmPq5DXdiCeZA--tC3HVFAXz_oE=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/60/4a/604aafc2e4e50764148deeae297aaa61bf16b0ad.JPEG"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/B_h8zwn992ZYgbD7H9E8IqhGAO0yTQgujyUWzsaTRSRiUZbPCvAiqP4ldat9eM7VhNwVmBQpXLO5rfKpSOZTW1b005wua1-i7XHGnZzdL1WNQ1zxKK0YvYg91lgpT9F6BcVQJGfONt2pS_x0NGRkfiukgKHQ5W0=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/3a/23/3a2316987cd080758f1d1cb3587ed740a4278f84.JPEG"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/0Ie3EvqdsK6XlQ3JIWy-ZlGOEJMI0v6QJp2GluWvxl1O2tpSFz_LTyo3mAvlc02oK3d2JK3kCIXBL2KSaEY_hlse9K18LIyzfeKgmCBJefFsv882DaUNtj9-RpSkZsHf_t0kQB5mngunOdcGzboMIO8dDJRaujg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/5b/e7/5be74db44ed4c7a9e4b03452f0c113076a8fcfa9.JPEG"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/SMyeZAuu5jizrFoJCBf47m9kLQycsyvcxYDWDHcAYf-uUBesfOmwbUuILwR1mJ88FTEvo0aNhQN-2S3K0uzmO68XQ26cuu2EzzURLGSf1__el1x273gafpMMQvGrKdFDAbWpXVdO8ZTOmH7a4CaAvetWm34SVgk=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/0e/a7/0ea7fcab056fd9d16d20c3faec59a8a250a6ea57.JPEG"
+          }
+        ],
+        "overall_rating": 5,
+        "reviews": 3,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 3
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 0
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Air conditioning",
+          "Restaurant"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoI7O7a0rrcsbe8ARoNL2cvMTFoN2c0dmtjcxAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoI7O7a0rrcsbe8ARoNL2cvMTFoN2c0dmtjcxAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkI4qnU16Xf-pwyGg0vZy8xMWNzNmxxZ3lkEAE",
+      "property_token": "ChkI4qnU16Xf-pwyGg0vZy8xMWNzNmxxZ3lkEAE",
+      "name": "Home Inn Plus Shanghai Xintiandi Lujianbang Road Subway Station",
+      "address": null,
+      "latitude": 31.210817,
+      "longitude": 121.48146999999999,
+      "rating": 4.4,
+      "user_rating_count": 24,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Air conditioning",
+        "Restaurant",
+        "Full-service laundry",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 2010.0,
+        "total": 6029.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$2,010",
+          "extracted_lowest": 2010
+        },
+        "raw_total_rate": {
+          "lowest": "$6,029",
+          "extracted_lowest": 6029
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 7,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.1429
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Home Inn Plus Shanghai Xintiandi Lujianbang Road Subway Station",
+        "property_token": "ChkI4qnU16Xf-pwyGg0vZy8xMWNzNmxxZ3lkEAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkI4qnU16Xf-pwyGg0vZy8xMWNzNmxxZ3lkEAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.210817,
+          "longitude": 121.48146999999999
+        },
+        "rate_per_night": {
+          "lowest": "$2,010",
+          "extracted_lowest": 2010
+        },
+        "total_rate": {
+          "lowest": "$6,029",
+          "extracted_lowest": 6029
+        },
+        "nearby_places": [
+          {
+            "name": "田子坊",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "8 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "32 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmKi_gBvgJ0rQPHtGy3dFdy9QexZHNXetaMk4LqQObvXC9OIOAvxk7nHaxv8U59W_K_eNcb3_m2ANIUktrrOD1s6tTmuztZ9s4rGwWs2r64KyX2roVJzSeW_p7n62u49xa6IkI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmKi_gBvgJ0rQPHtGy3dFdy9QexZHNXetaMk4LqQObvXC9OIOAvxk7nHaxv8U59W_K_eNcb3_m2ANIUktrrOD1s6tTmuztZ9s4rGwWs2r64KyX2roVJzSeW_p7n62u49xa6IkI=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnJM_YNcg29FMQ-05dOsS2ysl-5-gb1j1tgFwHG70X-Yv532EAUy4VSplV1DJrtW34UR-vLgm5VirG9_hJftPx1pkOp0DIjfB8hDCX8aofU1cCkAHIJQeeEB0aSu-dLApu6dMXV=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnJM_YNcg29FMQ-05dOsS2ysl-5-gb1j1tgFwHG70X-Yv532EAUy4VSplV1DJrtW34UR-vLgm5VirG9_hJftPx1pkOp0DIjfB8hDCX8aofU1cCkAHIJQeeEB0aSu-dLApu6dMXV=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/UDgVanOpJQQGiW2vppNeETSuj2usMg9ZcVVj-uoXEuiUl49L9fk2uBS1ALYR-tuCUCy85Rj06j_HOkAtpXlxlSDNwqo-8wMcImxdx8eITOjbvkgyHEwLJPcoOJXhDL6aQcHvfQBh6LSxR2dDKTUAI-_qoJ-DWw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/f8/c1/f8c1813cfc713d60a5db8f0abfbe2d089de2ef64.jpeg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/lEwcGr7JDKwSUu-RdxqIDpvZ9KlvGsxi-eZo8pWRwZbOif1bE7LK7TqIMwkC--D8OTTG-uXF8F7TqfCSP04fb413XY8amsbx9sndCqGkJcFny4mMPqFj7SrglNGHhO_uMssDHzih_YcGA9VDHQ2Zl4tJQNeofqc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/d0/62/d0624a106f4edbc5df7d788dcad71f34a0e79691.jpeg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/P-HvnDIB1BHZizlMzQN_M_aC6HWV356udSUgjebD4vUJNKadxEnskvF78zUNJHWhdmr1bhNO_6h3IqL70geVbNk9fSeyVQUw9pcHxUpGzSlXAmw1XxndcJprnwmJaOFNMRZ7d42GErQ1QlZu5wxZE3w3liaIUg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/90/53/9053c43c6484050be8cc191217442c4262e6faf1.png"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/crM08XTeyDK9LRzZb3QyGzIXr1trZgvkERKlS10N2qeyktycBBhuWWUURuqyE68tX96TKvCcqQwvPeC0qRK9ibmoPhBeL9dYLGA7BhCQwIFMxuIRBM65-ZinVL5A2SScWLlAtTr4Kh1Mqk019CfmHJ5pR4wMCMo=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/eb/a0/eba03d3273556f71c16c6e6f3bdaed8179ff7572.jpeg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/HYedRAicIElQpt5DSln1VNE5wtFw0KzX8zfI3ltnNdRIvHBGo0MoDBCfgl_JMZgJJP720sag_ckMDL9i9VP2B-T9bqARRe8glrxYcC9LF_OzfeF7dTYmrk5FWioJkBhHQBHWrDzIBfMpSw9_KqVSXeJ99nYzrA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0d/ff/d1/95/caption.jpg?w=1900&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/y8Di3HoJ0pi2h1k7-wJRJKpWnRnFj55tDxr24mU7YiBFr9rWlmizHsPJYl4QNdLyQM5MfpD-Eq-vMwjSL78ZUxves_zGyjs_kQgfDGG8NKoZSRcTxBiSaYoejx394vjFEvwqsJGkc8BY0dnNUi_aslUKS5_MWQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0d/ff/d1/86/caption.jpg?w=1900&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/Xk19Qmvdd7RbZd3fonRohTF0faqbLpeUQn9z8XO50nC6_QH-ixLBrPiDi2TW0i7d8h4DszsxiRNRgFm4Exo-L7FlkVd6J3fCpmIaWvUKDAAw-TbixF5g28WjHoz2b30XET1iPT2liF0Hp7lHls1ndCCj_-vdL2A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/51/d7/51d7aeaec3eb32c17a9956946fb27455802dfbf1.jpeg"
+          }
+        ],
+        "overall_rating": 4.4,
+        "reviews": 24,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 15
+          },
+          {
+            "stars": 4,
+            "count": 6
+          },
+          {
+            "stars": 3,
+            "count": 2
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 1
+          }
+        ],
+        "location_rating": 3.6,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Air conditioning",
+          "Restaurant",
+          "Full-service laundry",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkI4qnU16Xf-pwyGg0vZy8xMWNzNmxxZ3lkEAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkI4qnU16Xf-pwyGg0vZy8xMWNzNmxxZ3lkEAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkIiuOd1-io1v1EGg0vZy8xMWY1bHk2enhmEAE",
+      "property_token": "ChkIiuOd1-io1v1EGg0vZy8xMWY1bHk2enhmEAE",
+      "name": "JI Hotel Shanghai South Xizang Road",
+      "address": null,
+      "latitude": 31.198544999999996,
+      "longitude": 121.49190999999999,
+      "rating": 5,
+      "user_rating_count": 2,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast ($)",
+        "Free Wi-Fi",
+        "Air conditioning",
+        "Restaurant"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 2940.0,
+        "total": 8820.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$2,940",
+          "extracted_lowest": 2940
+        },
+        "raw_total_rate": {
+          "lowest": "$8,820",
+          "extracted_lowest": 8820
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 8,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.125
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "JI Hotel Shanghai South Xizang Road",
+        "property_token": "ChkIiuOd1-io1v1EGg0vZy8xMWY1bHk2enhmEAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkIiuOd1-io1v1EGg0vZy8xMWY1bHk2enhmEAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.198544999999996,
+          "longitude": 121.49190999999999
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$2,940",
+          "extracted_lowest": 2940
+        },
+        "total_rate": {
+          "lowest": "$8,820",
+          "extracted_lowest": 8820
+        },
+        "nearby_places": [
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "35 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/DcjcT5r2k6P-S4lc76pbzGGCARQFoWOd_8xX4WK9d99qVpIquQ2TT-k3OtxE7DP8y_IJs9HM3x2V_W_1T2FpjBvA1boqF17lc_nXzV9xDlQyJK35bfGkgab6144IctO59hGlVbFZ3Sb9ba7sEBtFFcKQcYFhDXg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/5a/b8/5ab85fc589b3b2e95f785c2074662d32d297fe80.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/13Acq-4D78uMdgACZFALDq7iJYLiyu6cnJ9iUvZOnLU7XSbrDtnJo6nSSMnaiqOc7CmS8y6bUMqXq8ZJh19AEe1inmy2AiOMSElHYofco-F86OBoUM_uIFeNWhvPulWL_Rvh2jozV23M4LTSYLhLb_hnllwxqMQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/e5/49/e5496ea8ab8bf9bbd2a37aaf1c6a60b134d7ed13.JPEG"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/MWrIEIGy1o7cm0efefuG9vJlcUVBi3HTiJXA6_I13naVZYDbUu58fiZqQnVCk2QgSuNejhVnTD2EXaBloyj6HCQZvOnJYaa1wocpnIdWHLBqyxEF_lOs4I_cdUxBEQZLAQBwhztn9VGZcAmxQ6cTwrnnALhWog=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/74/fb/74fbc78ba9af38cf192680284e742130d5671e80.JPEG"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/F3ZqTS7wzy5r83LTpF_PCCJOXo-xBpO9dgvZMese_RyfDai0SzHSH9_ELms5m6JXySvK1m_wckscikPVfJD6jb-MPtH99hVkpPOe5bXvpI17E2eSVprZAAlUQS_J5Br7CEXuJow6T5xVNP7r1-y_JyGyCuRlyg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/6a/bf/6abfeaa54311abbafd6abd85c7b457169886323c.JPEG"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEY2iCASTD_PQjTDYPcSbRrjcTwLv31yRreOaPWva29XGorQpJzYlbfvo9-RsGWkZJuv8LXDGvioYzlEA5SZomJTfyQ382ixLz7phHHn24nPA0YEkGOCSN3ywILFS2hw-PpdUZMHCTbUhg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEY2iCASTD_PQjTDYPcSbRrjcTwLv31yRreOaPWva29XGorQpJzYlbfvo9-RsGWkZJuv8LXDGvioYzlEA5SZomJTfyQ382ixLz7phHHn24nPA0YEkGOCSN3ywILFS2hw-PpdUZMHCTbUhg=s10000"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/cae2M9m38FvlSc6YiR8oC44NFJdn9vWLQOSfpVjxGMwHnHWqGkj_jCzvFyz67l0bbbZpwtyp7jgEg5D3XEj-z9FMFM9VmhZnIcFNop5pCrRBtdIBJSBcbluqCN2Cwxxmj6qO4Y5wbyYN2Zjy-P1Oap6IlcpzlA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/30/a4/30a47c94a65b6e5b4f8a541d69b521985dab92e0.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/WIMgexSH95Z27RFomyTzEB36UAYFNVGxhxyeVVrse4H8AuBC6IdjlhG8tqBYrNNJYWiwHAdG5e79E5XHgv0OvlaEh09hXbIEl7NoYwXDHtpAO_CeV8El7WkgOhsC6ufKihHAzarNtlEiPA5WhQ0q-k6dBcGKNg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/a3/30/a330d9ae200de1ebbf6e2160a9f3de10c6fc7aba.JPEG"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/PAGy--n4sPrn4L28DGIWEq0LUbwkoTjd6xCBcxCdZFsR_XYgv389X7AkrE39kTfYkVIftFZubsBbVH5-LHjTd4EEXhv5URylF3yBFg7TMD8dwec7SoHx_Wj6nWHosIcdkyYHYW8Yn_Pqhwv9c-duRMwrF6et4A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/da/7d/da7d0283b59aeb0be2eb7b3ea8eb94d08e67cce8.JPEG"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEHy4cDXlAgtzKmH2WR5d4PD_FO3hNVpYK3U56SI0vPp67EVnsAooSrFFtuNzXH0jsoGHQsPgD6cDEKJPpt38opxY0vmQmRFlFJr6rPJIaqrg88Mk8LCjWLIYW_KC-JOzlDUYg8F6RVn9u3=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEHy4cDXlAgtzKmH2WR5d4PD_FO3hNVpYK3U56SI0vPp67EVnsAooSrFFtuNzXH0jsoGHQsPgD6cDEKJPpt38opxY0vmQmRFlFJr6rPJIaqrg88Mk8LCjWLIYW_KC-JOzlDUYg8F6RVn9u3=s10000"
+          }
+        ],
+        "overall_rating": 5,
+        "reviews": 2,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 2
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 0
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "amenities": [
+          "Breakfast ($)",
+          "Free Wi-Fi",
+          "Air conditioning",
+          "Restaurant"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkIiuOd1-io1v1EGg0vZy8xMWY1bHk2enhmEAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkIiuOd1-io1v1EGg0vZy8xMWY1bHk2enhmEAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkI5ufR9tCP55kmGg0vZy8xMWo5MHZscW0xEAE",
+      "property_token": "ChkI5ufR9tCP55kmGg0vZy8xMWo5MHZscW0xEAE",
+      "name": "全季上海局門路酒店",
+      "address": null,
+      "latitude": 31.201347000000002,
+      "longitude": 121.482819,
+      "rating": 5,
+      "user_rating_count": 1,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Restaurant",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 3156.0,
+        "total": 9468.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$3,156",
+          "extracted_lowest": 3156
+        },
+        "raw_total_rate": {
+          "lowest": "$9,468",
+          "extracted_lowest": 9468
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 9,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.1111
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "全季上海局門路酒店",
+        "property_token": "ChkI5ufR9tCP55kmGg0vZy8xMWo5MHZscW0xEAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkI5ufR9tCP55kmGg0vZy8xMWo5MHZscW0xEAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.201347000000002,
+          "longitude": 121.482819
+        },
+        "rate_per_night": {
+          "lowest": "$3,156",
+          "extracted_lowest": 3156
+        },
+        "total_rate": {
+          "lowest": "$9,468",
+          "extracted_lowest": 9468
+        },
+        "nearby_places": [
+          {
+            "name": "上海博物馆",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "10 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "31 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/qhAcQRE9q8QweGmTnS4dhyP_KNEhDmN9drU2tBVyfnt1PdpDuKeKRsM7FEK1vQuMF2Kw77Lv0nN4Z8pZc_y_oOudMcu_OCjKj4tvisOeB4TmFgaDDRqRP6DpbMMKTSSt-LmaPIVW3nYJPHXJ7DcjlokTY2_c4dI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_r_004.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/X2O48bXTwGvreBR9DQlM54EY7oZ1Vg1q7oOW2RL9GzjbCcbLwNjmt9YVgjdMGDvY3CfeKdGIahfF8L8Cq8AyPPkU-ou2yIiKgNd_UxN1_-PGU6AY6tXzbkIpuoedpWH7bpt-oZiD0CBplWWJTlb-zvwLcbYpMqc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_l_004.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/83CCZaSXJfzjVxN4wgRltimL5ZnW6nmpDFudpFoPmMKkbif-ZOGf1jccRcHs-uEHLquUXot9MjuSUNA_qfcIBiGC0Vh9y9ya2gMJ9Kw8Z--ku44iTOhYC9pVPncVx5aHconIKPyLgEAVjIJd9soT0bEJsv6L9w=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_a_012.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/3o0Fsy_c7JGvWzAmNgGoKw6Dyt3ezVjqYBr_qWhuy0O0hknrWPXZLMDxxlW-_bkP6Eka5_FvM2TTEfcj7bY466W7nT-AM0JsC6_dFf2V5KP-4M8G-NLi2TWFwvZiu7NXqOtY50_7ZUjtOxiB9dX9R-hJQ7fS6Q4=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_l_001.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/Ns4GiMmq439SULuWHTeRqd0dub6r89PSzWFBhC0ftjzpuNBXAlSEylwCKvpLMfluq3R0sq4sfl57krdXSPu-FzGgKmUvGSe3DLxMW6ZwYnAyajrdSU52lf3ML_4nRu_4YyyIIO9mPJIjgLXTXj0PCC1w0ZNDdkI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_l_003.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/z3eCYOtTsAsXM2NtKzfnJCJKBjqMuMyVv5hdB4K-Ups68WBc4R9SkkPRjJhAYnNQ9ZDl6b7JQGOMaKNnPl4aYef6ZStX-fauDKXrQdq-agd7VcB8LE-KXrvGNGLLFf58sMqZiNc_izgH8-2-9fOKXUpFUPo1vR4=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_r_005.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/0rzoJkrraUCK19BWr-EAQ4pPndiWjrc6C0xwPl6NEJmt-VEs5xGSpSmBSCOxmq4TcN5zJ6qOYt0C46M3NIaD2sSKsyV0CBc8ZgQb5KkhVmUISmPCO7hkBdQrpdj9WdTqmd5LpZjH4-dj5B3ufrTmr6QEN4sW8oI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_k_001.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/le1fQXZyep2yafknzc-kmkNx9kwqGrcPXNqtQN6usJhoPTfGLttIfp65wuSM97IQG0UO9UOu5_EB9YZFQwyvGioSg7T0ahM1AUHW6sCVA5kSJNUvADLtH3PLvUnZg5z0pAl40o0Rm652pfBlLtjJsiqNK6KIALY=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_w_006.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/NVaCxo2__msQjciKQCw8BpfEEvD_JVn6bXTfrP8kyIJD8iWDFwONWNmIFKbtNoAT1JmFq4ctmOn4br8Hgv1CEmuRG7TmkV0-gs1e_0Dd0ueInm3YJR9pBf5AeJtMIrgLxKnQFer9OI-mnzEJqiEtUu1oe6jTdA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/88/883644/883644a_hb_r_003.jpg"
+          }
+        ],
+        "overall_rating": 5,
+        "reviews": 1,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 1
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 0
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.4,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Restaurant",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkI5ufR9tCP55kmGg0vZy8xMWo5MHZscW0xEAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkI5ufR9tCP55kmGg0vZy8xMWo5MHZscW0xEAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoI_qufz57KiI7DARoNL2cvMTFydHZzYjU0XxAB",
+      "property_token": "ChoI_qufz57KiI7DARoNL2cvMTFydHZzYjU0XxAB",
+      "name": "Ji Hotel",
+      "address": null,
+      "latitude": 31.208,
+      "longitude": 121.488,
+      "rating": null,
+      "user_rating_count": null,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Pool",
+        "Air conditioning",
+        "Restaurant",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 2529.0,
+        "total": 7587.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$2,529",
+          "extracted_lowest": 2529
+        },
+        "raw_total_rate": {
+          "lowest": "$7,587",
+          "extracted_lowest": 7587
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 10,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.1
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Ji Hotel",
+        "property_token": "ChoI_qufz57KiI7DARoNL2cvMTFydHZzYjU0XxAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoI_qufz57KiI7DARoNL2cvMTFydHZzYjU0XxAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.208,
+          "longitude": 121.488
+        },
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$2,529",
+          "extracted_lowest": 2529
+        },
+        "total_rate": {
+          "lowest": "$7,587",
+          "extracted_lowest": 7587
+        },
+        "nearby_places": [
+          {
+            "name": "上海城隍廟",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "35 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/SYSLxvIWY8OPh1BFCKPSVjECc4LRpVMPyahBYvk0wOUqJJDd8bRmPrAyyFX92yH9GCB2HhGjmTLQZxXQBKHBtWDou0-IpUee5jO1qP8CQiLI8argeeoG1VExKxd7a0zZgMx_bhGs72xhuQBhJ8ZnhIzAzhou2Ek=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_ro_019.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/REaCiXOcS5Lm5Y6zTMST0c7Yfy0Aujji1oAASImzcO9t6mC6ae6cB0md9qi8T_uqeWUOSQTne-Yl3AIz7mZsGEZ3zs3UpRJfuxYZUTHK_bQrN-ACE4bg5Z-tPYhhPMlL56BoFD91i89QUNv48lLB76djy24tzw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_a_002.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/3cZMpMBmQB3qFMDXeHGaHIPIdi3K9YDlIuFv8RxhYVBZNb-BfI7YKmuRLf52h_dPviewfOxNxk8pXOSugJo7B2AbarX0oaNNLX4JZF6rOtwsDqUYWB2_WJN9vd3ZtxGNC8aNi0LAhDWNvS0aeH7Y6rLiSwGPj8s=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_ro_007.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/k3dZcHjVbrCDSXUCdS9GRiyn_Akzao-yzFrxwYgHoWnF52nkj1QR9qxITkmXCwWWwX8D28a7Y8Pcpzyouxn5fScQqiMKIpJMZqirpTXPfRk3DjAQUtrUHasJZsWUHLZg3VDDZCR9g2pGlcC0KtXV92jn3cU_Ow=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_a_009.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/Wl5btFZS3m2laim6IU5qN1Ds0o-HuwXgOvYqhT_zmZzaamMmC9KrT6gl_lZOvte1Qfp5FJvzpRGEoE1y0YGGPqgp36IbHm7PkTu-m1l0O0TJegSb36LrvRAtBOzpD7GMgn7Wk40q3dnpLnSX1irNOWe0jKN1qw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_a_005.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/VwzU_ylWJXnRaE0i82NQmrEEB9_LRFVjiYFVNXFXQgnRr8zg5lmUB9TK2uUzMLtoCeMxDipk5RNGYhwIk9n8YkvY2ukZtN18TETcYCs3r5CWCpvVOo7FBdXtvQeHGxJ0NmXHciY6Hc0FyamLTUTNT9xmMY89zw8=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_a_011.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/mVPaGRahqfFQxvZ1YPJYyZDQ08COdlo532rB59tuing7ZtwsVFstNF--O-JjUzVaalK-uExORbYfYbXbocIF4XbzrFvKYJMYLyoDA5GmnMoxK6pC3iSF6PXJIXwybbJQBecgB5P_Ndf3nOkZ_8aq8yq2aSr3YS4=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_a_003.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/OvOjHcZaYNWKBF8E-I-X-yQH5dAx_scLSTpgTm7iyC2RmXxWVeybEAzQ-Dua1d62fBYpRCCrKToMiws3mX0U0PezjjXwuCd5iBA6fhETUVh5sfDf4Mfc-D0bHWK8TntlxS1iofKabA5dD_65wNQwZhECzNmDWQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_a_010.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/EL1Dz4ShNE8GY5QBA7xZSByzUabDFuaUXM7szGiBDEdnUXE0IyJiDlWj6y59K_7vlo-vhMtzZoJS35rDSgfj7uTkxjTt5mw8AqcTHRE9YAhH2RLckQOPVg-jst4AUGorKbEekR4hcbDwPo62_KtIQnGKYpCo0cQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/908384/908384a_hb_ro_006.jpg"
+          }
+        ],
+        "location_rating": 3.4,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Pool",
+          "Air conditioning",
+          "Restaurant",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoI_qufz57KiI7DARoNL2cvMTFydHZzYjU0XxAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoI_qufz57KiI7DARoNL2cvMTFydHZzYjU0XxAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkIqdT4n4KR_N46Gg0vZy8xMXE0OWZzOHJ4EAE",
+      "property_token": "ChkIqdT4n4KR_N46Gg0vZy8xMXE0OWZzOHJ4EAE",
+      "name": "Podinn Shanghai New World Hong House Branch",
+      "address": null,
+      "latitude": 31.21269,
+      "longitude": 121.48264999999999,
+      "rating": null,
+      "user_rating_count": null,
+      "hotel_class": null,
+      "amenities": [],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1068.0,
+        "total": 3205.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$1,068",
+          "extracted_lowest": 1068
+        },
+        "raw_total_rate": {
+          "lowest": "$3,205",
+          "extracted_lowest": 3205
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 11,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0909
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Podinn Shanghai New World Hong House Branch",
+        "property_token": "ChkIqdT4n4KR_N46Gg0vZy8xMXE0OWZzOHJ4EAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkIqdT4n4KR_N46Gg0vZy8xMXE0OWZzOHJ4EAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.21269,
+          "longitude": 121.48264999999999
+        },
+        "rate_per_night": {
+          "lowest": "$1,068",
+          "extracted_lowest": 1068
+        },
+        "total_rate": {
+          "lowest": "$3,205",
+          "extracted_lowest": 3205
+        },
+        "nearby_places": [
+          {
+            "name": "田子坊",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "8 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "32 分鐘"
+              }
+            ]
+          }
+        ],
+        "images": [
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/LfAGEDNuivC_VeQnX6XqGq_SL7q87bOWupFAUFlQLpJjygkVZxz8YzFNazSzdaSEKjBO5GmwzEvp6-sDdT7ySLhOB9WEqTdDqKPjf4pmiVxSCblxs5A1ponKHm2V1xitQmczMFlQGVzeiLhsOYe6uJU8hBNOPQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/6c/bf/6cbfb98cb28155b18ec5dd7a209d0c4eb4803ded.JPEG"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/9A815zA3O2TjqgRjcIS8cyTjnJE8s2_IDHKeIV489JQ1ivzhWwA7ih9irgnzkoDdgo4sM3QpsccmlREKt5XZBweMgBxyrUMJV2a7A6aXYKt1mdryBHV2CmgJjq9M9LsrXJzmkJn7lq68fCkmfI09184SswVkC6M=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/8a/9f/8a9fde640b6231d940b4fd296d2cb9a19e1d47fe.JPEG"
+          }
+        ],
+        "location_rating": 3.8,
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkIqdT4n4KR_N46Gg0vZy8xMXE0OWZzOHJ4EAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkIqdT4n4KR_N46Gg0vZy8xMXE0OWZzOHJ4EAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkI_tbT9NjpoIVHGg0vZy8xMXlkaGx4eDVzEAE",
+      "property_token": "ChkI_tbT9NjpoIVHGg0vZy8xMXlkaGx4eDVzEAE",
+      "name": "Intercity Hotel Shanghai Xizang South Road",
+      "address": null,
+      "latitude": 31.206955,
+      "longitude": 121.48849600000001,
+      "rating": 4.3,
+      "user_rating_count": 3,
+      "hotel_class": null,
+      "amenities": [],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 3861.0,
+        "total": 11582.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$3,861",
+          "extracted_lowest": 3861
+        },
+        "raw_total_rate": {
+          "lowest": "$11,582",
+          "extracted_lowest": 11582
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 12,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0833
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Intercity Hotel Shanghai Xizang South Road",
+        "property_token": "ChkI_tbT9NjpoIVHGg0vZy8xMXlkaGx4eDVzEAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkI_tbT9NjpoIVHGg0vZy8xMXlkaGx4eDVzEAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.206955,
+          "longitude": 121.48849600000001
+        },
+        "check_in_time": "下午2:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$3,861",
+          "extracted_lowest": 3861
+        },
+        "total_rate": {
+          "lowest": "$11,582",
+          "extracted_lowest": 11582
+        },
+        "nearby_places": [
+          {
+            "name": "上海当代艺术博物馆",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "8 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "35 分鐘"
+              }
+            ]
+          }
+        ],
+        "images": [
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/3C7ubV_YTOwsWJ4kSjB0V0tqciOvv_selNlQ-JnEOUdU0HmCyYlANADfxXRg-mYn73wh7l1yfLvV6qTOtFWbZoJHLCcanDQpcqNKzz5iVczvLHr_q5xtpHlANk14VCnA7e5mAoBvpVuI1ZhaY0UdmL2Izv4pTL4=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_ro_047_20250403_134139.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/Q-0Us9z9BVno4j6GHja1cWMgknDDzceetAwgYx6xJULuTyBwUeqMOoUcSqzO6A6qzoR3iGSxh9zANKgr8EBfdYVcoUXKMtQLaVLIRRWRM42qMJRW42vOZVmLzFKOMn4bESJ-gJjXycTHkUnnITUDvZES3QtabA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_ro_010_20250403_133942.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/G_g5owW6VIN65CxvQ8D4mpfXTXDqS3at1qlo7ca4lukaOdkiUIfvIsQT69pINaI4sEY2Ba-ieMu5EcRzotpMjNgzBGbvZgqVVCM6n6hBwtbn7K5uBVXYYrOAOHJQXLpEt5HzuNLlqm_siRrVY9hE2wAs7HmUYEU=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_ro_051_20250403_134154.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/k48iJYwCp-QAp4Sse0FXDj4kTX8bk8rJI_bOGfI4MnjaxxON9qPsIa1bG0nYzyU6xKDv8aWVlTfUEYRIn_DQdwpZ8WEj2q17zX3ADv0WdVLP4E2h1C-TtArHtVEZU29TKkwnrnwBFcd6JAWKCijCz8Zr98Kq_no=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/117000000/116910000/116908800/116908716/0a35472c_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/EnCoRNlom9SyGcX5fv9BLdg85oP5Crpd9aIM3EGB0_2uF0365MgN4SCvBi7iJqUGWd9-rItlUIE09dwj4Nzr_k2wq1UqUFdg4OHZCBz2C-Oh11YnLviN9CTLsGkAJynaDKs-AnziPKWURsNi0INa2pzrjeq-MPs=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_r_021_20250826_025753.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/qxLSyLjVppC3QCceBGMsVXBHCUScmqnT2AoWtiP-KLEQcqapgvfUPgLdnnJL6vhNwhGhBGArNlLW7bmy7a-YwrSVnku-ZVzH_OFYT-Pl-zP9NYrq6qYP3Nn4SZzPjFZqc1Z0uxXaHE608dpxUXKOuMQw2JKiek8=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_ro_023_20250403_133956.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/o1JLwPLQWpANGHpiSdbikfQj-0Qdse7rzP0mUSQU1VM0ghNcdxNDMLJVc18EYhF1Xa_RIsZNu58-veimtvE_U1vKi3U2NfS7HwSC3Vq8sE6qYtTPbVs1llanRr-EyPYN5nEitO1ugGm4yudnTRo8GY8PAwVXPA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_l_003_20250716_075911.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/uwePx9YHLwoapvECIlv8EcKgWi9UOZIGrkAY5O-KZYmVaJASgJs3GI3ckPq3Hx9vJVB4t6cQ7Jt53uYwp3XcdI7i0T5h1b67mMCXt5IBssvmKkNut4Drqkozw106yR9gZcosz5VDN9DGAiQh8OPsz3__tyh7ZBs=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_ro_007_20250403_133927.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/VW4VapfxtuLDYVYnQSEoqEPApbYb7gdYzywBrHY7SpR_aUMVVJbCqkMuJAO73f6rogdGUy2a1ueqJPM-ikPsUKQ9J9zY9k0z-oQ7vvJ_xzrgZdH61_Ojm9LXSlUO6xmCYIzOd9z0GHn91JlVABf7_Iz3brtI4Jc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/10/1083228/1083228a_hb_ro_024_20250403_133957.jpg"
+          }
+        ],
+        "overall_rating": 4.3,
+        "reviews": 3,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 2
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 1
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkI_tbT9NjpoIVHGg0vZy8xMXlkaGx4eDVzEAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkI_tbT9NjpoIVHGg0vZy8xMXlkaGx4eDVzEAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoI89bYhN2fotDuARoNL2cvMTFqOTB2OWxjaBAB",
+      "property_token": "ChoI89bYhN2fotDuARoNL2cvMTFqOTB2OWxjaBAB",
+      "name": "JI Hotel",
+      "address": null,
+      "latitude": 31.214161999999998,
+      "longitude": 121.48590999999999,
+      "rating": 5,
+      "user_rating_count": 3,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Free Wi-Fi",
+        "Parking",
+        "Restaurant",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 4205.0,
+        "total": 12616.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$4,205",
+          "extracted_lowest": 4205
+        },
+        "raw_total_rate": {
+          "lowest": "$12,616",
+          "extracted_lowest": 12616
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 13,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0769
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "JI Hotel",
+        "property_token": "ChoI89bYhN2fotDuARoNL2cvMTFqOTB2OWxjaBAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoI89bYhN2fotDuARoNL2cvMTFqOTB2OWxjaBAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.214161999999998,
+          "longitude": 121.48590999999999
+        },
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$4,205",
+          "extracted_lowest": 4205
+        },
+        "total_rate": {
+          "lowest": "$12,616",
+          "extracted_lowest": 12616
+        },
+        "nearby_places": [
+          {
+            "name": "豫园",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "8 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "33 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/3xx-vDLKN5O9F_fi1DTWdN7EhwQNbcwrsCcDTAqPq9nYNJOoGVux9sMak4pboENtzYdpeEalz2SKjLM5x74bpL81SbBPAkdXPPlm8TuKKchI9G0zwc9ggPDROCZKb8luvXDMxlJ9e_vyp-mnbqG7CLcsGSFy9m4=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_ro_010.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/0xeH4zU93sqVCrDOku1CfIWvrmQWPtpTUWhsULPFS_B7RQhaBgQo_626uXpI5_uWcjsexXt9XpyS4bPc7_vAu3jtkAAGsCRPx_u53tYiO9m0w2w1v_G5vBApzz29ZK8gixEs8jfENQ-pur5-WOs7rZwKsWlCJw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_ro_003.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/8TUrqF1_Li8xouNXOzW15w9PeMZqw1wI3zy_9Bong0zbPEJ02fpdk_V7-T2_YSygNHgv-Cspozsw6JgqBTnQiwLJYbIHk6GttWzOSURJe-1ZAFe-B0I_4PTw81pz3u_BeNnvpQFx0tMZ1HhkENMmvDE7WQA7Lqw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_ro_001.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWknCD02ePHBzcKvtTWDnsN7TRPAuYcQLwxWB2i1nMbUNvwQ5d0-U7rUFQyS0Yp0vctNgG-e_J_hIO7zXENRAfDVxuB6UvOPz9okD5wmil-v7lJw-sA_x4seYLZp3oJz7WfYrra9fB9JB5l8=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWknCD02ePHBzcKvtTWDnsN7TRPAuYcQLwxWB2i1nMbUNvwQ5d0-U7rUFQyS0Yp0vctNgG-e_J_hIO7zXENRAfDVxuB6UvOPz9okD5wmil-v7lJw-sA_x4seYLZp3oJz7WfYrra9fB9JB5l8=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/d1GmDR8G4ruHeW69pUNfuU7lHBUZ0BU5jDXv2CowfVXl8uJZgLuJeDRjiUpQFf6BC89UHCMpr0uRZirg8Ox113-3kUIjo8JZDpUBsIHdcRqQ59w_T-fzdZHKTfri5MM4JUHWwk7PbRJ6KZhmZOpx-WnQO_1ydQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_w_006.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/nYq7Elba_sypx6AtfqfHVI6fuP8vCgVoFTMzvCZZchyknLpZf5syn013BRXNuAcLn4naiHhQgU1_D--VfTgHTpfgInREWNlbmNVBPdda0DwNaRbJjB8L9y06_BGLFOdrMMsALX6mcFB4Ou-hp5LXKDxaWdTumQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_l_002.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/YYlmW-y7nRo266QWVtklUVdMdXqzW8ggP5A2D6ofSDHzbvQmzgqrKER-J4h0RZIOKfJA-72ZLPccb7ld2Xs2DAx6DmZi5QZX4BJT0mTU8ktB1ZUt8rOMrnBKyx9YJIMkZubNd2IoaSpNQneVCMAgNAgGbF4c0A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_r_004.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/kNsYE1vG319DXrDwmrW_D-H2B8FFPff6zOo_kuhtQKWBvRkus1EOHBcnAvlN50gyro8q40oZ6l60kq7dcxtScD7mDR80vyU5_GLLsvcmd591wOVN3xMuK5Z5lYOOFnwOtlO-gZSenuIQDOpcXzWPBzMg8MGdYcw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://photos.hotelbeds.com/giata/original/90/909025/909025a_hb_l_004.jpg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/SsgYZ1nj0VkvsVEXRI3b1QbCMy3bQ4wD3r-kUtB8s01-X5F2QCUFF-LPO9i-QqkBUqeGuWSGy0AgUcco3UVl8F6-EU_peQ1wfzdF-au-4TupwctWmTMDbswQqvtSbbhzw8UTAfb3_yLrIJWFUHPRA36qAuiwTP0=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/3e/52/3e52dbc1ef74114d583a819a23ad1f119cd9968e.jpeg"
+          }
+        ],
+        "overall_rating": 5,
+        "reviews": 3,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 3
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 0
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.5,
+        "amenities": [
+          "Free Wi-Fi",
+          "Parking",
+          "Restaurant",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoI89bYhN2fotDuARoNL2cvMTFqOTB2OWxjaBAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoI89bYhN2fotDuARoNL2cvMTFqOTB2OWxjaBAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoIkvjl8KKPwNuKARoNL2cvMTF4ejIzOWdochAB",
+      "property_token": "ChoIkvjl8KKPwNuKARoNL2cvMTF4ejIzOWdochAB",
+      "name": "唯庭輕居飯店",
+      "address": null,
+      "latitude": 31.20899,
+      "longitude": 121.48297,
+      "rating": null,
+      "user_rating_count": null,
+      "hotel_class": null,
+      "amenities": [],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1529.0,
+        "total": 4588.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$1,529",
+          "extracted_lowest": 1529
+        },
+        "raw_total_rate": {
+          "lowest": "$4,588",
+          "extracted_lowest": 4588
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 14,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0714
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "唯庭輕居飯店",
+        "property_token": "ChoIkvjl8KKPwNuKARoNL2cvMTF4ejIzOWdochAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoIkvjl8KKPwNuKARoNL2cvMTF4ejIzOWdochAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.20899,
+          "longitude": 121.48297
+        },
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$1,529",
+          "extracted_lowest": 1529
+        },
+        "total_rate": {
+          "lowest": "$4,588",
+          "extracted_lowest": 4588
+        },
+        "nearby_places": [
+          {
+            "name": "田子坊",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "33 分鐘"
+              }
+            ]
+          }
+        ],
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/pxjQG5ylLFh9TGpd4kmFUqvMeeZtU4--lLmTT1anUPOrrmgwLqo_9-7JyNlQ_TtZMcDlfK1rAN3RU5blvAaa-nlt_hn0xJx3veOARd8jPjmFJl2L1XzrJxPGjV6aQDTkgnmLchuwgCfuLH4lGFIqf2XDpXxc4g=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/b9/b3/b9b3240c193a65a6e7c91cc2e32b114f809e8066.JPEG"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/yxFf6eb7mjDICuTC5gPrTpMVJHYC6MLqKR15kBzwCnFQ-Uru1Ibnt8aeDTsL9CXoQF8XUHisDurHOj84bJqLMI-JPaTjlQhsml2lthCMudEiQ4J7nuBQUDQK7uO1NASN_A5urf-txkYDo2sswPkJqgzQdmPqRAI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/e6/zz/e6ad22e66bf73b31faafc857ec2b8fdc944196d8.JPEG"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/vyvpsn0p1laYM1XADtLd5kOCna4NZYgkxXHXzcGc7t-82XSKcBGnQXsLciW7qpD2RupaYwVPeoWKMXr6Hq0VmxAsDmPZm6o8MJ-93vRUuwlIK7YABorOp-J9-quv5UIZ2_2GsexBL1jYSxc5WzNqQKAICTBdIQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/e0/e4/e0e4b8560306c6dd6d7927fb09a5e28f8edd9477.JPEG"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/H9yRUBZIhLSxXpUd7d8ZwtEY0KD62fIYntEefiatTgpYp8ZbaWQOyELTGm01bY1E_9BJ-uqaGp9szPA22cjzEatZ5fUEtfX4NFjLRh7QBOFu8Cr-DGNOIi98LVnouvk6vI6_48XxlQY0zZCS1bDUWgafmq-iGng=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/e9/2e/e92ed922ea45f8452379c6de46b6a99721878644.JPEG"
+          }
+        ],
+        "location_rating": 3.5,
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoIkvjl8KKPwNuKARoNL2cvMTF4ejIzOWdochAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoIkvjl8KKPwNuKARoNL2cvMTF4ejIzOWdochAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChgI5KWNz4Hkzv-dARoLL2cvMXZjams3cHIQAQ",
+      "property_token": "ChgI5KWNz4Hkzv-dARoLL2cvMXZjams3cHIQAQ",
+      "name": "上海會景樓大酒店",
+      "address": null,
+      "latitude": 31.211892,
+      "longitude": 121.487954,
+      "rating": 3.7,
+      "user_rating_count": 3,
+      "hotel_class": "2 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Parking",
+        "Air conditioning",
+        "Restaurant",
+        "Full-service laundry",
+        "Kid-friendly"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": null,
+        "total": null,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": false,
+        "raw_rate_per_night": {},
+        "raw_total_rate": {}
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 15,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0667
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "上海會景樓大酒店",
+        "property_token": "ChgI5KWNz4Hkzv-dARoLL2cvMXZjams3cHIQAQ",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChgI5KWNz4Hkzv-dARoLL2cvMXZjams3cHIQAQ&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.211892,
+          "longitude": 121.487954
+        },
+        "check_out_time": "下午12:00",
+        "nearby_places": [
+          {
+            "name": "豫园",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "36 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "2 星級飯店",
+        "extracted_hotel_class": 2,
+        "images": [
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/0uO_eaKQcOCf8lOuHUHudlb53YvqNto5lVgvzIipI7ZA4Ywqa9WwA76pwoIiurSVOVRsNZodJmsox4uibPsSpR8KhwrlqTnZx5PMNJMMZ9aNzOLc7oVFA9Phn2UtvZwRKJrzjawFWbnJDSox40Z-dqCbPFm4yA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/5a/6b/5a6bba2d62d9f66b1e784b167090f14eb2887f4d.JPEG"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/Okkgle-R81MjxGIKQJo964ilSSQ_rCdgk31_KSa4wTyODkSnXDZF7pfdNK-5YKqCxr36dU9d2fV06oDp16glE2uwnvOsfeG37-GkK9S7YPqYDMNfN3NP_QwWJUM_qwgAbIxriqFClQ0Dwkn3Qph72_W59t2c7A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/1f/2a/1f2a144c4e68d20d08d67247c6a2f0cf5c9c1706.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/N8dfB5ESszb_wpQ9Vwv9CoKPmi2rTuurFwRqG0B1_s8F-cvLlR7PehpGUT6ab-EcupkjjpvBuTEjDlSpdPWfpCjxF9GHvqRcdBcKljTCOHPSB9sZMSHwwx1Aa93QW_A6y6LPtknCtbcLt3zc8mlizn-YkM-QgMM=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/2a/16/2a16e81401f52a00f2f01ac4cab781b0d9289038.JPEG"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/ZXZjQbq9jMo_uUPyWHvnNsNHo6lmVu8mQ0Ss9eVWnhd6Hd9-zkByxf9aIgt3dNGasXxc8tQqhpYKDPtB1QwxB5ODHkY4AFOKhuajZKe9tZoCR3dpAWuT5piR8XTwR7WqD4idhuhMfQd-3GnXT5llloxGAYCayFI=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/a1/07/a107f3029c26f9672b114f445e9b6ddd6c304f52.JPEG"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/he3UO8mLC7MAQXU5IXrXRlZl-w3KN9rYZriLpvo7w-n9-oZgQdIl_uD7uE0OCAACpi6_JbaLRW6d9RvqHEcXjcnBApQewsFipKBaR8j47ysq5aRfBtDooAXy6CKZZdPYccI-SbL1l1WhcRiAi48UsCg3gYh0ims=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/f5/c2/f5c28d5ee0cf96aa102ecacb0fcfc77fa12b347a.JPEG"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk5BYpNrDNXbefyoD-YulroPdGL6b_rw96p9eVFYdlkWPRMJloy9RcxJXauT-93mO1NlXZECWbpwZ5Z6X13gTJmFja7-47nlJrNEjPGnqt7-XeDKEduGbg7YWcDiHon2UWaltL3Qg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk5BYpNrDNXbefyoD-YulroPdGL6b_rw96p9eVFYdlkWPRMJloy9RcxJXauT-93mO1NlXZECWbpwZ5Z6X13gTJmFja7-47nlJrNEjPGnqt7-XeDKEduGbg7YWcDiHon2UWaltL3Qg=s10000"
+          }
+        ],
+        "overall_rating": 3.7,
+        "reviews": 3,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 0
+          },
+          {
+            "stars": 4,
+            "count": 2
+          },
+          {
+            "stars": 3,
+            "count": 1
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.4,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Parking",
+          "Air conditioning",
+          "Restaurant",
+          "Full-service laundry",
+          "Kid-friendly"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChgI5KWNz4Hkzv-dARoLL2cvMXZjams3cHIQAQ",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChgI5KWNz4Hkzv-dARoLL2cvMXZjams3cHIQAQ"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoIgo76qsO6ntCQARoNL2cvMTFzNF82Y2RncxAB",
+      "property_token": "ChoIgo76qsO6ntCQARoNL2cvMTFzNF82Y2RncxAB",
+      "name": "Baseplus-Binjiang Serviced Apartment",
+      "address": null,
+      "latitude": 31.205235999999996,
+      "longitude": 121.49163,
+      "rating": 4.5,
+      "user_rating_count": 6,
+      "hotel_class": "4 星級飯店",
+      "amenities": [],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": null,
+        "total": null,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": false,
+        "raw_rate_per_night": {},
+        "raw_total_rate": {}
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 16,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0625
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Baseplus-Binjiang Serviced Apartment",
+        "property_token": "ChoIgo76qsO6ntCQARoNL2cvMTFzNF82Y2RncxAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoIgo76qsO6ntCQARoNL2cvMTFzNF82Y2RncxAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.205235999999996,
+          "longitude": 121.49163
+        },
+        "check_out_time": "下午12:00",
+        "nearby_places": [
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "33 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "4 星級飯店",
+        "extracted_hotel_class": 4,
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWltkjUwW2hnlIIUj_NXW6-kpUegGNZwSjja38gxwD9N2M3WvIo3ak01VSAMhkTrc-n78pxKOEXvR8sN_Ij0JXbwu7tNIBNwzGbytLgkwa5MRt5IoLWf6lIDWTS7h3eZFRSyM3eBFA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWltkjUwW2hnlIIUj_NXW6-kpUegGNZwSjja38gxwD9N2M3WvIo3ak01VSAMhkTrc-n78pxKOEXvR8sN_Ij0JXbwu7tNIBNwzGbytLgkwa5MRt5IoLWf6lIDWTS7h3eZFRSyM3eBFA=s10000"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/j-1weX3-zYUvr9rG_9TN_E3HMB8AwBEqNjawOUniz7_71kQPU3eTvT-EtPQzyMLMol4XM6NJx0JQPKUmiabwtRTAcmoLPFj2iIoVl78SmQ90x67JiEYMzV0tnOmKg4mQcISluJheE_4YMbuRgM_1poHPArnnpew=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/129000000/128250000/128244400/128244353/20c5df1b_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/bnmsmsUJflTZzWX_SP-y5F7W0Zg3Yfv1h4qzy0BSJItECdMN1O9bHGZ3lq9Kt7t_0D0zv0zo4uzcXNUhtWBwq_G1xtHePQo0nJSMC0T-jJcJS2JZm2FO1T2kB-fORoIgglKCb7zOp7OZdnwx-UG1hhyZRcYvMw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/129000000/128250000/128244400/128244353/w1080h717x0y0-a647b062_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/e1xCWZfObb1TF-1A8eLno7Cx8oNYdkpFSebAh4BnwZDb6rMKNoW3N_rEji2xLoN1CwJXfNIOXB1JkKo9Ezch6yQQsXgdqP6gMZEYzq-DAWEkYQnICP7pszCJ6eYUhMDGX6iUw4Dt-XkU7ybH5J-MbInS96TkTQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/49/f3/49f3868bb5374a17691856ec370c70e261e89cbd.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/CubzJgQwgNdeuSudSl_ht_Fi4IRgW1XvBrbZmoLGOniFSZbYuRsckxjuYZAJws3KmmS20URjrTfAmyILiALvDIhtS5-VmE_05ZLnd96nC6sXzOhN9n5n2ASjLcUON1IhBtykHITRlW0zoDYEgeDSNypMmNQB8hs=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/97/61/976136d48b1047438b4198549df34f2ff3ff6049.JPEG"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/3hZwyiidOyBmAuOgKA5Sktvnh616YKEghG8zm-LP8E5RC5qREaZkBXwMWF-l6Biee5rRQNGE2OYKPpecTsi_71wSaPBwDLyfqaZkpfkq-ln1fIKvF8kl4oymSG8ObRecbf9Ce0BqtZ3Hpc9SyMHrntM4jc1LKQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1b/4a/8d/54/caption.jpg?w=1900&h=1300&s=1"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/k64J31okWn4XqrO_md5FhxXLc09aO_Pa-r6m0uIwpI-mbn3j595Zl8IAAIX95ejlsxtiG3dIoxKN1CjcfydYiSUWJSjvavwqXjJOg479aVZgh1aAreRARzLUvZVLCGWDycaEwBVWlzT4gu7Ht8AItCr2KcBxYQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/48/77/4877e745c12f297ff1358984f0629ab44e20ab7a.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/cym1TcH2GLP-Q66YfjJRhRWaoYBruwItA-LDBlbp4YIGcdTw3VcE1y1kJ4zFLqLt5lOdyO7D0TJMJ0DZ3WSDA0lmo82KH23tCJMVbOrC_qSQFq5u-2zIL-675dFnMJzOJSij8IDSKkuI4aOBReMgzj0KiW-Yrw0=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://images.trvl-media.com/lodging/129000000/128250000/128244400/128244353/6a3f6ea3_z.jpg"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/yEC78JJEsiebSa2yP8qIwHs9m2T8w61UkN69RnKm5DD07TBdfFdRgK7beRxRPtHdUqbj9UtqZyOsZak-eOUr7a_0pnm-gBJ1a6d4E6SiQD8ykQMp2A-lKVFgzKJmdgr2WG4Bdsa_nw19TtVcTTyGJAomsK660w=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/59/01/590102f4bf149451b7fc32962d39e13242fdaeff.JPEG"
+          }
+        ],
+        "overall_rating": 4.5,
+        "reviews": 6,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 4
+          },
+          {
+            "stars": 4,
+            "count": 1
+          },
+          {
+            "stars": 3,
+            "count": 1
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoIgo76qsO6ntCQARoNL2cvMTFzNF82Y2RncxAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoIgo76qsO6ntCQARoNL2cvMTFzNF82Y2RncxAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChkI9oLQ26Wpw497Gg0vZy8xMWx0OXEya2RxEAE",
+      "property_token": "ChkI9oLQ26Wpw497Gg0vZy8xMWx0OXEya2RxEAE",
+      "name": "Home Inn Select Hotel",
+      "address": null,
+      "latitude": 31.203732,
+      "longitude": 121.49343999999999,
+      "rating": 5,
+      "user_rating_count": 3,
+      "hotel_class": null,
+      "amenities": [],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": null,
+        "total": null,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": false,
+        "raw_rate_per_night": {},
+        "raw_total_rate": {}
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 17,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0588
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "Home Inn Select Hotel",
+        "property_token": "ChkI9oLQ26Wpw497Gg0vZy8xMWx0OXEya2RxEAE",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChkI9oLQ26Wpw497Gg0vZy8xMWx0OXEya2RxEAE&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.203732,
+          "longitude": 121.49343999999999
+        },
+        "check_out_time": "下午12:00",
+        "nearby_places": [
+          {
+            "name": "上海城隍廟",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "32 分鐘"
+              }
+            ]
+          }
+        ],
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG1OhormFAwqU--59CPIFmGjfmr8gH9_xz5kFIJRknHreypXpMwEP4J168KSfVuUZVxiMEh0FLg22itAdR6CIZM1SP7ZUGfFEBeTboRYXI2kW6Ngunlhq-EGliQLdsVRC9o08OBbw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAG1OhormFAwqU--59CPIFmGjfmr8gH9_xz5kFIJRknHreypXpMwEP4J168KSfVuUZVxiMEh0FLg22itAdR6CIZM1SP7ZUGfFEBeTboRYXI2kW6Ngunlhq-EGliQLdsVRC9o08OBbw=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFtbjFL8H6kigFSXtbxmkLV2BnFFVvqBBGJTgLanllI5WgZ2u9mb1h-aXD_6nO8MItM7_ocSXCgfzlDaHamJhs5eVacj9q4Lbd6k35Ji0SCNIYFx6eKtza4B7E6owiv1LXE0-3F_g=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAFtbjFL8H6kigFSXtbxmkLV2BnFFVvqBBGJTgLanllI5WgZ2u9mb1h-aXD_6nO8MItM7_ocSXCgfzlDaHamJhs5eVacj9q4Lbd6k35Ji0SCNIYFx6eKtza4B7E6owiv1LXE0-3F_g=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEsC-adzeAiGR9tXEIuTJgNhYNFgCSE82vBQCpeJYvmJVTkjPtRdEwnaO2Xq3R3yWizz4x7x4vD0zvWtreFqMZ7AoLPJv7ZgpdJbMK6DvUpDgAEJcVERIeD6Ofd8HiNfszJTGJzkDbfZsE=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEsC-adzeAiGR9tXEIuTJgNhYNFgCSE82vBQCpeJYvmJVTkjPtRdEwnaO2Xq3R3yWizz4x7x4vD0zvWtreFqMZ7AoLPJv7ZgpdJbMK6DvUpDgAEJcVERIeD6Ofd8HiNfszJTGJzkDbfZsE=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEiZGe0nBULXyeHR5-HQZsEMU-qlgKDimtPnh7-xemd15Zn_OG2xw0Vv97QlUKrxq3JXMsx1mT-WTs4mefceQzDsFNJ3cR4TG791IDmU3XjlaLStQkxSJVZ_KlklvrpB-Lt5gKU=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEiZGe0nBULXyeHR5-HQZsEMU-qlgKDimtPnh7-xemd15Zn_OG2xw0Vv97QlUKrxq3JXMsx1mT-WTs4mefceQzDsFNJ3cR4TG791IDmU3XjlaLStQkxSJVZ_KlklvrpB-Lt5gKU=s10000"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEsBNVmx9C6e7IWlDTpl_LMN2Tsslun9ZsQH0YtsB-3RAAGsIha1uVlEIHT6sA2bL5edwUt6kyRj1bCjx-vsNaHSeEmnBd6qiaD39_RoHmiRFaxTFCfSPnb2JvVsMOcFLgQgJ2OIQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://lh3.googleusercontent.com/gps-cs-s/APNQkAEsBNVmx9C6e7IWlDTpl_LMN2Tsslun9ZsQH0YtsB-3RAAGsIha1uVlEIHT6sA2bL5edwUt6kyRj1bCjx-vsNaHSeEmnBd6qiaD39_RoHmiRFaxTFCfSPnb2JvVsMOcFLgQgJ2OIQ=s10000"
+          }
+        ],
+        "overall_rating": 5,
+        "reviews": 3,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 3
+          },
+          {
+            "stars": 4,
+            "count": 0
+          },
+          {
+            "stars": 3,
+            "count": 0
+          },
+          {
+            "stars": 2,
+            "count": 0
+          },
+          {
+            "stars": 1,
+            "count": 0
+          }
+        ],
+        "location_rating": 3.3,
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChkI9oLQ26Wpw497Gg0vZy8xMWx0OXEya2RxEAE",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChkI9oLQ26Wpw497Gg0vZy8xMWx0OXEya2RxEAE"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoItpjRm6_K-JmqARoNL2cvMTFkZHg3emQ1MhAB",
+      "property_token": "ChoItpjRm6_K-JmqARoNL2cvMTFkZHg3emQ1MhAB",
+      "name": "漢庭酒店",
+      "address": null,
+      "latitude": 31.212719999999997,
+      "longitude": 121.48543,
+      "rating": 3.4,
+      "user_rating_count": 7,
+      "hotel_class": "3 星級飯店",
+      "amenities": [
+        "Breakfast",
+        "Free Wi-Fi",
+        "Air conditioning",
+        "Restaurant",
+        "Kid-friendly",
+        "Smoke-free property"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": null,
+        "total": null,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": false,
+        "raw_rate_per_night": {},
+        "raw_total_rate": {}
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 18,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0556
+      },
+      "raw_candidate": {
+        "type": "hotel",
+        "name": "漢庭酒店",
+        "link": "http://www.huazhu.com/",
+        "property_token": "ChoItpjRm6_K-JmqARoNL2cvMTFkZHg3emQ1MhAB",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoItpjRm6_K-JmqARoNL2cvMTFkZHg3emQ1MhAB&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.212719999999997,
+          "longitude": 121.48543
+        },
+        "check_in_time": "下午2:00",
+        "nearby_places": [
+          {
+            "name": "田子坊",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "9 分鐘"
+              }
+            ]
+          },
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "33 分鐘"
+              }
+            ]
+          }
+        ],
+        "hotel_class": "3 星級飯店",
+        "extracted_hotel_class": 3,
+        "images": [
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/1HhDpUyLnIAiqK1UyUur3PA-Ky8ezLTTIF-nDlkpAtPAjd3ccvWrYT_d-xfRPRplEyBOX4r9sn0OqDvByK5GrSWV9s8aZlZoWGA67yeVQ_H-wUcvvl2keb7PfvFrwJp2lmFrJErXk-Z5Q6RTEmlDzB-Yo3VwgQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/08/38/70/photo3jpg.jpg?w=1900&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/5WI6DrUHF5GLk7GsjZPOGxWvxVPLhZd1Z6a5NHqayAfRJYaYkhlMmfzO24FxnpbCOvQOcxZDuimmV10_Rw9Qzx8R3A8-Twg8iKfDOQu9bafpdE0BmBAiQsdkKAQgjmmEBk77zSTwNU-SmAl2CKEL7ko_rwGtSQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/08/38/75/photo8jpg.jpg?w=1900&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/j8MygrONysL_6CsjtelEIksVYQzEX9pHkfK5CTkAEgnqmisimS4_HaB9IqhLRjeSuggfGKhokRuCEXAKcdtSp4wwymBg7u5FcsuDZ-2dXEXNRs8mv-i4Jeq8rEifUQucAWP59Nv3L7CNK-IzaDWQmffDrZHUmQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/af/00/af00177cd86d4002fa50bfab9ac01a9213e06a64.jpeg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/eMKtbK0vv_LPL_Gk1erPpg3OU8S77qQWDhDWyKraihsEbSiG_jwoz6_iADsWsgu3cPDkLye_gKpyltsOwjnbZLcUz_SKdM1cjq7cxp3JlbvN2EUpvdgnTo5ExKapKJq1ZYKK6D0iOPhYYXnJKWS01SP9oIG8aTk=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/e7/e0/e7e0f17d8cab385f4abd0aa4676144fd78de3317.JPEG"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/zSM4XyHzuMuGjdPlN6amVH8WZXAqxrwBW1OI9PaKhxgBzBgB2u3NgkwA20HtJ__Z9meQNkMbgWGWuSdPC8WSO6tODwYdlqnIKP0ZsQzUAHIYKNKNGRlTEKAiKnwpzuxWvVq85o1LRBPq6WBnGsdM39p_Fe-DYDw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/3d/50/3d5099633346995db7905580b8c5ef4ce7f3a3cd.jpeg"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/Abjapnp2GBSd-KfaTknOEi4oy463QvzrD-j_7wQZn9MOpM2Sko6Tm9Z-NDprG76pyeP1lbWgPMDRCa-SP3nfyAyj9nTt3WvrQQW4AQhYqzaauExp6GmFY6KXgdOg-yloC0knuoSFcKPuG-bhnKIOULifGzqBOw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/3a/zz/3aad476b648fd01f60ea828672dd09fa875a781c.jpeg"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/ZtMV4jOBzj_TNRZq8TIDuZh7pvdHSebFR-ci7xx_771XcKH4Uz8CXGeco6Wwv_V7EhPqYlzEa1GZMVqub7AfxOvzEbNmjkBCKpwcMUrOoIC0eyfiVNB7oSCQ7H2t_JtcHOwl8oEVLHTbUOZcJpuBb1nSXlAm-FY=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/08/38/6e/photo1jpg.jpg?w=1900&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/1g0uIl2qIZ8Jx3NxlvW6UxGkkXOhqhlnUPMorh25T9-nEcUzrksGneaTpqv03496F00kBHBPt_E7eFz5XlisjuOO9TdZN8ObPzyVeVisH9Gb7qMI0nAI_AQB0OzOK0gvMUfCICEn_xZSohRJq8Vdl18u0hyq6pE=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/08/38/73/photo6jpg.jpg?w=1900&h=1400&s=1"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/nJF7V4ykfr8Qg98h5ja__vdSZfW9FN2zPQN0mxMxN3ayyUT0Qr3gw-AVbg7VP1fcSVvEBIYjaTKFywD2H2_6Pkhn_Dn37Dm_sueyFeGdtBvxWD82HTXaziiK1ffGbSo6zBtut2S21UIxUSGX4ov2-T4UA6J16A=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://cdn.worldota.net/t/1024x768/content/92/08/9208215c56ff36573010326c95ed28f1f05a255f.jpeg"
+          }
+        ],
+        "overall_rating": 3.4,
+        "reviews": 7,
+        "ratings": [
+          {
+            "stars": 5,
+            "count": 2
+          },
+          {
+            "stars": 4,
+            "count": 2
+          },
+          {
+            "stars": 3,
+            "count": 1
+          },
+          {
+            "stars": 2,
+            "count": 1
+          },
+          {
+            "stars": 1,
+            "count": 1
+          }
+        ],
+        "location_rating": 3.5,
+        "amenities": [
+          "Breakfast",
+          "Free Wi-Fi",
+          "Air conditioning",
+          "Restaurant",
+          "Kid-friendly",
+          "Smoke-free property"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoItpjRm6_K-JmqARoNL2cvMTFkZHg3emQ1MhAB",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoItpjRm6_K-JmqARoNL2cvMTFkZHg3emQ1MhAB"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoQ14208YKxyYy-ARoNL2cvMTFtdDVwejczNxAC",
+      "property_token": "ChoQ14208YKxyYy-ARoNL2cvMTFtdDVwejczNxAC",
+      "name": "HUI上海黄浦滨江高区域豪华景观房 江景 步行至外滩 新天地 人民广场 黄金地段超大平层四卧室",
+      "address": null,
+      "latitude": 31.199241638183594,
+      "longitude": 121.48929595947266,
+      "rating": 3.95,
+      "user_rating_count": 8,
+      "hotel_class": null,
+      "amenities": [
+        "空調",
+        "機場接駁服務",
+        "陽台",
+        "海灘",
+        "親子友善",
+        "嬰兒床",
+        "電梯",
+        "健身中心",
+        "燙衣板",
+        "廚房",
+        "微波爐",
+        "烤箱",
+        "可攜帶寵物",
+        "室內全面禁菸",
+        "有線電視",
+        "洗衣機",
+        "有無障礙設施",
+        "免費停車場",
+        "免費 Wi-Fi"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 7564.0,
+        "total": 22691.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$7,564",
+          "extracted_lowest": 7564
+        },
+        "raw_total_rate": {
+          "lowest": "$22,691",
+          "extracted_lowest": 22691
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 19,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.0526
+      },
+      "raw_candidate": {
+        "type": "vacation rental",
+        "name": "HUI上海黄浦滨江高区域豪华景观房 江景 步行至外滩 新天地 人民广场 黄金地段超大平层四卧室",
+        "property_token": "ChoQ14208YKxyYy-ARoNL2cvMTFtdDVwejczNxAC",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoQ14208YKxyYy-ARoNL2cvMTFtdDVwejczNxAC&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.199241638183594,
+          "longitude": 121.48929595947266
+        },
+        "check_in_time": "下午3:00",
+        "check_out_time": "下午12:00",
+        "rate_per_night": {
+          "lowest": "$7,564",
+          "extracted_lowest": 7564
+        },
+        "total_rate": {
+          "lowest": "$22,691",
+          "extracted_lowest": 22691
+        },
+        "prices": [
+          {
+            "source": "Agoda",
+            "logo": "https://www.gstatic.com/travel-hotels/branding/e89db943-92ad-48bd-9bd7-da844fa32f2d.png",
+            "num_guests": 4,
+            "rate_per_night": {
+              "lowest": "$7,564",
+              "extracted_lowest": 7564
+            }
+          }
+        ],
+        "nearby_places": [
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "40 分鐘"
+              }
+            ]
+          }
+        ],
+        "images": [
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/5JaljHRrlA6yIG280DG3EbtugFVWKyuzlqeM7VMRyjvPly93BXRvOIPK7iQd4gbj7cFAXAPTC3dmiiAc-W93ywXahhsriuRxhfgi99_x73w4mcl6kyW3n280nETsbuLVmkwDsWyMuwFAIOQWyPhDXwo_ZKN334w=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/93781013d2c3275c8c19a6f01f7e5dbe.jpeg?ce=0"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/vGut5WzUtmzXj9r4vgTvBS3MqlUCOzBu6IHU6lc5nSx9g679IVLBMNbITlL2MwwCkNWjgm2F-m3NJ7zDBOWHVgsuJVQZaX3UIyPJ3PIdFA_l_50u7aaS2oD_vl_yicUBwus4FFdHkXPxevNeUOYVcOkPDL1Eqw=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/888b6d4757c01de377572d010bacab56.jpg?ce=2"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/qXUvvVCQM42F-rha2RQkNIyimAiDTQPtxK08-dFfu17di1A-ArTZMxG7bCvoz_p3fuReskDhIspz-dRlP5r-2_ZBXUl984uG-8KmqqKR2muSIrGx8j0u2fLZr_ZXED8AP5D8EbVnHaAFJwTSrAj-6Qbx2AtTiQ=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://freecancellationscdn-hsbgcwfragasdpfe.z01.azurefd.net/remote/static.cupid.travel/hotels/517595486.jpg?w=1024&h=683&mode=crop&scale=both&anchor=middlecenter&quality=80"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/_70YuEECUV7OlKBK2Df-OPosf5tlMCBQQBFs52sfMUhDR8SV3pC6XZiYB51-JVfzpyVs6xJfXQn6kUVRi7dspZBqvDpfIU8jVQQIzgBMEyMc8yt0bytjwFO9-Fw-LvGvs5KsaEzh44E9AUZQLWsCQ3-xanKwnA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://freecancellationscdn-hsbgcwfragasdpfe.z01.azurefd.net/remote/q-xx.bstatic.com/xdata/images/hotel/max1024x683/681040863.jpg?k=3b49720a891077be490b76306e2c793cd198661b5b8dac0649d7126b1f363190&o=&a=2344045&w=1024&h=683&mode=crop&scale=both&anchor=middlecenter&quality=80"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/kr3NaVnTBln-aXuc1aseeQEuYRbsa0GepzVrYzC_yN_SGFEz26kzxgyQrndtrMM2xT6w33FOH46ZklnIKN-ClU9By5ynMZfWReXT-SU7zCPkicYcfkaqrAVX4pDHMaIkSKzsHjeH_S8mEOc9uU3Gy5vB2KsUauE=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/05897198de8d8d6831e3c8995a802fb9.jpg?ce=0"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/RDujFhGaMKRSakRI7kXwhQtIelrPF4CyrpxJ-tkM2peKpbJvuNCYzPCdLmZ8X9hFgHqX_5puzuTPcANA2kKk7I391pKoqTLddzTq90PzZuaVLb8CrEs7EeSH5jLKJObXz_S3vGpuAvNVsnWdo-0UIdBsO5zN3jA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/80043a5caa74af0bfecb11489a7a046b.jpg?ce=0"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/yYPZHglJzx3N2qIp23mAw25voRDCegtkxRU90QB2UsL_1EWb1QTVVMxw8NebxZOCiPWUn59QaKzWryCoGv7thye4IVv7Maa09VjmvGaNCcRyI-cWpwuxFtZjEchFjlQa-hu8bu-76hVi5Bmb_bPovtzmpuuknXg=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/11ddb4be5b64e76b19ff8b7de80be25d.jpg?ce=2"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/AkRwgezpmhvjwn6foeyRoqd9PvyPkp98D2ubRhhscq8nwWlDji0MNhvA6tAr1S5qr9jFwqpg4jvT9pznTgqxyarEszpoSATyVOLY-mXk_hswChb7GCNacomF6jwAgv9KtPq0q8JoRZqcsX0w4I6s4ZITD6SaLxo=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/ba3b45b64f6ce7392bbba825fc3c60b7.jpg?ce=2"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/qGDRVjubS53q1QDxGqEKtHQqY0Bt_6KI-UlLIaeWY5zwNvhepMuh6KZY6_rP41eqC54St1ytHh7AcLUqhgEt8u7MQkHwOn3w0AC8ota0HZs58Gh5OAxrM93MBnytWcCdT9D2Xtp00Es90ra--sZUm8JZDTNd3Gc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/55907806/0/94a036877439f6003d6e0643fafacddb.jpg?ce=0"
+          }
+        ],
+        "overall_rating": 3.95,
+        "reviews": 8,
+        "location_rating": 3.3,
+        "amenities": [
+          "空調",
+          "機場接駁服務",
+          "陽台",
+          "海灘",
+          "親子友善",
+          "嬰兒床",
+          "電梯",
+          "健身中心",
+          "燙衣板",
+          "廚房",
+          "微波爐",
+          "烤箱",
+          "可攜帶寵物",
+          "室內全面禁菸",
+          "有線電視",
+          "洗衣機",
+          "有無障礙設施",
+          "免費停車場",
+          "免費 Wi-Fi"
+        ],
+        "essential_info": [
+          "整棟公寓",
+          "可入住 10 人",
+          "4 間臥室",
+          "2 間浴室",
+          "2 張床",
+          "282 平方公尺"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoQ14208YKxyYy-ARoNL2cvMTFtdDVwejczNxAC",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoQ14208YKxyYy-ARoNL2cvMTFtdDVwejczNxAC"
+      }
+    },
+    {
+      "candidate_domain": "lodging",
+      "provider": "serpapi_google_hotels",
+      "place_id": "ChoQ8Kz815-GyYXXARoNL2cvMTF4ZDJuZjY3cxAC",
+      "property_token": "ChoQ8Kz815-GyYXXARoNL2cvMTF4ZDJuZjY3cxAC",
+      "name": "Eastern Hub 黄浦豪华两房民宿 靠近淮海路 外滩 豫园 步行到新天地",
+      "address": null,
+      "latitude": 31.20301055908203,
+      "longitude": 121.48990631103516,
+      "rating": null,
+      "user_rating_count": null,
+      "hotel_class": null,
+      "amenities": [
+        "空調",
+        "親子友善",
+        "燙衣板",
+        "廚房",
+        "可攜帶寵物",
+        "有線電視",
+        "洗衣機",
+        "有無障礙設施",
+        "免費停車場",
+        "免費 Wi-Fi"
+      ],
+      "thumbnail": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 6450.0,
+        "total": 19350.0,
+        "nights": 3,
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": true,
+        "raw_rate_per_night": {
+          "lowest": "$6,450",
+          "extracted_lowest": 6450
+        },
+        "raw_total_rate": {
+          "lowest": "$19,350",
+          "extracted_lowest": 19350
+        }
+      },
+      "matched_queries": [
+        {
+          "query": "上海 景萊酒店·不舍 飯店",
+          "intent_type": "lodging",
+          "rank": 20,
+          "target_terms": [
+            "lodging"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "設計師酒店",
+            "地理位置"
+          ]
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 0.05
+      },
+      "raw_candidate": {
+        "type": "vacation rental",
+        "name": "Eastern Hub 黄浦豪华两房民宿 靠近淮海路 外滩 豫园 步行到新天地",
+        "link": "https://www.bluepillow.com/search/67a242f1905c444f2d0c50dd?dest=ago&cat=Vacation+rental+(other)&lat=31.20301&lng=121.48991&language=en",
+        "property_token": "ChoQ8Kz815-GyYXXARoNL2cvMTF4ZDJuZjY3cxAC",
+        "serpapi_property_details_link": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&property_token=ChoQ8Kz815-GyYXXARoNL2cvMTF4ZDJuZjY3cxAC&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97",
+        "gps_coordinates": {
+          "latitude": 31.20301055908203,
+          "longitude": 121.48990631103516
+        },
+        "rate_per_night": {
+          "lowest": "$6,450",
+          "extracted_lowest": 6450
+        },
+        "total_rate": {
+          "lowest": "$19,350",
+          "extracted_lowest": 19350
+        },
+        "prices": [
+          {
+            "source": "Bluepillow.com",
+            "logo": "https://www.gstatic.com/travel-hotels/branding/190ff319-d0fd-4c45-bfc8-bad6f5f395f2.png",
+            "num_guests": 2,
+            "rate_per_night": {
+              "lowest": "$6,450",
+              "extracted_lowest": 6450
+            },
+            "free_cancellation": true,
+            "free_cancellation_until_date": "7月13日"
+          }
+        ],
+        "nearby_places": [
+          {
+            "name": "上海虹橋國際機場",
+            "transportations": [
+              {
+                "type": "Taxi",
+                "duration": "35 分鐘"
+              }
+            ]
+          }
+        ],
+        "images": [
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/Ari-5zoIeVFGBoVTt1qe93DmuxXQgEa6Mu4y0itPEV-rSzIpFdrjlChqOuVLa0XxsNZOXE8Ahuzdgp4M2EHNcX1XVgo3zWOXZG3I14NCijBls0HzhTf0iaPVJHvbOFjrjoSniSbUozeQY636v3PauYphAfeHV1k=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/a464ae9d5a6a62f89ff453b3942cde2a.jpg?ce=0&s=312x"
+          },
+          {
+            "thumbnail": "https://lh6.googleusercontent.com/proxy/Y71aaESJz9q3OOCsxuJgX9Q69vv7Hq3oSl7bZcbJ_adHvIDR7EyFojew4DpM7I14Tyt3n7-lmOtWArZgzwVM7D4EuRb_gfKNTqNddGVephug5g9CmB5iRLiZgjpwueLsgdplP7iA1N7qKeo7CHzLENvW40PgzA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/50147624203ea6eed643eb1b744a2833.jpg?ce=0&s=312x"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/PWprQdtxx5vz6YV8q2c8aIgEE5Ni5EBkQ-IXMqoaJFwvxz_o-oUhV4x11hmSp2J7W0sTk2zDd3f1Y2ku-2Tr-XdSWKqd8wFaEuRe4bLZuJqWr2tNau0Kf9IDrKxtaY79KSZ9Xcu6V0M4_nNm0Jc5VGzlvGM33cc=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/2a27822db16ba5184137c2ec7343686d.jpg?ce=0&s=312x"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/hHDfgpDfaclSSLO9-HXy4Ux1MBm7nqV1Pew_D5EDuES562vsm_GSWrQCI2E_rXZ8ASbfAXnyJZyAoFvGseiuMyc72sxwWLWpx2INk539n-XxE15_Ctp2NbzBwysBLHVlPp8IzCGuHPMcP6CqnBoeJ2ju8I4E-1s=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/77aec945ad39588b4114588abed04713.jpg?ce=0&s=312x"
+          },
+          {
+            "thumbnail": "https://lh3.googleusercontent.com/proxy/g15Rx0ca-Ff_jIJAceC0d3dRl76j5070Z643ZwVWgREddlb8MZmX5AT_2e2OBczIl87qtfWhWhdhk9wP5OJ7be1b_t3_OQj51LaTR23-FAIh42z81L6cccPt7gSkLhyk29LYwMKMRP-F03a__jmhzSET9n4y924=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/d44aa4d79c66e945a90c4c71d99252f7.jpg?ce=0&s=312x"
+          },
+          {
+            "thumbnail": "https://lh5.googleusercontent.com/proxy/idexAduvmB9azL9JX6Si3q1CuPis1Ji_XhfGMwiNUAHycTLrs7y1YJuRMCCou42m4pmmG8okEw4MHkBgORj5B0FmwegEXwriYd1LLZ-3U8NGGqyFnih4r8eZ6r3t00gkhUnkMsMuqIhgk0yCLnt4pqu2LDCbfA=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/b5d88c2b7b50e9791614955f3befcc28.jpg?ce=0&s=312x"
+          },
+          {
+            "thumbnail": "https://lh4.googleusercontent.com/proxy/xrYsSeKDb4yPb_csqjk2MUHJxI1_YL2A7KJPzcf9Cy6pqUulAcP_72occIKzXXjBAKV_RlQdKEdcHiRFcXrBql7V8Rgo6ku36co1GAfvCVNOm6GeYkxUTC1ZHY57u4brlAQA0L0ht_nO94nAm47k4bDNpLRj_g=s287-w287-h192-n-k-no-v1",
+            "original_image": "https://pix8.agoda.net/hotelImages/63870116/0/a0c29ee17674805dd6d05beee28ee9de.jpg?ce=0&s=312x"
+          }
+        ],
+        "location_rating": 3.3,
+        "amenities": [
+          "空調",
+          "親子友善",
+          "燙衣板",
+          "廚房",
+          "可攜帶寵物",
+          "有線電視",
+          "洗衣機",
+          "有無障礙設施",
+          "免費停車場",
+          "免費 Wi-Fi"
+        ],
+        "excluded_amenities": [
+          "不提供機場接駁服務"
+        ],
+        "essential_info": [
+          "整棟房屋",
+          "可入住 15 人",
+          "10 間臥室",
+          "10 張床"
+        ],
+        "serpapi_google_hotels_reviews_link": "https://serpapi.com/search.json?engine=google_hotels_reviews&hl=en&property_token=ChoQ8Kz815-GyYXXARoNL2cvMTF4ZDJuZjY3cxAC",
+        "serpapi_google_hotels_photos_link": "https://serpapi.com/search.json?engine=google_hotels_photos&property_token=ChoQ8Kz815-GyYXXARoNL2cvMTF4ZDJuZjY3cxAC"
+      }
+    }
+  ],
+  "pagination": {
+    "current_from": 1,
+    "current_to": 20,
+    "next_page_token": "CBI=",
+    "next": "https://serpapi.com/search.json?adults=2&check_in_date=2026-07-14&check_out_date=2026-07-17&children=0&currency=TWD&engine=google_hotels&gl=tw&hl=zh-tw&next_page_token=CBI%3D&q=%E4%B8%8A%E6%B5%B7+%E6%99%AF%E8%90%8A%E9%85%92%E5%BA%97%C2%B7%E4%B8%8D%E8%88%8D+%E9%A3%AF%E5%BA%97"
+  }
+}

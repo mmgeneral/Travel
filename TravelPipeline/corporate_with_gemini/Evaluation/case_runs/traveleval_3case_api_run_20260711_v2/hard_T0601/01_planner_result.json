@@ -1,0 +1,249 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-12-15",
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "13:00",
+          "time": "09:00~13:00",
+          "activity": "高鐵北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": true
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "sunday",
+          "start_time": "13:30",
+          "end_time": "14:00",
+          "time": "13:30~14:00",
+          "activity": "入住酒店",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": true
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "sunday",
+          "start_time": "14:30",
+          "end_time": "17:00",
+          "time": "14:30~17:00",
+          "activity": "市區輕鬆逛街",
+          "slot_type": "activity",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "sunday",
+          "start_time": "17:30",
+          "end_time": "19:00",
+          "time": "17:30~19:00",
+          "activity": "晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "monday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "monday",
+          "start_time": "09:00",
+          "end_time": "11:30",
+          "time": "09:00~11:30",
+          "activity": "參觀富泉山古文化遺址",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "富泉山古文化遺址",
+          "route_entry_place": "富泉山古文化遺址",
+          "route_exit_place": "富泉山古文化遺址",
+          "locked": true
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "monday",
+          "start_time": "11:30",
+          "end_time": "12:00",
+          "time": "11:30~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "monday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "中午小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "monday",
+          "start_time": "13:30",
+          "end_time": "16:00",
+          "time": "13:30~16:00",
+          "activity": "遊覽七寶古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "七寶古鎮",
+          "route_entry_place": "七寶古鎮",
+          "route_exit_place": "七寶古鎮",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "上海冬季較冷，請攜帶保暖衣物。",
+    "建議提前查詢高鐵票價及時刻，以規劃行程。",
+    "避免在餐飲中選火鍋和川菜，可選擇當地特色小吃。",
+    "下雨時路面濕滑，請穿著防滑鞋。"
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [
+        "friends"
+      ],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "富泉山古文化遺址",
+        "七寶古鎮"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 5,
+      "duration_nights": 4,
+      "travel_start_date": "2024-12-15",
+      "travel_end_date": "2024-12-19",
+      "season_or_month": "December",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "富泉山古文化遺址",
+        "七寶古鎮"
+      ],
+      "desired_experiences": [
+        "小眾秘境",
+        "歷史古蹟"
+      ],
+      "activity_types": [
+        "history",
+        "culture"
+      ],
+      "food_preferences": [
+        "local_snacks"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": [
+        "good_location",
+        "free_parking"
+      ]
+    },
+    "why": {
+      "trip_goal": "探索上海小眾秘境和歷史古蹟",
+      "success_criteria": [
+        "體驗小眾景點",
+        "探索歷史古蹟",
+        "滿足預算",
+        "便利交通"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "how": {
+      "budget": 3200,
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "route_feasibility"
+      ],
+      "hard_constraints": [
+        "需有免費停車",
+        "不坐飛機",
+        "不吃火鍋和川菜"
+      ],
+      "soft_preferences": []
+    }
+  }
+}

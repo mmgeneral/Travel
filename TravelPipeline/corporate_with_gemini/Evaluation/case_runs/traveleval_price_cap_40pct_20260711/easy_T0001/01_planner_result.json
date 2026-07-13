@@ -1,0 +1,333 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-11-15",
+    "arrival_anchor": {
+      "name": "上海虹橋站",
+      "place_query": "上海虹橋站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海虹橋站",
+      "place_query": "上海虹橋站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "friday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "friday",
+          "start_time": "07:00",
+          "end_time": "12:00",
+          "time": "07:00~12:00",
+          "activity": "搭乘高鐵從北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "北京站",
+          "route_exit_place": "上海虹橋站",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "friday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "午餐於豫園品嚐上海小籠包",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "豫園",
+          "route_entry_place": "豫園",
+          "route_exit_place": "豫園",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "friday",
+          "start_time": "13:00",
+          "end_time": "15:00",
+          "time": "13:00~15:00",
+          "activity": "參觀豫園和城隍廟",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "豫園和城隍廟",
+          "route_entry_place": "豫園和城隍廟",
+          "route_exit_place": "豫園和城隍廟",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "friday",
+          "start_time": "15:00",
+          "end_time": "15:30",
+          "time": "15:00~15:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "豫園和城隍廟",
+          "route_exit_place": "外灘",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": "friday",
+          "start_time": "15:30",
+          "end_time": "17:30",
+          "time": "15:30~17:30",
+          "activity": "在外灘漫步觀賞夜景",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "外灘",
+          "route_entry_place": "外灘",
+          "route_exit_place": "外灘",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "saturday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "saturday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "saturday",
+          "start_time": "11:00",
+          "end_time": "11:30",
+          "time": "11:00~11:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "法租界",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "saturday",
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "time": "11:30~13:00",
+          "activity": "在法租界午餐並散步",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "法租界",
+          "route_entry_place": "法租界",
+          "route_exit_place": "法租界",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "saturday",
+          "start_time": "13:00",
+          "end_time": "15:00",
+          "time": "13:00~15:00",
+          "activity": "參觀上海城市規劃展示館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海城市規劃展示館",
+          "route_entry_place": "上海城市規劃展示館",
+          "route_exit_place": "上海城市規劃展示館",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀東方明珠塔",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "東方明珠塔",
+          "route_entry_place": "東方明珠塔",
+          "route_exit_place": "東方明珠塔",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "sunday",
+          "start_time": "11:00",
+          "end_time": "11:30",
+          "time": "11:00~11:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "東方明珠塔",
+          "route_exit_place": "上海海洋水族館",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": "sunday",
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "time": "11:30~13:00",
+          "activity": "參觀上海海洋水族館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海海洋水族館",
+          "route_entry_place": "上海海洋水族館",
+          "route_exit_place": "上海海洋水族館",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot04",
+          "day_of_week": "sunday",
+          "start_time": "13:00",
+          "end_time": "13:30",
+          "time": "13:00~13:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海海洋水族館",
+          "route_exit_place": "上海虹橋站",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot05",
+          "day_of_week": "sunday",
+          "start_time": "14:00",
+          "end_time": "19:00",
+          "time": "14:00~19:00",
+          "activity": "搭乘高鐵返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海虹橋站",
+          "route_exit_place": "北京站",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "高鐵票建議提前購買以確保可控時間與座位。",
+    "根據天氣情況及時調整攜帶服裝。",
+    "合理安排每日預算，確保整體開銷不超出每人每日約1133元人民幣。",
+    "提前查詢各景點的營業時間及是否需要提前預約。"
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "外灘",
+        "豫園",
+        "法租界"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 3,
+      "duration_nights": 2,
+      "travel_start_date": "2024-11-15",
+      "travel_end_date": "2024-11-17",
+      "season_or_month": "11月中旬",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [],
+      "desired_experiences": [
+        "文化體驗",
+        "地道美食"
+      ],
+      "activity_types": [
+        "culture",
+        "local_food"
+      ],
+      "food_preferences": [],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "探索上海的美食與文化",
+      "success_criteria": [
+        "控制預算不超過3400元",
+        "包含文化和美食體驗"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "how": {
+      "budget": 3400,
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "route_feasibility"
+      ],
+      "hard_constraints": [],
+      "soft_preferences": []
+    }
+  }
+}

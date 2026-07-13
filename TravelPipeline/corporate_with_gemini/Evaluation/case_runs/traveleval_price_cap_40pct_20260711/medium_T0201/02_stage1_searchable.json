@@ -1,0 +1,44 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": "saturday",
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "meal",
+      "original_activity": "淮海路商圈咖啡館休憩",
+      "reason_for_search": "需搜尋具體的咖啡館",
+      "suggested_search_query": "淮海路 咖啡館",
+      "target_terms": [
+        "咖啡館"
+      ],
+      "location_terms": [
+        "淮海路"
+      ],
+      "intent_type": "cafe",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": "sunday",
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "meal",
+      "original_activity": "享用上海特色晚餐",
+      "reason_for_search": "缺乏具體餐廳資訊",
+      "suggested_search_query": "上海 特色 晚餐",
+      "target_terms": [
+        "特色晚餐"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    }
+  ]
+}

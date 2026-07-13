@@ -1,0 +1,643 @@
+{
+  "anchor_context_version": "anchor_resolver_v0.1",
+  "created_at": "2026-07-06T14:15:52",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "名古屋",
+    "country_code": "JP",
+    "region_code": "Aichi",
+    "language_code": "zh-TW",
+    "travel_start_date": "2026-07-18",
+    "arrival_anchor": {
+      "name": "中部國際機場",
+      "place_query": "中部國際機場",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "中部國際機場",
+      "place_query": "中部國際機場",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "名古屋",
+  "default_start_anchor": "中部國際機場",
+  "default_end_anchor": "中部國際機場",
+  "distance_note": "Anchor Resolver only resolves nearby schedule anchors. CandidateScorer uses straight-line distance as a routing proxy.",
+  "slot_anchors": [
+    {
+      "slot_key": "slot_id:day1_slot02",
+      "slot_id": "day1_slot02",
+      "day": 1,
+      "day_of_week": "saturday",
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用名古屋 Ogura Toast 早餐",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": "saturday",
+        "start_time": "08:00",
+        "end_time": "12:00",
+        "time": "08:00~12:00",
+        "activity": "從台灣飛往名古屋並入境當地",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": false,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "中部國際機場",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "slot_id:day1_slot04",
+      "slot_id": "day1_slot04",
+      "day": 1,
+      "day_of_week": "saturday",
+      "start_time": "14:00",
+      "end_time": "17:00",
+      "time": "14:00~17:00",
+      "slot_type": "shopping",
+      "original_activity": "逛榮（Sakae）區",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": "saturday",
+        "start_time": "08:00",
+        "end_time": "12:00",
+        "time": "08:00~12:00",
+        "activity": "從台灣飛往名古屋並入境當地",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "中部國際機場",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "slot_id:day1_slot06",
+      "slot_id": "day1_slot06",
+      "day": 1,
+      "day_of_week": "saturday",
+      "start_time": "17:30",
+      "end_time": "19:00",
+      "time": "17:30~19:00",
+      "slot_type": "meal",
+      "original_activity": "享用名古屋 Tebasaki 晚餐",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": "saturday",
+        "start_time": "08:00",
+        "end_time": "12:00",
+        "time": "08:00~12:00",
+        "activity": "從台灣飛往名古屋並入境當地",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "中部國際機場",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "slot_id:day2_slot01",
+      "slot_id": "day2_slot01",
+      "day": 2,
+      "day_of_week": "sunday",
+      "start_time": "09:00",
+      "end_time": "11:30",
+      "time": "09:00~11:30",
+      "slot_type": "shopping",
+      "original_activity": "體驗大須商圈",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "中部國際機場",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "schedule",
+        "role": "next",
+        "slot_id": "day2_slot04",
+        "day": 2,
+        "day_of_week": "sunday",
+        "start_time": "12:30",
+        "end_time": "15:00",
+        "time": "12:30~15:00",
+        "activity": "文化之道漫步",
+        "query": "名古屋 Nagoya City Archives Museum",
+        "place": {
+          "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+          "resource_name": "places/ChIJqQkwHC9xA2AR_Y4eVMku55w",
+          "name": "名古屋市市政資料館",
+          "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+          "latitude": 35.1811442,
+          "longitude": 136.9103135,
+          "primary_type": "museum",
+          "types": [
+            "tourist_attraction",
+            "museum",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=11306056831771512573&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "名古屋 Nagoya City Archives Museum",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": false,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "slot_id:day2_slot02",
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "day_of_week": "sunday",
+      "start_time": "11:30",
+      "end_time": "12:00",
+      "time": "11:30~12:00",
+      "slot_type": "meal",
+      "original_activity": "探索街頭美食",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "中部國際機場",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "schedule",
+        "role": "next",
+        "slot_id": "day2_slot04",
+        "day": 2,
+        "day_of_week": "sunday",
+        "start_time": "12:30",
+        "end_time": "15:00",
+        "time": "12:30~15:00",
+        "activity": "文化之道漫步",
+        "query": "名古屋 Nagoya City Archives Museum",
+        "place": {
+          "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+          "resource_name": "places/ChIJqQkwHC9xA2AR_Y4eVMku55w",
+          "name": "名古屋市市政資料館",
+          "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+          "latitude": 35.1811442,
+          "longitude": 136.9103135,
+          "primary_type": "museum",
+          "types": [
+            "tourist_attraction",
+            "museum",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=11306056831771512573&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "名古屋 Nagoya City Archives Museum",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "slot_id:day3_slot01",
+      "slot_id": "day3_slot01",
+      "day": 3,
+      "day_of_week": "monday",
+      "start_time": "09:00",
+      "end_time": "11:00",
+      "time": "09:00~11:00",
+      "slot_type": "flexible",
+      "original_activity": "自由活動或前往其他景點",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "中部國際機場",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": "day3_slot02",
+        "day": 3,
+        "day_of_week": "monday",
+        "start_time": "11:00",
+        "end_time": "12:30",
+        "time": "11:00~12:30",
+        "activity": "結束行程並回台",
+        "query": "中部國際機場",
+        "place": {
+          "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+          "name": "中部國際機場(新特麗亞)",
+          "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+          "latitude": 34.8573624,
+          "longitude": 136.8107557,
+          "primary_type": "international_airport",
+          "types": [
+            "international_airport",
+            "airport",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "中部國際機場",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    }
+  ]
+}

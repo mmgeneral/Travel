@@ -1,0 +1,923 @@
+{
+  "instruction": "Use only the provided place and lodging candidates. Decide whether each fuzzy slot can be replaced directly, needs minor itinerary reordering, or requires a larger itinerary rewrite. Also decide lodging for each night. Do not invent new places or hotels.",
+  "decision_schema": {
+    "fuzzy_slot_decision": "single_replace | minor_adjustment | major_rebuild",
+    "lodging_decision": "single_hotel | split_hotels"
+  },
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-12-15",
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [
+        "friends"
+      ],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "富泉山古文化遺址",
+        "七寶古鎮"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 5,
+      "duration_nights": 4,
+      "travel_start_date": "2024-12-15",
+      "travel_end_date": "2024-12-19",
+      "season_or_month": "December",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "富泉山古文化遺址",
+        "七寶古鎮"
+      ],
+      "desired_experiences": [
+        "小眾秘境",
+        "歷史古蹟"
+      ],
+      "activity_types": [
+        "history",
+        "culture"
+      ],
+      "food_preferences": [
+        "local_snacks"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": [
+        "good_location",
+        "free_parking"
+      ]
+    },
+    "why": {
+      "trip_goal": "探索上海小眾秘境和歷史古蹟",
+      "success_criteria": [
+        "體驗小眾景點",
+        "探索歷史古蹟",
+        "滿足預算",
+        "便利交通"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "how": {
+      "budget": 3200,
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "route_feasibility"
+      ],
+      "hard_constraints": [
+        "需有免費停車",
+        "不坐飛機",
+        "不吃火鍋和川菜"
+      ],
+      "soft_preferences": []
+    }
+  },
+  "original_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "13:00",
+          "time": "09:00~13:00",
+          "activity": "高鐵北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": true
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "sunday",
+          "start_time": "13:30",
+          "end_time": "14:00",
+          "time": "13:30~14:00",
+          "activity": "入住酒店",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": true
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "sunday",
+          "start_time": "14:30",
+          "end_time": "17:00",
+          "time": "14:30~17:00",
+          "activity": "市區輕鬆逛街",
+          "slot_type": "activity",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "sunday",
+          "start_time": "17:30",
+          "end_time": "19:00",
+          "time": "17:30~19:00",
+          "activity": "晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "monday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "monday",
+          "start_time": "09:00",
+          "end_time": "11:30",
+          "time": "09:00~11:30",
+          "activity": "參觀富泉山古文化遺址",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "富泉山古文化遺址",
+          "route_entry_place": "富泉山古文化遺址",
+          "route_exit_place": "富泉山古文化遺址",
+          "locked": true
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "monday",
+          "start_time": "11:30",
+          "end_time": "12:00",
+          "time": "11:30~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "monday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "中午小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "monday",
+          "start_time": "13:30",
+          "end_time": "16:00",
+          "time": "13:30~16:00",
+          "activity": "遊覽七寶古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "七寶古鎮",
+          "route_entry_place": "七寶古鎮",
+          "route_exit_place": "七寶古鎮",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "day_of_week": "sunday",
+      "start_time": "14:30",
+      "end_time": "17:00",
+      "time": "14:30~17:00",
+      "slot_type": "activity",
+      "original_activity": "市區輕鬆逛街",
+      "reason_for_search": "缺乏具體店家或特色",
+      "target_terms": [],
+      "location_terms": [
+        "上海",
+        "上海火車站附近"
+      ],
+      "intent_type": "shopping",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+          "name": "Nanjing Road Pedestrian Street",
+          "address": "上海市黄浦区南京路步行街6FMF+VXJ 邮政编码: 200001",
+          "latitude": 31.234720999999993,
+          "longitude": 121.47489800000001,
+          "google_maps_uri": "https://maps.google.com/?cid=2673353610482772141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 2160,
+          "score": 0.4015,
+          "score_breakdown": {
+            "total": 0.4015,
+            "relevance": 0.28,
+            "quality": 0.8139,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 逛街",
+            "上海火車站附近 逛街"
+          ],
+          "why": "符合「上海」；Google 評分 4.6，2160 則評論；由查詢「上海 逛街」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.4015
+        },
+        {
+          "place_id": "ChIJXeVKn-ZwsjUR8pePzpUtIxo",
+          "name": "正大廣場",
+          "address": "上海市浦东新区陆家嘴陆家嘴西路168号 邮政编码: 200092",
+          "latitude": 31.236859,
+          "longitude": 121.499172,
+          "google_maps_uri": "https://maps.google.com/?cid=1883399190609893362&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 853,
+          "score": 0.3758,
+          "score_breakdown": {
+            "total": 0.3758,
+            "relevance": 0.2113,
+            "quality": 0.482,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6451
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 下午 逛街"
+          ],
+          "why": "符合「上海」；Google 評分 4.2，853 則評論；由查詢「上海 下午 逛街」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3758
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": "monday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "中午小吃",
+      "reason_for_search": "缺乏具體店家或特色",
+      "target_terms": [
+        "小吃"
+      ],
+      "location_terms": [
+        "上海",
+        "富泉山古文化遺址附近",
+        "七寶古鎮附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJGRhnfkNwsjURGKqqL8OaDfA",
+          "name": "萊萊小吃湯包館",
+          "address": "上海市黄浦区天津路504号 邮政编码: 200001",
+          "latitude": 31.236185000000003,
+          "longitude": 121.47731299999998,
+          "google_maps_uri": "https://maps.google.com/?cid=17297651906908957208&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 460,
+          "score": 0.5017,
+          "score_breakdown": {
+            "total": 0.5017,
+            "relevance": 0.5167,
+            "quality": 0.3245,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7825
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 小吃",
+            "上海 中午 小吃"
+          ],
+          "why": "符合「小吃」；Google 評分 4.4，460 則評論；由查詢「上海 小吃」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.6617
+        },
+        {
+          "place_id": "ChIJYfQySkdwsjURExO_It75d-0",
+          "name": "南翔小籠上海小吃",
+          "address": "上海市黄浦区新闸路200号 邮政编码: 200001",
+          "latitude": 31.2386309,
+          "longitude": 121.46972219999999,
+          "google_maps_uri": "https://maps.google.com/?cid=17111420041678492435&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 29,
+          "score": 0.378,
+          "score_breakdown": {
+            "total": 0.378,
+            "relevance": 0.4567,
+            "quality": 0.0252,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.25,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7555
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 小吃"
+          ],
+          "why": "符合「小吃、上海」；Google 評分 4.4，29 則評論；由查詢「上海 小吃」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.378
+        }
+      ]
+    }
+  ],
+  "lodging_candidates": [
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoIw7zegc2E-NWxARoNL2cvMTFiNzNzN2s0MxAB",
+      "property_token": "ChoIw7zegc2E-NWxARoNL2cvMTFiNzNzN2s0MxAB",
+      "name": "上海雅居樂萬豪酒店",
+      "address": null,
+      "latitude": 31.236535999999997,
+      "longitude": 121.47337399999998,
+      "rating": 4.5,
+      "user_rating_count": 2198,
+      "hotel_class": "5 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 6393.0,
+        "total": 25571.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.9,
+        "reviews": 1.0,
+        "google_rank": 0.3333,
+        "price": 0.18,
+        "distance": 0.9328,
+        "total": 0.6584
+      },
+      "distance_to_place_candidates": {
+        "average_km": 0.874,
+        "nearest_km": 0.248,
+        "score": 0.9328,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChcIp7KxsrXc9a3uARoKL20vMDRmMnI5MBAB",
+      "property_token": "ChcIp7KxsrXc9a3uARoKL20vMDRmMnI5MBAB",
+      "name": "上海明天廣場JW萬豪酒店",
+      "address": null,
+      "latitude": 31.230710999999996,
+      "longitude": 121.46988599999999,
+      "rating": 4.5,
+      "user_rating_count": 374,
+      "hotel_class": "5 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 7074.0,
+        "total": 28295.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.9,
+        "reviews": 0.8579,
+        "google_rank": 0.5,
+        "price": 0.18,
+        "distance": 0.8812,
+        "total": 0.6525
+      },
+      "distance_to_place_candidates": {
+        "average_km": 1.333,
+        "nearest_km": 0.653,
+        "score": 0.8812,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIrK3b5JnezcCCARoML2cvMXlsaGxmeGZtEAE",
+      "property_token": "ChkIrK3b5JnezcCCARoML2cvMXlsaGxmeGZtEAE",
+      "name": "上海浦東香格里拉大酒店(舊翼)",
+      "address": null,
+      "latitude": 31.2354278,
+      "longitude": 121.49908210000001,
+      "rating": 4.4,
+      "user_rating_count": 1395,
+      "hotel_class": "5 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 6269.0,
+        "total": 25077.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.88,
+        "reviews": 1.0,
+        "google_rank": 0.1111,
+        "price": 0.18,
+        "distance": 0.889,
+        "total": 0.6061
+      },
+      "distance_to_place_candidates": {
+        "average_km": 1.836,
+        "nearest_km": 0.159,
+        "score": 0.889,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIqLfXw5Ta1P2XARoML2cvMXBwMnRfZGxnEAE",
+      "property_token": "ChkIqLfXw5Ta1P2XARoML2cvMXBwMnRfZGxnEAE",
+      "name": "錦江之星上海南京路步行街店",
+      "address": null,
+      "latitude": 31.235788799999998,
+      "longitude": 121.4774342,
+      "rating": 4,
+      "user_rating_count": 110,
+      "hotel_class": "2 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1841.0,
+        "total": 7366.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.8,
+        "reviews": 0.6817,
+        "google_rank": 0.1667,
+        "price": 0.18,
+        "distance": 0.9517,
+        "total": 0.5812
+      },
+      "distance_to_place_candidates": {
+        "average_km": 0.796,
+        "nearest_km": 0.046,
+        "score": 0.9517,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoIx7bfhNnZocCfARoNL2cvMTFjNnM0MHRsehAB",
+      "property_token": "ChoIx7bfhNnZocCfARoNL2cvMTFjNnM0MHRsehAB",
+      "name": "Hyatt Regency Shanghai",
+      "address": null,
+      "latitude": 31.293832599999998,
+      "longitude": 121.51578330000001,
+      "rating": 4.3,
+      "user_rating_count": 121,
+      "hotel_class": "5 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 5452.0,
+        "total": 21806.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.86,
+        "reviews": 0.6954,
+        "google_rank": 1.0,
+        "price": 0.18,
+        "distance": 0.4406,
+        "total": 0.5736
+      },
+      "distance_to_place_candidates": {
+        "average_km": 7.271,
+        "nearest_km": 6.529,
+        "score": 0.4406,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChgIlvXyiKm47sWsARoLL2cvMXRjeHh0djQQAQ",
+      "property_token": "ChgIlvXyiKm47sWsARoLL2cvMXRjeHh0djQQAQ",
+      "name": "上海浦西萬怡酒店",
+      "address": null,
+      "latitude": 31.242969,
+      "longitude": 121.45520200000001,
+      "rating": 4.3,
+      "user_rating_count": 311,
+      "hotel_class": "4 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 4042.0,
+        "total": 16170.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.86,
+        "reviews": 0.8313,
+        "google_rank": 0.2,
+        "price": 0.18,
+        "distance": 0.7763,
+        "total": 0.5626
+      },
+      "distance_to_place_candidates": {
+        "average_km": 2.504,
+        "nearest_km": 1.462,
+        "score": 0.7763,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIiZm2ov6noPAvGg0vZy8xMWYzeTNocnk0EAE",
+      "property_token": "ChkIiZm2ov6noPAvGg0vZy8xMWYzeTNocnk0EAE",
+      "name": "SSAW Boutique Hotel Shanghai Bund",
+      "address": null,
+      "latitude": 31.227774,
+      "longitude": 121.48461999999999,
+      "rating": 4.3,
+      "user_rating_count": 238,
+      "hotel_class": "3 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 3640.0,
+        "total": 14561.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.86,
+        "reviews": 0.7927,
+        "google_rank": 0.0769,
+        "price": 0.18,
+        "distance": 0.8427,
+        "total": 0.5582
+      },
+      "distance_to_place_candidates": {
+        "average_km": 1.486,
+        "nearest_km": 1.165,
+        "score": 0.8427,
+        "reference_count": 4
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChgIgaax453BicoIGgwvZy8xcHR5MjJyNWgQAQ",
+      "property_token": "ChgIgaax453BicoIGgwvZy8xcHR5MjJyNWgQAQ",
+      "name": "上海海神諾富特大酒店",
+      "address": null,
+      "latitude": 31.239471899999998,
+      "longitude": 121.5248297,
+      "rating": 4.4,
+      "user_rating_count": 727,
+      "hotel_class": "4 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 2681.0,
+        "total": 10723.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.88,
+        "reviews": 0.9539,
+        "google_rank": 0.0714,
+        "price": 0.18,
+        "distance": 0.6535,
+        "total": 0.5235
+      },
+      "distance_to_place_candidates": {
+        "average_km": 4.251,
+        "nearest_km": 2.457,
+        "score": 0.6535,
+        "reference_count": 4
+      },
+      "warnings": []
+    }
+  ],
+  "geo_clusters": {
+    "k": 3,
+    "clusters": [
+      {
+        "cluster_id": 2,
+        "center": {
+          "latitude": 31.2347371,
+          "longitude": 121.4806113
+        },
+        "member_count": 9,
+        "members": [
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+            "name": "Nanjing Road Pedestrian Street",
+            "latitude": 31.234720999999993,
+            "longitude": 121.47489800000001,
+            "score": 0.4015,
+            "slot_id": "day1_slot03",
+            "day": 1,
+            "original_activity": "市區輕鬆逛街"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJXeVKn-ZwsjUR8pePzpUtIxo",
+            "name": "正大廣場",
+            "latitude": 31.236859,
+            "longitude": 121.499172,
+            "score": 0.3758,
+            "slot_id": "day1_slot03",
+            "day": 1,
+            "original_activity": "市區輕鬆逛街"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJGRhnfkNwsjURGKqqL8OaDfA",
+            "name": "萊萊小吃湯包館",
+            "latitude": 31.236185000000003,
+            "longitude": 121.47731299999998,
+            "score": 0.5017,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "中午小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJYfQySkdwsjURExO_It75d-0",
+            "name": "南翔小籠上海小吃",
+            "latitude": 31.2386309,
+            "longitude": 121.46972219999999,
+            "score": 0.378,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "中午小吃"
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoIw7zegc2E-NWxARoNL2cvMTFiNzNzN2s0MxAB",
+            "name": "上海雅居樂萬豪酒店",
+            "latitude": 31.236535999999997,
+            "longitude": 121.47337399999998,
+            "score": 0.6584,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChcIp7KxsrXc9a3uARoKL20vMDRmMnI5MBAB",
+            "name": "上海明天廣場JW萬豪酒店",
+            "latitude": 31.230710999999996,
+            "longitude": 121.46988599999999,
+            "score": 0.6525,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIrK3b5JnezcCCARoML2cvMXlsaGxmeGZtEAE",
+            "name": "上海浦東香格里拉大酒店(舊翼)",
+            "latitude": 31.2354278,
+            "longitude": 121.49908210000001,
+            "score": 0.6061,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIqLfXw5Ta1P2XARoML2cvMXBwMnRfZGxnEAE",
+            "name": "錦江之星上海南京路步行街店",
+            "latitude": 31.235788799999998,
+            "longitude": 121.4774342,
+            "score": 0.5812,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIiZm2ov6noPAvGg0vZy8xMWYzeTNocnk0EAE",
+            "name": "SSAW Boutique Hotel Shanghai Bund",
+            "latitude": 31.227774,
+            "longitude": 121.48461999999999,
+            "score": 0.5582,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      },
+      {
+        "cluster_id": 3,
+        "center": {
+          "latitude": 31.2666522,
+          "longitude": 121.5203065
+        },
+        "member_count": 2,
+        "members": [
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoIx7bfhNnZocCfARoNL2cvMTFjNnM0MHRsehAB",
+            "name": "Hyatt Regency Shanghai",
+            "latitude": 31.293832599999998,
+            "longitude": 121.51578330000001,
+            "score": 0.5736,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChgIgaax453BicoIGgwvZy8xcHR5MjJyNWgQAQ",
+            "name": "上海海神諾富特大酒店",
+            "latitude": 31.239471899999998,
+            "longitude": 121.5248297,
+            "score": 0.5235,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "center": {
+          "latitude": 31.242969,
+          "longitude": 121.455202
+        },
+        "member_count": 1,
+        "members": [
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChgIlvXyiKm47sWsARoLL2cvMXRjeHh0djQQAQ",
+            "name": "上海浦西萬怡酒店",
+            "latitude": 31.242969,
+            "longitude": 121.45520200000001,
+            "score": 0.5626,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      }
+    ]
+  },
+  "lodging_strategy": {
+    "duration_days": 5,
+    "duration_nights": 4,
+    "preferred_mode": "single_or_split_hotel",
+    "max_hotel_switches": 2,
+    "cluster_count": 3,
+    "rule": "短天數預設盡量住同一間；只有地理分布很遠或跨城市時才換住宿。"
+  }
+}

@@ -1,0 +1,312 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-11-15",
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "friday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "friday",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "抵達上海並入住酒店",
+          "slot_type": "flexible",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "上海火車站",
+          "route_entry_place": "上海火車站",
+          "route_exit_place": "上海火車站",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "friday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用午餐 - 上海特色小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "friday",
+          "start_time": "13:00",
+          "end_time": "13:30",
+          "time": "13:00~13:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "friday",
+          "start_time": "13:30",
+          "end_time": "17:00",
+          "time": "13:30~17:00",
+          "activity": "外灘與南京路步行街觀光",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "外灘",
+          "route_entry_place": "外灘",
+          "route_exit_place": "南京路步行街",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "saturday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "saturday",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "參觀豫園與城隍廟",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "豫園",
+          "route_entry_place": "豫園",
+          "route_exit_place": "城隍廟",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "saturday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用午餐 - 嘗試當地小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "saturday",
+          "start_time": "13:00",
+          "end_time": "13:30",
+          "time": "13:00~13:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "saturday",
+          "start_time": "13:30",
+          "end_time": "17:00",
+          "time": "13:30~17:00",
+          "activity": "法租界區域漫步",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "武康路",
+          "route_exit_place": "淮海中路",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "參觀上海中心大廈及浦東金融中心觀景台",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "上海中心大廈",
+          "route_entry_place": "上海中心大廈",
+          "route_exit_place": "浦東金融中心觀景台",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "sunday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用午餐 - 本幫菜",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": "sunday",
+          "start_time": "13:00",
+          "end_time": "16:00",
+          "time": "13:00~16:00",
+          "activity": "朱家角水鄉或其他選擇的短程旅遊",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot04",
+          "day_of_week": "sunday",
+          "start_time": "16:00",
+          "end_time": "18:00",
+          "time": "16:00~18:00",
+          "activity": "返程至上海火車站",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "上海火車站",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "外灘",
+        "南京路",
+        "豫園",
+        "法租界"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 3,
+      "duration_nights": 2,
+      "travel_start_date": "2024-11-15",
+      "travel_end_date": "2024-11-17",
+      "season_or_month": "秋季",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "外灘",
+        "南京路",
+        "豫園",
+        "法租界"
+      ],
+      "desired_experiences": [
+        "當地美食",
+        "歷史文化"
+      ],
+      "activity_types": [
+        "culture",
+        "local_food",
+        "shopping"
+      ],
+      "food_preferences": [
+        "本幫菜",
+        "小吃"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "休閒自助旅遊體驗上海現代與傳統風光",
+      "success_criteria": [
+        "在預算內體驗主要景點",
+        "享用當地特色美食",
+        "合理規劃交通與住宿"
+      ],
+      "priority_order": [
+        3,
+        2,
+        1
+      ]
+    },
+    "how": {
+      "budget": 3400,
+      "preferred_transportation": "地鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "route_feasibility"
+      ],
+      "hard_constraints": [],
+      "soft_preferences": []
+    }
+  },
+  "reminders": [
+    "11月適合步行但需注意保暖。",
+    "提前檢查景點開放時間，如豫園和博物館的公休日。",
+    "考慮使用地鐵卡或手機支付便捷進出。",
+    "高鐵車站需提前抵達以充足時間完成安檢和候車。"
+  ]
+}

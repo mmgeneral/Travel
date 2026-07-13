@@ -1,0 +1,126 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": "sunday",
+      "start_time": "18:00",
+      "end_time": "19:00",
+      "time": "18:00~19:00",
+      "slot_type": "meal",
+      "original_activity": "享用本幫菜晚餐",
+      "reason_for_search": "缺乏具體店家",
+      "suggested_search_query": "上海 必吃 本幫菜 晚餐",
+      "target_terms": [
+        "本幫菜"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合晚餐"
+      ]
+    },
+    {
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "day_of_week": "monday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用當地特色小吃",
+      "reason_for_search": "缺乏具體店家",
+      "suggested_search_query": "上海 當地 特色小吃",
+      "target_terms": [
+        "特色小吃"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": "tuesday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用特色午餐",
+      "reason_for_search": "缺乏具體店家",
+      "suggested_search_query": "上海 特色午餐",
+      "target_terms": [
+        "特色午餐"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day4_slot03",
+      "day": 4,
+      "day_of_week": "wednesday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用午後茶點",
+      "reason_for_search": "缺乏具體店家",
+      "suggested_search_query": "上海 下午茶",
+      "target_terms": [
+        "下午茶"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "cafe",
+      "must_have": []
+    },
+    {
+      "slot_id": "day5_slot03",
+      "day": 5,
+      "day_of_week": "thursday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用本幫菜午餐",
+      "reason_for_search": "缺乏具體店家",
+      "suggested_search_query": "上海 必吃 本幫菜 午餐",
+      "target_terms": [
+        "本幫菜"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day4_slot05",
+      "day": 4,
+      "day_of_week": "wednesday",
+      "start_time": "14:00",
+      "end_time": "17:00",
+      "time": "14:00~17:00",
+      "slot_type": "attraction",
+      "original_activity": "自由探索市區小眾文化",
+      "reason_for_search": "需具體化探索路線",
+      "suggested_search_query": "上海 小眾文化探索",
+      "target_terms": [
+        "小眾文化"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    }
+  ]
+}

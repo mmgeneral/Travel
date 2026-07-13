@@ -1,0 +1,18 @@
+{
+  "pending_searches": [
+    {
+      "day": 1,
+      "time": "12:10~13:30",
+      "original_activity": "在國華街享用午餐（牛肉湯、虱目魚肚等小吃）",
+      "reason_for_search": "缺乏具體店家資訊",
+      "suggested_search_query": "國華街 牛肉湯 虱目魚肚 午餐 推薦"
+    },
+    {
+      "day": 2,
+      "time": "12:10~13:30",
+      "original_activity": "安平老街午餐（豆花、蝦捲等）",
+      "reason_for_search": "缺乏具體店家資訊",
+      "suggested_search_query": "安平老街 豆花 蝦捲 午餐 推薦"
+    }
+  ]
+}

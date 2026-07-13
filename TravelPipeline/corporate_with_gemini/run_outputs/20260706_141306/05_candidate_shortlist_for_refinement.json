@@ -1,0 +1,1583 @@
+{
+  "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot04",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "14:00",
+      "time": "12:00~14:00",
+      "slot_type": "meal",
+      "original_activity": "享受國華街與永樂市場的小吃美食",
+      "reason_for_search": "缺乏具體美食店家",
+      "target_terms": [
+        "小吃",
+        "美食",
+        "餐廳"
+      ],
+      "location_terms": [
+        "台南",
+        "國華街",
+        "永樂市場"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot04",
+        "slot_id": "day1_slot04",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "12:00",
+        "end_time": "14:00",
+        "time": "12:00~14:00",
+        "slot_type": "meal",
+        "original_activity": "享受國華街與永樂市場的小吃美食",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot03",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "遊覽祀典武廟和大天后宮",
+          "query": "台南 大天后宮",
+          "place": {
+            "place_id": "ChIJje2QZmF2bjQRR6NbMsm6hTY",
+            "resource_name": "places/ChIJje2QZmF2bjQRR6NbMsm6hTY",
+            "name": "臺南祀典大天后宮",
+            "address": "700臺南市中西區赤嵌里永福路二段227巷18號",
+            "latitude": 22.9966464,
+            "longitude": 120.2015605,
+            "primary_type": "place_of_worship",
+            "types": [
+              "place_of_worship",
+              "historical_landmark",
+              "historical_place",
+              "association_or_organization",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=3928751623246684999&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 大天后宮",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day1_slot06",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "14:30",
+          "end_time": "16:00",
+          "time": "14:30~16:00",
+          "activity": "漫步孔廟與府中街",
+          "query": "台南 孔廟",
+          "place": {
+            "place_id": "ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+            "resource_name": "places/ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+            "name": "臺南孔廟",
+            "address": "700臺南市中西區永華里南門路2號",
+            "latitude": 22.9905296,
+            "longitude": 120.2040401,
+            "primary_type": "place_of_worship",
+            "types": [
+              "place_of_worship",
+              "historical_landmark",
+              "tourist_attraction",
+              "historical_place",
+              "association_or_organization",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=802303505355083921&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 孔廟",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJCSB7Gql3bjQROSy6AUJjU2I",
+          "name": "今鶴Jinher -安平店｜生日慶生｜早午餐｜台南美食｜寵物友善",
+          "address": "70062臺南市中西區永華路一段320號",
+          "latitude": 22.989046,
+          "longitude": 120.18820359999998,
+          "google_maps_uri": "https://maps.google.com/?cid=7085115773931891769&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.9,
+          "user_rating_count": 5244,
+          "score": 0.5346,
+          "score_breakdown": {
+            "total": 0.5346,
+            "relevance": 0.3742,
+            "quality": 0.9748,
+            "opening": 1.0,
+            "route": 0.6073,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7184
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.607,
+            "candidate_to_next_km": 1.629,
+            "previous_to_next_km": 0.726,
+            "route_distance_km": 3.237,
+            "detour_km": 2.511,
+            "max_leg_km": 1.629,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽祀典武廟和大天后宮",
+              "query": "台南 大天后宮",
+              "place_id": "ChIJje2QZmF2bjQRR6NbMsm6hTY",
+              "name": "臺南祀典大天后宮",
+              "address": "700臺南市中西區赤嵌里永福路二段227巷18號",
+              "latitude": 22.9966464,
+              "longitude": 120.2015605
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "漫步孔廟與府中街",
+              "query": "台南 孔廟",
+              "place_id": "ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+              "name": "臺南孔廟",
+              "address": "700臺南市中西區永華里南門路2號",
+              "latitude": 22.9905296,
+              "longitude": 120.2040401
+            }
+          },
+          "matched_queries": [
+            "台南 美食 餐廳"
+          ],
+          "why": "符合「美食、台南」；Google 評分 4.9，5244 則評論；由查詢「台南 美食 餐廳」命中；前後站直線路徑約 3.237 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.6946
+        },
+        {
+          "place_id": "ChIJRRodmCx3bjQRIJLhupSBI-k",
+          "name": "鮮好吃｜台南國華街在地小吃",
+          "address": "700臺南市中西區國華街三段89號",
+          "latitude": 22.9956076,
+          "longitude": 120.19808139999999,
+          "google_maps_uri": "https://maps.google.com/?cid=16799413510812570144&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 51,
+          "score": 0.3782,
+          "score_breakdown": {
+            "total": 0.3782,
+            "relevance": 0.395,
+            "quality": 0.0477,
+            "opening": 0.55,
+            "route": 0.8608,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7278
+          },
+          "opening": {
+            "coverage": 0.75,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.374,
+            "candidate_to_next_km": 0.831,
+            "previous_to_next_km": 0.726,
+            "route_distance_km": 1.206,
+            "detour_km": 0.48,
+            "max_leg_km": 0.831,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽祀典武廟和大天后宮",
+              "query": "台南 大天后宮",
+              "place_id": "ChIJje2QZmF2bjQRR6NbMsm6hTY",
+              "name": "臺南祀典大天后宮",
+              "address": "700臺南市中西區赤嵌里永福路二段227巷18號",
+              "latitude": 22.9966464,
+              "longitude": 120.2015605
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "漫步孔廟與府中街",
+              "query": "台南 孔廟",
+              "place_id": "ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+              "name": "臺南孔廟",
+              "address": "700臺南市中西區永華里南門路2號",
+              "latitude": 22.9905296,
+              "longitude": 120.2040401
+            }
+          },
+          "matched_queries": [
+            "台南 國華街 小吃"
+          ],
+          "why": "符合「小吃、台南、國華街」；Google 評分 4.8，51 則評論；由查詢「台南 國華街 小吃」命中；前後站直線路徑約 1.206 km",
+          "warnings": [
+            "評論數偏少",
+            "營業時間只覆蓋部分行程時段"
+          ],
+          "selection_score": 0.5382
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day1_slot07",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "16:00",
+      "end_time": "17:30",
+      "time": "16:00~17:30",
+      "slot_type": "shopping",
+      "original_activity": "逛藍晒圖文創園區或林百貨",
+      "reason_for_search": "具體去處需確認",
+      "target_terms": [
+        "藍晒圖",
+        "林百貨",
+        "文創園區",
+        "商店",
+        "夜市"
+      ],
+      "location_terms": [
+        "台南",
+        "火車站附近"
+      ],
+      "intent_type": "shopping",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot07",
+        "slot_id": "day1_slot07",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "16:00",
+        "end_time": "17:30",
+        "time": "16:00~17:30",
+        "slot_type": "shopping",
+        "original_activity": "逛藍晒圖文創園區或林百貨",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot06",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "14:30",
+          "end_time": "16:00",
+          "time": "14:30~16:00",
+          "activity": "漫步孔廟與府中街",
+          "query": "台南 府中街",
+          "place": {
+            "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+            "resource_name": "places/ChIJ3YZLDYh2bjQRVqmbugF5dME",
+            "name": "府中街",
+            "address": "700臺南市中西區永華里府中街",
+            "latitude": 22.9901951,
+            "longitude": 120.2065732,
+            "primary_type": null,
+            "types": [
+              "route"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=13939899794951219542&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 府中街",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "台南火車站",
+          "query": "台南火車站",
+          "place": {
+            "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+            "resource_name": "places/ChIJCaqM84x2bjQRRqzST46i6cM",
+            "name": "台南車站",
+            "address": "701臺南市東區成大里前鋒路210號",
+            "latitude": 22.9970861,
+            "longitude": 120.21298319999998,
+            "primary_type": "train_station",
+            "types": [
+              "train_station",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=14116993239077792838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南火車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJtbdB0Xt2bjQR1IE4qcWD-lg",
+          "name": "藍晒圖文創園區",
+          "address": "702台南市南区新昌里西門路一段689巷12號",
+          "latitude": 22.987102000000004,
+          "longitude": 120.19734539999997,
+          "google_maps_uri": "https://maps.google.com/?cid=6411581904486171092&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 25128,
+          "score": 0.6241,
+          "score_breakdown": {
+            "total": 0.6241,
+            "relevance": 0.5617,
+            "quality": 0.84,
+            "opening": 1.0,
+            "route": 0.6406,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8028
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.005,
+            "candidate_to_next_km": 1.948,
+            "previous_to_next_km": 1.009,
+            "route_distance_km": 2.953,
+            "detour_km": 1.945,
+            "max_leg_km": 1.948,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "漫步孔廟與府中街",
+              "query": "台南 府中街",
+              "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+              "name": "府中街",
+              "address": "700臺南市中西區永華里府中街",
+              "latitude": 22.9901951,
+              "longitude": 120.2065732
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 藍晒圖 文創園區",
+            "台南 藍晒圖 夜市"
+          ],
+          "why": "符合「藍晒圖、文創園區」；Google 評分 4.2，25128 則評論；由查詢「台南 藍晒圖 文創園區」命中；前後站直線路徑約 2.953 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.8641
+        },
+        {
+          "place_id": "ChIJrZJc4GJ2bjQRa3BRyIgtRcM",
+          "name": "台南林百貨",
+          "address": "700臺南市中西區南美里忠義路二段63號",
+          "latitude": 22.9917925,
+          "longitude": 120.2025232,
+          "google_maps_uri": "https://maps.google.com/?cid=14070702676288565355&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 29189,
+          "score": 0.5109,
+          "score_breakdown": {
+            "total": 0.5109,
+            "relevance": 0.3138,
+            "quality": 0.88,
+            "opening": 1.0,
+            "route": 0.8142,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6912
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.451,
+            "candidate_to_next_km": 1.222,
+            "previous_to_next_km": 1.009,
+            "route_distance_km": 1.673,
+            "detour_km": 0.664,
+            "max_leg_km": 1.222,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "漫步孔廟與府中街",
+              "query": "台南 府中街",
+              "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+              "name": "府中街",
+              "address": "700臺南市中西區永華里府中街",
+              "latitude": 22.9901951,
+              "longitude": 120.2065732
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 林百貨"
+          ],
+          "why": "符合「林百貨、台南」；Google 評分 4.4，29189 則評論；由查詢「台南 林百貨」命中；前後站直線路徑約 1.673 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.6709
+        }
+      ]
+    },
+    {
+      "slot_index": 3,
+      "slot_id": "day1_slot09",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "18:00",
+      "end_time": "21:00",
+      "time": "18:00~21:00",
+      "slot_type": "meal",
+      "original_activity": "品嚐武聖夜市或花園夜市的美食",
+      "reason_for_search": "需確認當天哪個夜市有營業",
+      "target_terms": [
+        "夜市",
+        "美食",
+        "小吃"
+      ],
+      "location_terms": [
+        "台南",
+        "武聖夜市",
+        "花園夜市"
+      ],
+      "intent_type": "night_market",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot09",
+        "slot_id": "day1_slot09",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "18:00",
+        "end_time": "21:00",
+        "time": "18:00~21:00",
+        "slot_type": "meal",
+        "original_activity": "品嚐武聖夜市或花園夜市的美食",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot06",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "14:30",
+          "end_time": "16:00",
+          "time": "14:30~16:00",
+          "activity": "漫步孔廟與府中街",
+          "query": "台南 府中街",
+          "place": {
+            "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+            "resource_name": "places/ChIJ3YZLDYh2bjQRVqmbugF5dME",
+            "name": "府中街",
+            "address": "700臺南市中西區永華里府中街",
+            "latitude": 22.9901951,
+            "longitude": 120.2065732,
+            "primary_type": null,
+            "types": [
+              "route"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=13939899794951219542&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 府中街",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "台南火車站",
+          "query": "台南火車站",
+          "place": {
+            "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+            "resource_name": "places/ChIJCaqM84x2bjQRRqzST46i6cM",
+            "name": "台南車站",
+            "address": "701臺南市東區成大里前鋒路210號",
+            "latitude": 22.9970861,
+            "longitude": 120.21298319999998,
+            "primary_type": "train_station",
+            "types": [
+              "train_station",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=14116993239077792838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南火車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJc9IkfkJ2bjQRD5USkR9J1ck",
+          "name": "武聖夜市",
+          "address": "700臺南市中西區光賢里武聖路69巷",
+          "latitude": 23.003458000000002,
+          "longitude": 120.19050980000002,
+          "google_maps_uri": "https://maps.google.com/?cid=14543610971589612815&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 25550,
+          "score": 0.6052,
+          "score_breakdown": {
+            "total": 0.6052,
+            "relevance": 0.57,
+            "quality": 0.86,
+            "opening": 1.0,
+            "route": 0.5204,
+            "google_rank": 1.0,
+            "type": 0.82,
+            "penalty": 0.0,
+            "relevance_gate": 0.8065
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 2.209,
+            "candidate_to_next_km": 2.407,
+            "previous_to_next_km": 1.009,
+            "route_distance_km": 4.616,
+            "detour_km": 3.607,
+            "max_leg_km": 2.407,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "漫步孔廟與府中街",
+              "query": "台南 府中街",
+              "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+              "name": "府中街",
+              "address": "700臺南市中西區永華里府中街",
+              "latitude": 22.9901951,
+              "longitude": 120.2065732
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 武聖夜市 小吃",
+            "台南 花園夜市 美食",
+            "台南 夜市 小吃",
+            "台南 夜市 美食"
+          ],
+          "why": "符合「夜市、武聖夜市」；Google 評分 4.3，25550 則評論；由查詢「台南 武聖夜市 小吃」命中；前後站直線路徑約 4.616 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.7652
+        },
+        {
+          "place_id": "ChIJx7B27Vl2bjQRXNQQFasKOKI",
+          "name": "台南花園夜市",
+          "address": "704臺南市北區成德里海安路三段533號",
+          "latitude": 23.0112387,
+          "longitude": 120.20022709999998,
+          "google_maps_uri": "https://maps.google.com/?cid=11689104562749232220&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 50081,
+          "score": 0.6003,
+          "score_breakdown": {
+            "total": 0.6003,
+            "relevance": 0.56,
+            "quality": 0.86,
+            "opening": 1.0,
+            "route": 0.5268,
+            "google_rank": 1.0,
+            "type": 0.82,
+            "penalty": 0.0,
+            "relevance_gate": 0.802
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 2.428,
+            "candidate_to_next_km": 2.045,
+            "previous_to_next_km": 1.009,
+            "route_distance_km": 4.473,
+            "detour_km": 3.464,
+            "max_leg_km": 2.428,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "漫步孔廟與府中街",
+              "query": "台南 府中街",
+              "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+              "name": "府中街",
+              "address": "700臺南市中西區永華里府中街",
+              "latitude": 22.9901951,
+              "longitude": 120.2065732
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 花園夜市 美食",
+            "台南 夜市 小吃",
+            "台南 夜市 美食"
+          ],
+          "why": "符合「夜市、台南、花園夜市」；Google 評分 4.3，50081 則評論；由查詢「台南 花園夜市 美食」命中；前後站直線路徑約 4.473 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.6003
+        }
+      ]
+    },
+    {
+      "slot_index": 4,
+      "slot_id": "day2_slot04",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用安平小吃",
+      "reason_for_search": "缺乏具體美食店家",
+      "target_terms": [
+        "小吃",
+        "美食",
+        "night market"
+      ],
+      "location_terms": [
+        "台南",
+        "安平"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot04",
+        "slot_id": "day2_slot04",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "12:00",
+        "end_time": "13:30",
+        "time": "12:00~13:30",
+        "slot_type": "meal",
+        "original_activity": "享用安平小吃",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot03",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "遊覽德記洋行與安平老街",
+          "query": "台南 安平老街",
+          "place": {
+            "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+            "resource_name": "places/ChIJ_____wN2bjQRIOio8uGV_Og",
+            "name": "安平老街",
+            "address": "708臺南市安平區延平街",
+            "latitude": 23.0007174,
+            "longitude": 120.1616449,
+            "primary_type": "tourist_attraction",
+            "types": [
+              "tourist_attraction",
+              "historical_landmark",
+              "gift_shop",
+              "jewelry_store",
+              "home_goods_store",
+              "historical_place",
+              "store",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=16788458308601702432&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 安平老街",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "台南火車站",
+          "query": "台南火車站",
+          "place": {
+            "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+            "resource_name": "places/ChIJCaqM84x2bjQRRqzST46i6cM",
+            "name": "台南車站",
+            "address": "701臺南市東區成大里前鋒路210號",
+            "latitude": 22.9970861,
+            "longitude": 120.21298319999998,
+            "primary_type": "train_station",
+            "types": [
+              "train_station",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=14116993239077792838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南火車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJ9yNzPXB1bjQRY1OvSlEqLuU",
+          "name": "良人煮鍋｜手作鍋物｜安平區美食",
+          "address": "708013臺南市安平區國平里國平北路127號",
+          "latitude": 22.9828051,
+          "longitude": 120.16779899999997,
+          "google_maps_uri": "https://maps.google.com/?cid=16514183412247909219&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 1926,
+          "score": 0.4908,
+          "score_breakdown": {
+            "total": 0.4908,
+            "relevance": 0.43,
+            "quality": 0.8201,
+            "opening": 1.0,
+            "route": 0.5976,
+            "google_rank": 0.1667,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7435
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 2.089,
+            "candidate_to_next_km": 4.89,
+            "previous_to_next_km": 5.27,
+            "route_distance_km": 6.979,
+            "detour_km": 1.709,
+            "max_leg_km": 4.89,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽德記洋行與安平老街",
+              "query": "台南 安平老街",
+              "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+              "name": "安平老街",
+              "address": "708臺南市安平區延平街",
+              "latitude": 23.0007174,
+              "longitude": 120.1616449
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 安平 美食"
+          ],
+          "why": "符合「美食、安平」；Google 評分 4.8，1926 則評論；由查詢「台南 安平 美食」命中；前後站直線路徑約 6.979 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.6508
+        },
+        {
+          "place_id": "ChIJH8OHDSV3bjQRe5_hMHHmUNM",
+          "name": "屋裏的湯",
+          "address": "708006臺南市安平區國平里建平七街593號",
+          "latitude": 22.9897001,
+          "longitude": 120.1715738,
+          "google_maps_uri": "https://maps.google.com/?cid=15226923713965432699&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 3216,
+          "score": 0.4905,
+          "score_breakdown": {
+            "total": 0.4905,
+            "relevance": 0.28,
+            "quality": 0.9215,
+            "opening": 1.0,
+            "route": 0.7381,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.592,
+            "candidate_to_next_km": 4.318,
+            "previous_to_next_km": 5.27,
+            "route_distance_km": 5.909,
+            "detour_km": 0.639,
+            "max_leg_km": 4.318,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽德記洋行與安平老街",
+              "query": "台南 安平老街",
+              "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+              "name": "安平老街",
+              "address": "708臺南市安平區延平街",
+              "latitude": 23.0007174,
+              "longitude": 120.1616449
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 安平小吃",
+            "台南 安平 美食"
+          ],
+          "why": "符合「台南、安平」；Google 評分 4.8，3216 則評論；由查詢「台南 安平小吃」命中；前後站直線路徑約 5.909 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.4905
+        }
+      ]
+    },
+    {
+      "slot_index": 5,
+      "slot_id": "day2_slot06",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "time": "14:00~16:00",
+      "slot_type": "attraction",
+      "original_activity": "搭乘四草綠色隧道生態船或騎車看夕陽",
+      "reason_for_search": "活動選擇需具體確認",
+      "target_terms": [
+        "四草綠色隧道",
+        "生態船",
+        "夕陽",
+        "騎車",
+        "生態觀光",
+        "觀賞點"
+      ],
+      "location_terms": [
+        "台南"
+      ],
+      "intent_type": "outdoor",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot06",
+        "slot_id": "day2_slot06",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "14:00",
+        "end_time": "16:00",
+        "time": "14:00~16:00",
+        "slot_type": "attraction",
+        "original_activity": "搭乘四草綠色隧道生態船或騎車看夕陽",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot03",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "遊覽德記洋行與安平老街",
+          "query": "台南 安平老街",
+          "place": {
+            "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+            "resource_name": "places/ChIJ_____wN2bjQRIOio8uGV_Og",
+            "name": "安平老街",
+            "address": "708臺南市安平區延平街",
+            "latitude": 23.0007174,
+            "longitude": 120.1616449,
+            "primary_type": "tourist_attraction",
+            "types": [
+              "tourist_attraction",
+              "historical_landmark",
+              "gift_shop",
+              "jewelry_store",
+              "home_goods_store",
+              "historical_place",
+              "store",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=16788458308601702432&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 安平老街",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "台南火車站",
+          "query": "台南火車站",
+          "place": {
+            "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+            "resource_name": "places/ChIJCaqM84x2bjQRRqzST46i6cM",
+            "name": "台南車站",
+            "address": "701臺南市東區成大里前鋒路210號",
+            "latitude": 22.9970861,
+            "longitude": 120.21298319999998,
+            "primary_type": "train_station",
+            "types": [
+              "train_station",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=14116993239077792838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南火車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJmUeaPwB1bjQRcS6Afejk-zE",
+          "name": "四鯤鯓紅樹林生態觀光船",
+          "address": "702臺南市南區鯤鯓里鯤鯓路102巷",
+          "latitude": 22.962246999999998,
+          "longitude": 120.1726101,
+          "google_maps_uri": "https://maps.google.com/?cid=3601724014201941617&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 232,
+          "score": 0.4971,
+          "score_breakdown": {
+            "total": 0.4971,
+            "relevance": 0.5854,
+            "quality": 0.1905,
+            "opening": 1.0,
+            "route": 0.4093,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8134
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 4.423,
+            "candidate_to_next_km": 5.665,
+            "previous_to_next_km": 5.27,
+            "route_distance_km": 10.087,
+            "detour_km": 4.817,
+            "max_leg_km": 5.665,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽德記洋行與安平老街",
+              "query": "台南 安平老街",
+              "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+              "name": "安平老街",
+              "address": "708臺南市安平區延平街",
+              "latitude": 23.0007174,
+              "longitude": 120.1616449
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 生態觀光"
+          ],
+          "why": "符合「生態船、生態觀光」；Google 評分 4.6，232 則評論；由查詢「台南 生態觀光」命中；前後站直線路徑約 10.087 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.7371
+        },
+        {
+          "place_id": "ChIJt0-ISOvYbTQRhg3rUteyQIw",
+          "name": "四草綠色隧道（大眾廟）",
+          "address": "709臺南市安南區四草里大眾路360號",
+          "latitude": 23.0196399,
+          "longitude": 120.1361465,
+          "google_maps_uri": "https://maps.google.com/?cid=10106274201698241926&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 22494,
+          "score": 0.5137,
+          "score_breakdown": {
+            "total": 0.5137,
+            "relevance": 0.4261,
+            "quality": 0.86,
+            "opening": 1.0,
+            "route": 0.3381,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7417
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 3.352,
+            "candidate_to_next_km": 8.254,
+            "previous_to_next_km": 5.27,
+            "route_distance_km": 11.607,
+            "detour_km": 6.336,
+            "max_leg_km": 8.254,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽德記洋行與安平老街",
+              "query": "台南 安平老街",
+              "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+              "name": "安平老街",
+              "address": "708臺南市安平區延平街",
+              "latitude": 23.0007174,
+              "longitude": 120.1616449
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 四草綠色隧道 生態船"
+          ],
+          "why": "符合「四草綠色隧道」；Google 評分 4.3，22494 則評論；由查詢「台南 四草綠色隧道 生態船」命中；前後站直線路徑約 11.607 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.6737
+        }
+      ]
+    },
+    {
+      "slot_index": 6,
+      "slot_id": "day2_slot08",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "16:30",
+      "end_time": "17:30",
+      "time": "16:30~17:30",
+      "slot_type": "shopping",
+      "original_activity": "選購安平伴手禮並準備返程",
+      "reason_for_search": "需具體推薦伴手禮商店",
+      "target_terms": [
+        "伴手禮",
+        "特產店",
+        "禮品店",
+        "市集"
+      ],
+      "location_terms": [
+        "台南",
+        "安平"
+      ],
+      "intent_type": "shopping",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot08",
+        "slot_id": "day2_slot08",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "16:30",
+        "end_time": "17:30",
+        "time": "16:30~17:30",
+        "slot_type": "shopping",
+        "original_activity": "選購安平伴手禮並準備返程",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot03",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "遊覽德記洋行與安平老街",
+          "query": "台南 安平老街",
+          "place": {
+            "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+            "resource_name": "places/ChIJ_____wN2bjQRIOio8uGV_Og",
+            "name": "安平老街",
+            "address": "708臺南市安平區延平街",
+            "latitude": 23.0007174,
+            "longitude": 120.1616449,
+            "primary_type": "tourist_attraction",
+            "types": [
+              "tourist_attraction",
+              "historical_landmark",
+              "gift_shop",
+              "jewelry_store",
+              "home_goods_store",
+              "historical_place",
+              "store",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=16788458308601702432&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南 安平老街",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "台南火車站",
+          "query": "台南火車站",
+          "place": {
+            "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+            "resource_name": "places/ChIJCaqM84x2bjQRRqzST46i6cM",
+            "name": "台南車站",
+            "address": "701臺南市東區成大里前鋒路210號",
+            "latitude": 22.9970861,
+            "longitude": 120.21298319999998,
+            "primary_type": "train_station",
+            "types": [
+              "train_station",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=14116993239077792838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台南火車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJZV2e13h3bjQRhTwyQFJ6z_8",
+          "name": "金賀禮鮮爆蝦餅 | 台南安平精緻禮盒伴手禮",
+          "address": "708臺南市安平區天妃里觀音街90號",
+          "latitude": 23.0005733,
+          "longitude": 120.16165229999999,
+          "google_maps_uri": "https://maps.google.com/?cid=18433086293533670533&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 1380,
+          "score": 0.6219,
+          "score_breakdown": {
+            "total": 0.6219,
+            "relevance": 0.575,
+            "quality": 0.7484,
+            "opening": 1.0,
+            "route": 0.8428,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "penalty": 0.0,
+            "relevance_gate": 0.8088
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.016,
+            "candidate_to_next_km": 5.268,
+            "previous_to_next_km": 5.27,
+            "route_distance_km": 5.284,
+            "detour_km": 0.014,
+            "max_leg_km": 5.268,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽德記洋行與安平老街",
+              "query": "台南 安平老街",
+              "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+              "name": "安平老街",
+              "address": "708臺南市安平區延平街",
+              "latitude": 23.0007174,
+              "longitude": 120.1616449
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 安平 伴手禮",
+            "台南 安平 特產店",
+            "台南 安平 禮品店"
+          ],
+          "why": "符合「伴手禮、台南、安平」；Google 評分 5，1380 則評論；由查詢「台南 安平 伴手禮」命中；前後站直線路徑約 5.284 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.7819
+        },
+        {
+          "place_id": "ChIJIZ_auj13bjQRXCm6eKcQJzM",
+          "name": "日鮮市集",
+          "address": "708臺南市安平區文平里永華路二段363號",
+          "latitude": 22.989481899999998,
+          "longitude": 120.18055629999998,
+          "google_maps_uri": "https://maps.google.com/?cid=3685933131497089372&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.9,
+          "user_rating_count": 1475,
+          "score": 0.4014,
+          "score_breakdown": {
+            "total": 0.4014,
+            "relevance": 0.335,
+            "quality": 0.7558,
+            "opening": 0.55,
+            "route": 0.7852,
+            "google_rank": 0.5,
+            "type": 0.68,
+            "penalty": 0.0,
+            "relevance_gate": 0.7008
+          },
+          "opening": {
+            "coverage": 0.5,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 2.304,
+            "candidate_to_next_km": 3.425,
+            "previous_to_next_km": 5.27,
+            "route_distance_km": 5.729,
+            "detour_km": 0.459,
+            "max_leg_km": 3.425,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽德記洋行與安平老街",
+              "query": "台南 安平老街",
+              "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+              "name": "安平老街",
+              "address": "708臺南市安平區延平街",
+              "latitude": 23.0007174,
+              "longitude": 120.1616449
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "台南火車站",
+              "query": "台南火車站",
+              "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+              "name": "台南車站",
+              "address": "701臺南市東區成大里前鋒路210號",
+              "latitude": 22.9970861,
+              "longitude": 120.21298319999998
+            }
+          },
+          "matched_queries": [
+            "台南 安平 市集"
+          ],
+          "why": "符合「市集」；Google 評分 4.9，1475 則評論；由查詢「台南 安平 市集」命中；前後站直線路徑約 5.729 km",
+          "warnings": [
+            "營業時間只覆蓋部分行程時段",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.5614
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-11-15",
+    "arrival_anchor": {
+      "name": "上海虹橋火車站",
+      "place_query": "上海虹橋火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海虹橋火車站",
+      "place_query": "上海虹橋火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": "景萊酒店·不舍",
+      "place_query": "景萊酒店·不舍",
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "friday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "friday",
+          "start_time": "07:00",
+          "end_time": "12:00",
+          "time": "07:00~12:00",
+          "activity": "乘坐高鐵從北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": "北京南站",
+          "route_exit_place": "上海虹橋火車站",
+          "locked": true
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "friday",
+          "start_time": "12:30",
+          "end_time": "14:00",
+          "time": "12:30~14:00",
+          "activity": "入住景萊酒店·不舍",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "景萊酒店·不舍",
+          "route_entry_place": "景萊酒店·不舍",
+          "route_exit_place": "景萊酒店·不舍",
+          "locked": true
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "friday",
+          "start_time": "14:30",
+          "end_time": "18:00",
+          "time": "14:30~18:00",
+          "activity": "逛南京東路和外灘",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "saturday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "saturday",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "參觀靜安寺與玉佛寺",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "靜安寺",
+          "route_entry_place": "靜安寺",
+          "route_exit_place": "玉佛寺",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "saturday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用當地午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "saturday",
+          "start_time": "13:30",
+          "end_time": "17:00",
+          "time": "13:30~17:00",
+          "activity": "探索M50創意園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "M50創意園",
+          "route_entry_place": "M50創意園",
+          "route_exit_place": "M50創意園",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "sunday",
+          "start_time": "10:00",
+          "end_time": "12:00",
+          "time": "10:00~12:00",
+          "activity": "參觀新天地與購物",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "新天地",
+          "route_entry_place": "新天地",
+          "route_exit_place": "新天地",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "sunday",
+          "start_time": "12:30",
+          "end_time": "14:00",
+          "time": "12:30~14:00",
+          "activity": "於新天地享用午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": "sunday",
+          "start_time": "14:30",
+          "end_time": "18:00",
+          "time": "14:30~18:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "date_description": "第四天",
+      "day_of_week": "monday",
+      "schedule": [
+        {
+          "slot_id": "day4_slot01",
+          "day_of_week": "monday",
+          "start_time": "09:00",
+          "end_time": "11:30",
+          "time": "09:00~11:30",
+          "activity": "自由活動",
+          "slot_type": "flexible",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot02",
+          "day_of_week": "monday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "返回酒店退房",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "景萊酒店·不舍",
+          "route_entry_place": "景萊酒店·不舍",
+          "route_exit_place": "景萊酒店·不舍",
+          "locked": true
+        },
+        {
+          "slot_id": "day4_slot03",
+          "day_of_week": "monday",
+          "start_time": "14:00",
+          "end_time": "19:00",
+          "time": "14:00~19:00",
+          "activity": "乘坐高鐵返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": "上海虹橋火車站",
+          "route_exit_place": "北京南站",
+          "locked": true
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "11月上海氣溫較低，建議攜帶外套。",
+    "高鐵票價有浮動，請提前購票。",
+    "住宿建議盡早預訂以確保房間和價格。",
+    "注意行程中需要乘坐地鐵，合理安排出行時間。"
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "靜安區",
+        "外灘",
+        "新天地"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 4,
+      "duration_nights": 3,
+      "travel_start_date": "2024-11-15",
+      "travel_end_date": "2024-11-18",
+      "season_or_month": "11月中旬",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "靜安寺",
+        "玉佛寺",
+        "新天地"
+      ],
+      "desired_experiences": [
+        "設計師酒店住宿"
+      ],
+      "activity_types": [
+        "culture",
+        "shopping"
+      ],
+      "food_preferences": [],
+      "shopping_preferences": [],
+      "lodging_preferences": [
+        "設計師酒店",
+        "地理位置"
+      ]
+    },
+    "why": {
+      "trip_goal": "放鬆與城市探索",
+      "success_criteria": [
+        "舒適的住宿",
+        "便利的交通",
+        "豐富的文化體驗"
+      ],
+      "priority_order": [
+        3,
+        1,
+        2
+      ]
+    },
+    "how": {
+      "budget": 5600,
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "seasonal_weather"
+      ],
+      "hard_constraints": [],
+      "soft_preferences": []
+    }
+  }
+}

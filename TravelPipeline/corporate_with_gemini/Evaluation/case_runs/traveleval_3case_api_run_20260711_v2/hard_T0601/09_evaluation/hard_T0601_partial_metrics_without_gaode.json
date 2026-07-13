@@ -1,0 +1,357 @@
+{
+  "title": "TravelEval partial metrics without Gaode/Amap API",
+  "source_note": "這不是官方完整 TravelEval 分數；它輸出 paper-style metric table，去除高德 API 必要項目。",
+  "score_direction_note": "↑ 表示越高越好，↓ 表示越低越好，- 表示成本分解值本身不代表好壞。",
+  "computed_metrics": [
+    {
+      "dimension": "Accuracy",
+      "metric": "CCD",
+      "direction": "↓",
+      "value": 0.0,
+      "status": "computed_from_converted_plan",
+      "note": "成本表由轉換器重算；可抓 arithmetic mismatch，但不是模型自報成本。",
+      "details": null
+    },
+    {
+      "dimension": "Accuracy",
+      "metric": "FAR",
+      "direction": "↓",
+      "value": 0.6667,
+      "status": "computed_partial",
+      "note": "只檢查 attraction；可由 TravelEval sandbox 或候選座標佐證。",
+      "details": [
+        {
+          "name": "南京路步行街",
+          "grounded": true,
+          "matched_name": "南京路步行街",
+          "match_score": 1.0,
+          "candidate_coordinates": true
+        },
+        {
+          "name": "富泉山古文化遺址",
+          "grounded": false,
+          "matched_name": null,
+          "match_score": 0.5333,
+          "candidate_coordinates": false
+        },
+        {
+          "name": "七寶古鎮",
+          "grounded": false,
+          "matched_name": null,
+          "match_score": 0.5,
+          "candidate_coordinates": false
+        }
+      ]
+    },
+    {
+      "dimension": "Accuracy",
+      "metric": "VROH",
+      "direction": "↓",
+      "value": 0.0,
+      "status": "computed_partial",
+      "note": "只檢查能匹配到 TravelEval attractions CSV 的景點。",
+      "details": [
+        {
+          "name": "南京路步行街",
+          "matched_name": "南京路步行街",
+          "visit_time": "14:30~17:00",
+          "opening_time": "0:00~24:00",
+          "match_score": 1.0,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "dimension": "Accuracy",
+      "metric": "ITD",
+      "direction": "↓",
+      "value": null,
+      "status": "missing_input",
+      "note": "final result 沒有火車/航班班次與時間，無法用 TravelEval intercity sandbox 算 ITD。",
+      "details": null
+    },
+    {
+      "dimension": "Accuracy",
+      "metric": "PD",
+      "direction": "↓",
+      "value": 0.0,
+      "status": "computed",
+      "note": "",
+      "details": null
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "BCS",
+      "direction": "↑",
+      "value": 0.0,
+      "status": "computed",
+      "note": "成本與預算統一以 CNY 計。",
+      "details": null
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "TCS",
+      "direction": "↑",
+      "value": 1.0,
+      "status": "computed_partial",
+      "note": "檢查天數與時間格式/重疊；未檢查實際交通可行時間。",
+      "details": null
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "HCS",
+      "direction": "↑",
+      "value": 1.0,
+      "status": "computed_partial",
+      "note": "",
+      "details": null
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "PAS-A",
+      "direction": "↑",
+      "value": 1.0,
+      "status": "computed_partial",
+      "note": "無住宿偏好時，夜數正確即視為滿足。",
+      "details": {
+        "score": 1.0,
+        "hotel_name": "上海雅居樂萬豪酒店",
+        "expected_nights": 4,
+        "planned_nights": 4,
+        "matched_name": "上海雅居乐万豪侯爵酒店",
+        "match_score": 0.9
+      }
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "PAS-T",
+      "direction": "↑",
+      "value": 1.0,
+      "status": "proxy_no_gaode",
+      "note": "不查實際路線，只看偏好交通是否出現在行程/通勤 slot。",
+      "details": {
+        "score": 1.0,
+        "preferred": "高鐵",
+        "matched_terms": [
+          "高鐵"
+        ],
+        "has_commute_slots": true
+      }
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "PAS-C",
+      "direction": "↑",
+      "value": 0.0,
+      "status": "proxy_text_match",
+      "note": "用飲食偏好文字覆蓋近似。",
+      "details": {
+        "score": 0.0,
+        "matched": [],
+        "missing": [
+          "local_snacks"
+        ]
+      }
+    },
+    {
+      "dimension": "Compliance",
+      "metric": "TTCS",
+      "direction": "↑",
+      "value": 0.0,
+      "status": "computed_partial",
+      "note": "使用 TravelEval 推薦停留時間；未納入排隊時間模型。",
+      "details": [
+        {
+          "name": "南京路步行街",
+          "matched_name": "南京路步行街",
+          "planned_hours": 2.5,
+          "recommended_hours": [
+            1.0,
+            2.0
+          ],
+          "match_score": 1.0,
+          "score": 0.8
+        }
+      ]
+    },
+    {
+      "dimension": "Temporality",
+      "metric": "STR",
+      "direction": "↑",
+      "value": 0.8,
+      "status": "proxy_no_queue_model",
+      "note": "用停留時間落在推薦區間的程度近似，未納入排隊時間。",
+      "details": null
+    },
+    {
+      "dimension": "Temporality",
+      "metric": "DTU",
+      "direction": "↑",
+      "value": 0.4822,
+      "status": "proxy_no_queue_model",
+      "note": "用每日景點時數 / 當日行程 span 近似。",
+      "details": null
+    },
+    {
+      "dimension": "Temporality",
+      "metric": "OTU",
+      "direction": "↑",
+      "value": 0.0625,
+      "status": "proxy_no_queue_model",
+      "note": "用總景點時數 / 24h*天數近似。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "BE",
+      "direction": "↑",
+      "value": 0.746,
+      "status": "proxy_estimated_costs",
+      "note": "TravelEval 公式方向：experience value / actual cost * 1000；目前成本含住宿、景點票、餐費與市內交通估算，仍缺城際交通。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "ACD",
+      "direction": "-",
+      "value": 5114.2,
+      "status": "estimated_or_computed",
+      "note": "住宿成本。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "ATD",
+      "direction": "-",
+      "value": 50.0,
+      "status": "estimated_or_computed",
+      "note": "景點票價優先來自 slot cost_estimate，缺少時用 TravelEval attraction price fallback。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "ETD",
+      "direction": "-",
+      "value": 0.0,
+      "status": "missing_or_zero",
+      "note": "城際交通成本目前缺資料。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "RTD",
+      "direction": "-",
+      "value": 850.0,
+      "status": "estimated_or_computed",
+      "note": "市內交通成本優先來自 slot cost_estimate，缺少時用每段整團 8 CNY fallback。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "MED",
+      "direction": "-",
+      "value": 420.0,
+      "status": "estimated_or_computed",
+      "note": "餐費優先來自 slot cost_estimate，缺少時用 TravelEval restaurant price 或每人 80 CNY fallback。",
+      "details": null
+    },
+    {
+      "dimension": "Economy",
+      "metric": "OTD",
+      "direction": "-",
+      "value": 0.0,
+      "status": "missing_or_zero",
+      "note": "其他成本。",
+      "details": null
+    },
+    {
+      "dimension": "Utility",
+      "metric": "EDI",
+      "direction": "↑",
+      "value": 0.4362,
+      "status": "computed_partial",
+      "note": "用 TravelEval attraction type 做 Shannon entropy。",
+      "details": null
+    },
+    {
+      "dimension": "Utility",
+      "metric": "ADS",
+      "direction": "↑",
+      "value": 0.1695,
+      "status": "computed_partial",
+      "note": "平均每日景點數 / 普通旅行 target density 3.54。",
+      "details": null
+    },
+    {
+      "dimension": "Utility",
+      "metric": "AQE",
+      "direction": "↑",
+      "value": 0.96,
+      "status": "computed_partial",
+      "note": "用景點 star/5 加權停留時間近似。",
+      "details": null
+    },
+    {
+      "dimension": "Utility",
+      "metric": "Profit",
+      "direction": "↑",
+      "value": 4.8,
+      "status": "computed_partial",
+      "note": "用 sandbox star 與偏好匹配近似。",
+      "details": null
+    }
+  ],
+  "skipped_gaode_metrics": [
+    {
+      "dimension": "Accuracy",
+      "metric": "FRTC",
+      "direction": "↓",
+      "value": null,
+      "status": "skipped_gaode_required",
+      "note": "需要高德 transit API 檢查相鄰 POI 公共交通可達性。",
+      "details": null
+    },
+    {
+      "dimension": "Spatiality",
+      "metric": "SSR",
+      "direction": "↓",
+      "value": null,
+      "status": "skipped_gaode_required",
+      "note": "需要高德路網距離計算 route penalty。",
+      "details": null
+    },
+    {
+      "dimension": "Spatiality",
+      "metric": "CSM-P90",
+      "direction": "↓",
+      "value": null,
+      "status": "skipped_gaode_required",
+      "note": "需要 POI 路網距離與跨日空間錯配計算。",
+      "details": null
+    },
+    {
+      "dimension": "Spatiality",
+      "metric": "CSM-P95",
+      "direction": "↓",
+      "value": null,
+      "status": "skipped_gaode_required",
+      "note": "需要 POI 路網距離與跨日空間錯配計算。",
+      "details": null
+    }
+  ],
+  "currency": "CNY",
+  "cost_breakdown": {
+    "attractions": 50.0,
+    "intercity_transportation": 0.0,
+    "intracity_transportation": 850.0,
+    "accommodation": 5114.2,
+    "meals": 420.0,
+    "other": 0.0,
+    "total": 6434.2
+  },
+  "sandbox_summary": {
+    "travel_eval_dir": "/private/tmp/TravelEval",
+    "city_key": "shanghai",
+    "matched_attractions": 1
+  }
+}

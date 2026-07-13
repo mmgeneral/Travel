@@ -1,0 +1,260 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-11T21:17:04",
+  "decision_summary": {
+    "overall_strategy": "minor_adjustment",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "所有主要活動場所地理位置集中，適合選擇單一酒店以便交通和住宿便利。",
+      "富泉山古文化遺址和七寶古鎮是行程中明確的活動，不需要大改。",
+      "市區活動和中午小吃需要更具體的候選，進行輕微調整以提升行程體驗。"
+    ],
+    "warnings": [
+      "可能略超預算，需要監控花費。"
+    ]
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChoIw7zegc2E-NWxARoNL2cvMTFiNzNzN2s0MxAB",
+        "property_token": "ChoIw7zegc2E-NWxARoNL2cvMTFiNzNzN2s0MxAB",
+        "name": "上海雅居樂萬豪酒店",
+        "latitude": 31.236535999999997,
+        "longitude": 121.47337399999998,
+        "price": {
+          "currency": "TWD",
+          "per_night": 6393.0,
+          "total": 25571.0,
+          "nights": 4,
+          "availability_confirmed": true,
+          "source": "serpapi_google_hotels"
+        }
+      },
+      "reason": "靠近主要景點與活動區域，並符合免費停車的住宿要求。"
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "original_activity": "市區輕鬆逛街",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+        "name": "Nanjing Road Pedestrian Street",
+        "address": "上海市黄浦区南京路步行街6FMF+VXJ 邮政编码: 200001",
+        "latitude": 31.234720999999993,
+        "longitude": 121.47489800000001
+      },
+      "reason": "南京路步行街受歡迎度高，且地理位置靠近酒店，適合當日下午行程。"
+    },
+    {
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "original_activity": "中午小吃",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJGRhnfkNwsjURGKqqL8OaDfA",
+        "name": "萊萊小吃湯包館",
+        "address": "上海市黄浦区天津路504号 邮政编码: 200001",
+        "latitude": 31.236185000000003,
+        "longitude": 121.47731299999998
+      },
+      "reason": "地理位置適中且評分良好，適合午餐選項。"
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "09:00",
+          "end_time": "13:00",
+          "time": "09:00~13:00",
+          "activity": "高鐵北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 800,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "依一般高鐵票價進行估算。"
+          }
+        },
+        {
+          "slot_id": "day1_slot02",
+          "start_time": "13:30",
+          "end_time": "14:00",
+          "time": "13:30~14:00",
+          "activity": "入住酒店",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "入住行程不產生額外費用。"
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "14:30",
+          "end_time": "17:00",
+          "time": "14:30~17:00",
+          "activity": "南京路步行街觀光",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "南京路步行街",
+          "route_entry_place": "南京路步行街",
+          "route_exit_place": "南京路步行街",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "南京路步行街免費觀光。"
+          }
+        },
+        {
+          "slot_id": "day1_slot04",
+          "start_time": "17:30",
+          "end_time": "19:00",
+          "time": "17:30~19:00",
+          "activity": "晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 300,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "估計晚餐成本。"
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "start_time": "09:00",
+          "end_time": "11:30",
+          "time": "09:00~11:30",
+          "activity": "參觀富泉山古文化遺址",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "富泉山古文化遺址",
+          "route_entry_place": "富泉山古文化遺址",
+          "route_exit_place": "富泉山古文化遺址",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 50,
+            "source": "candidate_price",
+            "confidence": 0.8,
+            "note": "根據提供的價格估計的門票成本。"
+          }
+        },
+        {
+          "slot_id": "day2_slot02",
+          "start_time": "11:30",
+          "end_time": "12:00",
+          "time": "11:30~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 50,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "市內交通費用估算。"
+          }
+        },
+        {
+          "slot_id": "day2_slot03",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "午餐於萊萊小吃湯包館",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "萊萊小吃湯包館",
+          "route_entry_place": "萊萊小吃湯包館",
+          "route_exit_place": "萊萊小吃湯包館",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 120,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "根據餐館類型和評價估算的午餐費用。"
+          }
+        },
+        {
+          "slot_id": "day2_slot04",
+          "start_time": "13:30",
+          "end_time": "16:00",
+          "time": "13:30~16:00",
+          "activity": "遊覽七寶古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "七寶古鎮",
+          "route_entry_place": "七寶古鎮",
+          "route_exit_place": "七寶古鎮",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "七寶古鎮免費遊覽。"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJ443NM0NwsjURrWjV1_GoGSU",
+      "ChIJGRhnfkNwsjURGKqqL8OaDfA"
+    ],
+    "lodging": [
+      "ChoIw7zegc2E-NWxARoNL2cvMTFiNzNzN2s0MxAB"
+    ]
+  }
+}

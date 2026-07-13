@@ -1,0 +1,2223 @@
+{
+  "instruction": "Use only the provided place and lodging candidates. Decide whether each fuzzy slot can be replaced directly, needs minor itinerary reordering, or requires a larger itinerary rewrite. Also decide lodging for each night. Do not invent new places or hotels.",
+  "decision_schema": {
+    "fuzzy_slot_decision": "single_replace | minor_adjustment | major_rebuild",
+    "lodging_decision": "single_hotel | split_hotels"
+  },
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-12-15",
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [
+        "friends"
+      ],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "朱家角古鎮",
+        "廣富林文化遺址公園",
+        "大境閣"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 5,
+      "duration_nights": 4,
+      "travel_start_date": "2024-12-15",
+      "travel_end_date": "2024-12-19",
+      "season_or_month": "冬季",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "朱家角古鎮",
+        "廣富林文化遺址公園"
+      ],
+      "desired_experiences": [
+        "小眾秘境",
+        "歷史古蹟"
+      ],
+      "activity_types": [
+        "culture",
+        "history"
+      ],
+      "food_preferences": [
+        "local_cuisine",
+        "not_huoguo_or_sichuan"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": [
+        "central_location",
+        "free_parking"
+      ]
+    },
+    "why": {
+      "trip_goal": "探索上海的小眾秘境與歷史古蹟",
+      "success_criteria": [
+        "預算不超過3200元",
+        "不吃火鍋和川菜",
+        "住宿位置好并免費停車"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3
+      ]
+    },
+    "how": {
+      "budget": 3200,
+      "preferred_transportation": "high_speed_train",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "route_feasibility"
+      ],
+      "hard_constraints": [
+        "no_flight"
+      ],
+      "soft_preferences": []
+    }
+  },
+  "original_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "sunday",
+          "start_time": "08:00",
+          "end_time": "13:00",
+          "time": "08:00~13:00",
+          "activity": "從北京乘坐高鐵前往上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "sunday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "抵達上海並入住酒店",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "酒店名",
+          "route_entry_place": "酒店",
+          "route_exit_place": "酒店",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "sunday",
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "time": "15:00~17:00",
+          "activity": "參觀西延堂教堂",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "西延堂教堂",
+          "route_entry_place": "西延堂教堂",
+          "route_exit_place": "西延堂教堂",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "sunday",
+          "start_time": "17:00",
+          "end_time": "18:00",
+          "time": "17:00~18:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": "sunday",
+          "start_time": "18:00",
+          "end_time": "19:00",
+          "time": "18:00~19:00",
+          "activity": "享用本幫菜晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "monday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "monday",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "探訪朱家角古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "朱家角古鎮",
+          "route_entry_place": "朱家角古鎮",
+          "route_exit_place": "朱家角古鎮",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "monday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用當地特色小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "monday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "monday",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀廣富林文化遺址公園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "廣富林文化遺址公園",
+          "route_entry_place": "廣富林文化遺址公園",
+          "route_exit_place": "廣富林文化遺址公園",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "tuesday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "tuesday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海鐵道博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海鐵道博物館",
+          "route_entry_place": "上海鐵道博物館",
+          "route_exit_place": "上海鐵道博物館",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "tuesday",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": "tuesday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用特色午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot04",
+          "day_of_week": "tuesday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot05",
+          "day_of_week": "tuesday",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "探訪大境閣與古城牆",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "大境閣",
+          "route_entry_place": "大境閣",
+          "route_exit_place": "大境閣",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "date_description": "第四天",
+      "day_of_week": "wednesday",
+      "schedule": [
+        {
+          "slot_id": "day4_slot01",
+          "day_of_week": "wednesday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "探索錦澤古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "錦澤古鎮",
+          "route_entry_place": "錦澤古鎮",
+          "route_exit_place": "錦澤古鎮",
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot02",
+          "day_of_week": "wednesday",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot03",
+          "day_of_week": "wednesday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用午後茶點",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot04",
+          "day_of_week": "wednesday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot05",
+          "day_of_week": "wednesday",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "自由探索市區小眾文化",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "date_description": "第五天",
+      "day_of_week": "thursday",
+      "schedule": [
+        {
+          "slot_id": "day5_slot01",
+          "day_of_week": "thursday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀古筆墨館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "古筆墨館",
+          "route_entry_place": "古筆墨館",
+          "route_exit_place": "古筆墨館",
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot02",
+          "day_of_week": "thursday",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot03",
+          "day_of_week": "thursday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用本幫菜午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot04",
+          "day_of_week": "thursday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot05",
+          "day_of_week": "thursday",
+          "start_time": "14:00",
+          "end_time": "18:00",
+          "time": "14:00~18:00",
+          "activity": "返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": "sunday",
+      "start_time": "18:00",
+      "end_time": "19:00",
+      "time": "18:00~19:00",
+      "slot_type": "meal",
+      "original_activity": "享用本幫菜晚餐",
+      "reason_for_search": "缺乏具體店家",
+      "target_terms": [
+        "本幫菜"
+      ],
+      "location_terms": [
+        "上海",
+        "西延堂教堂附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合晚餐"
+      ],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJyXECKN5wsjURRtmre8Sh_wM",
+          "name": "上海本幫菜",
+          "address": "上海市浦东新区陆家嘴浦东大道10号 邮政编码: 200120",
+          "latitude": 31.2385571,
+          "longitude": 121.51416479999999,
+          "google_maps_uri": "https://maps.google.com/?cid=288126766435522886&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 1,
+          "score": 0.4601,
+          "score_breakdown": {
+            "total": 0.4601,
+            "relevance": 0.54,
+            "quality": 0.001,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.793
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 本幫菜",
+            "上海 晚餐 本幫菜"
+          ],
+          "why": "符合「本幫菜、上海」；Google 評分 5，1 則評論；由查詢「上海 本幫菜」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.6201
+        },
+        {
+          "place_id": "ChIJm0xwOl55sjURvRVh6ORjG1w",
+          "name": "本幫江浙菜",
+          "address": "上海市浦东新区杨高南路5885号 邮政编码: 201318",
+          "latitude": 31.1307778,
+          "longitude": 121.540606,
+          "google_maps_uri": "https://maps.google.com/?cid=6637008310662927805&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3542,
+          "score_breakdown": {
+            "total": 0.3542,
+            "relevance": 0.49,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7705
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 晚餐 本幫菜"
+          ],
+          "why": "符合「本幫菜」；由查詢「上海 晚餐 本幫菜」命中",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3542
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "day_of_week": "monday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用當地特色小吃",
+      "reason_for_search": "缺乏具體店家",
+      "target_terms": [
+        "特色小吃"
+      ],
+      "location_terms": [
+        "上海",
+        "朱家角古鎮附近",
+        "廣富林文化遺址公園附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJuUaDgkRwsjURX3c7vCH-0sA",
+          "name": "七寶老街特色小吃",
+          "address": "上海市黄浦区南京路南京东路720号食品一店 邮政编码: 200001",
+          "latitude": 31.235470999999997,
+          "longitude": 121.476816,
+          "google_maps_uri": "https://maps.google.com/?cid=13894447221236791135&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 3.5,
+          "user_rating_count": 2,
+          "score": 0.51,
+          "score_breakdown": {
+            "total": 0.51,
+            "relevance": 0.7467,
+            "quality": 0.0014,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.886
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色小吃"
+          ],
+          "why": "符合「特色小吃」；Google 評分 3.5，2 則評論；由查詢「上海 特色小吃」命中",
+          "warnings": [
+            "評分低於 4.0",
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.67
+        },
+        {
+          "place_id": "ChIJv3so1B-PsjURXCaXKCN1tfw",
+          "name": "上海特色小吃",
+          "address": "上海市奉贤区安中中路153号 邮政编码: 201402",
+          "latitude": 30.961204,
+          "longitude": 121.400121,
+          "google_maps_uri": "https://maps.google.com/?cid=18209589462207768156&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4,
+          "user_rating_count": 2,
+          "score": 0.5013,
+          "score_breakdown": {
+            "total": 0.5013,
+            "relevance": 0.7467,
+            "quality": 0.0016,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.886
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色小吃"
+          ],
+          "why": "符合「特色小吃、上海」；Google 評分 4，2 則評論；由查詢「上海 特色小吃」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.5013
+        },
+        {
+          "place_id": "ChIJzQq5JfdvsjURMmg1lRNqOTQ",
+          "name": "豫中園老城隍廟特色小吃",
+          "address": "上海市静安区曹家渡万航渡路725号 邮政编码: 200042",
+          "latitude": 31.2273052,
+          "longitude": 121.4317832,
+          "google_maps_uri": "https://maps.google.com/?cid=3763155595984988210&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 1,
+          "score": 0.4731,
+          "score_breakdown": {
+            "total": 0.4731,
+            "relevance": 0.7612,
+            "quality": 0.001,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8925
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色小吃"
+          ],
+          "why": "符合「特色小吃」；Google 評分 5，1 則評論；由查詢「上海 特色小吃」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.4731
+        },
+        {
+          "place_id": "ChIJN2vZN8hxsjURLt2i3H5q_o8",
+          "name": "福建沙縣特色小吃",
+          "address": "上海市闸北区中山北路7F8C+22V 邮政编码: 200081",
+          "latitude": 31.265125,
+          "longitude": 121.470038,
+          "google_maps_uri": "https://maps.google.com/?cid=10375847684608285998&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 1,
+          "score": 0.454,
+          "score_breakdown": {
+            "total": 0.454,
+            "relevance": 0.7467,
+            "quality": 0.001,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.886
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "廣富林文化遺址公園附近 特色小吃"
+          ],
+          "why": "符合「特色小吃」；Google 評分 5，1 則評論；由查詢「廣富林文化遺址公園附近 特色小吃」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.454
+        },
+        {
+          "place_id": "ChIJA5s-SUBwsjURFhARLaLPojs",
+          "name": "佳家湯包",
+          "address": "上海市黄浦区人民广场黄河路90号 邮政编码: 200003",
+          "latitude": 31.234576999999998,
+          "longitude": 121.47082099999999,
+          "google_maps_uri": "https://maps.google.com/?cid=4297225289912619030&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 1169,
+          "score": 0.3604,
+          "score_breakdown": {
+            "total": 0.3604,
+            "relevance": 0.236,
+            "quality": 0.5928,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6562
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色小吃",
+            "上海 午餐 特色小吃"
+          ],
+          "why": "符合「上海」；Google 評分 4.3，1169 則評論；由查詢「上海 特色小吃」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3604
+        }
+      ]
+    },
+    {
+      "slot_index": 3,
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": "tuesday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用特色午餐",
+      "reason_for_search": "缺乏具體店家",
+      "target_terms": [
+        "特色午餐"
+      ],
+      "location_terms": [
+        "上海",
+        "上海鐵道博物館附近",
+        "大境閣附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJPWUSbWlwsjURjYNLkOXNZGw",
+          "name": "上海博物館餐廳",
+          "address": "上海市黄浦区人民广场人民大道201号 邮政编码: 200003",
+          "latitude": 31.228561499999998,
+          "longitude": 121.4760239,
+          "google_maps_uri": "https://maps.google.com/?cid=7810594039619355533&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 6,
+          "score": 0.3401,
+          "score_breakdown": {
+            "total": 0.3401,
+            "relevance": 0.28,
+            "quality": 0.005,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "tuesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海鐵道博物館附近 特色午餐"
+          ],
+          "why": "符合「上海」；Google 評分 4.2，6 則評論；由查詢「上海鐵道博物館附近 特色午餐」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3401
+        },
+        {
+          "place_id": "ChIJMa4ROwxwsjUR46G4qL0sMZk",
+          "name": "上海老弄堂餐廳",
+          "address": "上海市黄浦区瑞金一路139号-1复兴商厦2层 邮政编码: 200041",
+          "latitude": 31.221173,
+          "longitude": 121.46359700000001,
+          "google_maps_uri": "https://maps.google.com/?cid=11038653354752909795&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.5,
+          "user_rating_count": 14,
+          "score": 0.2961,
+          "score_breakdown": {
+            "total": 0.2961,
+            "relevance": 0.28,
+            "quality": 0.0125,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "tuesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色午餐"
+          ],
+          "why": "符合「上海」；Google 評分 4.5，14 則評論；由查詢「上海 特色午餐」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2961
+        },
+        {
+          "place_id": "ChIJGwIwmUFwsjUR5o4PuWoEzK0",
+          "name": "旋景餐廳",
+          "address": "中國上海市黃浦區人民廣場 邮政编码: 200003",
+          "latitude": 31.234643,
+          "longitude": 121.47295000000001,
+          "google_maps_uri": "https://maps.google.com/?cid=12523389520228355814&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 8,
+          "score": 0.2953,
+          "score_breakdown": {
+            "total": 0.2953,
+            "relevance": 0.28,
+            "quality": 0.007,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "tuesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海鐵道博物館附近 特色午餐"
+          ],
+          "why": "符合「上海」；Google 評分 4.4，8 則評論；由查詢「上海鐵道博物館附近 特色午餐」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2953
+        },
+        {
+          "place_id": "ChIJP0XdplplsjURd84TtjYn3OE",
+          "name": "夏朵花園",
+          "address": "上海市徐汇区复兴西路268号 邮政编码: 200031",
+          "latitude": 31.211326,
+          "longitude": 121.43789199999999,
+          "google_maps_uri": "https://maps.google.com/?cid=16274926269346598519&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.9,
+          "user_rating_count": 39,
+          "score": 0.2925,
+          "score_breakdown": {
+            "total": 0.2925,
+            "relevance": 0.24,
+            "quality": 0.0375,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.658
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "tuesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色午餐",
+            "上海 午餐 特色午餐"
+          ],
+          "why": "符合「上海」；Google 評分 4.9，39 則評論；由查詢「上海 特色午餐」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2925
+        },
+        {
+          "place_id": "ChIJvyekmVhwsjURATsh25Jn61Y",
+          "name": "Mercato",
+          "address": "上海市黄浦区外滩3号外滩三号6层 CN 上海市 黄浦区 中山东一路 3 邮政编码: 200002",
+          "latitude": 31.23417,
+          "longitude": 121.49076000000001,
+          "google_maps_uri": "https://maps.google.com/?cid=6263213587228080897&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 97,
+          "score": 0.2838,
+          "score_breakdown": {
+            "total": 0.2838,
+            "relevance": 0.24,
+            "quality": 0.085,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.658
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "tuesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 特色午餐",
+            "上海 午餐 特色午餐"
+          ],
+          "why": "符合「上海」；Google 評分 4.6，97 則評論；由查詢「上海 特色午餐」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2838
+        }
+      ]
+    },
+    {
+      "slot_index": 4,
+      "slot_id": "day4_slot03",
+      "day": 4,
+      "day_of_week": "wednesday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用午後茶點",
+      "reason_for_search": "缺乏具體店家",
+      "target_terms": [
+        "下午茶"
+      ],
+      "location_terms": [
+        "上海",
+        "錦澤古鎮附近",
+        "上海火車站附近"
+      ],
+      "intent_type": "cafe",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJhQQ-w6h6sjURcensZEOvVuM",
+          "name": "汾陽花園酒店下午茶",
+          "address": "上海市徐汇区汾阳路45号-1 邮政编码: 200031",
+          "latitude": 31.212557999999998,
+          "longitude": 121.45499,
+          "google_maps_uri": "https://maps.google.com/?cid=16381473398597675377&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 3,
+          "score": 0.5023,
+          "score_breakdown": {
+            "total": 0.5023,
+            "relevance": 0.792,
+            "quality": 0.003,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.9064
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "wednesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 下午茶",
+            "上海火車站 附近 下午茶"
+          ],
+          "why": "符合「下午茶」；Google 評分 5，3 則評論；由查詢「上海 下午茶」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.6623
+        },
+        {
+          "place_id": "ChIJYfy6LHVwsjUR3dWdFOIJZAQ",
+          "name": "下午茶博物館",
+          "address": "上海市黄浦区复兴中路529号-27 邮政编码: 200025",
+          "latitude": 31.215175,
+          "longitude": 121.468525,
+          "google_maps_uri": "https://maps.google.com/?cid=316388740435924445&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 6,
+          "score": 0.4298,
+          "score_breakdown": {
+            "total": 0.4298,
+            "relevance": 0.742,
+            "quality": 0.005,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8839
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "wednesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 下午茶"
+          ],
+          "why": "符合「下午茶」；Google 評分 4.2，6 則評論；由查詢「上海 下午茶」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.4298
+        }
+      ]
+    },
+    {
+      "slot_index": 5,
+      "slot_id": "day5_slot03",
+      "day": 5,
+      "day_of_week": "thursday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用本幫菜午餐",
+      "reason_for_search": "缺乏具體店家",
+      "target_terms": [
+        "本幫菜"
+      ],
+      "location_terms": [
+        "上海",
+        "古筆墨館附近",
+        "上海火車站附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJyXECKN5wsjURRtmre8Sh_wM",
+          "name": "上海本幫菜",
+          "address": "上海市浦东新区陆家嘴浦东大道10号 邮政编码: 200120",
+          "latitude": 31.2385571,
+          "longitude": 121.51416479999999,
+          "google_maps_uri": "https://maps.google.com/?cid=288126766435522886&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 1,
+          "score": 0.4881,
+          "score_breakdown": {
+            "total": 0.4881,
+            "relevance": 0.5953,
+            "quality": 0.001,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8179
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "thursday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 本幫菜",
+            "古筆墨館附近 本幫菜",
+            "上海火車站附近 本幫菜",
+            "上海 午餐 本幫菜"
+          ],
+          "why": "符合「本幫菜、上海」；Google 評分 5，1 則評論；由查詢「上海 本幫菜」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.6481
+        },
+        {
+          "place_id": "ChIJbanp3cx1sjURJxybqUuxk-4",
+          "name": "本幫菜館",
+          "address": "上海市浦东新区利津路357号 邮政编码: 200129",
+          "latitude": 31.277093999999998,
+          "longitude": 121.584012,
+          "google_maps_uri": "https://maps.google.com/?cid=17191279141129493543&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.4106,
+          "score_breakdown": {
+            "total": 0.4106,
+            "relevance": 0.547,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7962
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "thursday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 本幫菜",
+            "上海 午餐 本幫菜"
+          ],
+          "why": "符合「本幫菜」；由查詢「上海火車站附近 本幫菜」命中",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.4106
+        },
+        {
+          "place_id": "ChIJmzWKlBN6sjURhnihNRz767w",
+          "name": "三林本幫菜",
+          "address": "上海市浦东新区浦三路739号-2 邮政编码: 200125",
+          "latitude": 31.185055000000002,
+          "longitude": 121.518276,
+          "google_maps_uri": "https://maps.google.com/?cid=13613250397234886790&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 4,
+          "score": 0.3887,
+          "score_breakdown": {
+            "total": 0.3887,
+            "relevance": 0.5853,
+            "quality": 0.0034,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8134
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "thursday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "古筆墨館附近 本幫菜",
+            "上海火車站附近 本幫菜",
+            "上海 午餐 本幫菜"
+          ],
+          "why": "符合「本幫菜」；Google 評分 4.3，4 則評論；由查詢「古筆墨館附近 本幫菜」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3887
+        },
+        {
+          "place_id": "ChIJp7Qn1UBwsjURIi0cHgjeH6I",
+          "name": "藍帝老上海本幫菜",
+          "address": "上海市黄浦区长沙路179号 邮政编码: 200003",
+          "latitude": 31.237945,
+          "longitude": 121.471159,
+          "google_maps_uri": "https://maps.google.com/?cid=11682300084868623650&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 43,
+          "score": 0.3887,
+          "score_breakdown": {
+            "total": 0.3887,
+            "relevance": 0.4653,
+            "quality": 0.0362,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7594
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "thursday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 本幫菜"
+          ],
+          "why": "符合「本幫菜、上海」；Google 評分 4.3，43 則評論；由查詢「上海火車站附近 本幫菜」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3887
+        },
+        {
+          "place_id": "ChIJ0Qa3jF9wsjURbiJLV8v58vY",
+          "name": "旺角本幫菜",
+          "address": "上海市黄浦区四牌楼丽水路1号悦园商厦6F 邮政编码: 200010",
+          "latitude": 31.228807999999997,
+          "longitude": 121.49088399999998,
+          "google_maps_uri": "https://maps.google.com/?cid=17794559729432470126&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.365,
+          "score_breakdown": {
+            "total": 0.365,
+            "relevance": 0.4653,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7594
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "thursday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 本幫菜"
+          ],
+          "why": "符合「本幫菜」；由查詢「上海火車站附近 本幫菜」命中",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.365
+        }
+      ]
+    },
+    {
+      "slot_index": 6,
+      "slot_id": "day4_slot05",
+      "day": 4,
+      "day_of_week": "wednesday",
+      "start_time": "14:00",
+      "end_time": "17:00",
+      "time": "14:00~17:00",
+      "slot_type": "attraction",
+      "original_activity": "自由探索市區小眾文化",
+      "reason_for_search": "需具體化探索路線",
+      "target_terms": [
+        "小眾文化"
+      ],
+      "location_terms": [
+        "上海",
+        "錦澤古鎮附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [
+        "適合下午探索"
+      ],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJyQRr64R6sjUR1fS1Z4IZMnc",
+          "name": "上海雅眾文化傳播有限公司",
+          "address": "上海市黄浦区局门路436号8号桥Ⅱ7层7101a 邮政编码: 200023",
+          "latitude": 31.2028599,
+          "longitude": 121.48174259999998,
+          "google_maps_uri": "https://maps.google.com/?cid=8588955487225378005&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3884,
+          "score_breakdown": {
+            "total": 0.3884,
+            "relevance": 0.4528,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7538
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "wednesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 小眾文化",
+            "上海 下午 小眾文化"
+          ],
+          "why": "符合「小眾文化、上海」；由查詢「上海 小眾文化」命中",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.5484
+        },
+        {
+          "place_id": "ChIJ8xRoACR5sjURX94qXXi1638",
+          "name": "小上海旅遊文化城",
+          "address": "上海市浦东新区康沈路1611弄号 邮政编码: 201318",
+          "latitude": 31.116546999999997,
+          "longitude": 121.57672900000001,
+          "google_maps_uri": "https://maps.google.com/?cid=9217660590907645535&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3599,
+          "score_breakdown": {
+            "total": 0.3599,
+            "relevance": 0.3895,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7253
+          },
+          "opening": {
+            "coverage": null,
+            "weekday_known": true,
+            "source": null,
+            "day_of_week": "wednesday"
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 小眾文化"
+          ],
+          "why": "符合「小眾文化、上海」；由查詢「上海 小眾文化」命中",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少可對應星期幾的營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3599
+        }
+      ]
+    }
+  ],
+  "lodging_candidates": [
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+      "property_token": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+      "name": "Meego Qingwen Hotel",
+      "address": null,
+      "latitude": 31.235129999999995,
+      "longitude": 121.45161399999999,
+      "rating": 4.2,
+      "user_rating_count": 25,
+      "hotel_class": "1 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 733.0,
+        "total": 2933.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.84,
+        "reviews": 0.4716,
+        "google_rank": 1.0,
+        "price": 0.45,
+        "distance": 0.599,
+        "total": 0.6555
+      },
+      "distance_to_place_candidates": {
+        "average_km": 6.449,
+        "nearest_km": 1.827,
+        "score": 0.599,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIh97qpMqh2rtuGg0vZy8xMXh6MTFqbDIzEAE",
+      "property_token": "ChkIh97qpMqh2rtuGg0vZy8xMXh6MTFqbDIzEAE",
+      "name": "WeFlow Youth Hostel Shanghai",
+      "address": null,
+      "latitude": 31.245176999999998,
+      "longitude": 121.46893999999999,
+      "rating": 4.6,
+      "user_rating_count": 5,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 850.0,
+        "total": 3400.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.92,
+        "reviews": 0.2593,
+        "google_rank": 0.3333,
+        "price": 0.18,
+        "distance": 0.6612,
+        "total": 0.4916
+      },
+      "distance_to_place_candidates": {
+        "average_km": 6.201,
+        "nearest_km": 0.831,
+        "score": 0.6612,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoIx7WB5_Xz9d6QARoNL2cvMTFoNXJnNzNscBAB",
+      "property_token": "ChoIx7WB5_Xz9d6QARoNL2cvMTFoNXJnNzNscBAB",
+      "name": "Shanghai Meego Yes Hotel",
+      "address": null,
+      "latitude": 31.23038,
+      "longitude": 121.4737,
+      "rating": 3.3,
+      "user_rating_count": 37,
+      "hotel_class": "2 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1229.0,
+        "total": 4916.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.66,
+        "reviews": 0.5265,
+        "google_rank": 0.1429,
+        "price": 0.18,
+        "distance": 0.7259,
+        "total": 0.4658
+      },
+      "distance_to_place_candidates": {
+        "average_km": 5.369,
+        "nearest_km": 0.3,
+        "score": 0.7259,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIsMPNls_7vJRVGg0vZy8xMWI2M2ZwY18wEAE",
+      "property_token": "ChkIsMPNls_7vJRVGg0vZy8xMWI2M2ZwY18wEAE",
+      "name": "Starr Hotel Shanghai",
+      "address": null,
+      "latitude": 31.257143000000003,
+      "longitude": 121.458755,
+      "rating": 3.9,
+      "user_rating_count": 47,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1531.0,
+        "total": 6123.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.78,
+        "reviews": 0.5603,
+        "google_rank": 0.0556,
+        "price": 0.18,
+        "distance": 0.5886,
+        "total": 0.4363
+      },
+      "distance_to_place_candidates": {
+        "average_km": 7.433,
+        "nearest_km": 1.392,
+        "score": 0.5886,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIjpbnkrmpjM5UGg0vZy8xMWZ5NTU4bGhkEAE",
+      "property_token": "ChkIjpbnkrmpjM5UGg0vZy8xMWZ5NTU4bGhkEAE",
+      "name": "Yi Ju Homestay",
+      "address": null,
+      "latitude": 31.065466,
+      "longitude": 121.401259,
+      "rating": 5,
+      "user_rating_count": 1,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 796.0,
+        "total": 3184.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 1.0,
+        "reviews": 0.1003,
+        "google_rank": 0.5,
+        "price": 0.45,
+        "distance": 0.1574,
+        "total": 0.4273
+      },
+      "distance_to_place_candidates": {
+        "average_km": 19.238,
+        "nearest_km": 11.594,
+        "score": 0.1574,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChcI-uLM1PLmopxOGgsvZy8xdGZxbnlsaxAB",
+      "property_token": "ChcI-uLM1PLmopxOGgsvZy8xdGZxbnlsaxAB",
+      "name": "滬紡大廈",
+      "address": null,
+      "latitude": 31.233815,
+      "longitude": 121.45101700000001,
+      "rating": 4,
+      "user_rating_count": 8,
+      "hotel_class": "3 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1522.0,
+        "total": 6089.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.8,
+        "reviews": 0.318,
+        "google_rank": 0.0588,
+        "price": 0.18,
+        "distance": 0.5985,
+        "total": 0.4143
+      },
+      "distance_to_place_candidates": {
+        "average_km": 6.438,
+        "nearest_km": 1.846,
+        "score": 0.5985,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChgI-vLD_bqwtpk6GgwvZy8xMnZzOHM2NTMQAQ",
+      "property_token": "ChgI-vLD_bqwtpk6GgwvZy8xMnZzOHM2NTMQAQ",
+      "name": "Shanghai Astronautic Hotel",
+      "address": null,
+      "latitude": 31.246584799999997,
+      "longitude": 121.48478739999999,
+      "rating": 4,
+      "user_rating_count": 2,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 1237.0,
+        "total": 4950.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.8,
+        "reviews": 0.159,
+        "google_rank": 0.125,
+        "price": 0.18,
+        "distance": 0.6263,
+        "total": 0.4142
+      },
+      "distance_to_place_candidates": {
+        "average_km": 6.2,
+        "nearest_km": 1.45,
+        "score": 0.6263,
+        "reference_count": 21
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkI7LCOisOs8949Gg0vZy8xMWd4anBxcmwyEAE",
+      "property_token": "ChkI7LCOisOs8949Gg0vZy8xMWd4anBxcmwyEAE",
+      "name": "Shanghai Future Shangju Hotel",
+      "address": null,
+      "latitude": 31.185904999999998,
+      "longitude": 121.69234,
+      "rating": 4.4,
+      "user_rating_count": 19,
+      "hotel_class": "3 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1010.0,
+        "total": 4040.0,
+        "nights": 4,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.88,
+        "reviews": 0.4336,
+        "google_rank": 0.2,
+        "price": 0.18,
+        "distance": 0.1328,
+        "total": 0.3255
+      },
+      "distance_to_place_candidates": {
+        "average_km": 20.929,
+        "nearest_km": 13.436,
+        "score": 0.1328,
+        "reference_count": 21
+      },
+      "warnings": []
+    }
+  ],
+  "geo_clusters": {
+    "k": 3,
+    "clusters": [
+      {
+        "cluster_id": 2,
+        "center": {
+          "latitude": 31.2323829,
+          "longitude": 121.4782255
+        },
+        "member_count": 24,
+        "members": [
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJyXECKN5wsjURRtmre8Sh_wM",
+            "name": "上海本幫菜",
+            "latitude": 31.2385571,
+            "longitude": 121.51416479999999,
+            "score": 0.4601,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "享用本幫菜晚餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJuUaDgkRwsjURX3c7vCH-0sA",
+            "name": "七寶老街特色小吃",
+            "latitude": 31.235470999999997,
+            "longitude": 121.476816,
+            "score": 0.51,
+            "slot_id": "day2_slot02",
+            "day": 2,
+            "original_activity": "享用當地特色小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJzQq5JfdvsjURMmg1lRNqOTQ",
+            "name": "豫中園老城隍廟特色小吃",
+            "latitude": 31.2273052,
+            "longitude": 121.4317832,
+            "score": 0.4731,
+            "slot_id": "day2_slot02",
+            "day": 2,
+            "original_activity": "享用當地特色小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJN2vZN8hxsjURLt2i3H5q_o8",
+            "name": "福建沙縣特色小吃",
+            "latitude": 31.265125,
+            "longitude": 121.470038,
+            "score": 0.454,
+            "slot_id": "day2_slot02",
+            "day": 2,
+            "original_activity": "享用當地特色小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJA5s-SUBwsjURFhARLaLPojs",
+            "name": "佳家湯包",
+            "latitude": 31.234576999999998,
+            "longitude": 121.47082099999999,
+            "score": 0.3604,
+            "slot_id": "day2_slot02",
+            "day": 2,
+            "original_activity": "享用當地特色小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJPWUSbWlwsjURjYNLkOXNZGw",
+            "name": "上海博物館餐廳",
+            "latitude": 31.228561499999998,
+            "longitude": 121.4760239,
+            "score": 0.3401,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "享用特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJMa4ROwxwsjUR46G4qL0sMZk",
+            "name": "上海老弄堂餐廳",
+            "latitude": 31.221173,
+            "longitude": 121.46359700000001,
+            "score": 0.2961,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "享用特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJGwIwmUFwsjUR5o4PuWoEzK0",
+            "name": "旋景餐廳",
+            "latitude": 31.234643,
+            "longitude": 121.47295000000001,
+            "score": 0.2953,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "享用特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJP0XdplplsjURd84TtjYn3OE",
+            "name": "夏朵花園",
+            "latitude": 31.211326,
+            "longitude": 121.43789199999999,
+            "score": 0.2925,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "享用特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJvyekmVhwsjURATsh25Jn61Y",
+            "name": "Mercato",
+            "latitude": 31.23417,
+            "longitude": 121.49076000000001,
+            "score": 0.2838,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "享用特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJhQQ-w6h6sjURcensZEOvVuM",
+            "name": "汾陽花園酒店下午茶",
+            "latitude": 31.212557999999998,
+            "longitude": 121.45499,
+            "score": 0.5023,
+            "slot_id": "day4_slot03",
+            "day": 4,
+            "original_activity": "享用午後茶點"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJYfy6LHVwsjUR3dWdFOIJZAQ",
+            "name": "下午茶博物館",
+            "latitude": 31.215175,
+            "longitude": 121.468525,
+            "score": 0.4298,
+            "slot_id": "day4_slot03",
+            "day": 4,
+            "original_activity": "享用午後茶點"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJyXECKN5wsjURRtmre8Sh_wM",
+            "name": "上海本幫菜",
+            "latitude": 31.2385571,
+            "longitude": 121.51416479999999,
+            "score": 0.4881,
+            "slot_id": "day5_slot03",
+            "day": 5,
+            "original_activity": "享用本幫菜午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJbanp3cx1sjURJxybqUuxk-4",
+            "name": "本幫菜館",
+            "latitude": 31.277093999999998,
+            "longitude": 121.584012,
+            "score": 0.4106,
+            "slot_id": "day5_slot03",
+            "day": 5,
+            "original_activity": "享用本幫菜午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJmzWKlBN6sjURhnihNRz767w",
+            "name": "三林本幫菜",
+            "latitude": 31.185055000000002,
+            "longitude": 121.518276,
+            "score": 0.3887,
+            "slot_id": "day5_slot03",
+            "day": 5,
+            "original_activity": "享用本幫菜午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJp7Qn1UBwsjURIi0cHgjeH6I",
+            "name": "藍帝老上海本幫菜",
+            "latitude": 31.237945,
+            "longitude": 121.471159,
+            "score": 0.3887,
+            "slot_id": "day5_slot03",
+            "day": 5,
+            "original_activity": "享用本幫菜午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ0Qa3jF9wsjURbiJLV8v58vY",
+            "name": "旺角本幫菜",
+            "latitude": 31.228807999999997,
+            "longitude": 121.49088399999998,
+            "score": 0.365,
+            "slot_id": "day5_slot03",
+            "day": 5,
+            "original_activity": "享用本幫菜午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJyQRr64R6sjUR1fS1Z4IZMnc",
+            "name": "上海雅眾文化傳播有限公司",
+            "latitude": 31.2028599,
+            "longitude": 121.48174259999998,
+            "score": 0.3884,
+            "slot_id": "day4_slot05",
+            "day": 4,
+            "original_activity": "自由探索市區小眾文化"
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+            "name": "Meego Qingwen Hotel",
+            "latitude": 31.235129999999995,
+            "longitude": 121.45161399999999,
+            "score": 0.6555,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIh97qpMqh2rtuGg0vZy8xMXh6MTFqbDIzEAE",
+            "name": "WeFlow Youth Hostel Shanghai",
+            "latitude": 31.245176999999998,
+            "longitude": 121.46893999999999,
+            "score": 0.4916,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoIx7WB5_Xz9d6QARoNL2cvMTFoNXJnNzNscBAB",
+            "name": "Shanghai Meego Yes Hotel",
+            "latitude": 31.23038,
+            "longitude": 121.4737,
+            "score": 0.4658,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIsMPNls_7vJRVGg0vZy8xMWI2M2ZwY18wEAE",
+            "name": "Starr Hotel Shanghai",
+            "latitude": 31.257143000000003,
+            "longitude": 121.458755,
+            "score": 0.4363,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChcI-uLM1PLmopxOGgsvZy8xdGZxbnlsaxAB",
+            "name": "滬紡大廈",
+            "latitude": 31.233815,
+            "longitude": 121.45101700000001,
+            "score": 0.4143,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChgI-vLD_bqwtpk6GgwvZy8xMnZzOHM2NTMQAQ",
+            "name": "Shanghai Astronautic Hotel",
+            "latitude": 31.246584799999997,
+            "longitude": 121.48478739999999,
+            "score": 0.4142,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      },
+      {
+        "cluster_id": 3,
+        "center": {
+          "latitude": 31.1444099,
+          "longitude": 121.603225
+        },
+        "member_count": 3,
+        "members": [
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJm0xwOl55sjURvRVh6ORjG1w",
+            "name": "本幫江浙菜",
+            "latitude": 31.1307778,
+            "longitude": 121.540606,
+            "score": 0.3542,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "享用本幫菜晚餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ8xRoACR5sjURX94qXXi1638",
+            "name": "小上海旅遊文化城",
+            "latitude": 31.116546999999997,
+            "longitude": 121.57672900000001,
+            "score": 0.3599,
+            "slot_id": "day4_slot05",
+            "day": 4,
+            "original_activity": "自由探索市區小眾文化"
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkI7LCOisOs8949Gg0vZy8xMWd4anBxcmwyEAE",
+            "name": "Shanghai Future Shangju Hotel",
+            "latitude": 31.185904999999998,
+            "longitude": 121.69234,
+            "score": 0.3255,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "center": {
+          "latitude": 31.013335,
+          "longitude": 121.40069
+        },
+        "member_count": 2,
+        "members": [
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJv3so1B-PsjURXCaXKCN1tfw",
+            "name": "上海特色小吃",
+            "latitude": 30.961204,
+            "longitude": 121.400121,
+            "score": 0.5013,
+            "slot_id": "day2_slot02",
+            "day": 2,
+            "original_activity": "享用當地特色小吃"
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIjpbnkrmpjM5UGg0vZy8xMWZ5NTU4bGhkEAE",
+            "name": "Yi Ju Homestay",
+            "latitude": 31.065466,
+            "longitude": 121.401259,
+            "score": 0.4273,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      }
+    ]
+  },
+  "lodging_strategy": {
+    "duration_days": 5,
+    "duration_nights": 4,
+    "preferred_mode": "single_or_split_hotel",
+    "max_hotel_switches": 2,
+    "cluster_count": 3,
+    "rule": "短天數預設盡量住同一間；只有地理分布很遠或跨城市時才換住宿。"
+  }
+}

@@ -1,0 +1,1319 @@
+{
+  "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot08",
+      "day": 1,
+      "day_of_week": "saturday",
+      "start_time": "18:30",
+      "end_time": "20:00",
+      "time": "18:30~20:00",
+      "slot_type": "meal",
+      "original_activity": "享用名古屋特色美食",
+      "reason_for_search": "需要找到具體的餐廳",
+      "target_terms": [
+        "美食",
+        "餐廳",
+        "特色美食",
+        "日本料理",
+        "夜市"
+      ],
+      "location_terms": [
+        "名古屋"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合晚餐",
+        "適合在18:30用餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot08",
+        "slot_id": "day1_slot08",
+        "day": 1,
+        "day_of_week": "saturday",
+        "start_time": "18:30",
+        "end_time": "20:00",
+        "time": "18:30~20:00",
+        "slot_type": "meal",
+        "original_activity": "享用名古屋特色美食",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot06",
+          "day": 1,
+          "day_of_week": "saturday",
+          "start_time": "16:30",
+          "end_time": "18:00",
+          "time": "16:30~18:00",
+          "activity": "於大須商店街購物暢逛",
+          "query": "名古屋 大須商店街",
+          "place": {
+            "place_id": "ChIJZdlrqMxwA2ARpJpFJF45vgg",
+            "resource_name": "places/ChIJZdlrqMxwA2ARpJpFJF45vgg",
+            "name": "大須商店街（名古屋）",
+            "address": "3 Chome-26 Osu, Naka Ward, Nagoya, Aichi 460-0011日本",
+            "latitude": 35.159065999999996,
+            "longitude": 136.90257300000002,
+            "primary_type": null,
+            "types": [
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=630004074376698532&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "名古屋 大須商店街",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "中部國際機場",
+          "query": "中部國際機場",
+          "place": {
+            "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "name": "中部國際機場(新特麗亞)",
+            "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+            "latitude": 34.8573624,
+            "longitude": 136.8107557,
+            "primary_type": "international_airport",
+            "types": [
+              "international_airport",
+              "airport",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "中部國際機場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJJRIRWR96A2AR1pCxwc4H298",
+          "name": "熱田蓬萊軒 本店",
+          "address": "503 Gōdochō, Atsuta Ward, Nagoya, Aichi 456-0043",
+          "latitude": 35.120168899999996,
+          "longitude": 136.9068979,
+          "google_maps_uri": "https://maps.google.com/?cid=16130495074951860438&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.5,
+          "user_rating_count": 7618,
+          "score": 0.4386,
+          "score_breakdown": {
+            "total": 0.4386,
+            "relevance": 0.1963,
+            "quality": 0.8996,
+            "opening": 1.0,
+            "route": 0.6834,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6383
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "saturday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 4.343,
+            "candidate_to_next_km": 30.507,
+            "previous_to_next_km": 34.574,
+            "route_distance_km": 34.85,
+            "detour_km": 0.276,
+            "max_leg_km": 30.507,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "於大須商店街購物暢逛",
+              "query": "名古屋 大須商店街",
+              "place_id": "ChIJZdlrqMxwA2ARpJpFJF45vgg",
+              "name": "大須商店街（名古屋）",
+              "address": "3 Chome-26 Osu, Naka Ward, Nagoya, Aichi 460-0011日本",
+              "latitude": 35.159065999999996,
+              "longitude": 136.90257300000002
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 特色 美食 餐廳",
+            "名古屋 餐廳"
+          ],
+          "why": "Google 評分 4.5，7618 則評論；由查詢「名古屋 特色 美食 餐廳」命中；前後站直線路徑約 34.85 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.4386
+        },
+        {
+          "place_id": "ChIJeUhI_NNxA2ARSBP5UM663A0",
+          "name": "矢場丼 矢場町本店",
+          "address": "3-chōme-6-18 Ōsu, Naka Ward, Nagoya, Aichi 460-0011",
+          "latitude": 35.161678099999996,
+          "longitude": 136.9062361,
+          "google_maps_uri": "https://maps.google.com/?cid=998878612653937480&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 6299,
+          "score": 0.3926,
+          "score_breakdown": {
+            "total": 0.3926,
+            "relevance": 0.1963,
+            "quality": 0.8185,
+            "opening": 1.0,
+            "route": 0.5894,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6383
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "saturday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.442,
+            "candidate_to_next_km": 34.938,
+            "previous_to_next_km": 34.574,
+            "route_distance_km": 35.38,
+            "detour_km": 0.805,
+            "max_leg_km": 34.938,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "於大須商店街購物暢逛",
+              "query": "名古屋 大須商店街",
+              "place_id": "ChIJZdlrqMxwA2ARpJpFJF45vgg",
+              "name": "大須商店街（名古屋）",
+              "address": "3 Chome-26 Osu, Naka Ward, Nagoya, Aichi 460-0011日本",
+              "latitude": 35.159065999999996,
+              "longitude": 136.90257300000002
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 特色 美食 餐廳",
+            "名古屋 餐廳"
+          ],
+          "why": "Google 評分 4.1，6299 則評論；由查詢「名古屋 特色 美食 餐廳」命中；前後站直線路徑約 35.38 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.3926
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "day_of_week": "sunday",
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用名古屋當地午餐",
+      "reason_for_search": "需要找到具體的餐廳",
+      "target_terms": [
+        "午餐",
+        "餐廳",
+        "特色料理",
+        "美食街",
+        "中式餐廳"
+      ],
+      "location_terms": [
+        "名古屋"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot02",
+        "slot_id": "day2_slot02",
+        "day": 2,
+        "day_of_week": "sunday",
+        "start_time": "12:00",
+        "end_time": "13:30",
+        "time": "12:00~13:30",
+        "slot_type": "meal",
+        "original_activity": "享用名古屋當地午餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot01",
+          "day": 2,
+          "day_of_week": "sunday",
+          "start_time": "10:00",
+          "end_time": "12:00",
+          "time": "10:00~12:00",
+          "activity": "於榮區購物與觀光",
+          "query": "名古屋 榮",
+          "place": {
+            "place_id": "ChIJy6RW2NJwA2AR5507QcamqY8",
+            "resource_name": "places/ChIJy6RW2NJwA2AR5507QcamqY8",
+            "name": "Sakae",
+            "address": "Sakae, Naka Ward, Nagoya, Aichi 460-0008日本",
+            "latitude": 35.164814199999995,
+            "longitude": 136.9040502,
+            "primary_type": null,
+            "types": [
+              "sublocality_level_2",
+              "sublocality",
+              "political"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=10351988588915957223&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "名古屋 榮",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day2_slot04",
+          "day": 2,
+          "day_of_week": "sunday",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀名古屋市市政資料館",
+          "query": "名古屋市市政資料館",
+          "place": {
+            "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+            "resource_name": "places/ChIJqQkwHC9xA2AR_Y4eVMku55w",
+            "name": "名古屋市市政資料館",
+            "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+            "latitude": 35.1811442,
+            "longitude": 136.9103135,
+            "primary_type": "museum",
+            "types": [
+              "tourist_attraction",
+              "museum",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=11306056831771512573&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "名古屋市市政資料館",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJZdlrqMxwA2ARpJpFJF45vgg",
+          "name": "大須商店街（名古屋）",
+          "address": "3 Chome-26 Osu, Naka Ward, Nagoya, Aichi 460-0011",
+          "latitude": 35.159065999999996,
+          "longitude": 136.90257300000002,
+          "google_maps_uri": "https://maps.google.com/?cid=630004074376698532&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 10344,
+          "score": 0.429,
+          "score_breakdown": {
+            "total": 0.429,
+            "relevance": 0.28,
+            "quality": 0.84,
+            "opening": 1.0,
+            "route": 0.6865,
+            "google_rank": 0.5,
+            "type": 0.68,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.653,
+            "candidate_to_next_km": 2.554,
+            "previous_to_next_km": 1.903,
+            "route_distance_km": 3.207,
+            "detour_km": 1.304,
+            "max_leg_km": 2.554,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "於榮區購物與觀光",
+              "query": "名古屋 榮",
+              "place_id": "ChIJy6RW2NJwA2AR5507QcamqY8",
+              "name": "Sakae",
+              "address": "Sakae, Naka Ward, Nagoya, Aichi 460-0008日本",
+              "latitude": 35.164814199999995,
+              "longitude": 136.9040502
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "參觀名古屋市市政資料館",
+              "query": "名古屋市市政資料館",
+              "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+              "name": "名古屋市市政資料館",
+              "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+              "latitude": 35.1811442,
+              "longitude": 136.9103135
+            }
+          },
+          "matched_queries": [
+            "名古屋 美食街"
+          ],
+          "why": "符合「名古屋」；Google 評分 4.2，10344 則評論；由查詢「名古屋 美食街」命中；前後站直線路徑約 3.207 km",
+          "warnings": [
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.429
+        },
+        {
+          "place_id": "ChIJN1p0YtFwA2ARbRWgVNlF7CY",
+          "name": "東洋軒 名古屋三越店",
+          "address": "〒460-0008 Aichi, Nagoya, Naka Ward, Sakae, 3-chōme−5−１ 名古屋三越栄 9F",
+          "latitude": 35.168688599999996,
+          "longitude": 136.9079418,
+          "google_maps_uri": "https://maps.google.com/?cid=2804693467674973549&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 436,
+          "score": 0.4207,
+          "score_breakdown": {
+            "total": 0.4207,
+            "relevance": 0.28,
+            "quality": 0.2898,
+            "opening": 1.0,
+            "route": 0.9215,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.557,
+            "candidate_to_next_km": 1.402,
+            "previous_to_next_km": 1.903,
+            "route_distance_km": 1.959,
+            "detour_km": 0.056,
+            "max_leg_km": 1.402,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "於榮區購物與觀光",
+              "query": "名古屋 榮",
+              "place_id": "ChIJy6RW2NJwA2AR5507QcamqY8",
+              "name": "Sakae",
+              "address": "Sakae, Naka Ward, Nagoya, Aichi 460-0008日本",
+              "latitude": 35.164814199999995,
+              "longitude": 136.9040502
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "參觀名古屋市市政資料館",
+              "query": "名古屋市市政資料館",
+              "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+              "name": "名古屋市市政資料館",
+              "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+              "latitude": 35.1811442,
+              "longitude": 136.9103135
+            }
+          },
+          "matched_queries": [
+            "名古屋 當地 午餐 餐廳"
+          ],
+          "why": "符合「名古屋」；Google 評分 4.1，436 則評論；由查詢「名古屋 當地 午餐 餐廳」命中；前後站直線路徑約 1.959 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.4207
+        }
+      ]
+    },
+    {
+      "slot_index": 3,
+      "slot_id": "day2_slot06",
+      "day": 2,
+      "day_of_week": "sunday",
+      "start_time": "16:30",
+      "end_time": "18:00",
+      "time": "16:30~18:00",
+      "slot_type": "meal",
+      "original_activity": "在榮區享用晚餐",
+      "reason_for_search": "需要找到具體的餐廳",
+      "target_terms": [
+        "晚餐",
+        "餐廳",
+        "日本料理",
+        "壽司",
+        "夜市"
+      ],
+      "location_terms": [
+        "名古屋",
+        "榮",
+        "榮區"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot06",
+        "slot_id": "day2_slot06",
+        "day": 2,
+        "day_of_week": "sunday",
+        "start_time": "16:30",
+        "end_time": "18:00",
+        "time": "16:30~18:00",
+        "slot_type": "meal",
+        "original_activity": "在榮區享用晚餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot04",
+          "day": 2,
+          "day_of_week": "sunday",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀名古屋市市政資料館",
+          "query": "名古屋市市政資料館",
+          "place": {
+            "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+            "resource_name": "places/ChIJqQkwHC9xA2AR_Y4eVMku55w",
+            "name": "名古屋市市政資料館",
+            "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+            "latitude": 35.1811442,
+            "longitude": 136.9103135,
+            "primary_type": "museum",
+            "types": [
+              "tourist_attraction",
+              "museum",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=11306056831771512573&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "名古屋市市政資料館",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "中部國際機場",
+          "query": "中部國際機場",
+          "place": {
+            "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "name": "中部國際機場(新特麗亞)",
+            "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+            "latitude": 34.8573624,
+            "longitude": 136.8107557,
+            "primary_type": "international_airport",
+            "types": [
+              "international_airport",
+              "airport",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "中部國際機場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJ10npKvVxA2AR6xjfHdgtXXs",
+          "name": "藏壽司 名古屋榮店",
+          "address": "〒460-0008 Aichi, Nagoya, Naka Ward, Sakae, 4-chōme−2−２９ 名古屋広小路プレイス 2F",
+          "latitude": 35.1687647,
+          "longitude": 136.91094809999998,
+          "google_maps_uri": "https://maps.google.com/?cid=8889311645736573163&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 3.8,
+          "user_rating_count": 986,
+          "score": 0.4121,
+          "score_breakdown": {
+            "total": 0.4121,
+            "relevance": 0.3083,
+            "quality": 0.4765,
+            "opening": 1.0,
+            "route": 0.7232,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6887
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.378,
+            "candidate_to_next_km": 35.808,
+            "previous_to_next_km": 37.127,
+            "route_distance_km": 37.186,
+            "detour_km": 0.059,
+            "max_leg_km": 35.808,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀名古屋市市政資料館",
+              "query": "名古屋市市政資料館",
+              "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+              "name": "名古屋市市政資料館",
+              "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+              "latitude": 35.1811442,
+              "longitude": 136.9103135
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 榮區 壽司"
+          ],
+          "why": "符合「壽司、名古屋、榮」；Google 評分 3.8，986 則評論；由查詢「名古屋 榮區 壽司」命中；前後站直線路徑約 37.186 km",
+          "warnings": [
+            "評分低於 4.0",
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.5721
+        },
+        {
+          "place_id": "ChIJo_LRKtJwA2ARryHT1q8ROOE",
+          "name": "日本料理 Uttoko Rashikku",
+          "address": "〒460-0008 Aichi, Nagoya, Naka Ward, Sakae, 3-chōme−6−１ 8F",
+          "latitude": 35.1674443,
+          "longitude": 136.9077096,
+          "google_maps_uri": "https://maps.google.com/?cid=16228740704150692271&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 316,
+          "score": 0.3533,
+          "score_breakdown": {
+            "total": 0.3533,
+            "relevance": 0.195,
+            "quality": 0.2276,
+            "opening": 1.0,
+            "route": 0.7353,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6378
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "sunday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.542,
+            "candidate_to_next_km": 35.592,
+            "previous_to_next_km": 37.127,
+            "route_distance_km": 37.134,
+            "detour_km": 0.007,
+            "max_leg_km": 35.592,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀名古屋市市政資料館",
+              "query": "名古屋市市政資料館",
+              "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+              "name": "名古屋市市政資料館",
+              "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+              "latitude": 35.1811442,
+              "longitude": 136.9103135
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 榮區 日本料理"
+          ],
+          "why": "符合「日本料理」；Google 評分 4.2，316 則評論；由查詢「名古屋 榮區 日本料理」命中；前後站直線路徑約 37.134 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.5133
+        }
+      ]
+    },
+    {
+      "slot_index": 4,
+      "slot_id": "day3_slot01",
+      "day": 3,
+      "day_of_week": "monday",
+      "start_time": "10:00",
+      "end_time": "12:00",
+      "time": "10:00~12:00",
+      "slot_type": "activity",
+      "original_activity": "自由活動於名古屋市區",
+      "reason_for_search": "需要找出具體活動或景點",
+      "target_terms": [
+        "活動",
+        "景點",
+        "博物館",
+        "咖啡店",
+        "夜市"
+      ],
+      "location_terms": [
+        "名古屋",
+        "市區"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day3_slot01",
+        "slot_id": "day3_slot01",
+        "day": 3,
+        "day_of_week": "monday",
+        "start_time": "10:00",
+        "end_time": "12:00",
+        "time": "10:00~12:00",
+        "slot_type": "activity",
+        "original_activity": "自由活動於名古屋市區",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "中部國際機場",
+          "query": "中部國際機場",
+          "place": {
+            "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "name": "中部國際機場(新特麗亞)",
+            "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+            "latitude": 34.8573624,
+            "longitude": 136.8107557,
+            "primary_type": "international_airport",
+            "types": [
+              "international_airport",
+              "airport",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "中部國際機場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": "day3_slot03",
+          "day": 3,
+          "day_of_week": "monday",
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "名古屋返回台灣航班",
+          "query": "中部國際機場",
+          "place": {
+            "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "name": "中部國際機場(新特麗亞)",
+            "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+            "latitude": 34.8573624,
+            "longitude": 136.8107557,
+            "primary_type": "international_airport",
+            "types": [
+              "international_airport",
+              "airport",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "中部國際機場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJsyTJ06B5A2ARvt6FJ9xiqaE",
+          "name": "名古屋港水族館",
+          "address": "1-3 Minatomachi, Minato Ward, Nagoya, Aichi 455-0033",
+          "latitude": 35.090508799999995,
+          "longitude": 136.8784377,
+          "google_maps_uri": "https://maps.google.com/?cid=11648950608865910462&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 23339,
+          "score": 0.3644,
+          "score_breakdown": {
+            "total": 0.3644,
+            "relevance": 0.2303,
+            "quality": 0.88,
+            "opening": 1.0,
+            "route": 0.0847,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6537
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 26.648,
+            "candidate_to_next_km": 26.648,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 53.296,
+            "detour_km": 53.296,
+            "max_leg_km": 26.648,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "名古屋返回台灣航班",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 市區 景點"
+          ],
+          "why": "符合「名古屋」；Google 評分 4.4，23339 則評論；由查詢「名古屋 市區 景點」命中；前後站直線路徑約 53.296 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.3644
+        },
+        {
+          "place_id": "ChIJse-wx8t2A2ARd6Z1knjp07k",
+          "name": "名古屋城",
+          "address": "1-1 Honmaru, Naka Ward, Nagoya, Aichi 460-0031",
+          "latitude": 35.184750099999995,
+          "longitude": 136.89968829999998,
+          "google_maps_uri": "https://maps.google.com/?cid=13390302821165147767&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 44666,
+          "score": 0.3608,
+          "score_breakdown": {
+            "total": 0.3608,
+            "relevance": 0.182,
+            "quality": 0.84,
+            "opening": 1.0,
+            "route": 0.0625,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6319
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 37.294,
+            "candidate_to_next_km": 37.294,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 74.588,
+            "detour_km": 74.588,
+            "max_leg_km": 37.294,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "名古屋返回台灣航班",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 市區 景點"
+          ],
+          "why": "符合「名古屋」；Google 評分 4.2，44666 則評論；由查詢「名古屋 市區 景點」命中；前後站直線路徑約 74.588 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.3608
+        }
+      ]
+    },
+    {
+      "slot_index": 5,
+      "slot_id": "day3_slot02",
+      "day": 3,
+      "day_of_week": "monday",
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "午餐於機場附近",
+      "reason_for_search": "需要找到機場附近的餐廳",
+      "target_terms": [
+        "午餐",
+        "餐廳",
+        "美食",
+        "咖啡店",
+        "小吃"
+      ],
+      "location_terms": [
+        "名古屋",
+        "機場",
+        "中部國際機場",
+        "附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day3_slot02",
+        "slot_id": "day3_slot02",
+        "day": 3,
+        "day_of_week": "monday",
+        "start_time": "12:00",
+        "end_time": "13:30",
+        "time": "12:00~13:30",
+        "slot_type": "meal",
+        "original_activity": "午餐於機場附近",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "中部國際機場",
+          "query": "中部國際機場",
+          "place": {
+            "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "name": "中部國際機場(新特麗亞)",
+            "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+            "latitude": 34.8573624,
+            "longitude": 136.8107557,
+            "primary_type": "international_airport",
+            "types": [
+              "international_airport",
+              "airport",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "中部國際機場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": "day3_slot03",
+          "day": 3,
+          "day_of_week": "monday",
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "名古屋返回台灣航班",
+          "query": "中部國際機場",
+          "place": {
+            "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+            "name": "中部國際機場(新特麗亞)",
+            "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+            "latitude": 34.8573624,
+            "longitude": 136.8107557,
+            "primary_type": "international_airport",
+            "types": [
+              "international_airport",
+              "airport",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "中部國際機場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJ9V9g7yN9BGARUvHfUcJ6x-k",
+          "name": "炭燒牛舌東山 中部國際機場新特麗亞店",
+          "address": "〒479-0881 Aichi, Tokoname, Centrair, 1-chōme−１ 中部国際空港 第1旅客ターミナルビル 4F",
+          "latitude": 34.858444299999995,
+          "longitude": 136.81435969999998,
+          "google_maps_uri": "https://maps.google.com/?cid=16845567906218504530&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 1953,
+          "score": 0.4427,
+          "score_breakdown": {
+            "total": 0.4427,
+            "relevance": 0.28,
+            "quality": 0.7552,
+            "opening": 1.0,
+            "route": 0.8479,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.35,
+            "candidate_to_next_km": 0.35,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 0.7,
+            "detour_km": 0.7,
+            "max_leg_km": 0.35,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "名古屋返回台灣航班",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 中部國際機場 附近 餐廳",
+            "名古屋 中部國際機場 美食"
+          ],
+          "why": "符合「機場、中部國際機場」；Google 評分 4.4，1953 則評論；由查詢「名古屋 中部國際機場 附近 餐廳」命中；前後站直線路徑約 0.7 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.4427
+        },
+        {
+          "place_id": "ChIJAR3UIJJ9BGARQfPYJ5AN_Ew",
+          "name": "丸屋本店 中部國際機場店",
+          "address": "中部国際空港セントレア4F Renga-dori, 1-chōme-1 Centrair, Tokoname, Aichi 479-0881",
+          "latitude": 34.8584335,
+          "longitude": 136.8141345,
+          "google_maps_uri": "https://maps.google.com/?cid=5547323753808589633&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 700,
+          "score": 0.4352,
+          "score_breakdown": {
+            "total": 0.4352,
+            "relevance": 0.28,
+            "quality": 0.443,
+            "opening": 1.0,
+            "route": 0.855,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": true,
+            "source": "periods",
+            "day_of_week": "monday"
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.33,
+            "candidate_to_next_km": 0.33,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 0.661,
+            "detour_km": 0.661,
+            "max_leg_km": 0.33,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "中部國際機場",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "名古屋返回台灣航班",
+              "query": "中部國際機場",
+              "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+              "name": "中部國際機場(新特麗亞)",
+              "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+              "latitude": 34.8573624,
+              "longitude": 136.8107557
+            }
+          },
+          "matched_queries": [
+            "名古屋 中部國際機場 附近 餐廳",
+            "名古屋 中部國際機場 美食",
+            "名古屋 中部國際機場 附近 小吃"
+          ],
+          "why": "符合「機場、中部國際機場」；Google 評分 4.4，700 則評論；由查詢「名古屋 中部國際機場 附近 餐廳」命中；前後站直線路徑約 0.661 km；目前沒有明顯警示",
+          "warnings": [],
+          "selection_score": 0.4352
+        }
+      ]
+    }
+  ]
+}

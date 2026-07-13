@@ -1,0 +1,34 @@
+{
+  "uid": "T0201",
+  "tag": "medium",
+  "start_city": "北京",
+  "target_city": "上海",
+  "days": 4,
+  "people_number": 2,
+  "people_composition": {
+    "adults": 2,
+    "children": 0,
+    "seniors": 0
+  },
+  "budget": 5600,
+  "dates": "2024-11-15 to 2024-11-18",
+  "transportation": {
+    "preferences": [
+      "高铁"
+    ],
+    "constraints": []
+  },
+  "accommodations": {
+    "preferences": [
+      "设计师酒店",
+      "位置超好"
+    ],
+    "constraints": []
+  },
+  "diet": {},
+  "attractions": {},
+  "rhythm": {},
+  "nature_language": "我们两个人想11月中旬从北京坐高铁去上海玩4天，预算5600元，希望住设计师酒店且位置要特别好。",
+  "nature_language_en": "We two people want to take the high-speed train from Beijing to Shanghai for 4 days in mid-November with a budget of 5600 RMB, preferring designer hotels in excellent locations.",
+  "difficulty": "medium"
+}

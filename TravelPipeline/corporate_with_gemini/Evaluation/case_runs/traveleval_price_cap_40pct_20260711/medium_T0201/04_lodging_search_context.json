@@ -1,0 +1,38 @@
+{
+  "destination": "上海",
+  "lodging_area": "MSG Designer Select Hotel",
+  "lodging_type": "飯店",
+  "query": "上海 MSG Designer Select Hotel 飯店",
+  "checkin_date": "2026-07-14",
+  "checkout_date": "2026-07-17",
+  "nights": 3,
+  "adults": 2,
+  "currency": "TWD",
+  "gl": "tw",
+  "hl": "zh-tw",
+  "budget_total": 5600.0,
+  "budget_currency": "CNY",
+  "lodging_budget_share": 0.4,
+  "budget_for_lodging_total": 2240.0,
+  "budget_per_night_cap": 746.67,
+  "budget_per_night_cap_search_currency": 3733.35,
+  "max_price": 3733.35,
+  "convert_lodging_price_to_budget_currency": true,
+  "lodging_preferences": [
+    "designer hotel"
+  ],
+  "avoid_areas": [],
+  "priority_order": [
+    3,
+    1,
+    2
+  ],
+  "can_search_live_price": true,
+  "live_price_date_adjustment": {
+    "reason": "TravelEval case date is in the past, but Google Hotels live price API requires a future check-in date.",
+    "original_checkin_date": "2024-11-15",
+    "original_checkout_date": "2024-11-18",
+    "live_api_checkin_date": "2026-07-14",
+    "live_api_checkout_date": "2026-07-17"
+  }
+}

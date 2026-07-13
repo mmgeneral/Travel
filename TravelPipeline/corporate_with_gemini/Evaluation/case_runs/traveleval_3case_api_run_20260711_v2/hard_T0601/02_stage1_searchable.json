@@ -1,0 +1,40 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "day_of_week": "sunday",
+      "start_time": "14:30",
+      "end_time": "17:00",
+      "time": "14:30~17:00",
+      "slot_type": "activity",
+      "original_activity": "市區輕鬆逛街",
+      "reason_for_search": "缺乏具體店家或特色",
+      "suggested_search_query": "上海 逛街 商圈",
+      "target_terms": [],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "shopping",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": "monday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "中午小吃",
+      "reason_for_search": "缺乏具體店家或特色",
+      "suggested_search_query": "上海 中午 美食 小吃",
+      "target_terms": [],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    }
+  ]
+}

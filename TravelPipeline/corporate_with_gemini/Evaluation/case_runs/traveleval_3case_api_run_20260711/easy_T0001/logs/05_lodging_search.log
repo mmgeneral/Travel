@@ -1,0 +1,11 @@
+
+
+===== TRACEBACK =====
+Traceback (most recent call last):
+  File "corporate_with_gemini/Evaluation/run_traveleval_case_pipeline.py", line 81, in run_stage
+    return func(*args, **kwargs)
+  File "/Users/xuchengyan/travel_agent/corporate_with_gemini/LodgingSearchAgent.py", line 272, in search_lodging_serpapi
+    response.raise_for_status()
+  File "/Users/xuchengyan/Library/Python/3.8/lib/python/site-packages/requests/models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://serpapi.com/search.json?engine=google_hotels&q=%E4%B8%8A%E6%B5%B7+%E9%A3%AF%E5%BA%97&check_in_date=2024-11-15&check_out_date=2024-11-17&adults=2&currency=TWD&gl=tw&hl=zh-tw&api_key=<REDACTED>

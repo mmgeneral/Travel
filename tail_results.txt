@@ -1,0 +1,219 @@
+]633;E;for f in *.py *.cpp *.hpp *.sql Dockerfile Makefile docker-compose.yml;79b66fec-489b-42bd-822c-5dbfaf681b95]633;C==> _inspect_de.py <==
+    main()
+
+==> _tmp_agent_run.py <==
+    main()
+
+==> acl.py <==
+
+
+==> agent.py <==
+    print(result["final_itinerary"])
+
+==> agent_orchestrator.py <==
+__all__ = ["AgentOrchestrator"]
+
+==> api.py <==
+    raise HTTPException(status_code=404, detail=f"No saga log for {order_id}")
+
+==> catalog.py <==
+    return load_shop_catalog("tokyo")
+
+==> checkpoint_entry.py <==
+    return [e.to_dict() for e in entries]
+
+==> collect_tte_data.py <==
+    main()
+
+==> conftest.py <==
+]
+
+==> debug_json.py <==
+    return line
+
+==> decision_engine.py <==
+
+
+==> dietary_utils.py <==
+    return False
+
+==> dp_solver.py <==
+            print(row)
+
+==> duffel.py <==
+DuffelClient = DuffelService
+
+==> eval_agent.py <==
+    test_itinerary_quality()
+==> feasibility_utils.py <==
+    return False, "; ".join(reasons) if reasons else "unknown"
+
+==> geo_utils.py <==
+    return uniq[:12]
+
+==> graph_checkpoint_utils.py <==
+    return await asyncio.to_thread(graph.update_state, config, values)  # type: ignore[union-attr]
+
+==> intent_parser.py <==
+        return fallback
+
+==> llm_router.py <==
+                raise
+
+==> observability.py <==
+    provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+
+==> openai_completion_client.py <==
+            return payload
+
+==> orchestrator.py <==
+                    yield {"event": "done", "data": done_body}
+
+==> polling_worker.py <==
+    main()
+
+==> query_utils.py <==
+    return ItinerarySynthesizer._normalize_slot_sequence(base)
+
+==> reproduction_task.py <==
+    run_task()
+
+==> retrieval_service.py <==
+    return filtered
+
+==> saga.py <==
+    demo_conversational()
+
+==> shop_catalog_io.py <==
+    return list(_load_catalog_tuple(name))
+
+==> shop_planning.py <==
+
+
+==> shop_profile_utils.py <==
+    return slots
+
+==> state.py <==
+    turn_checkpoints: List[str]
+
+==> test_agent_catalog.py <==
+    assert "breakfast" in asa_ramen.tags
+
+==> test_agent_dp_path.py <==
+    assert path2[-1].shop_name == "NightSnack"
+
+==> test_agent_intent_parsing.py <==
+
+
+==> test_agent_locale_fallback.py <==
+    assert _is_flight_booking_intent("cheap flight to Osaka") is True
+
+==> test_agent_places_time.py <==
+    assert "TIME_UNKNOWN" in profile.tags
+
+==> test_candidate_cache.py <==
+    assert "松籟庵" in result["candidate_cache"][key]
+
+==> test_checkpoint_entry.py <==
+    assert restored[1].get_parent_id() == "a"
+
+==> test_conflict_detector.py <==
+    assert result["feasible_window"] is None
+
+==> test_critic_agent.py <==
+        assert schema.verdict == "request_more"
+
+==> test_decision_engine.py <==
+    assert [n.shop_name for n in path] == ["A", "B"]
+
+==> test_dietary_clarification.py <==
+    )
+
+==> test_dietary_utils.py <==
+    assert intent["dietary_hints"] is None
+
+==> test_dp_solver_utils.py <==
+    assert result.minute == 45
+
+==> test_geo_location_routing.py <==
+    assert "retriever_complete" in research, "node_retriever did not log retriever_complete"
+
+==> test_golden_conversations.py <==
+            )
+
+==> test_idempotency.py <==
+        raise
+
+==> test_intent_parser.py <==
+        assert intent.city == "台北"
+
+==> test_llm_router.py <==
+    assert claude.complete([{"role": "user", "content": "3"}]).content == "ok:claude"
+
+==> test_llm_router_fallback.py <==
+        assert "unavailable" in attempted  # OllamaBackend was skipped
+
+==> test_lock_vs_diet_conflict.py <==
+    asyncio.run(main())
+
+==> test_multi_agent_feedback_loop.py <==
+
+
+==> test_nearby_search.py <==
+    assert any("京都" in q for q in qs)
+
+==> test_observability.py <==
+        assert attrs.get("llm.task_type") == "EMBEDDING"
+
+==> test_pause_resume.py <==
+        assert report.as_dict()["discussion_freshness"] == 0.123
+
+==> test_resilience.py <==
+    unittest.main(verbosity=2)
+
+==> test_retrieval_service.py <==
+    assert all(s.name != "燃えよ麺助" for s in kyoto_candidates)
+
+==> test_retriever_agent.py <==
+        mock_instance.arun.assert_called_once()
+
+==> test_saga.py <==
+    run_tests()
+
+==> test_saga_compensation.py <==
+    _run_case("validation-non-idempotent", 422, "validation_required", ActionOutcome.FAILED, "CANCEL_CREATE_VALIDATION_FAILED")
+
+==> test_scenarios_manual.py <==
+        print(f"\n完整輸出（含 LLM prompt 細節）已寫入：{log_path}")
+==> test_slot_locking.py <==
+    assert shopB["user_locked"] is False
+
+==> test_slot_tagging.py <==
+    assert any("izakaya" in q.lower() or "yakitori" in q.lower() for q in queries[:3])
+
+==> test_synthesizer_agent.py <==
+        assert isinstance(result.consensus, list)
+
+==> test_turn_checkpoints.py <==
+        assert out is hist_fb[1]
+
+==> test_turn_checkpoints_trim.py <==
+    assert turn_checkpoints_trimmed_to_checkpoint_id(["a", "b"], "z") is None
+
+==> tracing.py <==
+        logger.debug("Langfuse generation error update failed", exc_info=True)
+
+==> train_tte_model.py <==
+    main()
+
+==> travel_time_provider.py <==
+"""
+
+==> Dockerfile <==
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+==> Makefile <==
+	find . -name "*.pyc" -not -path "./.venv/*" -delete 2>/dev/null || true
+
+==> docker-compose.yml <==
+    restart: unless-stopped
+

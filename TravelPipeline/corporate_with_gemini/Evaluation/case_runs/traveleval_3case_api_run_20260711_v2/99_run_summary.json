@@ -1,0 +1,2980 @@
+{
+  "run_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2",
+  "results": [
+    {
+      "uid": "T0001",
+      "difficulty": "easy",
+      "case_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001",
+      "files": {
+        "query": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/00_traveleval_query.json",
+        "prompt": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/00_prompt.txt",
+        "planner": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/01_planner_result.json",
+        "stage1": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/02_stage1_searchable.json",
+        "places": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/03_places_search.json",
+        "lodging": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/05_lodging_search.json",
+        "candidate_package": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/06_candidate_package.json",
+        "candidate_llm_input": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/07_candidate_llm_input.json",
+        "final": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/08_final_itinerary.json",
+        "evaluation_score": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/09_evaluation/easy_T0001_offline_score_without_gaode.json",
+        "partial_metrics_json": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/09_evaluation/easy_T0001_partial_metrics_without_gaode.json",
+        "partial_metrics_md": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001/09_evaluation/easy_T0001_partial_metrics_without_gaode.md"
+      },
+      "score": {
+        "status": "success",
+        "score_scale": "0.0-1.0",
+        "overall_score_without_gaode": 0.8338,
+        "overall_score_percent_without_gaode": 83.38,
+        "dimension_scores": {
+          "accuracy": 0.7778,
+          "constraint": 0.9049,
+          "time": 0.8195,
+          "economy": 0.7667,
+          "utility": 0.9,
+          "space": null
+        },
+        "detailed_metrics": {
+          "accuracy": {
+            "cost_deviation_rate_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "轉換後 cost_breakdown 與可計算成本一致。",
+              "details": null
+            },
+            "people_deviation_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "",
+              "details": null
+            },
+            "place_grounding_score": {
+              "score": 0.8889,
+              "value": 0.1111,
+              "note": "使用 TravelEval 本地資料庫或候選 POI 座標驗證。",
+              "details": [
+                {
+                  "name": "上海火車站",
+                  "type": "flexible",
+                  "grounded": false,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.0,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "佳家湯包",
+                  "type": "meal",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.1818,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "外灘",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "外滩",
+                  "match_score": 1.0,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "豫園",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "豫园",
+                  "match_score": 1.0,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "萊萊小吃湯包館",
+                  "type": "meal",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.2857,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "法租界上海製針總場舊址",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.2667,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "上海中心大廈",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "上海中心大厦",
+                  "match_score": 0.86,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "藍帝老上海本幫菜",
+                  "type": "meal",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.5333,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "上海朱家角古鎮旅遊區",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "朱家角古镇景区",
+                  "match_score": 0.5882,
+                  "candidate_coordinates": true
+                }
+              ]
+            },
+            "opening_hours_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "只檢查能在 TravelEval attractions CSV 匹配到的景點。",
+              "details": [
+                {
+                  "name": "外灘",
+                  "matched_name": "外滩",
+                  "visit_time": "13:30~17:00",
+                  "opening_time": "0:00~24:00",
+                  "match_score": 1.0,
+                  "ok": true
+                },
+                {
+                  "name": "豫園",
+                  "matched_name": "豫园",
+                  "visit_time": "09:00~12:00",
+                  "opening_time": "9:00~16:30",
+                  "match_score": 1.0,
+                  "ok": true
+                },
+                {
+                  "name": "上海中心大廈",
+                  "matched_name": "上海中心大厦",
+                  "visit_time": "09:00~12:00",
+                  "opening_time": "8:30~22:00",
+                  "match_score": 0.86,
+                  "ok": true
+                },
+                {
+                  "name": "上海朱家角古鎮旅遊區",
+                  "matched_name": "朱家角古镇景区",
+                  "visit_time": "13:00~16:00",
+                  "opening_time": "8:30~18:00",
+                  "match_score": 0.5882,
+                  "ok": true
+                }
+              ]
+            },
+            "intercity_planning_completeness_proxy": {
+              "score": 0.0,
+              "value": null,
+              "note": "不呼叫高德；只檢查跨城旅行是否有火車/航班明細。",
+              "details": null
+            }
+          },
+          "constraint": {
+            "budget_satisfaction": {
+              "score": 1.0,
+              "value": {
+                "budget": 3400.0,
+                "total_cost": 2487.8
+              },
+              "note": "成本只包含目前 final result 可確認的價格。",
+              "details": null
+            },
+            "time_compliance": {
+              "score": 1.0,
+              "value": {
+                "planned_days": 3,
+                "requested_days": 3
+              },
+              "note": "",
+              "details": null
+            },
+            "people_adaptability": {
+              "score": 1.0,
+              "value": {
+                "planned_people": 2,
+                "requested_people": 2
+              },
+              "note": "",
+              "details": null
+            },
+            "accommodation_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查住宿夜數與本地住宿資料庫近似匹配。",
+              "details": {
+                "score": 1.0,
+                "hotel_name": "上海新世界麗笙大酒店",
+                "expected_nights": 2,
+                "planned_nights": 2,
+                "matched_name": "上海新世界丽笙大酒店",
+                "match_score": 0.9
+              }
+            },
+            "transportation_satisfaction": {
+              "score": 0.65,
+              "value": null,
+              "note": "不查路線；只看行程是否明確呈現偏好交通方式或至少保留通勤 slot。",
+              "details": {
+                "score": 0.65,
+                "preferred": "地鐵",
+                "matched_terms": [],
+                "has_commute_slots": true
+              }
+            },
+            "diet_preference_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "用最後行程文字檢查飲食偏好覆蓋。",
+              "details": {
+                "score": 1.0,
+                "matched": [
+                  "本幫菜",
+                  "小吃"
+                ],
+                "missing": []
+              }
+            },
+            "travel_time_satisfaction": {
+              "score": 0.6845,
+              "value": null,
+              "note": "用 TravelEval 推薦停留時間做離線近似。",
+              "details": [
+                {
+                  "name": "外灘",
+                  "matched_name": "外滩",
+                  "planned_hours": 3.5,
+                  "recommended_hours": [
+                    1.5,
+                    2.0
+                  ],
+                  "match_score": 1.0,
+                  "score": 0.5714
+                },
+                {
+                  "name": "豫園",
+                  "matched_name": "豫园",
+                  "planned_hours": 3.0,
+                  "recommended_hours": [
+                    0.5,
+                    1.0
+                  ],
+                  "match_score": 1.0,
+                  "score": 0.3333
+                },
+                {
+                  "name": "上海中心大廈",
+                  "matched_name": "上海中心大厦",
+                  "planned_hours": 3.0,
+                  "recommended_hours": [
+                    1.5,
+                    3.0
+                  ],
+                  "match_score": 0.86,
+                  "score": 1.0
+                },
+                {
+                  "name": "上海朱家角古鎮旅遊區",
+                  "matched_name": "朱家角古镇景区",
+                  "planned_hours": 3.0,
+                  "recommended_hours": [
+                    1.0,
+                    2.5
+                  ],
+                  "match_score": 0.5882,
+                  "score": 0.8333
+                }
+              ]
+            }
+          },
+          "time": {
+            "schedule_order_validity": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查時間格式、正時長與重疊。",
+              "details": []
+            },
+            "daily_time_utilization": {
+              "score": 0.7917,
+              "value": null,
+              "note": "以每日餐飲與景點活動時數 / 8 小時作為離線近似。",
+              "details": [
+                {
+                  "day": 1,
+                  "active_hours": 4.5,
+                  "score": 0.5625
+                },
+                {
+                  "day": 2,
+                  "active_hours": 7.5,
+                  "score": 0.9375
+                },
+                {
+                  "day": 3,
+                  "active_hours": 7.0,
+                  "score": 0.875
+                }
+              ]
+            },
+            "pace_alignment": {
+              "score": 0.6667,
+              "value": null,
+              "note": "用 5W1H pace 對每日景點數做近似。",
+              "details": [
+                {
+                  "day": 1,
+                  "attraction_count": 1,
+                  "target": 2.5,
+                  "score": 0.4
+                },
+                {
+                  "day": 2,
+                  "attraction_count": 2,
+                  "target": 2.5,
+                  "score": 0.8
+                },
+                {
+                  "day": 3,
+                  "attraction_count": 2,
+                  "target": 2.5,
+                  "score": 0.8
+                }
+              ]
+            }
+          },
+          "economy": {
+            "budget_efficiency": {
+              "score": 1.0,
+              "value": {
+                "score": 1.0,
+                "budget": 3400.0,
+                "total_cost": 2487.8
+              },
+              "note": "超預算時用 budget / known_total_cost 給部分分。",
+              "details": null
+            },
+            "cost_breakdown_completeness": {
+              "score": 0.8,
+              "value": null,
+              "note": "檢查住宿、餐飲、市內交通、城際交通、景點是否有價格。",
+              "details": {
+                "score": 0.8,
+                "present_categories": [
+                  "accommodation",
+                  "meals",
+                  "intracity_transportation",
+                  "attractions"
+                ],
+                "expected_categories": [
+                  "accommodation",
+                  "meals",
+                  "intracity_transportation",
+                  "intercity_transportation",
+                  "attractions"
+                ]
+              }
+            },
+            "lodging_price_evidence": {
+              "score": 0.5,
+              "value": {
+                "source": "serpapi_google_hotels",
+                "availability_confirmed": null
+              },
+              "note": "",
+              "details": null
+            }
+          },
+          "utility": {
+            "key_area_coverage": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查 5W1H key_areas 是否出現在最後行程。",
+              "details": {
+                "score": 1.0,
+                "matched": [
+                  "外灘",
+                  "南京路",
+                  "豫園",
+                  "法租界"
+                ],
+                "missing": []
+              }
+            },
+            "food_preference_coverage": {
+              "score": 1.0,
+              "value": null,
+              "note": "小籠包允許湯包作為同義近似。",
+              "details": {
+                "score": 1.0,
+                "matched": [
+                  "本幫菜",
+                  "小吃"
+                ],
+                "missing": []
+              }
+            },
+            "desired_experience_coverage": {
+              "score": 0.5,
+              "value": null,
+              "note": "檢查 desired_experiences 是否被最後行程文字覆蓋。",
+              "details": {
+                "score": 0.5,
+                "matched": [
+                  "當地美食"
+                ],
+                "missing": [
+                  "歷史文化"
+                ]
+              }
+            },
+            "activity_diversity_proxy": {
+              "score": 1.0,
+              "value": null,
+              "note": "不用官方分類表時計算一個簡單活動多樣性近似。",
+              "details": {
+                "score": 1.0,
+                "categories": [
+                  "culture",
+                  "food",
+                  "landmark",
+                  "leisure"
+                ]
+              }
+            },
+            "candidate_decision_grounding": {
+              "score": 1.0,
+              "value": null,
+              "note": "最後結果有保留 used_candidate_ids。",
+              "details": null
+            }
+          },
+          "space": null
+        },
+        "skipped_metrics": [
+          {
+            "dimension": "space",
+            "metric": "RP / CSM",
+            "reason": "TravelEval 的 SpaceMetrics 會使用 GeoCalculator 與高德路線/距離能力，本次完全排除。"
+          },
+          {
+            "dimension": "accuracy",
+            "metric": "transportation_breaks",
+            "reason": "TravelEval 會檢查相鄰 POI 的公共交通可達性，會碰到高德路線能力，本次排除。"
+          }
+        ],
+        "converted_user_query": {
+          "uid": "corporate_with_gemini_offline_case",
+          "start_city": "北京",
+          "target_city": "上海",
+          "days": 3,
+          "people_number": 2,
+          "budget": 3400.0,
+          "budget_currency": "CNY",
+          "transportation": {
+            "preferences": [
+              "地鐵"
+            ],
+            "constraints": []
+          },
+          "accommodations": {
+            "preferences": [],
+            "constraints": []
+          },
+          "diet": {
+            "preferences": [
+              "本幫菜",
+              "小吃"
+            ],
+            "constraints": []
+          },
+          "attractions": {
+            "preferences": [
+              "外灘",
+              "南京路",
+              "豫園",
+              "法租界",
+              "當地美食",
+              "歷史文化",
+              "culture",
+              "local_food",
+              "shopping"
+            ],
+            "constraints": []
+          },
+          "rhythm": {
+            "preferences": [
+              "moderate"
+            ]
+          },
+          "nature_language": "休閒自助旅遊體驗上海現代與傳統風光"
+        },
+        "sandbox_summary": {
+          "travel_eval_dir": "/private/tmp/TravelEval",
+          "city_key": "shanghai",
+          "attractions_rows": 360,
+          "restaurants_rows": 484,
+          "accommodations_rows": 513
+        },
+        "security_note": "此離線評分器不讀取、不要求、不輸出高德 API key。"
+      },
+      "partial_metrics_table": {
+        "title": "TravelEval partial metrics without Gaode/Amap API",
+        "source_note": "這不是官方完整 TravelEval 分數；它輸出 paper-style metric table，去除高德 API 必要項目。",
+        "score_direction_note": "↑ 表示越高越好，↓ 表示越低越好，- 表示成本分解值本身不代表好壞。",
+        "computed_metrics": [
+          {
+            "dimension": "Accuracy",
+            "metric": "CCD",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed_from_converted_plan",
+            "note": "成本表由轉換器重算；可抓 arithmetic mismatch，但不是模型自報成本。",
+            "details": null
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "FAR",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed_partial",
+            "note": "只檢查 attraction；可由 TravelEval sandbox 或候選座標佐證。",
+            "details": [
+              {
+                "name": "外灘",
+                "grounded": true,
+                "matched_name": "外滩",
+                "match_score": 1.0,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "豫園",
+                "grounded": true,
+                "matched_name": "豫园",
+                "match_score": 1.0,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "法租界上海製針總場舊址",
+                "grounded": true,
+                "matched_name": null,
+                "match_score": 0.2667,
+                "candidate_coordinates": true
+              },
+              {
+                "name": "上海中心大廈",
+                "grounded": true,
+                "matched_name": "上海中心大厦",
+                "match_score": 0.86,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "上海朱家角古鎮旅遊區",
+                "grounded": true,
+                "matched_name": "朱家角古镇景区",
+                "match_score": 0.5882,
+                "candidate_coordinates": true
+              }
+            ]
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "VROH",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed_partial",
+            "note": "只檢查能匹配到 TravelEval attractions CSV 的景點。",
+            "details": [
+              {
+                "name": "外灘",
+                "matched_name": "外滩",
+                "visit_time": "13:30~17:00",
+                "opening_time": "0:00~24:00",
+                "match_score": 1.0,
+                "ok": true
+              },
+              {
+                "name": "豫園",
+                "matched_name": "豫园",
+                "visit_time": "09:00~12:00",
+                "opening_time": "9:00~16:30",
+                "match_score": 1.0,
+                "ok": true
+              },
+              {
+                "name": "上海中心大廈",
+                "matched_name": "上海中心大厦",
+                "visit_time": "09:00~12:00",
+                "opening_time": "8:30~22:00",
+                "match_score": 0.86,
+                "ok": true
+              },
+              {
+                "name": "上海朱家角古鎮旅遊區",
+                "matched_name": "朱家角古镇景区",
+                "visit_time": "13:00~16:00",
+                "opening_time": "8:30~18:00",
+                "match_score": 0.5882,
+                "ok": true
+              }
+            ]
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "ITD",
+            "direction": "↓",
+            "value": null,
+            "status": "missing_input",
+            "note": "final result 沒有火車/航班班次與時間，無法用 TravelEval intercity sandbox 算 ITD。",
+            "details": null
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "PD",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed",
+            "note": "",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "BCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed",
+            "note": "成本與預算統一以 CNY 計。",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "TCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "檢查天數與時間格式/重疊；未檢查實際交通可行時間。",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "HCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-A",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "無住宿偏好時，夜數正確即視為滿足。",
+            "details": {
+              "score": 1.0,
+              "hotel_name": "上海新世界麗笙大酒店",
+              "expected_nights": 2,
+              "planned_nights": 2,
+              "matched_name": "上海新世界丽笙大酒店",
+              "match_score": 0.9
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-T",
+            "direction": "↑",
+            "value": 0.65,
+            "status": "proxy_no_gaode",
+            "note": "不查實際路線，只看偏好交通是否出現在行程/通勤 slot。",
+            "details": {
+              "score": 0.65,
+              "preferred": "地鐵",
+              "matched_terms": [],
+              "has_commute_slots": true
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-C",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "proxy_text_match",
+            "note": "用飲食偏好文字覆蓋近似。",
+            "details": {
+              "score": 1.0,
+              "matched": [
+                "本幫菜",
+                "小吃"
+              ],
+              "missing": []
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "TTCS",
+            "direction": "↑",
+            "value": 0.0,
+            "status": "computed_partial",
+            "note": "使用 TravelEval 推薦停留時間；未納入排隊時間模型。",
+            "details": [
+              {
+                "name": "外灘",
+                "matched_name": "外滩",
+                "planned_hours": 3.5,
+                "recommended_hours": [
+                  1.5,
+                  2.0
+                ],
+                "match_score": 1.0,
+                "score": 0.5714
+              },
+              {
+                "name": "豫園",
+                "matched_name": "豫园",
+                "planned_hours": 3.0,
+                "recommended_hours": [
+                  0.5,
+                  1.0
+                ],
+                "match_score": 1.0,
+                "score": 0.3333
+              },
+              {
+                "name": "上海中心大廈",
+                "matched_name": "上海中心大厦",
+                "planned_hours": 3.0,
+                "recommended_hours": [
+                  1.5,
+                  3.0
+                ],
+                "match_score": 0.86,
+                "score": 1.0
+              },
+              {
+                "name": "上海朱家角古鎮旅遊區",
+                "matched_name": "朱家角古镇景区",
+                "planned_hours": 3.0,
+                "recommended_hours": [
+                  1.0,
+                  2.5
+                ],
+                "match_score": 0.5882,
+                "score": 0.8333
+              }
+            ]
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "STR",
+            "direction": "↑",
+            "value": 0.6845,
+            "status": "proxy_no_queue_model",
+            "note": "用停留時間落在推薦區間的程度近似，未納入排隊時間。",
+            "details": null
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "DTU",
+            "direction": "↑",
+            "value": 0.6389,
+            "status": "proxy_no_queue_model",
+            "note": "用每日景點時數 / 當日行程 span 近似。",
+            "details": null
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "OTU",
+            "direction": "↑",
+            "value": 0.2222,
+            "status": "proxy_no_queue_model",
+            "note": "用總景點時數 / 24h*天數近似。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "BE",
+            "direction": "↑",
+            "value": 11.6167,
+            "status": "proxy_estimated_costs",
+            "note": "TravelEval 公式方向：experience value / actual cost * 1000；目前成本含住宿、景點票、餐費與市內交通估算，仍缺城際交通。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ACD",
+            "direction": "-",
+            "value": 1167.8,
+            "status": "estimated_or_computed",
+            "note": "住宿成本。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ATD",
+            "direction": "-",
+            "value": 560.0,
+            "status": "estimated_or_computed",
+            "note": "景點票價優先來自 slot cost_estimate，缺少時用 TravelEval attraction price fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ETD",
+            "direction": "-",
+            "value": 0.0,
+            "status": "missing_or_zero",
+            "note": "城際交通成本目前缺資料。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "RTD",
+            "direction": "-",
+            "value": 160.0,
+            "status": "estimated_or_computed",
+            "note": "市內交通成本優先來自 slot cost_estimate，缺少時用每段整團 8 CNY fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "MED",
+            "direction": "-",
+            "value": 600.0,
+            "status": "estimated_or_computed",
+            "note": "餐費優先來自 slot cost_estimate，缺少時用 TravelEval restaurant price 或每人 80 CNY fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "OTD",
+            "direction": "-",
+            "value": 0.0,
+            "status": "missing_or_zero",
+            "note": "其他成本。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "EDI",
+            "direction": "↑",
+            "value": 0.5382,
+            "status": "computed_partial",
+            "note": "用 TravelEval attraction type 做 Shannon entropy。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "ADS",
+            "direction": "↑",
+            "value": 0.4708,
+            "status": "computed_partial",
+            "note": "平均每日景點數 / 普通旅行 target density 3.54。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "AQE",
+            "direction": "↑",
+            "value": 0.9608,
+            "status": "computed_partial",
+            "note": "用景點 star/5 加權停留時間近似。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "Profit",
+            "direction": "↑",
+            "value": 7.225,
+            "status": "computed_partial",
+            "note": "用 sandbox star 與偏好匹配近似。",
+            "details": null
+          }
+        ],
+        "skipped_gaode_metrics": [
+          {
+            "dimension": "Accuracy",
+            "metric": "FRTC",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要高德 transit API 檢查相鄰 POI 公共交通可達性。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "SSR",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要高德路網距離計算 route penalty。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "CSM-P90",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要 POI 路網距離與跨日空間錯配計算。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "CSM-P95",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要 POI 路網距離與跨日空間錯配計算。",
+            "details": null
+          }
+        ],
+        "currency": "CNY",
+        "cost_breakdown": {
+          "attractions": 560.0,
+          "intercity_transportation": 0.0,
+          "intracity_transportation": 160.0,
+          "accommodation": 1167.8,
+          "meals": 600.0,
+          "other": 0.0,
+          "total": 2487.8
+        },
+        "sandbox_summary": {
+          "travel_eval_dir": "/private/tmp/TravelEval",
+          "city_key": "shanghai",
+          "matched_attractions": 4
+        }
+      }
+    },
+    {
+      "uid": "T0201",
+      "difficulty": "medium",
+      "case_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201",
+      "files": {
+        "query": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/00_traveleval_query.json",
+        "prompt": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/00_prompt.txt",
+        "planner": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/01_planner_result.json",
+        "stage1": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/02_stage1_searchable.json",
+        "places": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/03_places_search.json",
+        "lodging": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/05_lodging_search.json",
+        "candidate_package": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/06_candidate_package.json",
+        "candidate_llm_input": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/07_candidate_llm_input.json",
+        "final": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/08_final_itinerary.json",
+        "evaluation_score": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/09_evaluation/medium_T0201_offline_score_without_gaode.json",
+        "partial_metrics_json": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/09_evaluation/medium_T0201_partial_metrics_without_gaode.json",
+        "partial_metrics_md": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201/09_evaluation/medium_T0201_partial_metrics_without_gaode.md"
+      },
+      "score": {
+        "status": "success",
+        "score_scale": "0.0-1.0",
+        "overall_score_without_gaode": 0.7845,
+        "overall_score_percent_without_gaode": 78.45,
+        "dimension_scores": {
+          "accuracy": 0.71,
+          "constraint": 0.9532,
+          "time": 0.6927,
+          "economy": 0.9333,
+          "utility": 0.6333,
+          "space": null
+        },
+        "detailed_metrics": {
+          "accuracy": {
+            "cost_deviation_rate_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "轉換後 cost_breakdown 與可計算成本一致。",
+              "details": null
+            },
+            "people_deviation_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "",
+              "details": null
+            },
+            "place_grounding_score": {
+              "score": 0.8,
+              "value": 0.2,
+              "note": "使用 TravelEval 本地資料庫或候選 POI 座標驗證。",
+              "details": [
+                {
+                  "name": "上海 世 和 酒店",
+                  "type": "accommodation_check_in",
+                  "grounded": true,
+                  "matched_dataset": "accommodations",
+                  "matched_name": "上海世博萨和酒店",
+                  "match_score": 0.8571,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "外灘",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "外滩",
+                  "match_score": 1.0,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "靜安寺",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "静安寺",
+                  "match_score": 0.6667,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "佳家湯包",
+                  "type": "meal",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.1818,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "M50創意園",
+                  "type": "attraction",
+                  "grounded": false,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.25,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "新天地",
+                  "type": "shopping",
+                  "grounded": false,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.0,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "漢來名人坊",
+                  "type": "meal",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.25,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "上海博物館",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "上海博物馆",
+                  "match_score": 1.0,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "上海中心大廈",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "上海中心大厦",
+                  "match_score": 0.86,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "上海 世 和 酒店",
+                  "type": "accommodation_check_out",
+                  "grounded": true,
+                  "matched_dataset": "accommodations",
+                  "matched_name": "上海世博萨和酒店",
+                  "match_score": 0.8571,
+                  "candidate_coordinates": false
+                }
+              ]
+            },
+            "opening_hours_score": {
+              "score": 0.75,
+              "value": 0.25,
+              "note": "只檢查能在 TravelEval attractions CSV 匹配到的景點。",
+              "details": [
+                {
+                  "name": "外灘",
+                  "matched_name": "外滩",
+                  "visit_time": "14:30~18:00",
+                  "opening_time": "0:00~24:00",
+                  "match_score": 1.0,
+                  "ok": true
+                },
+                {
+                  "name": "靜安寺",
+                  "matched_name": "静安寺",
+                  "visit_time": "09:00~12:00",
+                  "opening_time": "7:30~17:00",
+                  "match_score": 0.6667,
+                  "ok": true
+                },
+                {
+                  "name": "上海博物館",
+                  "matched_name": "上海博物馆",
+                  "visit_time": "14:30~18:00",
+                  "opening_time": "9:00~17:00",
+                  "match_score": 1.0,
+                  "ok": false
+                },
+                {
+                  "name": "上海中心大廈",
+                  "matched_name": "上海中心大厦",
+                  "visit_time": "09:00~11:30",
+                  "opening_time": "8:30~22:00",
+                  "match_score": 0.86,
+                  "ok": true
+                }
+              ]
+            },
+            "intercity_planning_completeness_proxy": {
+              "score": 0.0,
+              "value": null,
+              "note": "不呼叫高德；只檢查跨城旅行是否有火車/航班明細。",
+              "details": null
+            }
+          },
+          "constraint": {
+            "budget_satisfaction": {
+              "score": 1.0,
+              "value": {
+                "budget": 5600.0,
+                "total_cost": 3275.4
+              },
+              "note": "成本只包含目前 final result 可確認的價格。",
+              "details": null
+            },
+            "time_compliance": {
+              "score": 1.0,
+              "value": {
+                "planned_days": 4,
+                "requested_days": 4
+              },
+              "note": "",
+              "details": null
+            },
+            "people_adaptability": {
+              "score": 1.0,
+              "value": {
+                "planned_people": 2,
+                "requested_people": 2
+              },
+              "note": "",
+              "details": null
+            },
+            "accommodation_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查住宿夜數與本地住宿資料庫近似匹配。",
+              "details": {
+                "score": 1.0,
+                "hotel_name": "上海 世 和 酒店",
+                "expected_nights": 3,
+                "planned_nights": 3,
+                "matched_name": "上海世博萨和酒店",
+                "match_score": 0.8571
+              }
+            },
+            "transportation_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "不查路線；只看行程是否明確呈現偏好交通方式或至少保留通勤 slot。",
+              "details": {
+                "score": 1.0,
+                "preferred": "高鐵",
+                "matched_terms": [
+                  "高鐵"
+                ],
+                "has_commute_slots": true
+              }
+            },
+            "diet_preference_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "用最後行程文字檢查飲食偏好覆蓋。",
+              "details": {
+                "score": 1.0,
+                "matched": [],
+                "missing": []
+              }
+            },
+            "travel_time_satisfaction": {
+              "score": 0.6726,
+              "value": null,
+              "note": "用 TravelEval 推薦停留時間做離線近似。",
+              "details": [
+                {
+                  "name": "外灘",
+                  "matched_name": "外滩",
+                  "planned_hours": 3.5,
+                  "recommended_hours": [
+                    1.5,
+                    2.0
+                  ],
+                  "match_score": 1.0,
+                  "score": 0.5714
+                },
+                {
+                  "name": "靜安寺",
+                  "matched_name": "静安寺",
+                  "planned_hours": 3.0,
+                  "recommended_hours": [
+                    2.0,
+                    2.5
+                  ],
+                  "match_score": 0.6667,
+                  "score": 0.8333
+                },
+                {
+                  "name": "上海博物館",
+                  "matched_name": "上海博物馆",
+                  "planned_hours": 3.5,
+                  "recommended_hours": [
+                    0.5,
+                    1.0
+                  ],
+                  "match_score": 1.0,
+                  "score": 0.2857
+                },
+                {
+                  "name": "上海中心大廈",
+                  "matched_name": "上海中心大厦",
+                  "planned_hours": 2.5,
+                  "recommended_hours": [
+                    1.5,
+                    3.0
+                  ],
+                  "match_score": 0.86,
+                  "score": 1.0
+                }
+              ]
+            }
+          },
+          "time": {
+            "schedule_order_validity": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查時間格式、正時長與重疊。",
+              "details": []
+            },
+            "daily_time_utilization": {
+              "score": 0.5781,
+              "value": null,
+              "note": "以每日餐飲與景點活動時數 / 8 小時作為離線近似。",
+              "details": [
+                {
+                  "day": 1,
+                  "active_hours": 3.5,
+                  "score": 0.4375
+                },
+                {
+                  "day": 2,
+                  "active_hours": 7.5,
+                  "score": 0.9375
+                },
+                {
+                  "day": 3,
+                  "active_hours": 5.0,
+                  "score": 0.625
+                },
+                {
+                  "day": 4,
+                  "active_hours": 2.5,
+                  "score": 0.3125
+                }
+              ]
+            },
+            "pace_alignment": {
+              "score": 0.5,
+              "value": null,
+              "note": "用 5W1H pace 對每日景點數做近似。",
+              "details": [
+                {
+                  "day": 1,
+                  "attraction_count": 1,
+                  "target": 2.5,
+                  "score": 0.4
+                },
+                {
+                  "day": 2,
+                  "attraction_count": 2,
+                  "target": 2.5,
+                  "score": 0.8
+                },
+                {
+                  "day": 3,
+                  "attraction_count": 1,
+                  "target": 2.5,
+                  "score": 0.4
+                },
+                {
+                  "day": 4,
+                  "attraction_count": 1,
+                  "target": 2.5,
+                  "score": 0.4
+                }
+              ]
+            }
+          },
+          "economy": {
+            "budget_efficiency": {
+              "score": 1.0,
+              "value": {
+                "score": 1.0,
+                "budget": 5600.0,
+                "total_cost": 3275.4
+              },
+              "note": "超預算時用 budget / known_total_cost 給部分分。",
+              "details": null
+            },
+            "cost_breakdown_completeness": {
+              "score": 0.8,
+              "value": null,
+              "note": "檢查住宿、餐飲、市內交通、城際交通、景點是否有價格。",
+              "details": {
+                "score": 0.8,
+                "present_categories": [
+                  "accommodation",
+                  "meals",
+                  "intracity_transportation",
+                  "attractions"
+                ],
+                "expected_categories": [
+                  "accommodation",
+                  "meals",
+                  "intracity_transportation",
+                  "intercity_transportation",
+                  "attractions"
+                ]
+              }
+            },
+            "lodging_price_evidence": {
+              "score": 1.0,
+              "value": {
+                "source": "serpapi_google_hotels",
+                "availability_confirmed": true
+              },
+              "note": "",
+              "details": null
+            }
+          },
+          "utility": {
+            "key_area_coverage": {
+              "score": 0.6667,
+              "value": null,
+              "note": "檢查 5W1H key_areas 是否出現在最後行程。",
+              "details": {
+                "score": 0.6667,
+                "matched": [
+                  "外灘",
+                  "新天地"
+                ],
+                "missing": [
+                  "靜安區"
+                ]
+              }
+            },
+            "food_preference_coverage": {
+              "score": 1.0,
+              "value": null,
+              "note": "小籠包允許湯包作為同義近似。",
+              "details": {
+                "score": 1.0,
+                "matched": [],
+                "missing": []
+              }
+            },
+            "desired_experience_coverage": {
+              "score": 0.0,
+              "value": null,
+              "note": "檢查 desired_experiences 是否被最後行程文字覆蓋。",
+              "details": {
+                "score": 0.0,
+                "matched": [],
+                "missing": [
+                  "設計師酒店住宿"
+                ]
+              }
+            },
+            "activity_diversity_proxy": {
+              "score": 0.5,
+              "value": null,
+              "note": "不用官方分類表時計算一個簡單活動多樣性近似。",
+              "details": {
+                "score": 0.5,
+                "categories": [
+                  "food",
+                  "landmark"
+                ]
+              }
+            },
+            "candidate_decision_grounding": {
+              "score": 1.0,
+              "value": null,
+              "note": "最後結果有保留 used_candidate_ids。",
+              "details": null
+            }
+          },
+          "space": null
+        },
+        "skipped_metrics": [
+          {
+            "dimension": "space",
+            "metric": "RP / CSM",
+            "reason": "TravelEval 的 SpaceMetrics 會使用 GeoCalculator 與高德路線/距離能力，本次完全排除。"
+          },
+          {
+            "dimension": "accuracy",
+            "metric": "transportation_breaks",
+            "reason": "TravelEval 會檢查相鄰 POI 的公共交通可達性，會碰到高德路線能力，本次排除。"
+          }
+        ],
+        "converted_user_query": {
+          "uid": "corporate_with_gemini_offline_case",
+          "start_city": "北京",
+          "target_city": "上海",
+          "days": 4,
+          "people_number": 2,
+          "budget": 5600.0,
+          "budget_currency": "CNY",
+          "transportation": {
+            "preferences": [
+              "高鐵"
+            ],
+            "constraints": []
+          },
+          "accommodations": {
+            "preferences": [
+              "設計師酒店",
+              "地理位置"
+            ],
+            "constraints": []
+          },
+          "diet": {
+            "preferences": [],
+            "constraints": []
+          },
+          "attractions": {
+            "preferences": [
+              "靜安區",
+              "外灘",
+              "新天地",
+              "設計師酒店住宿",
+              "culture",
+              "shopping"
+            ],
+            "constraints": []
+          },
+          "rhythm": {
+            "preferences": [
+              "moderate"
+            ]
+          },
+          "nature_language": "放鬆與城市探索"
+        },
+        "sandbox_summary": {
+          "travel_eval_dir": "/private/tmp/TravelEval",
+          "city_key": "shanghai",
+          "attractions_rows": 360,
+          "restaurants_rows": 484,
+          "accommodations_rows": 513
+        },
+        "security_note": "此離線評分器不讀取、不要求、不輸出高德 API key。"
+      },
+      "partial_metrics_table": {
+        "title": "TravelEval partial metrics without Gaode/Amap API",
+        "source_note": "這不是官方完整 TravelEval 分數；它輸出 paper-style metric table，去除高德 API 必要項目。",
+        "score_direction_note": "↑ 表示越高越好，↓ 表示越低越好，- 表示成本分解值本身不代表好壞。",
+        "computed_metrics": [
+          {
+            "dimension": "Accuracy",
+            "metric": "CCD",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed_from_converted_plan",
+            "note": "成本表由轉換器重算；可抓 arithmetic mismatch，但不是模型自報成本。",
+            "details": null
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "FAR",
+            "direction": "↓",
+            "value": 0.2,
+            "status": "computed_partial",
+            "note": "只檢查 attraction；可由 TravelEval sandbox 或候選座標佐證。",
+            "details": [
+              {
+                "name": "外灘",
+                "grounded": true,
+                "matched_name": "外滩",
+                "match_score": 1.0,
+                "candidate_coordinates": true
+              },
+              {
+                "name": "靜安寺",
+                "grounded": true,
+                "matched_name": "静安寺",
+                "match_score": 0.6667,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "M50創意園",
+                "grounded": false,
+                "matched_name": null,
+                "match_score": 0.25,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "上海博物館",
+                "grounded": true,
+                "matched_name": "上海博物馆",
+                "match_score": 1.0,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "上海中心大廈",
+                "grounded": true,
+                "matched_name": "上海中心大厦",
+                "match_score": 0.86,
+                "candidate_coordinates": true
+              }
+            ]
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "VROH",
+            "direction": "↓",
+            "value": 0.25,
+            "status": "computed_partial",
+            "note": "只檢查能匹配到 TravelEval attractions CSV 的景點。",
+            "details": [
+              {
+                "name": "外灘",
+                "matched_name": "外滩",
+                "visit_time": "14:30~18:00",
+                "opening_time": "0:00~24:00",
+                "match_score": 1.0,
+                "ok": true
+              },
+              {
+                "name": "靜安寺",
+                "matched_name": "静安寺",
+                "visit_time": "09:00~12:00",
+                "opening_time": "7:30~17:00",
+                "match_score": 0.6667,
+                "ok": true
+              },
+              {
+                "name": "上海博物館",
+                "matched_name": "上海博物馆",
+                "visit_time": "14:30~18:00",
+                "opening_time": "9:00~17:00",
+                "match_score": 1.0,
+                "ok": false
+              },
+              {
+                "name": "上海中心大廈",
+                "matched_name": "上海中心大厦",
+                "visit_time": "09:00~11:30",
+                "opening_time": "8:30~22:00",
+                "match_score": 0.86,
+                "ok": true
+              }
+            ]
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "ITD",
+            "direction": "↓",
+            "value": null,
+            "status": "missing_input",
+            "note": "final result 沒有火車/航班班次與時間，無法用 TravelEval intercity sandbox 算 ITD。",
+            "details": null
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "PD",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed",
+            "note": "",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "BCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed",
+            "note": "成本與預算統一以 CNY 計。",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "TCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "檢查天數與時間格式/重疊；未檢查實際交通可行時間。",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "HCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-A",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "無住宿偏好時，夜數正確即視為滿足。",
+            "details": {
+              "score": 1.0,
+              "hotel_name": "上海 世 和 酒店",
+              "expected_nights": 3,
+              "planned_nights": 3,
+              "matched_name": "上海世博萨和酒店",
+              "match_score": 0.8571
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-T",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "proxy_no_gaode",
+            "note": "不查實際路線，只看偏好交通是否出現在行程/通勤 slot。",
+            "details": {
+              "score": 1.0,
+              "preferred": "高鐵",
+              "matched_terms": [
+                "高鐵"
+              ],
+              "has_commute_slots": true
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-C",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "proxy_text_match",
+            "note": "用飲食偏好文字覆蓋近似。",
+            "details": {
+              "score": 1.0,
+              "matched": [],
+              "missing": []
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "TTCS",
+            "direction": "↑",
+            "value": 0.0,
+            "status": "computed_partial",
+            "note": "使用 TravelEval 推薦停留時間；未納入排隊時間模型。",
+            "details": [
+              {
+                "name": "外灘",
+                "matched_name": "外滩",
+                "planned_hours": 3.5,
+                "recommended_hours": [
+                  1.5,
+                  2.0
+                ],
+                "match_score": 1.0,
+                "score": 0.5714
+              },
+              {
+                "name": "靜安寺",
+                "matched_name": "静安寺",
+                "planned_hours": 3.0,
+                "recommended_hours": [
+                  2.0,
+                  2.5
+                ],
+                "match_score": 0.6667,
+                "score": 0.8333
+              },
+              {
+                "name": "上海博物館",
+                "matched_name": "上海博物馆",
+                "planned_hours": 3.5,
+                "recommended_hours": [
+                  0.5,
+                  1.0
+                ],
+                "match_score": 1.0,
+                "score": 0.2857
+              },
+              {
+                "name": "上海中心大廈",
+                "matched_name": "上海中心大厦",
+                "planned_hours": 2.5,
+                "recommended_hours": [
+                  1.5,
+                  3.0
+                ],
+                "match_score": 0.86,
+                "score": 1.0
+              }
+            ]
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "STR",
+            "direction": "↑",
+            "value": 0.6726,
+            "status": "proxy_no_queue_model",
+            "note": "用停留時間落在推薦區間的程度近似，未納入排隊時間。",
+            "details": null
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "DTU",
+            "direction": "↑",
+            "value": 0.4546,
+            "status": "proxy_no_queue_model",
+            "note": "用每日景點時數 / 當日行程 span 近似。",
+            "details": null
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "OTU",
+            "direction": "↑",
+            "value": 0.1667,
+            "status": "proxy_no_queue_model",
+            "note": "用總景點時數 / 24h*天數近似。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "BE",
+            "direction": "↑",
+            "value": 7.2052,
+            "status": "proxy_estimated_costs",
+            "note": "TravelEval 公式方向：experience value / actual cost * 1000；目前成本含住宿、景點票、餐費與市內交通估算，仍缺城際交通。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ACD",
+            "direction": "-",
+            "value": 1055.4,
+            "status": "estimated_or_computed",
+            "note": "住宿成本。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ATD",
+            "direction": "-",
+            "value": 320.0,
+            "status": "estimated_or_computed",
+            "note": "景點票價優先來自 slot cost_estimate，缺少時用 TravelEval attraction price fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ETD",
+            "direction": "-",
+            "value": 0.0,
+            "status": "missing_or_zero",
+            "note": "城際交通成本目前缺資料。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "RTD",
+            "direction": "-",
+            "value": 1600.0,
+            "status": "estimated_or_computed",
+            "note": "市內交通成本優先來自 slot cost_estimate，缺少時用每段整團 8 CNY fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "MED",
+            "direction": "-",
+            "value": 300.0,
+            "status": "estimated_or_computed",
+            "note": "餐費優先來自 slot cost_estimate，缺少時用 TravelEval restaurant price 或每人 80 CNY fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "OTD",
+            "direction": "-",
+            "value": 0.0,
+            "status": "missing_or_zero",
+            "note": "其他成本。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "EDI",
+            "direction": "↑",
+            "value": 0.6499,
+            "status": "computed_partial",
+            "note": "用 TravelEval attraction type 做 Shannon entropy。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "ADS",
+            "direction": "↑",
+            "value": 0.3531,
+            "status": "computed_partial",
+            "note": "平均每日景點數 / 普通旅行 target density 3.54。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "AQE",
+            "direction": "↑",
+            "value": 0.9352,
+            "status": "computed_partial",
+            "note": "用景點 star/5 加權停留時間近似。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "Profit",
+            "direction": "↑",
+            "value": 5.9,
+            "status": "computed_partial",
+            "note": "用 sandbox star 與偏好匹配近似。",
+            "details": null
+          }
+        ],
+        "skipped_gaode_metrics": [
+          {
+            "dimension": "Accuracy",
+            "metric": "FRTC",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要高德 transit API 檢查相鄰 POI 公共交通可達性。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "SSR",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要高德路網距離計算 route penalty。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "CSM-P90",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要 POI 路網距離與跨日空間錯配計算。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "CSM-P95",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要 POI 路網距離與跨日空間錯配計算。",
+            "details": null
+          }
+        ],
+        "currency": "CNY",
+        "cost_breakdown": {
+          "attractions": 320.0,
+          "intercity_transportation": 0.0,
+          "intracity_transportation": 1600.0,
+          "accommodation": 1055.4,
+          "meals": 300.0,
+          "other": 0.0,
+          "total": 3275.4
+        },
+        "sandbox_summary": {
+          "travel_eval_dir": "/private/tmp/TravelEval",
+          "city_key": "shanghai",
+          "matched_attractions": 4
+        }
+      }
+    },
+    {
+      "uid": "T0601",
+      "difficulty": "hard",
+      "case_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601",
+      "files": {
+        "query": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/00_traveleval_query.json",
+        "prompt": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/00_prompt.txt",
+        "planner": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/01_planner_result.json",
+        "stage1": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/02_stage1_searchable.json",
+        "places": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/03_places_search.json",
+        "lodging": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/05_lodging_search.json",
+        "candidate_package": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/06_candidate_package.json",
+        "candidate_llm_input": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/07_candidate_llm_input.json",
+        "final": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/08_final_itinerary.json",
+        "evaluation_score": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/09_evaluation/hard_T0601_offline_score_without_gaode.json",
+        "partial_metrics_json": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/09_evaluation/hard_T0601_partial_metrics_without_gaode.json",
+        "partial_metrics_md": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601/09_evaluation/hard_T0601_partial_metrics_without_gaode.md"
+      },
+      "score": {
+        "status": "success",
+        "score_scale": "0.0-1.0",
+        "overall_score_without_gaode": 0.6786,
+        "overall_score_percent_without_gaode": 67.86,
+        "dimension_scores": {
+          "accuracy": 0.7,
+          "constraint": 0.6857,
+          "time": 0.7417,
+          "economy": 0.7658,
+          "utility": 0.5,
+          "space": null
+        },
+        "detailed_metrics": {
+          "accuracy": {
+            "cost_deviation_rate_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "轉換後 cost_breakdown 與可計算成本一致。",
+              "details": null
+            },
+            "people_deviation_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "",
+              "details": null
+            },
+            "place_grounding_score": {
+              "score": 0.5,
+              "value": 0.5,
+              "note": "使用 TravelEval 本地資料庫或候選 POI 座標驗證。",
+              "details": [
+                {
+                  "name": "上海雅居樂萬豪酒店",
+                  "type": "accommodation_check_in",
+                  "grounded": true,
+                  "matched_dataset": "accommodations",
+                  "matched_name": "上海雅居乐万豪侯爵酒店",
+                  "match_score": 0.9,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "南京路步行街",
+                  "type": "attraction",
+                  "grounded": true,
+                  "matched_dataset": "attractions",
+                  "matched_name": "南京路步行街",
+                  "match_score": 1.0,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "晚餐",
+                  "type": "meal",
+                  "grounded": false,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.3333,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "富泉山古文化遺址",
+                  "type": "attraction",
+                  "grounded": false,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.5333,
+                  "candidate_coordinates": false
+                },
+                {
+                  "name": "萊萊小吃湯包館",
+                  "type": "meal",
+                  "grounded": true,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.2857,
+                  "candidate_coordinates": true
+                },
+                {
+                  "name": "七寶古鎮",
+                  "type": "attraction",
+                  "grounded": false,
+                  "matched_dataset": null,
+                  "matched_name": null,
+                  "match_score": 0.5,
+                  "candidate_coordinates": false
+                }
+              ]
+            },
+            "opening_hours_score": {
+              "score": 1.0,
+              "value": 0.0,
+              "note": "只檢查能在 TravelEval attractions CSV 匹配到的景點。",
+              "details": [
+                {
+                  "name": "南京路步行街",
+                  "matched_name": "南京路步行街",
+                  "visit_time": "14:30~17:00",
+                  "opening_time": "0:00~24:00",
+                  "match_score": 1.0,
+                  "ok": true
+                }
+              ]
+            },
+            "intercity_planning_completeness_proxy": {
+              "score": 0.0,
+              "value": null,
+              "note": "不呼叫高德；只檢查跨城旅行是否有火車/航班明細。",
+              "details": null
+            }
+          },
+          "constraint": {
+            "budget_satisfaction": {
+              "score": 0.0,
+              "value": {
+                "budget": 3200.0,
+                "total_cost": 6434.2
+              },
+              "note": "成本只包含目前 final result 可確認的價格。",
+              "details": null
+            },
+            "time_compliance": {
+              "score": 1.0,
+              "value": {
+                "planned_days": 5,
+                "requested_days": 5
+              },
+              "note": "",
+              "details": null
+            },
+            "people_adaptability": {
+              "score": 1.0,
+              "value": {
+                "planned_people": 2,
+                "requested_people": 2
+              },
+              "note": "",
+              "details": null
+            },
+            "accommodation_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查住宿夜數與本地住宿資料庫近似匹配。",
+              "details": {
+                "score": 1.0,
+                "hotel_name": "上海雅居樂萬豪酒店",
+                "expected_nights": 4,
+                "planned_nights": 4,
+                "matched_name": "上海雅居乐万豪侯爵酒店",
+                "match_score": 0.9
+              }
+            },
+            "transportation_satisfaction": {
+              "score": 1.0,
+              "value": null,
+              "note": "不查路線；只看行程是否明確呈現偏好交通方式或至少保留通勤 slot。",
+              "details": {
+                "score": 1.0,
+                "preferred": "高鐵",
+                "matched_terms": [
+                  "高鐵"
+                ],
+                "has_commute_slots": true
+              }
+            },
+            "diet_preference_satisfaction": {
+              "score": 0.0,
+              "value": null,
+              "note": "用最後行程文字檢查飲食偏好覆蓋。",
+              "details": {
+                "score": 0.0,
+                "matched": [],
+                "missing": [
+                  "local_snacks"
+                ]
+              }
+            },
+            "travel_time_satisfaction": {
+              "score": 0.8,
+              "value": null,
+              "note": "用 TravelEval 推薦停留時間做離線近似。",
+              "details": [
+                {
+                  "name": "南京路步行街",
+                  "matched_name": "南京路步行街",
+                  "planned_hours": 2.5,
+                  "recommended_hours": [
+                    1.0,
+                    2.0
+                  ],
+                  "match_score": 1.0,
+                  "score": 0.8
+                }
+              ]
+            }
+          },
+          "time": {
+            "schedule_order_validity": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查時間格式、正時長與重疊。",
+              "details": []
+            },
+            "daily_time_utilization": {
+              "score": 0.625,
+              "value": null,
+              "note": "以每日餐飲與景點活動時數 / 8 小時作為離線近似。",
+              "details": [
+                {
+                  "day": 1,
+                  "active_hours": 4.0,
+                  "score": 0.5
+                },
+                {
+                  "day": 2,
+                  "active_hours": 6.0,
+                  "score": 0.75
+                }
+              ]
+            },
+            "pace_alignment": {
+              "score": 0.6,
+              "value": null,
+              "note": "用 5W1H pace 對每日景點數做近似。",
+              "details": [
+                {
+                  "day": 1,
+                  "attraction_count": 1,
+                  "target": 2.5,
+                  "score": 0.4
+                },
+                {
+                  "day": 2,
+                  "attraction_count": 2,
+                  "target": 2.5,
+                  "score": 0.8
+                }
+              ]
+            }
+          },
+          "economy": {
+            "budget_efficiency": {
+              "score": 0.4973,
+              "value": {
+                "score": 0.4973,
+                "budget": 3200.0,
+                "total_cost": 6434.2
+              },
+              "note": "超預算時用 budget / known_total_cost 給部分分。",
+              "details": null
+            },
+            "cost_breakdown_completeness": {
+              "score": 0.8,
+              "value": null,
+              "note": "檢查住宿、餐飲、市內交通、城際交通、景點是否有價格。",
+              "details": {
+                "score": 0.8,
+                "present_categories": [
+                  "accommodation",
+                  "meals",
+                  "intracity_transportation",
+                  "attractions"
+                ],
+                "expected_categories": [
+                  "accommodation",
+                  "meals",
+                  "intracity_transportation",
+                  "intercity_transportation",
+                  "attractions"
+                ]
+              }
+            },
+            "lodging_price_evidence": {
+              "score": 1.0,
+              "value": {
+                "source": "serpapi_google_hotels",
+                "availability_confirmed": true
+              },
+              "note": "",
+              "details": null
+            }
+          },
+          "utility": {
+            "key_area_coverage": {
+              "score": 1.0,
+              "value": null,
+              "note": "檢查 5W1H key_areas 是否出現在最後行程。",
+              "details": {
+                "score": 1.0,
+                "matched": [
+                  "富泉山古文化遺址",
+                  "七寶古鎮"
+                ],
+                "missing": []
+              }
+            },
+            "food_preference_coverage": {
+              "score": 0.0,
+              "value": null,
+              "note": "小籠包允許湯包作為同義近似。",
+              "details": {
+                "score": 0.0,
+                "matched": [],
+                "missing": [
+                  "local_snacks"
+                ]
+              }
+            },
+            "desired_experience_coverage": {
+              "score": 0.0,
+              "value": null,
+              "note": "檢查 desired_experiences 是否被最後行程文字覆蓋。",
+              "details": {
+                "score": 0.0,
+                "matched": [],
+                "missing": [
+                  "小眾秘境",
+                  "歷史古蹟"
+                ]
+              }
+            },
+            "activity_diversity_proxy": {
+              "score": 0.5,
+              "value": null,
+              "note": "不用官方分類表時計算一個簡單活動多樣性近似。",
+              "details": {
+                "score": 0.5,
+                "categories": [
+                  "culture",
+                  "food"
+                ]
+              }
+            },
+            "candidate_decision_grounding": {
+              "score": 1.0,
+              "value": null,
+              "note": "最後結果有保留 used_candidate_ids。",
+              "details": null
+            }
+          },
+          "space": null
+        },
+        "skipped_metrics": [
+          {
+            "dimension": "space",
+            "metric": "RP / CSM",
+            "reason": "TravelEval 的 SpaceMetrics 會使用 GeoCalculator 與高德路線/距離能力，本次完全排除。"
+          },
+          {
+            "dimension": "accuracy",
+            "metric": "transportation_breaks",
+            "reason": "TravelEval 會檢查相鄰 POI 的公共交通可達性，會碰到高德路線能力，本次排除。"
+          }
+        ],
+        "converted_user_query": {
+          "uid": "corporate_with_gemini_offline_case",
+          "start_city": "北京",
+          "target_city": "上海",
+          "days": 5,
+          "people_number": 2,
+          "budget": 3200.0,
+          "budget_currency": "CNY",
+          "transportation": {
+            "preferences": [
+              "高鐵"
+            ],
+            "constraints": []
+          },
+          "accommodations": {
+            "preferences": [
+              "good_location",
+              "free_parking"
+            ],
+            "constraints": []
+          },
+          "diet": {
+            "preferences": [
+              "local_snacks"
+            ],
+            "constraints": []
+          },
+          "attractions": {
+            "preferences": [
+              "富泉山古文化遺址",
+              "七寶古鎮",
+              "小眾秘境",
+              "歷史古蹟",
+              "history",
+              "culture"
+            ],
+            "constraints": []
+          },
+          "rhythm": {
+            "preferences": [
+              "moderate"
+            ]
+          },
+          "nature_language": "探索上海小眾秘境和歷史古蹟"
+        },
+        "sandbox_summary": {
+          "travel_eval_dir": "/private/tmp/TravelEval",
+          "city_key": "shanghai",
+          "attractions_rows": 360,
+          "restaurants_rows": 484,
+          "accommodations_rows": 513
+        },
+        "security_note": "此離線評分器不讀取、不要求、不輸出高德 API key。"
+      },
+      "partial_metrics_table": {
+        "title": "TravelEval partial metrics without Gaode/Amap API",
+        "source_note": "這不是官方完整 TravelEval 分數；它輸出 paper-style metric table，去除高德 API 必要項目。",
+        "score_direction_note": "↑ 表示越高越好，↓ 表示越低越好，- 表示成本分解值本身不代表好壞。",
+        "computed_metrics": [
+          {
+            "dimension": "Accuracy",
+            "metric": "CCD",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed_from_converted_plan",
+            "note": "成本表由轉換器重算；可抓 arithmetic mismatch，但不是模型自報成本。",
+            "details": null
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "FAR",
+            "direction": "↓",
+            "value": 0.6667,
+            "status": "computed_partial",
+            "note": "只檢查 attraction；可由 TravelEval sandbox 或候選座標佐證。",
+            "details": [
+              {
+                "name": "南京路步行街",
+                "grounded": true,
+                "matched_name": "南京路步行街",
+                "match_score": 1.0,
+                "candidate_coordinates": true
+              },
+              {
+                "name": "富泉山古文化遺址",
+                "grounded": false,
+                "matched_name": null,
+                "match_score": 0.5333,
+                "candidate_coordinates": false
+              },
+              {
+                "name": "七寶古鎮",
+                "grounded": false,
+                "matched_name": null,
+                "match_score": 0.5,
+                "candidate_coordinates": false
+              }
+            ]
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "VROH",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed_partial",
+            "note": "只檢查能匹配到 TravelEval attractions CSV 的景點。",
+            "details": [
+              {
+                "name": "南京路步行街",
+                "matched_name": "南京路步行街",
+                "visit_time": "14:30~17:00",
+                "opening_time": "0:00~24:00",
+                "match_score": 1.0,
+                "ok": true
+              }
+            ]
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "ITD",
+            "direction": "↓",
+            "value": null,
+            "status": "missing_input",
+            "note": "final result 沒有火車/航班班次與時間，無法用 TravelEval intercity sandbox 算 ITD。",
+            "details": null
+          },
+          {
+            "dimension": "Accuracy",
+            "metric": "PD",
+            "direction": "↓",
+            "value": 0.0,
+            "status": "computed",
+            "note": "",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "BCS",
+            "direction": "↑",
+            "value": 0.0,
+            "status": "computed",
+            "note": "成本與預算統一以 CNY 計。",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "TCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "檢查天數與時間格式/重疊；未檢查實際交通可行時間。",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "HCS",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "",
+            "details": null
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-A",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "computed_partial",
+            "note": "無住宿偏好時，夜數正確即視為滿足。",
+            "details": {
+              "score": 1.0,
+              "hotel_name": "上海雅居樂萬豪酒店",
+              "expected_nights": 4,
+              "planned_nights": 4,
+              "matched_name": "上海雅居乐万豪侯爵酒店",
+              "match_score": 0.9
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-T",
+            "direction": "↑",
+            "value": 1.0,
+            "status": "proxy_no_gaode",
+            "note": "不查實際路線，只看偏好交通是否出現在行程/通勤 slot。",
+            "details": {
+              "score": 1.0,
+              "preferred": "高鐵",
+              "matched_terms": [
+                "高鐵"
+              ],
+              "has_commute_slots": true
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "PAS-C",
+            "direction": "↑",
+            "value": 0.0,
+            "status": "proxy_text_match",
+            "note": "用飲食偏好文字覆蓋近似。",
+            "details": {
+              "score": 0.0,
+              "matched": [],
+              "missing": [
+                "local_snacks"
+              ]
+            }
+          },
+          {
+            "dimension": "Compliance",
+            "metric": "TTCS",
+            "direction": "↑",
+            "value": 0.0,
+            "status": "computed_partial",
+            "note": "使用 TravelEval 推薦停留時間；未納入排隊時間模型。",
+            "details": [
+              {
+                "name": "南京路步行街",
+                "matched_name": "南京路步行街",
+                "planned_hours": 2.5,
+                "recommended_hours": [
+                  1.0,
+                  2.0
+                ],
+                "match_score": 1.0,
+                "score": 0.8
+              }
+            ]
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "STR",
+            "direction": "↑",
+            "value": 0.8,
+            "status": "proxy_no_queue_model",
+            "note": "用停留時間落在推薦區間的程度近似，未納入排隊時間。",
+            "details": null
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "DTU",
+            "direction": "↑",
+            "value": 0.4822,
+            "status": "proxy_no_queue_model",
+            "note": "用每日景點時數 / 當日行程 span 近似。",
+            "details": null
+          },
+          {
+            "dimension": "Temporality",
+            "metric": "OTU",
+            "direction": "↑",
+            "value": 0.0625,
+            "status": "proxy_no_queue_model",
+            "note": "用總景點時數 / 24h*天數近似。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "BE",
+            "direction": "↑",
+            "value": 0.746,
+            "status": "proxy_estimated_costs",
+            "note": "TravelEval 公式方向：experience value / actual cost * 1000；目前成本含住宿、景點票、餐費與市內交通估算，仍缺城際交通。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ACD",
+            "direction": "-",
+            "value": 5114.2,
+            "status": "estimated_or_computed",
+            "note": "住宿成本。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ATD",
+            "direction": "-",
+            "value": 50.0,
+            "status": "estimated_or_computed",
+            "note": "景點票價優先來自 slot cost_estimate，缺少時用 TravelEval attraction price fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "ETD",
+            "direction": "-",
+            "value": 0.0,
+            "status": "missing_or_zero",
+            "note": "城際交通成本目前缺資料。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "RTD",
+            "direction": "-",
+            "value": 850.0,
+            "status": "estimated_or_computed",
+            "note": "市內交通成本優先來自 slot cost_estimate，缺少時用每段整團 8 CNY fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "MED",
+            "direction": "-",
+            "value": 420.0,
+            "status": "estimated_or_computed",
+            "note": "餐費優先來自 slot cost_estimate，缺少時用 TravelEval restaurant price 或每人 80 CNY fallback。",
+            "details": null
+          },
+          {
+            "dimension": "Economy",
+            "metric": "OTD",
+            "direction": "-",
+            "value": 0.0,
+            "status": "missing_or_zero",
+            "note": "其他成本。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "EDI",
+            "direction": "↑",
+            "value": 0.4362,
+            "status": "computed_partial",
+            "note": "用 TravelEval attraction type 做 Shannon entropy。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "ADS",
+            "direction": "↑",
+            "value": 0.1695,
+            "status": "computed_partial",
+            "note": "平均每日景點數 / 普通旅行 target density 3.54。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "AQE",
+            "direction": "↑",
+            "value": 0.96,
+            "status": "computed_partial",
+            "note": "用景點 star/5 加權停留時間近似。",
+            "details": null
+          },
+          {
+            "dimension": "Utility",
+            "metric": "Profit",
+            "direction": "↑",
+            "value": 4.8,
+            "status": "computed_partial",
+            "note": "用 sandbox star 與偏好匹配近似。",
+            "details": null
+          }
+        ],
+        "skipped_gaode_metrics": [
+          {
+            "dimension": "Accuracy",
+            "metric": "FRTC",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要高德 transit API 檢查相鄰 POI 公共交通可達性。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "SSR",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要高德路網距離計算 route penalty。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "CSM-P90",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要 POI 路網距離與跨日空間錯配計算。",
+            "details": null
+          },
+          {
+            "dimension": "Spatiality",
+            "metric": "CSM-P95",
+            "direction": "↓",
+            "value": null,
+            "status": "skipped_gaode_required",
+            "note": "需要 POI 路網距離與跨日空間錯配計算。",
+            "details": null
+          }
+        ],
+        "currency": "CNY",
+        "cost_breakdown": {
+          "attractions": 50.0,
+          "intercity_transportation": 0.0,
+          "intracity_transportation": 850.0,
+          "accommodation": 5114.2,
+          "meals": 420.0,
+          "other": 0.0,
+          "total": 6434.2
+        },
+        "sandbox_summary": {
+          "travel_eval_dir": "/private/tmp/TravelEval",
+          "city_key": "shanghai",
+          "matched_attractions": 1
+        }
+      }
+    }
+  ],
+  "comparison": {
+    "scope": "one selected TravelEval case each from easy, medium, and hard",
+    "important_note": "This is a no-Gaode partial comparison. FRTC/SSR/CSM and official route-distance metrics are skipped.",
+    "bounded_partial_metrics": [
+      "CCD",
+      "FAR",
+      "VROH",
+      "PD",
+      "BCS",
+      "TCS",
+      "HCS",
+      "PAS-A",
+      "PAS-T",
+      "PAS-C",
+      "TTCS",
+      "STR",
+      "DTU",
+      "OTU",
+      "EDI",
+      "ADS",
+      "AQE"
+    ],
+    "lower_is_better": [
+      "CCD",
+      "FAR",
+      "PD",
+      "VROH"
+    ],
+    "your_pipeline": {
+      "average_bounded_partial_score": 0.7096,
+      "cases": [
+        {
+          "uid": "T0001",
+          "difficulty": "easy",
+          "case_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/easy_T0001",
+          "bounded_partial_average": 0.7744,
+          "normalized_metrics": {
+            "CCD": 1.0,
+            "FAR": 1.0,
+            "VROH": 1.0,
+            "PD": 1.0,
+            "BCS": 1.0,
+            "TCS": 1.0,
+            "HCS": 1.0,
+            "PAS-A": 1.0,
+            "PAS-T": 0.65,
+            "PAS-C": 1.0,
+            "TTCS": 0.0,
+            "STR": 0.6845,
+            "DTU": 0.6389,
+            "OTU": 0.2222,
+            "EDI": 0.5382,
+            "ADS": 0.4708,
+            "AQE": 0.9608
+          },
+          "key_values": {
+            "CCD": 0.0,
+            "FAR": 0.0,
+            "VROH": 0.0,
+            "BCS": 1.0,
+            "TTCS": 0.0,
+            "BE": 11.6167,
+            "EDI": 0.5382,
+            "ADS": 0.4708,
+            "AQE": 0.9608,
+            "Profit": 7.225
+          }
+        },
+        {
+          "uid": "T0201",
+          "difficulty": "medium",
+          "case_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/medium_T0201",
+          "bounded_partial_average": 0.7519,
+          "normalized_metrics": {
+            "CCD": 1.0,
+            "FAR": 0.8,
+            "VROH": 0.75,
+            "PD": 1.0,
+            "BCS": 1.0,
+            "TCS": 1.0,
+            "HCS": 1.0,
+            "PAS-A": 1.0,
+            "PAS-T": 1.0,
+            "PAS-C": 1.0,
+            "TTCS": 0.0,
+            "STR": 0.6726,
+            "DTU": 0.4546,
+            "OTU": 0.1667,
+            "EDI": 0.6499,
+            "ADS": 0.3531,
+            "AQE": 0.9352
+          },
+          "key_values": {
+            "CCD": 0.0,
+            "FAR": 0.2,
+            "VROH": 0.25,
+            "BCS": 1.0,
+            "TTCS": 0.0,
+            "BE": 7.2052,
+            "EDI": 0.6499,
+            "ADS": 0.3531,
+            "AQE": 0.9352,
+            "Profit": 5.9
+          }
+        },
+        {
+          "uid": "T0601",
+          "difficulty": "hard",
+          "case_dir": "/Users/xuchengyan/travel_agent/corporate_with_gemini/Evaluation/case_runs/traveleval_3case_api_run_20260711_v2/hard_T0601",
+          "bounded_partial_average": 0.6026,
+          "normalized_metrics": {
+            "CCD": 1.0,
+            "FAR": 0.3333,
+            "VROH": 1.0,
+            "PD": 1.0,
+            "BCS": 0.0,
+            "TCS": 1.0,
+            "HCS": 1.0,
+            "PAS-A": 1.0,
+            "PAS-T": 1.0,
+            "PAS-C": 0.0,
+            "TTCS": 0.0,
+            "STR": 0.8,
+            "DTU": 0.4822,
+            "OTU": 0.0625,
+            "EDI": 0.4362,
+            "ADS": 0.1695,
+            "AQE": 0.96
+          },
+          "key_values": {
+            "CCD": 0.0,
+            "FAR": 0.6667,
+            "VROH": 0.0,
+            "BCS": 0.0,
+            "TTCS": 0.0,
+            "BE": 0.746,
+            "EDI": 0.4362,
+            "ADS": 0.1695,
+            "AQE": 0.96,
+            "Profit": 4.8
+          }
+        }
+      ]
+    },
+    "paper_baselines": {
+      "Claude Code": {
+        "bounded_partial_average": 0.6249,
+        "raw_values": {
+          "CCD": 0.0407,
+          "FAR": 0.0,
+          "VROH": 0.0235,
+          "PD": 0.2148,
+          "BCS": 0.5703,
+          "TCS": 1.0,
+          "HCS": 0.5361,
+          "PAS-A": 0.4943,
+          "PAS-T": 0.8479,
+          "PAS-C": 0.5399,
+          "TTCS": 0.0342,
+          "STR": 0.6958,
+          "DTU": 0.1955,
+          "OTU": 0.0503,
+          "EDI": 0.5966,
+          "ADS": 0.5375,
+          "AQE": 0.8033,
+          "BE": 13.212,
+          "Profit": 5.6632
+        },
+        "normalized_metrics": {
+          "CCD": 0.9593,
+          "FAR": 1.0,
+          "VROH": 0.9765,
+          "PD": 0.7852,
+          "BCS": 0.5703,
+          "TCS": 1.0,
+          "HCS": 0.5361,
+          "PAS-A": 0.4943,
+          "PAS-T": 0.8479,
+          "PAS-C": 0.5399,
+          "TTCS": 0.0342,
+          "STR": 0.6958,
+          "DTU": 0.1955,
+          "OTU": 0.0503,
+          "EDI": 0.5966,
+          "ADS": 0.5375,
+          "AQE": 0.8033
+        }
+      },
+      "Approach A": {
+        "bounded_partial_average": 0.694,
+        "raw_values": {
+          "CCD": 0.0005,
+          "FAR": 0.0,
+          "VROH": 0.2504,
+          "PD": 0.0,
+          "BCS": 0.6273,
+          "TCS": 1.0,
+          "HCS": 1.0,
+          "PAS-A": 0.6681,
+          "PAS-T": 0.7524,
+          "PAS-C": 0.9036,
+          "TTCS": 0.0096,
+          "STR": 0.4979,
+          "DTU": 0.1212,
+          "OTU": 0.0608,
+          "EDI": 0.6547,
+          "ADS": 0.7649,
+          "AQE": 0.9882,
+          "BE": 16.274,
+          "Profit": 5.9979
+        },
+        "normalized_metrics": {
+          "CCD": 0.9995,
+          "FAR": 1.0,
+          "VROH": 0.7496,
+          "PD": 1.0,
+          "BCS": 0.6273,
+          "TCS": 1.0,
+          "HCS": 1.0,
+          "PAS-A": 0.6681,
+          "PAS-T": 0.7524,
+          "PAS-C": 0.9036,
+          "TTCS": 0.0096,
+          "STR": 0.4979,
+          "DTU": 0.1212,
+          "OTU": 0.0608,
+          "EDI": 0.6547,
+          "ADS": 0.7649,
+          "AQE": 0.9882
+        }
+      },
+      "Approach B": {
+        "bounded_partial_average": 0.7274,
+        "raw_values": {
+          "CCD": 0.0013,
+          "FAR": 0.0,
+          "VROH": 0.0046,
+          "PD": 0.0,
+          "BCS": 0.9217,
+          "TCS": 1.0,
+          "HCS": 1.0,
+          "PAS-A": 0.6748,
+          "PAS-T": 0.7826,
+          "PAS-C": 0.5652,
+          "TTCS": 0.4487,
+          "STR": 0.7677,
+          "DTU": 0.3029,
+          "OTU": 0.0649,
+          "EDI": 0.5829,
+          "ADS": 0.5129,
+          "AQE": 0.7479,
+          "BE": 22.192,
+          "Profit": 5.5015
+        },
+        "normalized_metrics": {
+          "CCD": 0.9987,
+          "FAR": 1.0,
+          "VROH": 0.9954,
+          "PD": 1.0,
+          "BCS": 0.9217,
+          "TCS": 1.0,
+          "HCS": 1.0,
+          "PAS-A": 0.6748,
+          "PAS-T": 0.7826,
+          "PAS-C": 0.5652,
+          "TTCS": 0.4487,
+          "STR": 0.7677,
+          "DTU": 0.3029,
+          "OTU": 0.0649,
+          "EDI": 0.5829,
+          "ADS": 0.5129,
+          "AQE": 0.7479
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,659 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2023-10-07T15:30:00",
+  "decision_summary": {
+    "overall_strategy": "minor_adjustment",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "使用 provided candidates，將模糊槽位替換為更具體的地方。",
+      "住宿候選中，Meego Qingwen Hotel 地理位置較居中，適合全程入住。"
+    ],
+    "warnings": []
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+        "property_token": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+        "name": "Meego Qingwen Hotel",
+        "latitude": 31.235129999999995,
+        "longitude": 121.45161399999999,
+        "price": {
+          "currency": "TWD",
+          "per_night": 733.0,
+          "total": 2933.0,
+          "nights": 4,
+          "availability_confirmed": true,
+          "source": "serpapi_google_hotels"
+        },
+        "rating": 4.2,
+        "user_rating_count": 25,
+        "hotel_class": "1 星級飯店"
+      },
+      "reason": "地理位置中心，便於前往各景點。"
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "original_activity": "享用本幫菜晚餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJyXECKN5wsjURRtmre8Sh_wM",
+        "name": "上海本幫菜",
+        "address": "上海市浦东新区陆家嘴浦东大道10号 邮政编码: 200120",
+        "latitude": 31.2385571,
+        "longitude": 121.51416479999999
+      },
+      "reason": "根據鄰近度和評分，選擇評分高且符合晚餐的本幫菜餐廳。"
+    },
+    {
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "original_activity": "享用當地特色小吃",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJuUaDgkRwsjURX3c7vCH-0sA",
+        "name": "七寶老街特色小吃",
+        "address": "上海市黄浦区南京路南京东路720号食品一店 邮政编码: 200001",
+        "latitude": 31.235470999999997,
+        "longitude": 121.476816
+      },
+      "reason": "選擇評分適中且地理位置相對便利的特色小吃。"
+    },
+    {
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "original_activity": "享用特色午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJPWUSbWlwsjURjYNLkOXNZGw",
+        "name": "上海博物館餐廳",
+        "address": "上海市黄浦区人民广场人民大道201号 邮政编码: 200003",
+        "latitude": 31.228561499999998,
+        "longitude": 121.4760239
+      },
+      "reason": "地點便利且評分良好的餐廳。"
+    },
+    {
+      "slot_id": "day4_slot03",
+      "day": 4,
+      "original_activity": "享用午後茶點",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJhQQ-w6h6sjURcensZEOvVuM",
+        "name": "汾陽花園酒店下午茶",
+        "address": "上海市徐汇区汾阳路45号-1 邮政编码: 200031",
+        "latitude": 31.212557999999998,
+        "longitude": 121.45499
+      },
+      "reason": "地理位置便利，且符合下午茶時間的選擇。"
+    },
+    {
+      "slot_id": "day5_slot03",
+      "day": 5,
+      "original_activity": "享用本幫菜午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJp7Qn1UBwsjURIi0cHgjeH6I",
+        "name": "藍帝老上海本幫菜",
+        "address": "上海市黄浦区长沙路179号 邮政编码: 200003",
+        "latitude": 31.237945,
+        "longitude": 121.471159
+      },
+      "reason": "選擇市區內評分較好的本幫菜餐廳。"
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "08:00",
+          "end_time": "13:00",
+          "time": "08:00~13:00",
+          "activity": "從北京乘坐高鐵前往上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 300,
+            "source": "llm_estimated",
+            "confidence": 0.8,
+            "note": "北京至上海的高鐵票價估計"
+          }
+        },
+        {
+          "slot_id": "day1_slot02",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "抵達上海並入住酒店",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "Meego Qingwen Hotel",
+          "route_entry_place": "上海火車站",
+          "route_exit_place": "Meego Qingwen Hotel",
+          "cost_estimate": {
+            "currency": "TWD",
+            "per_person": 0,
+            "party_total": 733,
+            "source": "serpapi_google_hotels",
+            "confidence": 1.0,
+            "note": "住宿費用"
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "time": "15:00~17:00",
+          "activity": "參觀西延堂教堂",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "西延堂教堂",
+          "route_entry_place": "Meego Qingwen Hotel",
+          "route_exit_place": "西延堂教堂",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.5,
+            "note": "免費參觀"
+          }
+        },
+        {
+          "slot_id": "day1_slot04",
+          "start_time": "17:00",
+          "end_time": "18:00",
+          "time": "17:00~18:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內短途交通費"
+          }
+        },
+        {
+          "slot_id": "day1_slot05",
+          "start_time": "18:00",
+          "end_time": "19:00",
+          "time": "18:00~19:00",
+          "activity": "享用本幫菜晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海本幫菜",
+          "route_entry_place": "西延堂教堂",
+          "route_exit_place": "上海本幫菜",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 150,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "根據上海本幫菜人均消費估算晚餐費用"
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "探訪朱家角古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "朱家角古鎮",
+          "route_entry_place": "Meego Qingwen Hotel",
+          "route_exit_place": "朱家角古鎮",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.6,
+            "note": "景區免費進入"
+          }
+        },
+        {
+          "slot_id": "day2_slot02",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用當地特色小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "七寶老街特色小吃",
+          "route_entry_place": "朱家角古鎮",
+          "route_exit_place": "七寶老街特色小吃",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 100,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "小吃消費概估"
+          }
+        },
+        {
+          "slot_id": "day2_slot03",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day2_slot04",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀廣富林文化遺址公園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "廣富林文化遺址公園",
+          "route_entry_place": "七寶老街特色小吃",
+          "route_exit_place": "廣富林文化遺址公園",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 50,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "門票價格估計"
+          }
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海鐵道博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海鐵道博物館",
+          "route_entry_place": "Meego Qingwen Hotel",
+          "route_exit_place": "上海鐵道博物館",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 30,
+            "party_total": 60,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "博物館門票估價"
+          }
+        },
+        {
+          "slot_id": "day3_slot02",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day3_slot03",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用特色午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館餐廳",
+          "route_entry_place": "上海鐵道博物館",
+          "route_exit_place": "上海博物館餐廳",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 120,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "午餐費用估計"
+          }
+        },
+        {
+          "slot_id": "day3_slot04",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day3_slot05",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "探訪大境閣與古城牆",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "大境閣",
+          "route_entry_place": "上海博物館餐廳",
+          "route_exit_place": "大境閣",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 15,
+            "party_total": 30,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "門票估價"
+          }
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "date_description": "第四天",
+      "schedule": [
+        {
+          "slot_id": "day4_slot01",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "探索錦澤古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "錦澤古鎮",
+          "route_entry_place": "Meego Qingwen Hotel",
+          "route_exit_place": "錦澤古鎮",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.7,
+            "note": "古鎮自由進入"
+          }
+        },
+        {
+          "slot_id": "day4_slot02",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day4_slot03",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用午後茶點",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "汾陽花園酒店下午茶",
+          "route_entry_place": "錦澤古鎮",
+          "route_exit_place": "汾陽花園酒店下午茶",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 100,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "下午茶費用估計"
+          }
+        },
+        {
+          "slot_id": "day4_slot04",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day4_slot05",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "自由探索市區小眾文化",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海雅眾文化傳播有限公司",
+          "route_entry_place": "汾陽花園酒店下午茶",
+          "route_exit_place": "上海雅眾文化傳播有限公司",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.5,
+            "note": "文化探索"
+          }
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "date_description": "第五天",
+      "schedule": [
+        {
+          "slot_id": "day5_slot01",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀古筆墨館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "古筆墨館",
+          "route_entry_place": "Meego Qingwen Hotel",
+          "route_exit_place": "古筆墨館",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 10,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "門票估價"
+          }
+        },
+        {
+          "slot_id": "day5_slot02",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day5_slot03",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用本幫菜午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "藍帝老上海本幫菜",
+          "route_entry_place": "古筆墨館",
+          "route_exit_place": "藍帝老上海本幫菜",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 150,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "午餐費用預估"
+          }
+        },
+        {
+          "slot_id": "day5_slot04",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 20,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "市內交通費"
+          }
+        },
+        {
+          "slot_id": "day5_slot05",
+          "start_time": "14:00",
+          "end_time": "18:00",
+          "time": "14:00~18:00",
+          "activity": "返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 300,
+            "source": "llm_estimated",
+            "confidence": 0.8,
+            "note": "上海至北京的高鐵票價估計"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJyXECKN5wsjURRtmre8Sh_wM",
+      "ChIJuUaDgkRwsjURX3c7vCH-0sA",
+      "ChIJPWUSbWlwsjURjYNLkOXNZGw",
+      "ChIJhQQ-w6h6sjURcensZEOvVuM",
+      "ChIJp7Qn1UBwsjURIi0cHgjeH6I"
+    ],
+    "lodging": [
+      "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB"
+    ]
+  }
+}

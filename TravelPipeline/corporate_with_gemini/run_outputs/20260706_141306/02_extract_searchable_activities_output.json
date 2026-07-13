@@ -1,0 +1,133 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot04",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "14:00",
+      "time": "12:00~14:00",
+      "slot_type": "meal",
+      "original_activity": "享受國華街與永樂市場的小吃美食",
+      "reason_for_search": "缺乏具體美食店家",
+      "suggested_search_query": "台南 國華街 永樂市場 小吃 美食",
+      "target_terms": [
+        "小吃",
+        "美食"
+      ],
+      "location_terms": [
+        "台南",
+        "國華街",
+        "永樂市場"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    },
+    {
+      "slot_id": "day1_slot07",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "16:00",
+      "end_time": "17:30",
+      "time": "16:00~17:30",
+      "slot_type": "shopping",
+      "original_activity": "逛藍晒圖文創園區或林百貨",
+      "reason_for_search": "具體去處需確認",
+      "suggested_search_query": "台南 藍晒圖 文創園區 林百貨",
+      "target_terms": [
+        "藍晒圖",
+        "林百貨"
+      ],
+      "location_terms": [
+        "台南"
+      ],
+      "intent_type": "shopping",
+      "must_have": []
+    },
+    {
+      "slot_id": "day1_slot09",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "18:00",
+      "end_time": "21:00",
+      "time": "18:00~21:00",
+      "slot_type": "meal",
+      "original_activity": "品嚐武聖夜市或花園夜市的美食",
+      "reason_for_search": "需確認當天哪個夜市有營業",
+      "suggested_search_query": "台南 武聖夜市 花園夜市 美食",
+      "target_terms": [
+        "夜市",
+        "美食"
+      ],
+      "location_terms": [
+        "台南"
+      ],
+      "intent_type": "night_market",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot04",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用安平小吃",
+      "reason_for_search": "缺乏具體美食店家",
+      "suggested_search_query": "台南 安平 小吃",
+      "target_terms": [
+        "小吃"
+      ],
+      "location_terms": [
+        "台南",
+        "安平"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot06",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "time": "14:00~16:00",
+      "slot_type": "attraction",
+      "original_activity": "搭乘四草綠色隧道生態船或騎車看夕陽",
+      "reason_for_search": "活動選擇需具體確認",
+      "suggested_search_query": "台南 四草綠色隧道 生態船 夕陽",
+      "target_terms": [
+        "四草綠色隧道",
+        "生態船",
+        "夕陽"
+      ],
+      "location_terms": [
+        "台南"
+      ],
+      "intent_type": "outdoor",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot08",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "16:30",
+      "end_time": "17:30",
+      "time": "16:30~17:30",
+      "slot_type": "shopping",
+      "original_activity": "選購安平伴手禮並準備返程",
+      "reason_for_search": "需具體推薦伴手禮商店",
+      "suggested_search_query": "台南 安平 伴手禮 商店",
+      "target_terms": [
+        "伴手禮"
+      ],
+      "location_terms": [
+        "台南",
+        "安平"
+      ],
+      "intent_type": "shopping",
+      "must_have": []
+    }
+  ]
+}

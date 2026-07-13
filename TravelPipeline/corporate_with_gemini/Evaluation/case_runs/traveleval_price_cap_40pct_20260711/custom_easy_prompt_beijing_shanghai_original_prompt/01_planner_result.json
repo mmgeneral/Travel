@@ -1,0 +1,396 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "外灘",
+        "法租界",
+        "南京東路"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 3,
+      "duration_nights": 2,
+      "travel_start_date": null,
+      "travel_end_date": null,
+      "season_or_month": null,
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "外灘",
+        "上海博物館"
+      ],
+      "desired_experiences": [
+        "城市風光",
+        "歷史文化",
+        "美食"
+      ],
+      "activity_types": [
+        "culture",
+        "local_food",
+        "shopping"
+      ],
+      "food_preferences": [],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "城市觀光與文化體驗",
+      "success_criteria": [
+        "預算控制",
+        "參觀主要城市景點",
+        "享用當地美食"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3
+      ]
+    },
+    "how": {
+      "budget": "3400元人民幣",
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "weather_sensitive_activity"
+      ],
+      "hard_constraints": [],
+      "soft_preferences": []
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": null,
+          "start_time": "08:00",
+          "end_time": "12:30",
+          "time": "08:00~12:30",
+          "activity": "搭乘高鐵從北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "北京火車站",
+          "route_exit_place": "上海火車站",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "辦理入住並休息",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "上海火車站",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀外灘",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "外灘",
+          "route_entry_place": "外灘",
+          "route_exit_place": "外灘",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": null,
+          "start_time": "16:00",
+          "end_time": "16:30",
+          "time": "16:00~16:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": null,
+          "start_time": "16:30",
+          "end_time": "18:00",
+          "time": "16:30~18:00",
+          "activity": "南京東路步行街購物與小吃",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "南京東路步行街",
+          "route_exit_place": "南京東路步行街",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot06",
+          "day_of_week": null,
+          "start_time": "18:00",
+          "end_time": "19:00",
+          "time": "18:00~19:00",
+          "activity": "享用上海小籠包晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "南京東路步行街",
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "11:30",
+          "time": "11:00~11:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": null,
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "time": "11:30~13:00",
+          "activity": "法租界漫步",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "法租界",
+          "route_exit_place": "法租界",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": null,
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "享用法租界特色午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "法租界",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot05",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "15:00",
+          "time": "14:00~15:00",
+          "activity": "在武康路與思南路漫步並拍照",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "武康路",
+          "route_exit_place": "思南路",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot06",
+          "day_of_week": null,
+          "start_time": "15:00",
+          "end_time": "15:30",
+          "time": "15:00~15:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot07",
+          "day_of_week": null,
+          "start_time": "16:00",
+          "end_time": "18:00",
+          "time": "16:00~18:00",
+          "activity": "咖啡館休憩",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "思南路",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot08",
+          "day_of_week": null,
+          "start_time": "18:30",
+          "end_time": "20:00",
+          "time": "18:30~20:00",
+          "activity": "夜間市中心生活體驗",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "市中心",
+          "route_exit_place": "市中心",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "time": "09:00~10:30",
+          "activity": "新天地早晨漫步與購物",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "新天地",
+          "route_exit_place": "新天地",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": null,
+          "start_time": "10:30",
+          "end_time": "11:00",
+          "time": "10:30~11:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "遊記和街頭美食午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "新天地",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot04",
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "16:30",
+          "time": "12:30~16:30",
+          "activity": "搭乘高鐵從上海返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海火車站",
+          "route_exit_place": "北京火車站",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "建議提前購買高鐵票確保座位。",
+    "攜帶陽傘和水，避免中暑。",
+    "上海地鐵卡可節省交通時間。"
+  ]
+}

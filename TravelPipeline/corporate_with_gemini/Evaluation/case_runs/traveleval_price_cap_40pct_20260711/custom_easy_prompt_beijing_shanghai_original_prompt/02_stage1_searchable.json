@@ -1,0 +1,171 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot02",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:30",
+      "end_time": "13:30",
+      "time": "12:30~13:30",
+      "slot_type": "lodging",
+      "original_activity": "辦理入住並休息",
+      "reason_for_search": "缺乏具體住宿資訊",
+      "suggested_search_query": "上海 住宿",
+      "target_terms": [],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "lodging",
+      "must_have": []
+    },
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "16:30",
+      "end_time": "18:00",
+      "time": "16:30~18:00",
+      "slot_type": "shopping",
+      "original_activity": "南京東路步行街購物與小吃",
+      "reason_for_search": "需尋找具體的美食和購物地點",
+      "suggested_search_query": "南京東路 小吃 購物",
+      "target_terms": [
+        "小吃"
+      ],
+      "location_terms": [
+        "南京東路"
+      ],
+      "intent_type": "shopping",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "time": "11:30~13:00",
+      "slot_type": "attraction",
+      "original_activity": "法租界漫步",
+      "reason_for_search": "缺乏具體漫步路線或景點",
+      "suggested_search_query": "法租界 漫步 景點",
+      "target_terms": [],
+      "location_terms": [
+        "法租界"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot04",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "13:00",
+      "end_time": "14:00",
+      "time": "13:00~14:00",
+      "slot_type": "meal",
+      "original_activity": "享用法租界特色午餐",
+      "reason_for_search": "需確認具體餐廳",
+      "suggested_search_query": "法租界 特色 午餐",
+      "target_terms": [],
+      "location_terms": [
+        "法租界"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot05",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "time": "14:00~15:00",
+      "slot_type": "attraction",
+      "original_activity": "在武康路與思南路漫步並拍照",
+      "reason_for_search": "缺乏具體的漫步路線或拍照地點",
+      "suggested_search_query": "武康路 思南路 拍照 漫步",
+      "target_terms": [],
+      "location_terms": [
+        "武康路",
+        "思南路"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot07",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "meal",
+      "original_activity": "咖啡館休憩",
+      "reason_for_search": "需尋找具體咖啡館",
+      "suggested_search_query": "法租界 咖啡館",
+      "target_terms": [],
+      "location_terms": [
+        "法租界"
+      ],
+      "intent_type": "cafe",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot08",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "18:30",
+      "end_time": "20:00",
+      "time": "18:30~20:00",
+      "slot_type": "attraction",
+      "original_activity": "夜間市中心生活體驗",
+      "reason_for_search": "需確認具體活動或地點",
+      "suggested_search_query": "上海 夜生活 活動",
+      "target_terms": [],
+      "location_terms": [
+        "市中心"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot01",
+      "day": 3,
+      "day_of_week": null,
+      "start_time": "09:00",
+      "end_time": "10:30",
+      "time": "09:00~10:30",
+      "slot_type": "shopping",
+      "original_activity": "新天地早晨漫步與購物",
+      "reason_for_search": "需尋找具體購物地點",
+      "suggested_search_query": "新天地 購物",
+      "target_terms": [],
+      "location_terms": [
+        "新天地"
+      ],
+      "intent_type": "shopping",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "time": "11:00~12:00",
+      "slot_type": "meal",
+      "original_activity": "遊記和街頭美食午餐",
+      "reason_for_search": "需確認具體美食地點",
+      "suggested_search_query": "新天地 街頭美食 午餐",
+      "target_terms": [
+        "街頭美食"
+      ],
+      "location_terms": [
+        "新天地"
+      ],
+      "intent_type": "local_food",
+      "must_have": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "uid": "T0001",
+  "tag": "easy",
+  "start_city": "北京",
+  "target_city": "上海",
+  "days": 3,
+  "people_number": 2,
+  "people_composition": {
+    "adults": 2,
+    "children": 0,
+    "seniors": 0
+  },
+  "budget": 3400,
+  "dates": "2024-11-15 to 2024-11-17",
+  "transportation": {},
+  "accommodations": {},
+  "diet": {},
+  "attractions": {},
+  "rhythm": {},
+  "nature_language": "我们两个人想从北京去上海玩3天，预算3400元。",
+  "nature_language_en": "We two people want to travel from Beijing to Shanghai for 3 days with a budget of 3400 RMB.",
+  "difficulty": "easy"
+}

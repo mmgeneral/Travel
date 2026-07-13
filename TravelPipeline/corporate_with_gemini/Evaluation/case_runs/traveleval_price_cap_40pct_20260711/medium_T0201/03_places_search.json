@@ -1,0 +1,4050 @@
+{
+  "places_search_version": "places_search_agent_v0.3",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-11-15",
+    "arrival_anchor": {
+      "name": "上海虹橋火車站",
+      "place_query": "上海虹橋火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海虹橋火車站",
+      "place_query": "上海虹橋火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": "MSG Designer Select Hotel",
+      "place_query": "MSG Designer Select Hotel",
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "上海",
+  "search_locale": {
+    "language_code": "zh-TW",
+    "region_code": "CN"
+  },
+  "candidate_slots": [
+    {
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": "saturday",
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "meal",
+      "original_activity": "淮海路商圈咖啡館休憩",
+      "reason_for_search": "需搜尋具體的咖啡館",
+      "previous_place_hint": "南京路步行街",
+      "next_place_hint": null,
+      "neighbor_hints": {
+        "source": "itinerary_neighbor_text",
+        "previous": {
+          "slot_id": "day2_slot02",
+          "activity": "南京路步行街購物",
+          "place_hint": "南京路步行街"
+        },
+        "next": {
+          "slot_id": null,
+          "activity": null,
+          "place_hint": null
+        }
+      },
+      "target_terms": [
+        "咖啡館"
+      ],
+      "location_terms": [
+        "淮海路",
+        "上海",
+        "南京路步行街附近"
+      ],
+      "intent_type": "cafe",
+      "must_have": [
+        "適合下午茶"
+      ],
+      "queries": [
+        {
+          "query": "上海 咖啡館",
+          "intent": "cafe",
+          "intent_type": "cafe",
+          "target_terms": [
+            "咖啡館"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "南京路步行街附近 咖啡館",
+          "intent": "cafe",
+          "intent_type": "cafe",
+          "target_terms": [
+            "咖啡館"
+          ],
+          "location_terms": [
+            "南京路步行街附近"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "淮海路 咖啡館",
+          "intent": "cafe",
+          "intent_type": "cafe",
+          "target_terms": [
+            "咖啡館"
+          ],
+          "location_terms": [
+            "淮海路"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "上海 下午茶 咖啡館",
+          "intent": "cafe",
+          "intent_type": "cafe",
+          "target_terms": [
+            "咖啡館"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": [
+            "適合下午茶"
+          ]
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "CN"
+      },
+      "location_bias": null,
+      "candidates": [
+        {
+          "place_id": "ChIJszPtCKZ6sjURezTjdVPpxVg",
+          "resource_name": "places/ChIJszPtCKZ6sjURezTjdVPpxVg",
+          "name": "Café del Volcán",
+          "address": "上海市徐汇区永康路80号 邮政编码: 200031",
+          "latitude": 31.210922,
+          "longitude": 121.45784700000002,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6396775390419039355&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 1,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "淮海路 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 6,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "淮海路"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 77,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": false,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 8,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 8,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 8,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 8,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 8,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 08:00 – 20:00",
+              "星期二: 08:00 – 20:00",
+              "星期三: 08:00 – 20:00",
+              "星期四: 08:00 – 20:00",
+              "星期五: 08:00 – 20:00",
+              "星期六: 10:00 – 20:00",
+              "星期日: 10:00 – 20:00"
+            ],
+            "nextOpenTime": "2026-07-12T02:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": false,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 8,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 8,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 8,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 8,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 8,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 08:00 – 20:00",
+              "星期二: 08:00 – 20:00",
+              "星期三: 08:00 – 20:00",
+              "星期四: 08:00 – 20:00",
+              "星期五: 08:00 – 20:00",
+              "星期六: 10:00 – 20:00",
+              "星期日: 10:00 – 20:00"
+            ],
+            "nextOpenTime": "2026-07-12T02:00:00Z"
+          },
+          "website_uri": "https://cn.cafevolcan.com/"
+        },
+        {
+          "place_id": "ChIJlaGrMf9vsjURW7PQlizKr1g",
+          "resource_name": "places/ChIJlaGrMf9vsjURW7PQlizKr1g",
+          "name": "Seesaw Coffee",
+          "address": "上海市静安区愚园路433号 邮政编码: 200040",
+          "latitude": 31.222373999999995,
+          "longitude": 121.4404275,
+          "primary_type": "cafe",
+          "types": [
+            "cafe",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6390548689119654747&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 2,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.82
+          },
+          "rating": 4.1,
+          "user_rating_count": 157,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 22:00",
+              "星期二: 09:00 – 22:00",
+              "星期三: 09:00 – 22:00",
+              "星期四: 09:00 – 22:00",
+              "星期五: 09:00 – 22:00",
+              "星期六: 09:00 – 22:00",
+              "星期日: 09:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 22:00",
+              "星期二: 09:00 – 22:00",
+              "星期三: 09:00 – 22:00",
+              "星期四: 09:00 – 22:00",
+              "星期五: 09:00 – 22:00",
+              "星期六: 09:00 – 22:00",
+              "星期日: 09:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "website_uri": "http://www.seesawcoffee.com/"
+        },
+        {
+          "place_id": "ChIJ8_NBmAtwsjUR4ap1SY1axeM",
+          "resource_name": "places/ChIJ8_NBmAtwsjUR4ap1SY1axeM",
+          "name": "Mietal Hands Shanghai Branch",
+          "address": "上海市黄浦区 236, 正东方向10米 邮政编码: 200041",
+          "latitude": 31.217869999999998,
+          "longitude": 121.46500999999999,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=16412623979890977505&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 3,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 下午茶 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 6,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": [
+                "適合下午茶"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.88
+          },
+          "rating": 4.4,
+          "user_rating_count": 65,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJRYvx3BVwsjURpREs0G7qZyc",
+          "resource_name": "places/ChIJRYvx3BVwsjURpREs0G7qZyc",
+          "name": "Mai Coffee",
+          "address": "上海市静安区北京西路551号 邮政编码: 200041",
+          "latitude": 31.233461999999996,
+          "longitude": 121.463332,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2839495851740238245&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 4,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 下午茶 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 1,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": [
+                "適合下午茶"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 19,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJafS2FUllsjURckryV2BBrp8",
+          "resource_name": "places/ChIJafS2FUllsjURckryV2BBrp8",
+          "name": "老麥咖啡館",
+          "address": "上海市徐汇区淮海中路1856号 邮政编码: 200031",
+          "latitude": 31.204320000000003,
+          "longitude": 121.43822000000002,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=11506205980026358386&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 5,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 下午茶 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 4,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": [
+                "適合下午茶"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 14,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJVWc1I7B6sjURo4t1VPNd6Po",
+          "resource_name": "places/ChIJVWc1I7B6sjURo4t1VPNd6Po",
+          "name": "Ops Cafe",
+          "address": "上海市徐汇区177弄1临号CN 上海市 徐汇区 太原路 177 邮政编码: 200031",
+          "latitude": 31.20561,
+          "longitude": 121.45534999999998,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=18079804003754281891&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 6,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667,
+            "rating_score": 0.9
+          },
+          "rating": 4.5,
+          "user_rating_count": 40,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJISbSH1twsjURQR1iWGb44fk",
+          "resource_name": "places/ChIJISbSH1twsjURQR1iWGb44fk",
+          "name": "南京路青年旅舍咖啡館",
+          "address": "上海市黄浦区 258, 天津路258号 邮政编码: 200001",
+          "latitude": 31.237729999999996,
+          "longitude": 121.48148,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=18005945903657131329&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "南京路步行街附近 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 1,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "南京路步行街附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 1.0
+          },
+          "rating": 5,
+          "user_rating_count": 1,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJv7xxWFtwsjURgg65bWfFsMY",
+          "resource_name": "places/ChIJv7xxWFtwsjURgg65bWfFsMY",
+          "name": "Mojo Cafe",
+          "address": "上海市黄浦区南京路南京东路505号 邮政编码: 200001",
+          "latitude": 31.235789200000003,
+          "longitude": 121.48082559999999,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14317160263423954562&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "南京路步行街附近 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 2,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "南京路步行街附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.88
+          },
+          "rating": 4.4,
+          "user_rating_count": 9,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 08:30 – 00:30",
+              "星期二: 08:30 – 00:30",
+              "星期三: 08:30 – 00:30",
+              "星期四: 08:30 – 00:30",
+              "星期五: 08:30 – 00:30",
+              "星期六: 08:30 – 00:30",
+              "星期日: 08:30 – 00:30"
+            ],
+            "nextCloseTime": "2026-07-11T16:30:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 0,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 0,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 0,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 0,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 0,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 30
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 08:30 – 00:30",
+              "星期二: 08:30 – 00:30",
+              "星期三: 08:30 – 00:30",
+              "星期四: 08:30 – 00:30",
+              "星期五: 08:30 – 00:30",
+              "星期六: 08:30 – 00:30",
+              "星期日: 08:30 – 00:30"
+            ],
+            "nextCloseTime": "2026-07-11T16:30:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJ-6rYL0FwsjUR368eo1LsF1w",
+          "resource_name": "places/ChIJ-6rYL0FwsjUR368eo1LsF1w",
+          "name": "上島咖啡",
+          "address": "上海市黄浦区南京路步行街6FPC+VR7 邮政编码: 200003",
+          "latitude": 31.237164099999998,
+          "longitude": 121.47206039999999,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6636032415621885919&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "南京路步行街附近 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 3,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "南京路步行街附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.54
+          },
+          "rating": 2.7,
+          "user_rating_count": 3,
+          "business_status": "OPERATIONAL",
+          "website_uri": "http://www.ubccn.com/"
+        },
+        {
+          "place_id": "ChIJfQYrUOmMtTURU4-M02mFdiA",
+          "resource_name": "places/ChIJfQYrUOmMtTURU4-M02mFdiA",
+          "name": "Maan Coffee",
+          "address": "江苏省南京市玄武区南京１９１２街太平北路72号 邮政编码: 210002",
+          "latitude": 32.045943,
+          "longitude": 118.79629899999999,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2339203746032815955&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "南京路步行街附近 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 4,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "南京路步行街附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.98
+          },
+          "rating": 4.9,
+          "user_rating_count": 8,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 8,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 08:30 – 22:00",
+              "星期二: 08:30 – 22:00",
+              "星期三: 08:30 – 22:00",
+              "星期四: 08:30 – 22:00",
+              "星期五: 08:30 – 22:00",
+              "星期六: 08:30 – 22:00",
+              "星期日: 08:30 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 8,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 08:30 – 22:00",
+              "星期二: 08:30 – 22:00",
+              "星期三: 08:30 – 22:00",
+              "星期四: 08:30 – 22:00",
+              "星期五: 08:30 – 22:00",
+              "星期六: 08:30 – 22:00",
+              "星期日: 08:30 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "website_uri": "https://www.zhihu.com/question/42882720"
+        },
+        {
+          "place_id": "ChIJ0cEMq0RwsjURKOd1_hUGriI",
+          "resource_name": "places/ChIJ0cEMq0RwsjURKOd1_hUGriI",
+          "name": "觀景咖啡餐廳",
+          "address": "上海市黄浦区南京路步行街558号 邮政编码: 200001",
+          "latitude": 31.235879,
+          "longitude": 121.47972499999999,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2498941534770423592&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "南京路步行街附近 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 5,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "南京路步行街附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2,
+            "rating_score": 0.8
+          },
+          "rating": 4,
+          "user_rating_count": 1,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 22:00",
+              "星期二: 09:00 – 22:00",
+              "星期三: 09:00 – 22:00",
+              "星期四: 09:00 – 22:00",
+              "星期五: 09:00 – 22:00",
+              "星期六: 09:00 – 22:00",
+              "星期日: 09:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 22:00",
+              "星期二: 09:00 – 22:00",
+              "星期三: 09:00 – 22:00",
+              "星期四: 09:00 – 22:00",
+              "星期五: 09:00 – 22:00",
+              "星期六: 09:00 – 22:00",
+              "星期日: 09:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJxWHLxGpwsjUR7XQFZdXmsZY",
+          "resource_name": "places/ChIJxWHLxGpwsjUR7XQFZdXmsZY",
+          "name": "Luckin Coffee",
+          "address": "上海市黄浦区 388, 南京西路388号1层仙乐斯广场 邮政编码: 200003",
+          "latitude": 31.231389999999998,
+          "longitude": 121.46942999999999,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=10858713980764255469&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "南京路步行街附近 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 6,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "南京路步行街附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667,
+            "rating_score": 0.88
+          },
+          "rating": 4.4,
+          "user_rating_count": 28,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJ68opVE1lsjUR8I0I-PhVYyY",
+          "resource_name": "places/ChIJ68opVE1lsjUR8I0I-PhVYyY",
+          "name": "La Casbah Coffee",
+          "address": "上海市徐汇区淮海中路1554号 邮政编码: 200031",
+          "latitude": 31.208793000000004,
+          "longitude": 121.44527900000001,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2766149123937177072&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "淮海路 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 1,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "淮海路"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 下午茶 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 5,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": [
+                "適合下午茶"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 0.98
+          },
+          "rating": 4.9,
+          "user_rating_count": 7,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJyW3bT616sjURP53uao6llHA",
+          "resource_name": "places/ChIJyW3bT616sjURP53uao6llHA",
+          "name": "la casbah咖啡店淮海店",
+          "address": "上海市徐汇区淮海中路1554号 邮政编码: 200031",
+          "latitude": 31.209402,
+          "longitude": 121.44621699999998,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=8112290859899067711&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "淮海路 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 2,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "淮海路"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.6
+          },
+          "rating": 3,
+          "user_rating_count": 1,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJOSE03W1wsjURIJtrytox9bU",
+          "resource_name": "places/ChIJOSE03W1wsjURIJtrytox9bU",
+          "name": "Little Bean",
+          "address": "上海市黄浦区CN 上海市 黄浦区 淮海中路 300 300号地下2层 邮政编码: 200021",
+          "latitude": 31.2233,
+          "longitude": 121.47349000000001,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=13111440705927748384&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "淮海路 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 3,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "淮海路"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.8
+          },
+          "rating": 4,
+          "user_rating_count": 1,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJkeLxR01lsjURgO-Bfv7RpMc",
+          "resource_name": "places/ChIJkeLxR01lsjURgO-Bfv7RpMc",
+          "name": "Starbucks Coffee",
+          "address": "上海市徐汇区 1555, 淮海中路1555号 邮政编码: 200031",
+          "latitude": 31.207849999999997,
+          "longitude": 121.44484000000001,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14385854000702549888&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "淮海路 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 4,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "淮海路"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          },
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJC_JaQGZwsjURiWEP0JuaTCc",
+          "resource_name": "places/ChIJC_JaQGZwsjURiWEP0JuaTCc",
+          "name": "星巴克咖啡淮海東路店",
+          "address": "上海市黄浦区 68, 淮海东路68号101单元 邮政编码: 200021",
+          "latitude": 31.22632,
+          "longitude": 121.48145000000001,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2831808259710476681&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "淮海路 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 5,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "淮海路"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          },
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJzVTsAUNwsjURtCDSBd1yme0",
+          "resource_name": "places/ChIJzVTsAUNwsjURtCDSBd1yme0",
+          "name": "Resume Coffee",
+          "address": "上海市黄浦区汉口路692号 邮政编码: 200001",
+          "latitude": 31.23381,
+          "longitude": 121.47734,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17120841752036647092&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 下午茶 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 2,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": [
+                "適合下午茶"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 60,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJxSwHFQBwsjURl42b0sazRu8",
+          "resource_name": "places/ChIJxSwHFQBwsjURl42b0sazRu8",
+          "name": "realshanghaicafebar真上海咖啡馆",
+          "address": "上海市静安区愚园路384号 邮政编码: 200040",
+          "latitude": 31.2228965,
+          "longitude": 121.44109150000001,
+          "primary_type": "coffee_shop",
+          "types": [
+            "coffee_shop",
+            "cafe",
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17241665889952828823&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 下午茶 咖啡館",
+              "intent": "cafe",
+              "intent_type": "cafe",
+              "rank": 3,
+              "target_terms": [
+                "咖啡館"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": [
+                "適合下午茶"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 4,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 22:00",
+              "星期二: 09:00 – 22:00",
+              "星期三: 09:00 – 22:00",
+              "星期四: 09:00 – 22:00",
+              "星期五: 09:00 – 22:00",
+              "星期六: 09:00 – 22:00",
+              "星期日: 09:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 22:00",
+              "星期二: 09:00 – 22:00",
+              "星期三: 09:00 – 22:00",
+              "星期四: 09:00 – 22:00",
+              "星期五: 09:00 – 22:00",
+              "星期六: 09:00 – 22:00",
+              "星期日: 09:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": "sunday",
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "meal",
+      "original_activity": "享用上海特色晚餐",
+      "reason_for_search": "缺乏具體餐廳資訊",
+      "previous_place_hint": "豫園",
+      "next_place_hint": null,
+      "neighbor_hints": {
+        "source": "itinerary_neighbor_text",
+        "previous": {
+          "slot_id": "day3_slot02",
+          "activity": "豫園城隍廟一帶遊覽",
+          "place_hint": "豫園"
+        },
+        "next": {
+          "slot_id": null,
+          "activity": null,
+          "place_hint": null
+        }
+      },
+      "target_terms": [
+        "特色晚餐"
+      ],
+      "location_terms": [
+        "上海",
+        "豫園附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "queries": [
+        {
+          "query": "上海 特色晚餐",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "特色晚餐"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "豫園附近 特色晚餐",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "特色晚餐"
+          ],
+          "location_terms": [
+            "豫園附近"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "上海 晚餐",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "特色晚餐"
+          ],
+          "location_terms": [
+            "上海"
+          ],
+          "must_have": []
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "CN"
+      },
+      "location_bias": null,
+      "candidates": [
+        {
+          "place_id": "ChIJvyekmVhwsjURATsh25Jn61Y",
+          "resource_name": "places/ChIJvyekmVhwsjURATsh25Jn61Y",
+          "name": "Mercato",
+          "address": "上海市黄浦区外滩3号外滩三号6层 CN 上海市 黄浦区 中山东一路 3 邮政编码: 200002",
+          "latitude": 31.23417,
+          "longitude": 121.49076000000001,
+          "primary_type": "western_restaurant",
+          "types": [
+            "western_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6263213587228080897&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 97,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJdZ_EJBBwsjUR1fNZINGcFdA",
+          "resource_name": "places/ChIJdZ_EJBBwsjUR1fNZINGcFdA",
+          "name": "弄堂麵館",
+          "address": "上海市静安区威海路665号 邮政编码: 200041",
+          "latitude": 31.226445,
+          "longitude": 121.45895800000001,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14994062956404798421&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 66,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJI86jIGZwsjUR_lm9vV4h_jk",
+          "resource_name": "places/ChIJI86jIGZwsjUR_lm9vV4h_jk",
+          "name": "紅盔甲人廣店",
+          "address": "上海市黄浦区2层 CN 上海市 黄浦区 金陵东路 500 500号亚龙国际广场 邮政编码: 200021",
+          "latitude": 31.22686,
+          "longitude": 121.47991999999999,
+          "primary_type": "chinese_restaurant",
+          "types": [
+            "chinese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4178814195040344574&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 40,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJ32n_8XFwsjURQ6GJm3y0OSE",
+          "resource_name": "places/ChIJ32n_8XFwsjURQ6GJm3y0OSE",
+          "name": "Calix",
+          "address": "上海市黄浦区181弄10~12号CN 上海市 黄浦区 太仓路 181 邮政编码: 200021",
+          "latitude": 31.22058,
+          "longitude": 121.47488000000001,
+          "primary_type": "western_restaurant",
+          "types": [
+            "western_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2394143124202561859&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "上海 晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 34,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJi98QgeNxsjURTTNX7H88eVM",
+          "resource_name": "places/ChIJi98QgeNxsjURTTNX7H88eVM",
+          "name": "Ministry of Crab",
+          "address": "上海市黄浦区人民广场人民公园南京西路231号 邮政编码: 200003",
+          "latitude": 31.231353,
+          "longitude": 121.47184279999999,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6014905297453658957&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 23,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 10:00 – 22:00",
+              "星期二: 10:00 – 22:00",
+              "星期三: 10:00 – 22:00",
+              "星期四: 10:00 – 22:00",
+              "星期五: 10:00 – 22:00",
+              "星期六: 10:00 – 22:00",
+              "星期日: 10:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 22,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 10,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 22,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 10:00 – 22:00",
+              "星期二: 10:00 – 22:00",
+              "星期三: 10:00 – 22:00",
+              "星期四: 10:00 – 22:00",
+              "星期五: 10:00 – 22:00",
+              "星期六: 10:00 – 22:00",
+              "星期日: 10:00 – 22:00"
+            ],
+            "nextCloseTime": "2026-07-11T14:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJibx_8nFwsjURuhZxQ67sPAA",
+          "resource_name": "places/ChIJibx_8nFwsjURuhZxQ67sPAA",
+          "name": "The Refinery Gastro Bar",
+          "address": "上海市黄浦区CN 上海市 黄浦区 太仓路 181 181弄10~12号01A 邮政编码: 200021",
+          "latitude": 31.220419999999997,
+          "longitude": 121.47489,
+          "primary_type": "western_restaurant",
+          "types": [
+            "western_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17148731802588858&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667,
+            "rating_score": 0.9
+          },
+          "rating": 4.5,
+          "user_rating_count": 126,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJzQq5JfdvsjURMmg1lRNqOTQ",
+          "resource_name": "places/ChIJzQq5JfdvsjURMmg1lRNqOTQ",
+          "name": "豫中園老城隍廟特色小吃",
+          "address": "上海市静安区曹家渡万航渡路725号 邮政编码: 200042",
+          "latitude": 31.2273052,
+          "longitude": 121.4317832,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=3763155595984988210&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "豫園附近 特色晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "豫園附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 1.0
+          },
+          "rating": 5,
+          "user_rating_count": 1,
+          "business_status": "OPERATIONAL"
+        },
+        {
+          "place_id": "ChIJZSpH9VlwsjUR7zaGKzQLiGE",
+          "resource_name": "places/ChIJZSpH9VlwsjUR7zaGKzQLiGE",
+          "name": "Hakkasan",
+          "address": "上海市黄浦区外滩中山东一路18号 邮政编码: 200125",
+          "latitude": 31.2383985,
+          "longitude": 121.48969169999998,
+          "primary_type": "cantonese_restaurant",
+          "types": [
+            "cantonese_restaurant",
+            "chinese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=7027879537208080111&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.88
+          },
+          "rating": 4.4,
+          "user_rating_count": 261,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 23,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 17:00 – 23:00",
+              "星期二: 17:00 – 23:00",
+              "星期三: 17:00 – 23:00",
+              "星期四: 17:00 – 23:00",
+              "星期五: 11:00 – 14:30, 17:00 – 23:00",
+              "星期六: 11:00 – 14:30, 17:00 – 23:00",
+              "星期日: 11:00 – 14:30, 17:00 – 23:00"
+            ],
+            "nextCloseTime": "2026-07-11T15:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 23,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 23,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 23,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 23,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 23,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 23,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 17:00 – 23:00",
+              "星期二: 17:00 – 23:00",
+              "星期三: 17:00 – 23:00",
+              "星期四: 17:00 – 23:00",
+              "星期五: 11:00 – 14:30, 17:00 – 23:00",
+              "星期六: 11:00 – 14:30, 17:00 – 23:00",
+              "星期日: 11:00 – 14:30, 17:00 – 23:00"
+            ],
+            "nextCloseTime": "2026-07-11T15:00:00Z"
+          },
+          "website_uri": "https://hakkasan.com/shanghai/"
+        },
+        {
+          "place_id": "ChIJtQV7wQF3bjQR-cSpwdNJMEU",
+          "resource_name": "places/ChIJtQV7wQF3bjQR-cSpwdNJMEU",
+          "name": "台南夜上海",
+          "address": "70055台灣臺南市中西區府前里尊王路58號",
+          "latitude": 22.9916375,
+          "longitude": 120.19651189999998,
+          "primary_type": "chinese_restaurant",
+          "types": [
+            "chinese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4985565961335194873&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 355,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 13
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 14
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 15
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 16
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 17
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 11
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 12
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 18:00 – 06:00",
+              "星期二: 18:00 – 06:00",
+              "星期三: 18:00 – 06:00",
+              "星期四: 18:00 – 06:00",
+              "星期五: 18:00 – 06:00",
+              "星期六: 18:00 – 06:00",
+              "星期日: 18:00 – 06:00"
+            ],
+            "nextCloseTime": "2026-07-11T22:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 6,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 6,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 6,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 6,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 6,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 6,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 6,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 18:00 – 06:00",
+              "星期二: 18:00 – 06:00",
+              "星期三: 18:00 – 06:00",
+              "星期四: 18:00 – 06:00",
+              "星期五: 18:00 – 06:00",
+              "星期六: 18:00 – 06:00",
+              "星期日: 18:00 – 06:00"
+            ],
+            "nextCloseTime": "2026-07-11T22:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJET8FaVBlsjURRQyoCBVCJx0",
+          "resource_name": "places/ChIJET8FaVBlsjURRQyoCBVCJx0",
+          "name": "ＳＥＮＳＯ意大利餐廳",
+          "address": "上海市长宁区1038弄161号1楼 CN 上海市 长宁区 华山路 1038 邮政编码: 200031",
+          "latitude": 31.21339,
+          "longitude": 121.4354,
+          "primary_type": "western_restaurant",
+          "types": [
+            "western_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2100720409298603077&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "上海 晚餐",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "特色晚餐"
+              ],
+              "location_terms": [
+                "上海"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 30,
+          "business_status": "OPERATIONAL"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

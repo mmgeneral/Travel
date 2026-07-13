@@ -1,0 +1,111 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot08",
+      "day": 1,
+      "day_of_week": "saturday",
+      "start_time": "18:30",
+      "end_time": "20:00",
+      "time": "18:30~20:00",
+      "slot_type": "meal",
+      "original_activity": "享用名古屋特色美食",
+      "reason_for_search": "需要找到具體的餐廳",
+      "suggested_search_query": "名古屋 特色 美食 餐廳",
+      "target_terms": [
+        "美食",
+        "餐廳"
+      ],
+      "location_terms": [
+        "名古屋"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "day_of_week": "sunday",
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用名古屋當地午餐",
+      "reason_for_search": "需要找到具體的餐廳",
+      "suggested_search_query": "名古屋 當地 午餐 餐廳",
+      "target_terms": [
+        "午餐",
+        "餐廳"
+      ],
+      "location_terms": [
+        "名古屋"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot06",
+      "day": 2,
+      "day_of_week": "sunday",
+      "start_time": "16:30",
+      "end_time": "18:00",
+      "time": "16:30~18:00",
+      "slot_type": "meal",
+      "original_activity": "在榮區享用晚餐",
+      "reason_for_search": "需要找到具體的餐廳",
+      "suggested_search_query": "榮區 晚餐 餐廳",
+      "target_terms": [
+        "晚餐",
+        "餐廳"
+      ],
+      "location_terms": [
+        "名古屋",
+        "榮"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot01",
+      "day": 3,
+      "day_of_week": "monday",
+      "start_time": "10:00",
+      "end_time": "12:00",
+      "time": "10:00~12:00",
+      "slot_type": "activity",
+      "original_activity": "自由活動於名古屋市區",
+      "reason_for_search": "需要找出具體活動或景點",
+      "suggested_search_query": "名古屋 自由活動 景點",
+      "target_terms": [
+        "活動",
+        "景點"
+      ],
+      "location_terms": [
+        "名古屋"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot02",
+      "day": 3,
+      "day_of_week": "monday",
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "午餐於機場附近",
+      "reason_for_search": "需要找到機場附近的餐廳",
+      "suggested_search_query": "機場附近 午餐 餐廳",
+      "target_terms": [
+        "午餐",
+        "餐廳"
+      ],
+      "location_terms": [
+        "名古屋",
+        "機場"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    }
+  ]
+}

@@ -1,0 +1,2905 @@
+{
+  "instruction": "Use only the provided place and lodging candidates. Decide whether each fuzzy slot can be replaced directly, needs minor itinerary reordering, or requires a larger itinerary rewrite. Also decide lodging for each night. Do not invent new places or hotels.",
+  "decision_schema": {
+    "fuzzy_slot_decision": "single_replace | minor_adjustment | major_rebuild",
+    "lodging_decision": "single_hotel | split_hotels"
+  },
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "外灘",
+        "法租界",
+        "南京東路"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 3,
+      "duration_nights": 2,
+      "travel_start_date": null,
+      "travel_end_date": null,
+      "season_or_month": null,
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "外灘",
+        "上海博物館"
+      ],
+      "desired_experiences": [
+        "城市風光",
+        "歷史文化",
+        "美食"
+      ],
+      "activity_types": [
+        "culture",
+        "local_food",
+        "shopping"
+      ],
+      "food_preferences": [],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "城市觀光與文化體驗",
+      "success_criteria": [
+        "預算控制",
+        "參觀主要城市景點",
+        "享用當地美食"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3
+      ]
+    },
+    "how": {
+      "budget": "3400元人民幣",
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "weather_sensitive_activity"
+      ],
+      "hard_constraints": [],
+      "soft_preferences": []
+    }
+  },
+  "original_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": null,
+          "start_time": "08:00",
+          "end_time": "12:30",
+          "time": "08:00~12:30",
+          "activity": "搭乘高鐵從北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "北京火車站",
+          "route_exit_place": "上海火車站",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "辦理入住並休息",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "上海火車站",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀外灘",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "外灘",
+          "route_entry_place": "外灘",
+          "route_exit_place": "外灘",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": null,
+          "start_time": "16:00",
+          "end_time": "16:30",
+          "time": "16:00~16:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": null,
+          "start_time": "16:30",
+          "end_time": "18:00",
+          "time": "16:30~18:00",
+          "activity": "南京東路步行街購物與小吃",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "南京東路步行街",
+          "route_exit_place": "南京東路步行街",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot06",
+          "day_of_week": null,
+          "start_time": "18:00",
+          "end_time": "19:00",
+          "time": "18:00~19:00",
+          "activity": "享用上海小籠包晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "南京東路步行街",
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "11:30",
+          "time": "11:00~11:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": null,
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "time": "11:30~13:00",
+          "activity": "法租界漫步",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "法租界",
+          "route_exit_place": "法租界",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": null,
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "享用法租界特色午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "法租界",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot05",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "15:00",
+          "time": "14:00~15:00",
+          "activity": "在武康路與思南路漫步並拍照",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "武康路",
+          "route_exit_place": "思南路",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot06",
+          "day_of_week": null,
+          "start_time": "15:00",
+          "end_time": "15:30",
+          "time": "15:00~15:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot07",
+          "day_of_week": null,
+          "start_time": "16:00",
+          "end_time": "18:00",
+          "time": "16:00~18:00",
+          "activity": "咖啡館休憩",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "思南路",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot08",
+          "day_of_week": null,
+          "start_time": "18:30",
+          "end_time": "20:00",
+          "time": "18:30~20:00",
+          "activity": "夜間市中心生活體驗",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "市中心",
+          "route_exit_place": "市中心",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "time": "09:00~10:30",
+          "activity": "新天地早晨漫步與購物",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "新天地",
+          "route_exit_place": "新天地",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": null,
+          "start_time": "10:30",
+          "end_time": "11:00",
+          "time": "10:30~11:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "遊記和街頭美食午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "新天地",
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot04",
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "16:30",
+          "time": "12:30~16:30",
+          "activity": "搭乘高鐵從上海返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海火車站",
+          "route_exit_place": "北京火車站",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot02",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:30",
+      "end_time": "13:30",
+      "time": "12:30~13:30",
+      "slot_type": "lodging",
+      "original_activity": "辦理入住並休息",
+      "reason_for_search": "缺乏具體住宿資訊",
+      "target_terms": [],
+      "location_terms": [
+        "上海",
+        "上海火車站附近",
+        "外灘附近"
+      ],
+      "intent_type": "lodging",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJ8-VLqlBwsjUR7Fjsy4_c6e8",
+          "name": "上海子魚居南京東路店",
+          "address": "中國上海市黃浦區 邮政编码: 200002",
+          "latitude": 31.239921000000002,
+          "longitude": 121.48532999999998,
+          "google_maps_uri": "https://maps.google.com/?cid=17287591154798057708&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 1245,
+          "score": 0.3274,
+          "score_breakdown": {
+            "total": 0.3274,
+            "relevance": 0.1768,
+            "quality": 0.5981,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6295
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 住宿",
+            "外灘附近 住宿"
+          ],
+          "why": "符合「上海」；Google 評分 4.2，1245 則評論；由查詢「上海 住宿」命中",
+          "warnings": [
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3274
+        },
+        {
+          "place_id": "ChIJEQf8Xf9wsjUR_ZKr2OupaKA",
+          "name": "外灘茂悅大酒店",
+          "address": "上海市虹口区黄浦路199号 邮政编码: 200120",
+          "latitude": 31.245349400000002,
+          "longitude": 121.49306600000001,
+          "google_maps_uri": "https://maps.google.com/?cid=11558675274063909629&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 465,
+          "score": 0.2539,
+          "score_breakdown": {
+            "total": 0.2539,
+            "relevance": 0.1734,
+            "quality": 0.3049,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.628
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "外灘附近 住宿"
+          ],
+          "why": "符合「外灘」；Google 評分 4.1，465 則評論；由查詢「外灘附近 住宿」命中",
+          "warnings": [
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2539
+        },
+        {
+          "place_id": "ChIJfyOA1iVwsjURBa83b5IojAc",
+          "name": "和頤至尚酒店（上海火車站店）",
+          "address": "上海市静安区天目西路511号102西 511 邮政编码: 200071",
+          "latitude": 31.2462178,
+          "longitude": 121.4515169,
+          "google_maps_uri": "https://maps.google.com/?cid=543854264401243909&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 38,
+          "score": 0.2446,
+          "score_breakdown": {
+            "total": 0.2446,
+            "relevance": 0.1548,
+            "quality": 0.0328,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6196
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 住宿"
+          ],
+          "why": "符合「上海、上海火車站」；Google 評分 4.4，38 則評論；由查詢「上海火車站附近 住宿」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2446
+        },
+        {
+          "place_id": "ChIJxTK7t0JwsjURAfxNvnrltE8",
+          "name": "Campanile Shanghai Bund Hotel",
+          "address": "上海市黄浦区福建南路33号 邮政编码: 200002",
+          "latitude": 31.2302304,
+          "longitude": 121.48379310000001,
+          "google_maps_uri": "https://maps.google.com/?cid=5743467740145777665&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 533,
+          "score": 0.2368,
+          "score_breakdown": {
+            "total": 0.2368,
+            "relevance": 0.1268,
+            "quality": 0.3553,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.607
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 住宿"
+          ],
+          "why": "符合「上海」；Google 評分 4.3，533 則評論；由查詢「上海 住宿」命中",
+          "warnings": [
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2368
+        },
+        {
+          "place_id": "ChIJpVMruFZwsjURGW4sRnBoKwk",
+          "name": "上海亞龍大酒店",
+          "address": "上海市黄浦区外滩上海四川北路525号 邮政编码: 200080",
+          "latitude": 31.243035999999996,
+          "longitude": 121.48634100000001,
+          "google_maps_uri": "https://maps.google.com/?cid=660736601762852377&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.2301,
+          "score_breakdown": {
+            "total": 0.2301,
+            "relevance": 0.1268,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.607
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "外灘附近 住宿"
+          ],
+          "why": "符合「上海」；由查詢「外灘附近 住宿」命中",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2301
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "16:30",
+      "end_time": "18:00",
+      "time": "16:30~18:00",
+      "slot_type": "shopping",
+      "original_activity": "南京東路步行街購物與小吃",
+      "reason_for_search": "需尋找具體的美食和購物地點",
+      "target_terms": [
+        "小吃"
+      ],
+      "location_terms": [
+        "南京東路",
+        "上海",
+        "南京東路附近",
+        "外灘附近"
+      ],
+      "intent_type": "shopping",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJoeG-BpSrQjQRxAW5R4IQT6g",
+          "name": "東引小吃店（推薦深夜美食 台北宵夜 牛肉麵 捷運南京三民站",
+          "address": "105台灣臺北市松山區南京東路五段291巷20弄3-2號",
+          "latitude": 25.0525099,
+          "longitude": 121.5658905,
+          "google_maps_uri": "https://maps.google.com/?cid=12127930473267135940&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 6490,
+          "score": 0.6913,
+          "score_breakdown": {
+            "total": 0.6913,
+            "relevance": 0.735,
+            "quality": 0.8188,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8808
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "南京東路附近 小吃"
+          ],
+          "why": "符合「小吃、南京東路」；Google 評分 4.1，6490 則評論；由查詢「南京東路附近 小吃」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.8513
+        },
+        {
+          "place_id": "ChIJYfQySkdwsjURExO_It75d-0",
+          "name": "南翔小籠上海小吃",
+          "address": "上海市黄浦区新闸路200号 邮政编码: 200001",
+          "latitude": 31.2386309,
+          "longitude": 121.46972219999999,
+          "google_maps_uri": "https://maps.google.com/?cid=17111420041678492435&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 29,
+          "score": 0.5445,
+          "score_breakdown": {
+            "total": 0.5445,
+            "relevance": 0.735,
+            "quality": 0.0252,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8808
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 小吃"
+          ],
+          "why": "符合「小吃、上海」；Google 評分 4.4，29 則評論；由查詢「上海 小吃」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.5445
+        },
+        {
+          "place_id": "ChIJGRhnfkNwsjURGKqqL8OaDfA",
+          "name": "萊萊小吃湯包館",
+          "address": "上海市黄浦区天津路504号 邮政编码: 200001",
+          "latitude": 31.236185000000003,
+          "longitude": 121.47731299999998,
+          "google_maps_uri": "https://maps.google.com/?cid=17297651906908957208&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 460,
+          "score": 0.5402,
+          "score_breakdown": {
+            "total": 0.5402,
+            "relevance": 0.7117,
+            "quality": 0.3245,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8703
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 小吃"
+          ],
+          "why": "符合「小吃」；Google 評分 4.4，460 則評論；由查詢「上海 小吃」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.5402
+        },
+        {
+          "place_id": "ChIJgRJ9DKWrQjQR1xtR4zZshU4",
+          "name": "老媽米粉湯/捷運南京三民站傳統小吃/南京公寓市場美食/古早味必吃三十年老店/早餐午餐晚餐",
+          "address": "105台灣臺北市松山區安平里南京東路五段291巷29弄1號",
+          "latitude": 25.0529113,
+          "longitude": 121.5661994,
+          "google_maps_uri": "https://maps.google.com/?cid=5658047489858673623&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4,
+          "user_rating_count": 278,
+          "score": 0.5109,
+          "score_breakdown": {
+            "total": 0.5109,
+            "relevance": 0.7233,
+            "quality": 0.1942,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8755
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "南京東路附近 小吃"
+          ],
+          "why": "符合「小吃」；Google 評分 4，278 則評論；由查詢「南京東路附近 小吃」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.5109
+        },
+        {
+          "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+          "name": "Nanjing Road Pedestrian Street",
+          "address": "上海市黄浦区南京路步行街6FMF+VXJ 邮政编码: 200001",
+          "latitude": 31.234720999999993,
+          "longitude": 121.47489800000001,
+          "google_maps_uri": "https://maps.google.com/?cid=2673353610482772141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 2160,
+          "score": 0.37,
+          "score_breakdown": {
+            "total": 0.37,
+            "relevance": 0.2117,
+            "quality": 0.8139,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6453
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "南京東路 購物 小吃"
+          ],
+          "why": "符合「南京東路、上海」；Google 評分 4.6，2160 則評論；由查詢「南京東路 購物 小吃」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.37
+        }
+      ]
+    },
+    {
+      "slot_index": 3,
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "11:30",
+      "end_time": "13:00",
+      "time": "11:30~13:00",
+      "slot_type": "attraction",
+      "original_activity": "法租界漫步",
+      "reason_for_search": "缺乏具體漫步路線或景點",
+      "target_terms": [],
+      "location_terms": [
+        "法租界",
+        "上海",
+        "上海博物館附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJnYKyU596sjURiclNuZoMC94",
+          "name": "法租界上海製針總場舊址",
+          "address": "上海市黄浦区打浦桥泰康路6F59+5H5 邮政编码: 200023",
+          "latitude": 31.207897,
+          "longitude": 121.46899699999997,
+          "google_maps_uri": "https://maps.google.com/?cid=15999895959837198729&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 44,
+          "score": 0.276,
+          "score_breakdown": {
+            "total": 0.276,
+            "relevance": 0.28,
+            "quality": 0.0396,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 法租界",
+            "上海博物館附近 法租界",
+            "法租界 周邊景點"
+          ],
+          "why": "符合「法租界、上海」；Google 評分 4.6，44 則評論；由查詢「上海 法租界」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.276
+        },
+        {
+          "place_id": "ChIJ3-01cZ96sjURfiGJgpCslF0",
+          "name": "法租界會審公廨舊址",
+          "address": "上海市卢湾区打浦桥建国中路6F59+WQG 邮政编码: 200023",
+          "latitude": 31.209812200000002,
+          "longitude": 121.4694576,
+          "google_maps_uri": "https://maps.google.com/?cid=6743204278745768318&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 12,
+          "score": 0.2324,
+          "score_breakdown": {
+            "total": 0.2324,
+            "relevance": 0.246,
+            "quality": 0.01,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.5,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6607
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 法租界"
+          ],
+          "why": "符合「法租界」；Google 評分 4.2，12 則評論；由查詢「上海 法租界」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2324
+        },
+        {
+          "place_id": "ChIJFezOP0llsjURgZUzT-yILHw",
+          "name": "武康大樓",
+          "address": "上海市徐汇区淮海中路1850号 邮政编码: 200031",
+          "latitude": 31.204479999999997,
+          "longitude": 121.438326,
+          "google_maps_uri": "https://maps.google.com/?cid=8947677108200772993&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 657,
+          "score": 0.2244,
+          "score_breakdown": {
+            "total": 0.2244,
+            "relevance": 0.1153,
+            "quality": 0.4238,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6019
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 法租界"
+          ],
+          "why": "符合「上海」；Google 評分 4.4，657 則評論；由查詢「上海 法租界」命中",
+          "warnings": [
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2244
+        },
+        {
+          "place_id": "ChIJdfGbep96sjURoNKgubZXSnI",
+          "name": "法租界警務處暨中央捕房舊址",
+          "address": "中國上海市黃浦區 邮政编码: 200023",
+          "latitude": 31.209678999999994,
+          "longitude": 121.469129,
+          "google_maps_uri": "https://maps.google.com/?cid=8235491310910362272&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 3,
+          "user_rating_count": 1,
+          "score": 0.2223,
+          "score_breakdown": {
+            "total": 0.2223,
+            "relevance": 0.246,
+            "quality": 0.0006,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6607
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 法租界"
+          ],
+          "why": "符合「法租界」；Google 評分 3，1 則評論；由查詢「上海 法租界」命中",
+          "warnings": [
+            "評分低於 4.0",
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2223
+        },
+        {
+          "place_id": "ChIJgV6AFUARVAUR43Yj3dA3Gh0",
+          "name": "上海法租界酒吧式花园洋房",
+          "address": "Shanghai, Xuhui District, 上海徐汇区永嘉路 邮政编码: 200000",
+          "latitude": 31.2085029,
+          "longitude": 121.45689060000001,
+          "google_maps_uri": "https://maps.google.com/?cid=2097049946697201379&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4,
+          "user_rating_count": 3,
+          "score": 0.2182,
+          "score_breakdown": {
+            "total": 0.2182,
+            "relevance": 0.246,
+            "quality": 0.0024,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.25,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6607
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 法租界"
+          ],
+          "why": "符合「法租界、上海」；Google 評分 4，3 則評論；由查詢「上海 法租界」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2182
+        }
+      ]
+    },
+    {
+      "slot_index": 4,
+      "slot_id": "day2_slot04",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "13:00",
+      "end_time": "14:00",
+      "time": "13:00~14:00",
+      "slot_type": "meal",
+      "original_activity": "享用法租界特色午餐",
+      "reason_for_search": "需確認具體餐廳",
+      "target_terms": [
+        "特色午餐",
+        "餐廳"
+      ],
+      "location_terms": [
+        "法租界",
+        "上海博物館附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJPWUSbWlwsjURjYNLkOXNZGw",
+          "name": "上海博物館餐廳",
+          "address": "上海市黄浦区人民广场人民大道201号 邮政编码: 200003",
+          "latitude": 31.228561499999998,
+          "longitude": 121.4760239,
+          "google_maps_uri": "https://maps.google.com/?cid=7810594039619355533&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 6,
+          "score": 0.4044,
+          "score_breakdown": {
+            "total": 0.4044,
+            "relevance": 0.5281,
+            "quality": 0.005,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7876
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海博物館附近 法租界 特色午餐"
+          ],
+          "why": "符合「餐廳、上海博物館」；Google 評分 4.2，6 則評論；由查詢「上海博物館附近 法租界 特色午餐」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.5644
+        },
+        {
+          "place_id": "ChIJwb83l1hwsjURvOkovWQR1cc",
+          "name": "法國餐廳",
+          "address": "上海市黄浦区外滩中山东一路3号外滩号三号行政办公楼 4F 邮政编码: 200002",
+          "latitude": 31.234108999999997,
+          "longitude": 121.490816,
+          "google_maps_uri": "https://maps.google.com/?cid=14399434507955005884&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 42,
+          "score": 0.3844,
+          "score_breakdown": {
+            "total": 0.3844,
+            "relevance": 0.4949,
+            "quality": 0.0354,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7727
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 法租界 餐廳"
+          ],
+          "why": "符合「餐廳」；Google 評分 4.3，42 則評論；由查詢「上海 法租界 餐廳」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.3844
+        }
+      ]
+    },
+    {
+      "slot_index": 5,
+      "slot_id": "day2_slot05",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "15:00",
+      "time": "14:00~15:00",
+      "slot_type": "attraction",
+      "original_activity": "在武康路與思南路漫步並拍照",
+      "reason_for_search": "缺乏具體的漫步路線或拍照地點",
+      "target_terms": [
+        "拍照",
+        "漫步"
+      ],
+      "location_terms": [
+        "武康路",
+        "思南路",
+        "上海",
+        "武康路附近",
+        "思南路附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJ2-UI76F6sjURj_HAeG5PMhE",
+          "name": "Tianzifang",
+          "address": "上海市黄浦区泰康路210弄号 邮政编码: 200023",
+          "latitude": 31.208811999999995,
+          "longitude": 121.468898,
+          "google_maps_uri": "https://maps.google.com/?cid=1239140183371215247&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 2011,
+          "score": 0.3417,
+          "score_breakdown": {
+            "total": 0.3417,
+            "relevance": 0.1833,
+            "quality": 0.7276,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.25,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6325
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "思南路附近 拍照"
+          ],
+          "why": "符合「上海」；Google 評分 4.2，2011 則評論；由查詢「思南路附近 拍照」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3417
+        },
+        {
+          "place_id": "ChIJFezOP0llsjURgZUzT-yILHw",
+          "name": "武康大樓",
+          "address": "上海市徐汇区淮海中路1850号 邮政编码: 200031",
+          "latitude": 31.204479999999997,
+          "longitude": 121.438326,
+          "google_maps_uri": "https://maps.google.com/?cid=8947677108200772993&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 657,
+          "score": 0.3305,
+          "score_breakdown": {
+            "total": 0.3305,
+            "relevance": 0.28,
+            "quality": 0.4238,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "武康路附近 拍照",
+            "武康路 漫步"
+          ],
+          "why": "符合「武康路、上海」；Google 評分 4.4，657 則評論；由查詢「武康路附近 拍照」命中",
+          "warnings": [
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3305
+        },
+        {
+          "place_id": "ChIJEdn5CuVwsjUR4zzXjFbjkvc",
+          "name": "上海金茂大廈88層觀光廳",
+          "address": "上海市浦东新区陆家嘴世纪大道88号 邮政编码: 200120",
+          "latitude": 31.235261999999995,
+          "longitude": 121.505912,
+          "google_maps_uri": "https://maps.google.com/?cid=17839571034837564643&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 35,
+          "score": 0.2691,
+          "score_breakdown": {
+            "total": 0.2691,
+            "relevance": 0.1367,
+            "quality": 0.0316,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6115
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 拍照"
+          ],
+          "why": "符合「上海」；Google 評分 4.6，35 則評論；由查詢「上海 拍照」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2691
+        },
+        {
+          "place_id": "ChIJ39eRCW5wsjURnVhHI0B3f3g",
+          "name": "上海宋慶齡故居",
+          "address": "上海市徐汇区淮海中路1843号 邮政编码: 200010",
+          "latitude": 31.203974000000002,
+          "longitude": 121.43899,
+          "google_maps_uri": "https://maps.google.com/?cid=8682789723947096221&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 138,
+          "score": 0.254,
+          "score_breakdown": {
+            "total": 0.254,
+            "relevance": 0.1678,
+            "quality": 0.1109,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.25,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6255
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "武康路附近 拍照"
+          ],
+          "why": "符合「上海」；Google 評分 4.3，138 則評論；由查詢「武康路附近 拍照」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.254
+        },
+        {
+          "place_id": "ChIJF1EwGAtwsjURQuxcP6rQOC4",
+          "name": "古董花園",
+          "address": "上海市虹口区思南路44号 邮政编码: 200041",
+          "latitude": 31.216597000000004,
+          "longitude": 121.46694699999999,
+          "google_maps_uri": "https://maps.google.com/?cid=3330641354066553922&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.4,
+          "user_rating_count": 47,
+          "score": 0.2536,
+          "score_breakdown": {
+            "total": 0.2536,
+            "relevance": 0.1989,
+            "quality": 0.0404,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6395
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "思南路附近 拍照"
+          ],
+          "why": "符合「思南路、上海」；Google 評分 4.4，47 則評論；由查詢「思南路附近 拍照」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2536
+        }
+      ]
+    },
+    {
+      "slot_index": 6,
+      "slot_id": "day2_slot07",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "meal",
+      "original_activity": "咖啡館休憩",
+      "reason_for_search": "需尋找具體咖啡館",
+      "target_terms": [
+        "咖啡館"
+      ],
+      "location_terms": [
+        "法租界",
+        "上海",
+        "法租界附近"
+      ],
+      "intent_type": "cafe",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJafS2FUllsjURckryV2BBrp8",
+          "name": "老麥咖啡館",
+          "address": "上海市徐汇区淮海中路1856号 邮政编码: 200031",
+          "latitude": 31.204320000000003,
+          "longitude": 121.43822000000002,
+          "google_maps_uri": "https://maps.google.com/?cid=11506205980026358386&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 14,
+          "score": 0.5776,
+          "score_breakdown": {
+            "total": 0.5776,
+            "relevance": 0.884,
+            "quality": 0.0128,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.9478
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 咖啡館",
+            "法租界附近 咖啡館",
+            "上海 下午茶 咖啡館"
+          ],
+          "why": "符合「咖啡館」；Google 評分 4.6，14 則評論；由查詢「上海 咖啡館」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.7376
+        }
+      ]
+    },
+    {
+      "slot_index": 7,
+      "slot_id": "day2_slot08",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "18:30",
+      "end_time": "20:00",
+      "time": "18:30~20:00",
+      "slot_type": "attraction",
+      "original_activity": "夜間市中心生活體驗",
+      "reason_for_search": "需確認具體活動或地點",
+      "target_terms": [],
+      "location_terms": [
+        "市中心",
+        "上海",
+        "上海博物館附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJE-I-loRwsjURCc0o6_knUc0",
+          "name": "非常時髦酒吧",
+          "address": "上海市虹口区黄浦路199号 邮政编码: 200080",
+          "latitude": 31.2455237,
+          "longitude": 121.4933637,
+          "google_maps_uri": "https://maps.google.com/?cid=14794650205234449673&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 152,
+          "score": 0.3186,
+          "score_breakdown": {
+            "total": 0.3186,
+            "relevance": 0.232,
+            "quality": 0.1184,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6544
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 夜生活",
+            "上海博物館附近 夜生活"
+          ],
+          "why": "符合「上海」；Google 評分 4.2，152 則評論；由查詢「上海 夜生活」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3186
+        },
+        {
+          "place_id": "ChIJt1Kp7RVxsjUR5rIrw3Xy88Q",
+          "name": "The Odd Couple",
+          "address": "上海市黄浦区CN 上海市 黄浦区 太仓路181弄25号 邮政编码: 200442",
+          "latitude": 31.220034,
+          "longitude": 121.47493,
+          "google_maps_uri": "https://maps.google.com/?cid=14191953438374081254&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.2,
+          "user_rating_count": 32,
+          "score": 0.286,
+          "score_breakdown": {
+            "total": 0.286,
+            "relevance": 0.182,
+            "quality": 0.0265,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6319
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海博物館附近 夜生活"
+          ],
+          "why": "符合「上海」；Google 評分 4.2，32 則評論；由查詢「上海博物館附近 夜生活」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.286
+        },
+        {
+          "place_id": "ChIJ02Nqyv1vsjUR5PU2qb-yBB8",
+          "name": "Shanghai-Bund",
+          "address": "上海市静安区北京西路6CGV+F6R 邮政编码: 200040",
+          "latitude": 31.226246,
+          "longitude": 121.443017,
+          "google_maps_uri": "https://maps.google.com/?cid=2235107851330057700&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.7,
+          "user_rating_count": 126,
+          "score": 0.2757,
+          "score_breakdown": {
+            "total": 0.2757,
+            "relevance": 0.232,
+            "quality": 0.1113,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.2,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6544
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 夜生活",
+            "上海博物館附近 夜生活"
+          ],
+          "why": "符合「上海」；Google 評分 4.7，126 則評論；由查詢「上海 夜生活」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2757
+        },
+        {
+          "place_id": "ChIJc53IsOFvsjURJgxyRr42zuY",
+          "name": "MUSE Bar",
+          "address": "上海市静安区海防路503弄2-26号同乐坊11 邮政编码: 200042",
+          "latitude": 31.237145999999996,
+          "longitude": 121.443788,
+          "google_maps_uri": "https://maps.google.com/?cid=16631290664779385894&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 3.3,
+          "user_rating_count": 3,
+          "score": 0.2448,
+          "score_breakdown": {
+            "total": 0.2448,
+            "relevance": 0.182,
+            "quality": 0.002,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.25,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6319
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海博物館附近 夜生活"
+          ],
+          "why": "符合「上海」；Google 評分 3.3，3 則評論；由查詢「上海博物館附近 夜生活」命中",
+          "warnings": [
+            "評分低於 4.0",
+            "評論數偏少",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2448
+        },
+        {
+          "place_id": "ChIJKcrrbw1wsjUR7trvxwjpCro",
+          "name": "Taxx Shanghai",
+          "address": "上海市黄浦区CN 上海市 黄浦区 巨鹿路 158 158号上海大同坊B1 邮政编码: 200041",
+          "latitude": 31.223129999999994,
+          "longitude": 121.4664,
+          "google_maps_uri": "https://maps.google.com/?cid=13405783464745097966&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 3,
+          "score": 0.2265,
+          "score_breakdown": {
+            "total": 0.2265,
+            "relevance": 0.232,
+            "quality": 0.0026,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.5,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6544
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 夜生活",
+            "上海博物館附近 夜生活"
+          ],
+          "why": "符合「上海」；Google 評分 4.3，3 則評論；由查詢「上海 夜生活」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2265
+        }
+      ]
+    },
+    {
+      "slot_index": 8,
+      "slot_id": "day3_slot01",
+      "day": 3,
+      "day_of_week": null,
+      "start_time": "09:00",
+      "end_time": "10:30",
+      "time": "09:00~10:30",
+      "slot_type": "shopping",
+      "original_activity": "新天地早晨漫步與購物",
+      "reason_for_search": "需尋找具體購物地點",
+      "target_terms": [],
+      "location_terms": [
+        "新天地",
+        "上海火車站附近"
+      ],
+      "intent_type": "shopping",
+      "must_have": [],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJ2ZKxgnFwsjUROVpCH9XEpUM",
+          "name": "上海新天地南里",
+          "address": "上海市黄浦区CN 上海市 黄浦区 兴业路123弄1-7号 邮政编码: 200001",
+          "latitude": 31.218601999999997,
+          "longitude": 121.47507,
+          "google_maps_uri": "https://maps.google.com/?cid=4874518591329950265&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.3,
+          "user_rating_count": 307,
+          "score": 0.2659,
+          "score_breakdown": {
+            "total": 0.2659,
+            "relevance": 0.28,
+            "quality": 0.2273,
+            "opening": 0.08,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 0.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 新天地 購物",
+            "上海火車站附近 新天地"
+          ],
+          "why": "符合「新天地」；Google 評分 4.3，307 則評論；由查詢「上海 新天地 購物」命中",
+          "warnings": [
+            "行程時段可能未營業",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2659
+        },
+        {
+          "place_id": "ChIJYwVmknFwsjURHjM9hvAniVQ",
+          "name": "新天地北里",
+          "address": "中國上海市黃浦區 邮政编码: 200021",
+          "latitude": 31.220002,
+          "longitude": 121.47488699999998,
+          "google_maps_uri": "https://maps.google.com/?cid=6091443884993098526&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 180,
+          "score": 0.2513,
+          "score_breakdown": {
+            "total": 0.2513,
+            "relevance": 0.28,
+            "quality": 0.1516,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.25,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 新天地"
+          ],
+          "why": "符合「新天地」；Google 評分 4.6，180 則評論；由查詢「上海火車站附近 新天地」命中",
+          "warnings": [
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2513
+        },
+        {
+          "place_id": "ChIJ58wtg3FwsjURJN5JhiyQYOI",
+          "name": "新天地時尚·購物中心",
+          "address": "上海市黄浦区马当路181号-183号 邮政编码: 200021",
+          "latitude": 31.21916,
+          "longitude": 121.474878,
+          "google_maps_uri": "https://maps.google.com/?cid=16312196371241885220&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.7,
+          "user_rating_count": 79,
+          "score": 0.2438,
+          "score_breakdown": {
+            "total": 0.2438,
+            "relevance": 0.28,
+            "quality": 0.0714,
+            "opening": 0.08,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": 0.333,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 新天地 購物",
+            "上海火車站附近 新天地"
+          ],
+          "why": "符合「新天地」；Google 評分 4.7，79 則評論；由查詢「上海 新天地 購物」命中",
+          "warnings": [
+            "評論數偏少",
+            "行程時段可能未營業",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.2438
+        },
+        {
+          "place_id": "ChIJIY0qd3FwsjURgJmVswMbv7Q",
+          "name": "新天地廣場",
+          "address": "上海市卢湾区兴业路123号5F 邮政编码: 200020",
+          "latitude": 31.218601999999997,
+          "longitude": 121.47507,
+          "google_maps_uri": "https://maps.google.com/?cid=13024158350090541440&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 17,
+          "score": 0.2272,
+          "score_breakdown": {
+            "total": 0.2272,
+            "relevance": 0.28,
+            "quality": 0.0138,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.1667,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 新天地"
+          ],
+          "why": "符合「新天地」；Google 評分 4.1，17 則評論；由查詢「上海火車站附近 新天地」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2272
+        },
+        {
+          "place_id": "ChIJvzP29nFwsjUR8s2UB5QXC3E",
+          "name": "Shanghai New World",
+          "address": "上海市黄浦区新天地马当路119号 邮政编码: 200021",
+          "latitude": 31.220826000000002,
+          "longitude": 121.47436499999998,
+          "google_maps_uri": "https://maps.google.com/?cid=8145630275579465202&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.5,
+          "user_rating_count": 88,
+          "score": 0.2215,
+          "score_breakdown": {
+            "total": 0.2215,
+            "relevance": 0.214,
+            "quality": 0.0758,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6463
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 新天地"
+          ],
+          "why": "符合「新天地」；Google 評分 4.5，88 則評論；由查詢「上海火車站附近 新天地」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.2215
+        }
+      ]
+    },
+    {
+      "slot_index": 9,
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "time": "11:00~12:00",
+      "slot_type": "meal",
+      "original_activity": "遊記和街頭美食午餐",
+      "reason_for_search": "需確認具體美食地點",
+      "target_terms": [
+        "街頭美食"
+      ],
+      "location_terms": [
+        "新天地",
+        "上海",
+        "上海火車站附近"
+      ],
+      "intent_type": "local_food",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": null,
+      "top_candidates": [
+        {
+          "place_id": "ChIJu-Pz3xJwsjURzHzDEi0k7TI",
+          "name": "１９６５東南亞街頭美食",
+          "address": "上海市静安区成都北路131号 邮政编码: 200041",
+          "latitude": 31.2262,
+          "longitude": 121.46711,
+          "google_maps_uri": "https://maps.google.com/?cid=3669629047383751884&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 5,
+          "user_rating_count": 4,
+          "score": 0.356,
+          "score_breakdown": {
+            "total": 0.356,
+            "relevance": 0.4676,
+            "quality": 0.004,
+            "opening": 0.55,
+            "route": 0.55,
+            "google_rank": 1.0,
+            "type": 0.82,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7604
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海 街頭美食"
+          ],
+          "why": "符合「街頭美食」；Google 評分 5，4 則評論；由查詢「上海 街頭美食」命中",
+          "warnings": [
+            "評論數偏少",
+            "缺少營業時間資料",
+            "缺少前後 anchor，距離分數採中立值"
+          ],
+          "selection_score": 0.516
+        },
+        {
+          "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+          "name": "Nanjing Road Pedestrian Street",
+          "address": "上海市黄浦区南京路步行街6FMF+VXJ 邮政编码: 200001",
+          "latitude": 31.234720999999993,
+          "longitude": 121.47489800000001,
+          "google_maps_uri": "https://maps.google.com/?cid=2673353610482772141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.6,
+          "user_rating_count": 2160,
+          "score": 0.3527,
+          "score_breakdown": {
+            "total": 0.3527,
+            "relevance": 0.1728,
+            "quality": 0.8139,
+            "opening": 1.0,
+            "route": 0.55,
+            "google_rank": 0.3333,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6278
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": false
+          },
+          "matched_queries": [
+            "上海火車站附近 街頭美食"
+          ],
+          "why": "符合「上海」；Google 評分 4.6，2160 則評論；由查詢「上海火車站附近 街頭美食」命中",
+          "warnings": [
+            "缺少前後 anchor，距離分數採中立值",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3527
+        }
+      ]
+    }
+  ],
+  "lodging_candidates": [
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+      "property_token": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+      "name": "Meego Qingwen Hotel",
+      "address": null,
+      "latitude": 31.235129999999995,
+      "longitude": 121.45161399999999,
+      "rating": 4.2,
+      "user_rating_count": 25,
+      "hotel_class": "1 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 757.0,
+        "total": 1514.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.84,
+        "reviews": 0.4716,
+        "google_rank": 0.5,
+        "price": 0.72,
+        "distance": 0.2681,
+        "total": 0.541
+      },
+      "distance_to_place_candidates": {
+        "average_km": 42.012,
+        "nearest_km": 0.777,
+        "score": 0.2681,
+        "reference_count": 35
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoIvOjS9KDYso6eARoNL2cvMTF4ejIzN2poYhAB",
+      "property_token": "ChoIvOjS9KDYso6eARoNL2cvMTF4ejIzN2poYhAB",
+      "name": "BVB度假民宿",
+      "address": null,
+      "latitude": 31.092806,
+      "longitude": 121.83845000000001,
+      "rating": null,
+      "user_rating_count": null,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 797.0,
+        "total": 1593.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.55,
+        "reviews": 0.35,
+        "google_rank": 1.0,
+        "price": 0.72,
+        "distance": 0.0015,
+        "total": 0.4743
+      },
+      "distance_to_place_candidates": {
+        "average_km": 74.322,
+        "nearest_km": 35.384,
+        "score": 0.0015,
+        "reference_count": 35
+      },
+      "warnings": [
+        "缺少住宿評分"
+      ]
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIh97qpMqh2rtuGg0vZy8xMXh6MTFqbDIzEAE",
+      "property_token": "ChkIh97qpMqh2rtuGg0vZy8xMXh6MTFqbDIzEAE",
+      "name": "WeFlow Youth Hostel Shanghai",
+      "address": null,
+      "latitude": 31.245176999999998,
+      "longitude": 121.46893999999999,
+      "rating": 4.6,
+      "user_rating_count": 5,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 878.0,
+        "total": 1756.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.92,
+        "reviews": 0.2593,
+        "google_rank": 0.1111,
+        "price": 0.72,
+        "distance": 0.2708,
+        "total": 0.4685
+      },
+      "distance_to_place_candidates": {
+        "average_km": 42.131,
+        "nearest_km": 0.732,
+        "score": 0.2708,
+        "reference_count": 35
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChoIx7WB5_Xz9d6QARoNL2cvMTFoNXJnNzNscBAB",
+      "property_token": "ChoIx7WB5_Xz9d6QARoNL2cvMTFoNXJnNzNscBAB",
+      "name": "Shanghai Meego Yes Hotel",
+      "address": null,
+      "latitude": 31.23038,
+      "longitude": 121.4737,
+      "rating": 3.3,
+      "user_rating_count": 37,
+      "hotel_class": "2 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 857.0,
+        "total": 1714.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.66,
+        "reviews": 0.5265,
+        "google_rank": 0.1429,
+        "price": 0.72,
+        "distance": 0.301,
+        "total": 0.4679
+      },
+      "distance_to_place_candidates": {
+        "average_km": 41.166,
+        "nearest_km": 0.3,
+        "score": 0.301,
+        "reference_count": 35
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChcIjOSYlNPezLtuGgsvZy8xdGtxeTg0NRAB",
+      "property_token": "ChcIjOSYlNPezLtuGgsvZy8xdGtxeTg0NRAB",
+      "name": "藍山國際青年旅舍",
+      "address": null,
+      "latitude": 31.2395511,
+      "longitude": 121.48127919999999,
+      "rating": 4.2,
+      "user_rating_count": 499,
+      "hotel_class": "3 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1244.0,
+        "total": 2488.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.84,
+        "reviews": 0.8995,
+        "google_rank": 0.0588,
+        "price": 0.45,
+        "distance": 0.2939,
+        "total": 0.4647
+      },
+      "distance_to_place_candidates": {
+        "average_km": 41.752,
+        "nearest_km": 0.387,
+        "score": 0.2939,
+        "reference_count": 35
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkI7LCOisOs8949Gg0vZy8xMWd4anBxcmwyEAE",
+      "property_token": "ChkI7LCOisOs8949Gg0vZy8xMWd4anBxcmwyEAE",
+      "name": "Shanghai Future Shangju Hotel",
+      "address": null,
+      "latitude": 31.185904999999998,
+      "longitude": 121.69234,
+      "rating": 4.4,
+      "user_rating_count": 19,
+      "hotel_class": "3 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1010.0,
+        "total": 2020.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.88,
+        "reviews": 0.4336,
+        "google_rank": 0.125,
+        "price": 0.72,
+        "distance": 0.0078,
+        "total": 0.4056
+      },
+      "distance_to_place_candidates": {
+        "average_km": 59.438,
+        "nearest_km": 18.56,
+        "score": 0.0078,
+        "reference_count": 35
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChkIjpbnkrmpjM5UGg0vZy8xMWZ5NTU4bGhkEAE",
+      "property_token": "ChkIjpbnkrmpjM5UGg0vZy8xMWZ5NTU4bGhkEAE",
+      "name": "Yi Ju Homestay",
+      "address": null,
+      "latitude": 31.065466,
+      "longitude": 121.401259,
+      "rating": 5,
+      "user_rating_count": 1,
+      "hotel_class": null,
+      "price": {
+        "currency": "TWD",
+        "per_night": 796.0,
+        "total": 1592.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 1.0,
+        "reviews": 0.1003,
+        "google_rank": 0.2,
+        "price": 0.72,
+        "distance": 0.0123,
+        "total": 0.4005
+      },
+      "distance_to_place_candidates": {
+        "average_km": 55.993,
+        "nearest_km": 15.815,
+        "score": 0.0123,
+        "reference_count": 35
+      },
+      "warnings": []
+    },
+    {
+      "candidate_domain": "lodging",
+      "place_id": "ChcIwoaW397G34MjGgsvZy8xdGYzM3o3ZBAB",
+      "property_token": "ChcIwoaW397G34MjGgsvZy8xdGYzM3o3ZBAB",
+      "name": "華美國際酒店",
+      "address": null,
+      "latitude": 31.222223000000003,
+      "longitude": 121.48173899999998,
+      "rating": 3.1,
+      "user_rating_count": 108,
+      "hotel_class": "3 星級飯店",
+      "price": {
+        "currency": "TWD",
+        "per_night": 1417.0,
+        "total": 2833.0,
+        "nights": 2,
+        "availability_confirmed": true,
+        "source": "serpapi_google_hotels"
+      },
+      "scores": {
+        "rating": 0.62,
+        "reviews": 0.679,
+        "google_rank": 0.0556,
+        "price": 0.45,
+        "distance": 0.2748,
+        "total": 0.3924
+      },
+      "distance_to_place_candidates": {
+        "average_km": 41.26,
+        "nearest_km": 0.692,
+        "score": 0.2748,
+        "reference_count": 35
+      },
+      "warnings": []
+    }
+  ],
+  "geo_clusters": {
+    "k": 2,
+    "clusters": [
+      {
+        "cluster_id": 2,
+        "center": {
+          "latitude": 31.2175027,
+          "longitude": 121.4823417
+        },
+        "member_count": 41,
+        "members": [
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ8-VLqlBwsjUR7Fjsy4_c6e8",
+            "name": "上海子魚居南京東路店",
+            "latitude": 31.239921000000002,
+            "longitude": 121.48532999999998,
+            "score": 0.3274,
+            "slot_id": "day1_slot02",
+            "day": 1,
+            "original_activity": "辦理入住並休息"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJEQf8Xf9wsjUR_ZKr2OupaKA",
+            "name": "外灘茂悅大酒店",
+            "latitude": 31.245349400000002,
+            "longitude": 121.49306600000001,
+            "score": 0.2539,
+            "slot_id": "day1_slot02",
+            "day": 1,
+            "original_activity": "辦理入住並休息"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJfyOA1iVwsjURBa83b5IojAc",
+            "name": "和頤至尚酒店（上海火車站店）",
+            "latitude": 31.2462178,
+            "longitude": 121.4515169,
+            "score": 0.2446,
+            "slot_id": "day1_slot02",
+            "day": 1,
+            "original_activity": "辦理入住並休息"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJxTK7t0JwsjURAfxNvnrltE8",
+            "name": "Campanile Shanghai Bund Hotel",
+            "latitude": 31.2302304,
+            "longitude": 121.48379310000001,
+            "score": 0.2368,
+            "slot_id": "day1_slot02",
+            "day": 1,
+            "original_activity": "辦理入住並休息"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJpVMruFZwsjURGW4sRnBoKwk",
+            "name": "上海亞龍大酒店",
+            "latitude": 31.243035999999996,
+            "longitude": 121.48634100000001,
+            "score": 0.2301,
+            "slot_id": "day1_slot02",
+            "day": 1,
+            "original_activity": "辦理入住並休息"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJYfQySkdwsjURExO_It75d-0",
+            "name": "南翔小籠上海小吃",
+            "latitude": 31.2386309,
+            "longitude": 121.46972219999999,
+            "score": 0.5445,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "南京東路步行街購物與小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJGRhnfkNwsjURGKqqL8OaDfA",
+            "name": "萊萊小吃湯包館",
+            "latitude": 31.236185000000003,
+            "longitude": 121.47731299999998,
+            "score": 0.5402,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "南京東路步行街購物與小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+            "name": "Nanjing Road Pedestrian Street",
+            "latitude": 31.234720999999993,
+            "longitude": 121.47489800000001,
+            "score": 0.37,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "南京東路步行街購物與小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJnYKyU596sjURiclNuZoMC94",
+            "name": "法租界上海製針總場舊址",
+            "latitude": 31.207897,
+            "longitude": 121.46899699999997,
+            "score": 0.276,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "法租界漫步"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ3-01cZ96sjURfiGJgpCslF0",
+            "name": "法租界會審公廨舊址",
+            "latitude": 31.209812200000002,
+            "longitude": 121.4694576,
+            "score": 0.2324,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "法租界漫步"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJFezOP0llsjURgZUzT-yILHw",
+            "name": "武康大樓",
+            "latitude": 31.204479999999997,
+            "longitude": 121.438326,
+            "score": 0.2244,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "法租界漫步"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJdfGbep96sjURoNKgubZXSnI",
+            "name": "法租界警務處暨中央捕房舊址",
+            "latitude": 31.209678999999994,
+            "longitude": 121.469129,
+            "score": 0.2223,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "法租界漫步"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJgV6AFUARVAUR43Yj3dA3Gh0",
+            "name": "上海法租界酒吧式花园洋房",
+            "latitude": 31.2085029,
+            "longitude": 121.45689060000001,
+            "score": 0.2182,
+            "slot_id": "day2_slot03",
+            "day": 2,
+            "original_activity": "法租界漫步"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJPWUSbWlwsjURjYNLkOXNZGw",
+            "name": "上海博物館餐廳",
+            "latitude": 31.228561499999998,
+            "longitude": 121.4760239,
+            "score": 0.4044,
+            "slot_id": "day2_slot04",
+            "day": 2,
+            "original_activity": "享用法租界特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJwb83l1hwsjURvOkovWQR1cc",
+            "name": "法國餐廳",
+            "latitude": 31.234108999999997,
+            "longitude": 121.490816,
+            "score": 0.3844,
+            "slot_id": "day2_slot04",
+            "day": 2,
+            "original_activity": "享用法租界特色午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ2-UI76F6sjURj_HAeG5PMhE",
+            "name": "Tianzifang",
+            "latitude": 31.208811999999995,
+            "longitude": 121.468898,
+            "score": 0.3417,
+            "slot_id": "day2_slot05",
+            "day": 2,
+            "original_activity": "在武康路與思南路漫步並拍照"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJFezOP0llsjURgZUzT-yILHw",
+            "name": "武康大樓",
+            "latitude": 31.204479999999997,
+            "longitude": 121.438326,
+            "score": 0.3305,
+            "slot_id": "day2_slot05",
+            "day": 2,
+            "original_activity": "在武康路與思南路漫步並拍照"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJEdn5CuVwsjUR4zzXjFbjkvc",
+            "name": "上海金茂大廈88層觀光廳",
+            "latitude": 31.235261999999995,
+            "longitude": 121.505912,
+            "score": 0.2691,
+            "slot_id": "day2_slot05",
+            "day": 2,
+            "original_activity": "在武康路與思南路漫步並拍照"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ39eRCW5wsjURnVhHI0B3f3g",
+            "name": "上海宋慶齡故居",
+            "latitude": 31.203974000000002,
+            "longitude": 121.43899,
+            "score": 0.254,
+            "slot_id": "day2_slot05",
+            "day": 2,
+            "original_activity": "在武康路與思南路漫步並拍照"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJF1EwGAtwsjURQuxcP6rQOC4",
+            "name": "古董花園",
+            "latitude": 31.216597000000004,
+            "longitude": 121.46694699999999,
+            "score": 0.2536,
+            "slot_id": "day2_slot05",
+            "day": 2,
+            "original_activity": "在武康路與思南路漫步並拍照"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJafS2FUllsjURckryV2BBrp8",
+            "name": "老麥咖啡館",
+            "latitude": 31.204320000000003,
+            "longitude": 121.43822000000002,
+            "score": 0.5776,
+            "slot_id": "day2_slot07",
+            "day": 2,
+            "original_activity": "咖啡館休憩"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJE-I-loRwsjURCc0o6_knUc0",
+            "name": "非常時髦酒吧",
+            "latitude": 31.2455237,
+            "longitude": 121.4933637,
+            "score": 0.3186,
+            "slot_id": "day2_slot08",
+            "day": 2,
+            "original_activity": "夜間市中心生活體驗"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJt1Kp7RVxsjUR5rIrw3Xy88Q",
+            "name": "The Odd Couple",
+            "latitude": 31.220034,
+            "longitude": 121.47493,
+            "score": 0.286,
+            "slot_id": "day2_slot08",
+            "day": 2,
+            "original_activity": "夜間市中心生活體驗"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ02Nqyv1vsjUR5PU2qb-yBB8",
+            "name": "Shanghai-Bund",
+            "latitude": 31.226246,
+            "longitude": 121.443017,
+            "score": 0.2757,
+            "slot_id": "day2_slot08",
+            "day": 2,
+            "original_activity": "夜間市中心生活體驗"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJc53IsOFvsjURJgxyRr42zuY",
+            "name": "MUSE Bar",
+            "latitude": 31.237145999999996,
+            "longitude": 121.443788,
+            "score": 0.2448,
+            "slot_id": "day2_slot08",
+            "day": 2,
+            "original_activity": "夜間市中心生活體驗"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJKcrrbw1wsjUR7trvxwjpCro",
+            "name": "Taxx Shanghai",
+            "latitude": 31.223129999999994,
+            "longitude": 121.4664,
+            "score": 0.2265,
+            "slot_id": "day2_slot08",
+            "day": 2,
+            "original_activity": "夜間市中心生活體驗"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ2ZKxgnFwsjUROVpCH9XEpUM",
+            "name": "上海新天地南里",
+            "latitude": 31.218601999999997,
+            "longitude": 121.47507,
+            "score": 0.2659,
+            "slot_id": "day3_slot01",
+            "day": 3,
+            "original_activity": "新天地早晨漫步與購物"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJYwVmknFwsjURHjM9hvAniVQ",
+            "name": "新天地北里",
+            "latitude": 31.220002,
+            "longitude": 121.47488699999998,
+            "score": 0.2513,
+            "slot_id": "day3_slot01",
+            "day": 3,
+            "original_activity": "新天地早晨漫步與購物"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ58wtg3FwsjURJN5JhiyQYOI",
+            "name": "新天地時尚·購物中心",
+            "latitude": 31.21916,
+            "longitude": 121.474878,
+            "score": 0.2438,
+            "slot_id": "day3_slot01",
+            "day": 3,
+            "original_activity": "新天地早晨漫步與購物"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJIY0qd3FwsjURgJmVswMbv7Q",
+            "name": "新天地廣場",
+            "latitude": 31.218601999999997,
+            "longitude": 121.47507,
+            "score": 0.2272,
+            "slot_id": "day3_slot01",
+            "day": 3,
+            "original_activity": "新天地早晨漫步與購物"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJvzP29nFwsjUR8s2UB5QXC3E",
+            "name": "Shanghai New World",
+            "latitude": 31.220826000000002,
+            "longitude": 121.47436499999998,
+            "score": 0.2215,
+            "slot_id": "day3_slot01",
+            "day": 3,
+            "original_activity": "新天地早晨漫步與購物"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJu-Pz3xJwsjURzHzDEi0k7TI",
+            "name": "１９６５東南亞街頭美食",
+            "latitude": 31.2262,
+            "longitude": 121.46711,
+            "score": 0.356,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "遊記和街頭美食午餐"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJ443NM0NwsjURrWjV1_GoGSU",
+            "name": "Nanjing Road Pedestrian Street",
+            "latitude": 31.234720999999993,
+            "longitude": 121.47489800000001,
+            "score": 0.3527,
+            "slot_id": "day3_slot03",
+            "day": 3,
+            "original_activity": "遊記和街頭美食午餐"
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+            "name": "Meego Qingwen Hotel",
+            "latitude": 31.235129999999995,
+            "longitude": 121.45161399999999,
+            "score": 0.541,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoIvOjS9KDYso6eARoNL2cvMTF4ejIzN2poYhAB",
+            "name": "BVB度假民宿",
+            "latitude": 31.092806,
+            "longitude": 121.83845000000001,
+            "score": 0.4743,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIh97qpMqh2rtuGg0vZy8xMXh6MTFqbDIzEAE",
+            "name": "WeFlow Youth Hostel Shanghai",
+            "latitude": 31.245176999999998,
+            "longitude": 121.46893999999999,
+            "score": 0.4685,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChoIx7WB5_Xz9d6QARoNL2cvMTFoNXJnNzNscBAB",
+            "name": "Shanghai Meego Yes Hotel",
+            "latitude": 31.23038,
+            "longitude": 121.4737,
+            "score": 0.4679,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChcIjOSYlNPezLtuGgsvZy8xdGtxeTg0NRAB",
+            "name": "藍山國際青年旅舍",
+            "latitude": 31.2395511,
+            "longitude": 121.48127919999999,
+            "score": 0.4647,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkI7LCOisOs8949Gg0vZy8xMWd4anBxcmwyEAE",
+            "name": "Shanghai Future Shangju Hotel",
+            "latitude": 31.185904999999998,
+            "longitude": 121.69234,
+            "score": 0.4056,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChkIjpbnkrmpjM5UGg0vZy8xMWZ5NTU4bGhkEAE",
+            "name": "Yi Ju Homestay",
+            "latitude": 31.065466,
+            "longitude": 121.401259,
+            "score": 0.4005,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          },
+          {
+            "candidate_domain": "lodging",
+            "place_id": "ChcIwoaW397G34MjGgsvZy8xdGYzM3o3ZBAB",
+            "name": "華美國際酒店",
+            "latitude": 31.222223000000003,
+            "longitude": 121.48173899999998,
+            "score": 0.3924,
+            "slot_id": null,
+            "day": null,
+            "original_activity": null
+          }
+        ]
+      },
+      {
+        "cluster_id": 1,
+        "center": {
+          "latitude": 25.0527106,
+          "longitude": 121.5660449
+        },
+        "member_count": 2,
+        "members": [
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJoeG-BpSrQjQRxAW5R4IQT6g",
+            "name": "東引小吃店（推薦深夜美食 台北宵夜 牛肉麵 捷運南京三民站",
+            "latitude": 25.0525099,
+            "longitude": 121.5658905,
+            "score": 0.6913,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "南京東路步行街購物與小吃"
+          },
+          {
+            "candidate_domain": "place",
+            "place_id": "ChIJgRJ9DKWrQjQR1xtR4zZshU4",
+            "name": "老媽米粉湯/捷運南京三民站傳統小吃/南京公寓市場美食/古早味必吃三十年老店/早餐午餐晚餐",
+            "latitude": 25.0529113,
+            "longitude": 121.5661994,
+            "score": 0.5109,
+            "slot_id": "day1_slot05",
+            "day": 1,
+            "original_activity": "南京東路步行街購物與小吃"
+          }
+        ]
+      }
+    ]
+  },
+  "lodging_strategy": {
+    "duration_days": 3,
+    "duration_nights": 2,
+    "preferred_mode": "single_hotel",
+    "max_hotel_switches": 0,
+    "cluster_count": 2,
+    "rule": "短天數預設盡量住同一間；只有地理分布很遠或跨城市時才換住宿。"
+  }
+}

@@ -1,0 +1,389 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-11T21:15:39",
+  "decision_summary": {
+    "overall_strategy": "minor_adjustment",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "The lodging_strategy suggests a single hotel and the trip is within a single city without significant distance between activities.",
+      "Most candidate slots can be fulfilled with a single replace decision, ensuring the original itinerary flow is preserved."
+    ],
+    "warnings": [
+      "Some candidate places lack user ratings and reviews, which may affect the quality of experience.",
+      "Ensure opening hours are checked for all attractions and restaurants to avoid unforeseen closures."
+    ]
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB",
+        "property_token": "ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB",
+        "name": "上海 世 和 酒店",
+        "latitude": 31.2035,
+        "longitude": 121.48827,
+        "price": {
+          "currency": "TWD",
+          "per_night": 1759.0,
+          "total": 5277.0,
+          "nights": 3,
+          "availability_confirmed": true,
+          "source": "serpapi_google_hotels"
+        }
+      },
+      "reason": "The hotel is reasonably priced and strategically located near key areas of interest."
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "original_activity": "逛南京東路和外灘",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJj6CthFhwsjURN2qBdkC2Z00",
+        "name": "外灘",
+        "address": "上海市黃浦區外灘",
+        "latitude": 31.241910899999997,
+        "longitude": 121.48989029999998
+      },
+      "reason": "Selected due to its iconic status and central location."
+    },
+    {
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "original_activity": "享用當地午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJA5s-SUBwsjURFhARLaLPojs",
+        "name": "佳家湯包",
+        "address": "上海市黄浦区人民广场黄河路90号 邮政编码: 200003",
+        "latitude": 31.234576999999998,
+        "longitude": 121.47082099999999
+      },
+      "reason": "High rating and proximity to the previous destination."
+    },
+    {
+      "slot_id": "day3_slot02",
+      "day": 3,
+      "original_activity": "於新天地享用午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJ0aXCBXx2bjQRtzmar99MpLo",
+        "name": "漢來名人坊 台南新光西門店",
+        "address": "700台灣臺南市中西區小西門里西門路一段658號新光三越新天地 本館C區1樓",
+        "latitude": 22.987341800000003,
+        "longitude": 120.19911259999999
+      },
+      "reason": "High user ratings and matches location term '新天地'."
+    },
+    {
+      "slot_id": "day4_slot01",
+      "day": 4,
+      "original_activity": "自由活動",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJcT52JmpwsjURKKp8uyIQKjU",
+        "name": "上海中心大廈",
+        "address": "上海市浦东新区陆家嘴银城中路501号 邮政编码: 200120",
+        "latitude": 31.233518000000004,
+        "longitude": 121.505618
+      },
+      "reason": "Popular attraction with good reviews and fits the slot's theme of flexible activities."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "07:00",
+          "end_time": "12:00",
+          "time": "07:00~12:00",
+          "activity": "乘坐高鐵從北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": "北京南站",
+          "route_exit_place": "上海虹橋火車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 400,
+            "party_total": 800,
+            "source": "llm_estimated",
+            "confidence": 0.9,
+            "note": "Estimated high-speed rail ticket cost."
+          }
+        },
+        {
+          "slot_id": "day1_slot02",
+          "start_time": "12:30",
+          "end_time": "14:00",
+          "time": "12:30~14:00",
+          "activity": "入住景萊酒店·不舍",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "景萊酒店·不舍",
+          "route_entry_place": "景萊酒店·不舍",
+          "route_exit_place": "景萊酒店·不舍",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 1759,
+            "party_total": 3518,
+            "source": "serpapi_google_hotels",
+            "confidence": 0.9,
+            "note": "Cost for two persons for one night."
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "14:30",
+          "end_time": "18:00",
+          "time": "14:30~18:00",
+          "activity": "外灘",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "外灘",
+          "route_entry_place": "外灘",
+          "route_exit_place": "外灘",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 1.0,
+            "note": "Iconic public area without entry fee."
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "參觀靜安寺與玉佛寺",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "靜安寺",
+          "route_entry_place": "靜安寺",
+          "route_exit_place": "玉佛寺",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 60,
+            "party_total": 120,
+            "source": "llm_estimated",
+            "confidence": 0.8,
+            "note": "Estimated entry fee for temples."
+          }
+        },
+        {
+          "slot_id": "day2_slot02",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "在佳家湯包享用午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "佳家湯包",
+          "route_entry_place": "佳家湯包",
+          "route_exit_place": "佳家湯包",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 50,
+            "party_total": 100,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "Estimated cost for two persons."
+          }
+        },
+        {
+          "slot_id": "day2_slot03",
+          "start_time": "13:30",
+          "end_time": "17:00",
+          "time": "13:30~17:00",
+          "activity": "探索M50創意園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "M50創意園",
+          "route_entry_place": "M50創意園",
+          "route_exit_place": "M50創意園",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 1.0,
+            "note": "Art district with free entry."
+          }
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "start_time": "10:00",
+          "end_time": "12:00",
+          "time": "10:00~12:00",
+          "activity": "參觀新天地與購物",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "新天地",
+          "route_entry_place": "新天地",
+          "route_exit_place": "新天地",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "Public shopping and entertainment area."
+          }
+        },
+        {
+          "slot_id": "day3_slot02",
+          "start_time": "12:30",
+          "end_time": "14:00",
+          "time": "12:30~14:00",
+          "activity": "在漢來名人坊用餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "漢來名人坊",
+          "route_entry_place": "漢來名人坊",
+          "route_exit_place": "漢來名人坊",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 100,
+            "party_total": 200,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Estimated meal cost for high-end restaurant."
+          }
+        },
+        {
+          "slot_id": "day3_slot03",
+          "start_time": "14:30",
+          "end_time": "18:00",
+          "time": "14:30~18:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 1.0,
+            "note": "No entry fee for the museum."
+          }
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "date_description": "第四天",
+      "schedule": [
+        {
+          "slot_id": "day4_slot01",
+          "start_time": "09:00",
+          "end_time": "11:30",
+          "time": "09:00~11:30",
+          "activity": "自由活動於上海中心大廈",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海中心大廈",
+          "route_entry_place": "上海中心大廈",
+          "route_exit_place": "上海中心大廈",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 100,
+            "party_total": 200,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "Estimated entry fee for observation decks."
+          }
+        },
+        {
+          "slot_id": "day4_slot02",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "返回酒店退房",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "景萊酒店·不舍",
+          "route_entry_place": "景萊酒店·不舍",
+          "route_exit_place": "景萊酒店·不舍",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 1.0,
+            "note": "No cost for check-out."
+          }
+        },
+        {
+          "slot_id": "day4_slot03",
+          "start_time": "14:00",
+          "end_time": "19:00",
+          "time": "14:00~19:00",
+          "activity": "乘坐高鐵返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": "高鐵",
+          "route_entry_place": "上海虹橋火車站",
+          "route_exit_place": "北京南站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 400,
+            "party_total": 800,
+            "source": "llm_estimated",
+            "confidence": 0.9,
+            "note": "Estimated return rail ticket cost."
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "Confirm all location opening times close to the travel date.",
+    "Check for any special events that might necessitate further adjustments."
+  ],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJj6CthFhwsjURN2qBdkC2Z00",
+      "ChIJA5s-SUBwsjURFhARLaLPojs",
+      "ChIJ0aXCBXx2bjQRtzmar99MpLo",
+      "ChIJcT52JmpwsjURKKp8uyIQKjU"
+    ],
+    "lodging": [
+      "ChcIy6SjzISkyMolGgsvZy8xdGQ0aDNzbBAB"
+    ]
+  }
+}

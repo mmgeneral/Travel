@@ -1,0 +1,952 @@
+{
+  "台南|台南 赤崁樓": {
+    "query": "台南 赤崁樓",
+    "resolved_at": "2026-07-06T02:52:25",
+    "place": {
+      "place_id": "ChIJbYl7d2F2bjQRnFdvyMBuZfI",
+      "resource_name": "places/ChIJbYl7d2F2bjQRnFdvyMBuZfI",
+      "name": "赤崁樓",
+      "address": "700臺南市中西區赤嵌里民族路二段212號",
+      "latitude": 22.997477999999997,
+      "longitude": 120.2025433,
+      "primary_type": null,
+      "types": [
+        "tourist_attraction",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=17466488504101853084&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 赤崁樓",
+          "intent": "anchor",
+          "rank": 1
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南孔廟": {
+    "query": "台南孔廟",
+    "resolved_at": "2026-07-06T02:52:25",
+    "place": {
+      "place_id": "ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+      "resource_name": "places/ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+      "name": "臺南孔廟",
+      "address": "700臺南市中西區永華里南門路2號",
+      "latitude": 22.9905296,
+      "longitude": 120.2040401,
+      "primary_type": "place_of_worship",
+      "types": [
+        "place_of_worship",
+        "tourist_attraction",
+        "historical_landmark",
+        "historical_place",
+        "association_or_organization",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=802303505355083921&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南孔廟",
+          "intent": "anchor",
+          "rank": 1
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南 安平樹屋": {
+    "query": "台南 安平樹屋",
+    "resolved_at": "2026-07-06T02:52:25",
+    "place": {
+      "place_id": "ChIJlynOByF3bjQR_IzNSlgH-Ss",
+      "resource_name": "places/ChIJlynOByF3bjQR_IzNSlgH-Ss",
+      "name": "安平樹屋",
+      "address": "708臺南市安平區王城里古堡街104號",
+      "latitude": 23.0038453,
+      "longitude": 120.1598012,
+      "primary_type": "tourist_attraction",
+      "types": [
+        "tourist_attraction",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=3168571888625356028&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 安平樹屋",
+          "intent": "anchor",
+          "rank": 1
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南 德記洋行": {
+    "query": "台南 德記洋行",
+    "resolved_at": "2026-07-06T02:52:26",
+    "place": {
+      "place_id": "ChIJo7avkR12bjQR9Gvc2sRtx40",
+      "resource_name": "places/ChIJo7avkR12bjQR9Gvc2sRtx40",
+      "name": "英商德記洋行",
+      "address": "708臺南市安平區王城里古堡街108號",
+      "latitude": 23.003446699999998,
+      "longitude": 120.1597835,
+      "primary_type": null,
+      "types": [
+        "historical_landmark",
+        "tourist_attraction",
+        "historical_place",
+        "museum",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=10216254971966155764&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 德記洋行",
+          "intent": "anchor",
+          "rank": 1
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南 大天后宮": {
+    "query": "台南 大天后宮",
+    "resolved_at": "2026-07-06T14:14:02",
+    "place": {
+      "place_id": "ChIJje2QZmF2bjQRR6NbMsm6hTY",
+      "resource_name": "places/ChIJje2QZmF2bjQRR6NbMsm6hTY",
+      "name": "臺南祀典大天后宮",
+      "address": "700臺南市中西區赤嵌里永福路二段227巷18號",
+      "latitude": 22.9966464,
+      "longitude": 120.2015605,
+      "primary_type": "place_of_worship",
+      "types": [
+        "place_of_worship",
+        "historical_landmark",
+        "historical_place",
+        "association_or_organization",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=3928751623246684999&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 大天后宮",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南 孔廟": {
+    "query": "台南 孔廟",
+    "resolved_at": "2026-07-06T14:14:03",
+    "place": {
+      "place_id": "ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+      "resource_name": "places/ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+      "name": "臺南孔廟",
+      "address": "700臺南市中西區永華里南門路2號",
+      "latitude": 22.9905296,
+      "longitude": 120.2040401,
+      "primary_type": "place_of_worship",
+      "types": [
+        "place_of_worship",
+        "historical_landmark",
+        "tourist_attraction",
+        "historical_place",
+        "association_or_organization",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=802303505355083921&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 孔廟",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南 府中街": {
+    "query": "台南 府中街",
+    "resolved_at": "2026-07-06T14:14:04",
+    "place": {
+      "place_id": "ChIJ3YZLDYh2bjQRVqmbugF5dME",
+      "resource_name": "places/ChIJ3YZLDYh2bjQRVqmbugF5dME",
+      "name": "府中街",
+      "address": "700臺南市中西區永華里府中街",
+      "latitude": 22.9901951,
+      "longitude": 120.2065732,
+      "primary_type": null,
+      "types": [
+        "route"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=13939899794951219542&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 府中街",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南火車站": {
+    "query": "台南火車站",
+    "resolved_at": "2026-07-06T14:14:06",
+    "place": {
+      "place_id": "ChIJCaqM84x2bjQRRqzST46i6cM",
+      "resource_name": "places/ChIJCaqM84x2bjQRRqzST46i6cM",
+      "name": "台南車站",
+      "address": "701臺南市東區成大里前鋒路210號",
+      "latitude": 22.9970861,
+      "longitude": 120.21298319999998,
+      "primary_type": "train_station",
+      "types": [
+        "train_station",
+        "transit_station",
+        "transportation_service",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=14116993239077792838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南火車站",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "台南|台南 安平老街": {
+    "query": "台南 安平老街",
+    "resolved_at": "2026-07-06T14:14:06",
+    "place": {
+      "place_id": "ChIJ_____wN2bjQRIOio8uGV_Og",
+      "resource_name": "places/ChIJ_____wN2bjQRIOio8uGV_Og",
+      "name": "安平老街",
+      "address": "708臺南市安平區延平街",
+      "latitude": 23.0007174,
+      "longitude": 120.1616449,
+      "primary_type": "tourist_attraction",
+      "types": [
+        "tourist_attraction",
+        "historical_landmark",
+        "gift_shop",
+        "jewelry_store",
+        "home_goods_store",
+        "historical_place",
+        "store",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=16788458308601702432&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "台南 安平老街",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|中部國際機場": {
+    "query": "中部國際機場",
+    "resolved_at": "2026-07-06T14:15:51",
+    "place": {
+      "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+      "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+      "name": "中部國際機場(新特麗亞)",
+      "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+      "latitude": 34.8573624,
+      "longitude": 136.8107557,
+      "primary_type": "international_airport",
+      "types": [
+        "international_airport",
+        "airport",
+        "transportation_service",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "中部國際機場",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋 nagoya city archives museum": {
+    "query": "名古屋 Nagoya City Archives Museum",
+    "resolved_at": "2026-07-06T14:15:52",
+    "place": {
+      "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+      "resource_name": "places/ChIJqQkwHC9xA2AR_Y4eVMku55w",
+      "name": "名古屋市市政資料館",
+      "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+      "latitude": 35.1811442,
+      "longitude": 136.9103135,
+      "primary_type": "museum",
+      "types": [
+        "tourist_attraction",
+        "museum",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=11306056831771512573&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋 Nagoya City Archives Museum",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋 大須商店街": {
+    "query": "名古屋 大須商店街",
+    "resolved_at": "2026-07-06T14:18:51",
+    "place": {
+      "place_id": "ChIJZdlrqMxwA2ARpJpFJF45vgg",
+      "resource_name": "places/ChIJZdlrqMxwA2ARpJpFJF45vgg",
+      "name": "大須商店街（名古屋）",
+      "address": "3 Chome-26 Osu, Naka Ward, Nagoya, Aichi 460-0011日本",
+      "latitude": 35.159065999999996,
+      "longitude": 136.90257300000002,
+      "primary_type": null,
+      "types": [
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=630004074376698532&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋 大須商店街",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋 榮": {
+    "query": "名古屋 榮",
+    "resolved_at": "2026-07-06T14:18:51",
+    "place": {
+      "place_id": "ChIJy6RW2NJwA2AR5507QcamqY8",
+      "resource_name": "places/ChIJy6RW2NJwA2AR5507QcamqY8",
+      "name": "Sakae",
+      "address": "Sakae, Naka Ward, Nagoya, Aichi 460-0008日本",
+      "latitude": 35.164814199999995,
+      "longitude": 136.9040502,
+      "primary_type": null,
+      "types": [
+        "sublocality_level_2",
+        "sublocality",
+        "political"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=10351988588915957223&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋 榮",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋市市政資料館": {
+    "query": "名古屋市市政資料館",
+    "resolved_at": "2026-07-06T14:18:52",
+    "place": {
+      "place_id": "ChIJqQkwHC9xA2AR_Y4eVMku55w",
+      "resource_name": "places/ChIJqQkwHC9xA2AR_Y4eVMku55w",
+      "name": "名古屋市市政資料館",
+      "address": "1-chōme-3 Shirakabe, Higashi Ward, Nagoya, Aichi 461-0011日本",
+      "latitude": 35.1811442,
+      "longitude": 136.9103135,
+      "primary_type": "museum",
+      "types": [
+        "tourist_attraction",
+        "museum",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=11306056831771512573&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋市市政資料館",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 砂卡礑步道": {
+    "query": "花蓮 砂卡礑步道",
+    "resolved_at": "2026-07-06T18:14:28",
+    "place": {
+      "place_id": "ChIJJyMSInuCaDQRzZ8QPigmNKQ",
+      "resource_name": "places/ChIJJyMSInuCaDQRzZ8QPigmNKQ",
+      "name": "砂卡礑步道",
+      "address": "972花蓮縣秀林鄉富世村砂卡礑步道",
+      "latitude": 24.1729478,
+      "longitude": 121.6173446,
+      "primary_type": null,
+      "types": [
+        "route"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=11832124075290959821&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 砂卡礑步道",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 清水斷崖": {
+    "query": "花蓮 清水斷崖",
+    "resolved_at": "2026-07-06T18:14:29",
+    "place": {
+      "place_id": "ChIJI327WbwrZjQRS4-WgIH1GAQ",
+      "resource_name": "places/ChIJI327WbwrZjQRS4-WgIH1GAQ",
+      "name": "清水斷崖",
+      "address": "972花蓮縣秀林鄉清水斷崖",
+      "latitude": 24.2188889,
+      "longitude": 121.6930556,
+      "primary_type": "natural_feature",
+      "types": [
+        "natural_feature",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=295255712149704523&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 清水斷崖",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 七星潭": {
+    "query": "花蓮 七星潭",
+    "resolved_at": "2026-07-06T18:14:29",
+    "place": {
+      "place_id": "ChIJ9SCI5oedaDQRijf91YB4Ag0",
+      "resource_name": "places/ChIJ9SCI5oedaDQRijf91YB4Ag0",
+      "name": "七星潭",
+      "address": "花蓮縣七星潭",
+      "latitude": 24.0430498,
+      "longitude": 121.62249260000002,
+      "primary_type": "beach",
+      "types": [
+        "beach",
+        "natural_feature",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=937444167187773322&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 七星潭",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 東大門夜市": {
+    "query": "花蓮 東大門夜市",
+    "resolved_at": "2026-07-06T18:14:29",
+    "place": {
+      "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+      "resource_name": "places/ChIJKQxO8emfaDQR5SAKaOCWeb4",
+      "name": "東大門夜市",
+      "address": "970花蓮縣花蓮市民主里中山路50號",
+      "latitude": 23.973585099999998,
+      "longitude": 121.61089009999999,
+      "primary_type": "market",
+      "types": [
+        "tourist_attraction",
+        "market",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=13725167229950632165&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 東大門夜市",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 瑞穗牧場": {
+    "query": "花蓮 瑞穗牧場",
+    "resolved_at": "2026-07-06T18:14:30",
+    "place": {
+      "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+      "resource_name": "places/ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+      "name": "瑞穗牧場",
+      "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+      "latitude": 23.479209299999997,
+      "longitude": 121.34595650000001,
+      "primary_type": "lodging",
+      "types": [
+        "tourist_attraction",
+        "ranch",
+        "farm",
+        "lodging",
+        "point_of_interest",
+        "service",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=51172475088977732&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 瑞穗牧場",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 六十石山": {
+    "query": "花蓮 六十石山",
+    "resolved_at": "2026-07-06T18:14:30",
+    "place": {
+      "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+      "resource_name": "places/ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+      "name": "六十石山",
+      "address": "983花蓮縣富里鄉六十石山",
+      "latitude": 23.218788,
+      "longitude": 121.317725,
+      "primary_type": "mountain_peak",
+      "types": [
+        "mountain_peak",
+        "natural_feature",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=1051646585337771459&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 六十石山",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮 雲山水夢幻湖": {
+    "query": "花蓮 雲山水夢幻湖",
+    "resolved_at": "2026-07-06T18:14:30",
+    "place": {
+      "place_id": "ChIJjUh15b2laDQRVjXq04Hj33k",
+      "resource_name": "places/ChIJjUh15b2laDQRVjXq04Hj33k",
+      "name": "花蓮雲山水夢幻湖",
+      "address": "974花蓮縣壽豐鄉豐坪路二段2巷201弄18號",
+      "latitude": 23.8285824,
+      "longitude": 121.5155814,
+      "primary_type": "garden",
+      "types": [
+        "garden",
+        "tourist_attraction",
+        "association_or_organization",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=8781987945141384534&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮 雲山水夢幻湖",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "花蓮|花蓮伴手禮": {
+    "query": "花蓮伴手禮",
+    "resolved_at": "2026-07-06T18:14:30",
+    "place": {
+      "place_id": "ChIJZbNXw8GfaDQRgrPCrmn-5Xk",
+      "resource_name": "places/ChIJZbNXw8GfaDQRgrPCrmn-5Xk",
+      "name": "杜倫先生丨花蓮名產丨伴手禮｜麻糬｜甜點｜蛋糕",
+      "address": "970花蓮縣花蓮市民生里中華路23號",
+      "latitude": 23.9762012,
+      "longitude": 121.60934549999999,
+      "primary_type": "dessert_shop",
+      "types": [
+        "dessert_shop",
+        "gift_shop",
+        "confectionery",
+        "point_of_interest",
+        "food_store",
+        "store",
+        "food",
+        "service",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=8783706378113037186&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "花蓮伴手禮",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋站": {
+    "query": "名古屋站",
+    "resolved_at": "2026-07-06T21:58:52",
+    "place": {
+      "place_id": "ChIJiYvXlOd2A2ARYxYm-Esg94E",
+      "resource_name": "places/ChIJiYvXlOd2A2ARYxYm-Esg94E",
+      "name": "名古屋車站",
+      "address": "1-chōme-1-4 Meieki, Nakamura Ward, Nagoya, Aichi 450-0002日本",
+      "latitude": 35.170915,
+      "longitude": 136.8815369,
+      "primary_type": "transit_station",
+      "types": [
+        "transit_station",
+        "subway_station",
+        "train_station",
+        "transportation_service",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=9364989460798117475&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋站",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋城": {
+    "query": "名古屋城",
+    "resolved_at": "2026-07-06T21:58:53",
+    "place": {
+      "place_id": "ChIJse-wx8t2A2ARd6Z1knjp07k",
+      "resource_name": "places/ChIJse-wx8t2A2ARd6Z1knjp07k",
+      "name": "名古屋城",
+      "address": "1-1 Honmaru, Naka Ward, Nagoya, Aichi 460-0031日本",
+      "latitude": 35.184750099999995,
+      "longitude": 136.89968829999998,
+      "primary_type": "castle",
+      "types": [
+        "castle",
+        "tourist_attraction",
+        "historical_place",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=13390302821165147767&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋城",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋 矢場とん 名鐵店": {
+    "query": "名古屋 矢場とん 名鐵店",
+    "resolved_at": "2026-07-06T22:33:31",
+    "place": {
+      "place_id": "ChIJVVVV4t12A2ARsgktDwjgPpQ",
+      "resource_name": "places/ChIJVVVV4t12A2ARsgktDwjgPpQ",
+      "name": "矢場丼 名古屋站名鐵店",
+      "address": "日本〒450-0002 Aichi, Nagoya, Nakamura Ward, Meieki, 1-chōme−2−１ 9階",
+      "latitude": 35.169503,
+      "longitude": 136.8839233,
+      "primary_type": "japanese_restaurant",
+      "types": [
+        "tonkatsu_restaurant",
+        "japanese_restaurant",
+        "restaurant",
+        "food",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=10682221691388365234&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋 矢場とん 名鐵店",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋中部國際機場": {
+    "query": "名古屋中部國際機場",
+    "resolved_at": "2026-07-06T22:33:32",
+    "place": {
+      "place_id": "ChIJzynM7ZN9BGARJQAsbih9mEI",
+      "resource_name": "places/ChIJzynM7ZN9BGARJQAsbih9mEI",
+      "name": "中部國際機場(新特麗亞)",
+      "address": "1-chōme-1 Centrair, Tokoname, Aichi 479-0881日本",
+      "latitude": 34.8573624,
+      "longitude": 136.8107557,
+      "primary_type": "international_airport",
+      "types": [
+        "international_airport",
+        "airport",
+        "transportation_service",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=4798723015563804709&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋中部國際機場",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  },
+  "名古屋|名古屋 吉卜力公園": {
+    "query": "名古屋 吉卜力公園",
+    "resolved_at": "2026-07-06T22:33:32",
+    "place": {
+      "place_id": "ChIJs9ADAkVnA2ARixLFaXpLFjY",
+      "resource_name": "places/ChIJs9ADAkVnA2ARixLFaXpLFjY",
+      "name": "吉卜力公園",
+      "address": "Ibaragabasama, Nagakute, Aichi 480-1342日本",
+      "latitude": 35.1750406,
+      "longitude": 137.0887716,
+      "primary_type": "amusement_park",
+      "types": [
+        "amusement_park",
+        "tourist_information_center",
+        "tourist_attraction",
+        "tour_agency",
+        "travel_agency",
+        "service",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=3897385516668359307&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "名古屋 吉卜力公園",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
+  }
+}

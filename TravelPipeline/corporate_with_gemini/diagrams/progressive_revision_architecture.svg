@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2f6fd6"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d87522"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#23846a"/>
+    </marker>
+    <style>
+      .bg { fill: #f7f8fb; }
+      .title { font: 700 46px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #172033; }
+      .subtitle { font: 400 24px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #4b5568; }
+      .section { font: 700 25px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #293244; }
+      .node-title { font: 700 26px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #172033; }
+      .node-subtitle { font: 600 19px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #506078; }
+      .node-text { font: 400 19px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #3c4658; }
+      .small { font: 400 17px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #4b5568; }
+      .tag { font: 600 16px "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; fill: #334155; }
+      .blue-box { fill: #eef5ff; stroke: #8cb6f3; stroke-width: 2; }
+      .cyan-box { fill: #ebfbff; stroke: #75c8dd; stroke-width: 2; }
+      .green-box { fill: #effaf5; stroke: #7fc8ae; stroke-width: 2; }
+      .orange-box { fill: #fff4e8; stroke: #efb277; stroke-width: 2; }
+      .purple-box { fill: #f4efff; stroke: #b8a2eb; stroke-width: 2; }
+      .gray-box { fill: #ffffff; stroke: #d8dee9; stroke-width: 2; }
+      .shadow { filter: drop-shadow(0 8px 18px rgba(25, 32, 48, 0.08)); }
+      .arrow-blue { fill: none; stroke: #2f6fd6; stroke-width: 4; marker-end: url(#arrow-blue); }
+      .arrow-orange { fill: none; stroke: #d87522; stroke-width: 4; marker-end: url(#arrow-orange); }
+      .arrow-green { fill: none; stroke: #23846a; stroke-width: 4; marker-end: url(#arrow-green); }
+      .dash { stroke-dasharray: 10 9; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1920" height="1080"/>
+
+  <text class="title" x="80" y="86">支援漸進式修訂之互動式旅遊規劃代理系統</text>
+  <text class="subtitle" x="80" y="124">初稿只是起點，系統保留目前行程狀態，依照使用者每次修訂做局部更新與驗證</text>
+
+  <text class="section" x="80" y="176">初始行程生成流程</text>
+  <text class="section" x="1320" y="374">漸進式修訂迴圈</text>
+
+  <!-- Initial planning pipeline -->
+  <g class="shadow">
+    <rect class="blue-box" x="80" y="205" width="270" height="122" rx="8"/>
+    <text class="node-title" x="108" y="249">使用者需求</text>
+    <text class="node-text" x="108" y="284">目的地、天數、偏好</text>
+    <text class="node-text" x="108" y="309">出發地與旅行條件</text>
+  </g>
+
+  <g class="shadow">
+    <rect class="blue-box" x="420" y="205" width="300" height="122" rx="8"/>
+    <text class="node-title" x="448" y="249">Initial Planner LLM</text>
+    <text class="node-text" x="448" y="284">產生有時間軸的</text>
+    <text class="node-text" x="448" y="309">80 分抽象初稿</text>
+  </g>
+
+  <g class="shadow">
+    <rect class="cyan-box" x="790" y="205" width="300" height="122" rx="8"/>
+    <text class="node-title" x="818" y="249">Ambiguity Extractor</text>
+    <text class="node-text" x="818" y="284">找出模糊 slots</text>
+    <text class="node-text" x="818" y="309">例：特色小吃、深度景點</text>
+  </g>
+
+  <g class="shadow">
+    <rect class="cyan-box" x="1160" y="205" width="330" height="122" rx="8"/>
+    <text class="node-title" x="1188" y="249">Grounding 與候選生成</text>
+    <text class="node-text" x="1188" y="284">Query Generator + Places Search</text>
+    <text class="node-text" x="1188" y="309">建立真實地點候選池</text>
+  </g>
+
+  <g class="shadow">
+    <rect class="green-box" x="1560" y="205" width="280" height="122" rx="8"/>
+    <text class="node-title" x="1588" y="249">Scorer / Validator</text>
+    <text class="node-text" x="1588" y="284">評分、過濾、檢查</text>
+    <text class="node-text" x="1588" y="309">產生可用初稿</text>
+  </g>
+
+  <path class="arrow-blue" d="M 350 266 L 410 266"/>
+  <path class="arrow-blue" d="M 720 266 L 780 266"/>
+  <path class="arrow-blue" d="M 1090 266 L 1150 266"/>
+  <path class="arrow-blue" d="M 1490 266 L 1550 266"/>
+  <path class="arrow-green" d="M 1700 327 C 1700 386 1320 386 1208 448"/>
+
+  <!-- Frontend workspace -->
+  <g class="shadow">
+    <rect class="gray-box" x="80" y="438" width="380" height="190" rx="8"/>
+    <text class="node-title" x="112" y="482">使用者與前端互動工作區</text>
+    <text class="node-text" x="112" y="520">拖拉行程、手動新增</text>
+    <text class="node-text" x="112" y="548">查看初稿與候選替代</text>
+    <text class="node-text" x="112" y="576">提出下一次修訂需求</text>
+    <rect x="112" y="596" width="92" height="26" rx="8" fill="#eef2f7"/>
+    <text class="tag" x="130" y="615">Frontend</text>
+  </g>
+
+  <!-- State center -->
+  <g class="shadow">
+    <rect class="purple-box" x="690" y="415" width="540" height="220" rx="8"/>
+    <text class="node-title" x="734" y="464">Current Itinerary State</text>
+    <text class="node-subtitle" x="734" y="495">目前行程狀態是整個系統的核心</text>
+    <text class="node-text" x="734" y="532">保存已接受行程、locked slots、手動拖拉結果</text>
+    <text class="node-text" x="734" y="562">保存候選景點池、評分結果、版本紀錄</text>
+    <text class="node-text" x="734" y="592">每次修訂都讀取狀態，只更新需要改的部分</text>
+  </g>
+
+  <path class="arrow-green" d="M 690 525 L 470 525"/>
+  <path class="arrow-orange dash" d="M 460 590 C 575 722 1390 690 1452 525"/>
+
+  <!-- Revision request and MCP -->
+  <g class="shadow">
+    <rect class="orange-box" x="1450" y="430" width="380" height="140" rx="8"/>
+    <text class="node-title" x="1482" y="474">User Revision Query</text>
+    <text class="node-text" x="1482" y="509">例：第二天下午太累</text>
+    <text class="node-text" x="1482" y="537">晚餐不要壽司，換特色料理</text>
+  </g>
+
+  <g class="shadow">
+    <rect class="orange-box" x="1450" y="650" width="380" height="160" rx="8"/>
+    <text class="node-title" x="1482" y="696">MCP Revision Router</text>
+    <text class="node-text" x="1482" y="733">判斷使用者意圖</text>
+    <text class="node-text" x="1482" y="761">選擇要呼叫的 Agent / Tool</text>
+    <text class="node-text" x="1482" y="789">沒有合適工具時走 LLM fallback</text>
+  </g>
+
+  <path class="arrow-orange" d="M 1640 570 L 1640 640"/>
+
+  <!-- Tools -->
+  <g class="shadow">
+    <rect class="gray-box" x="950" y="775" width="430" height="210" rx="8"/>
+    <text class="node-title" x="982" y="820">Agents / Tools</text>
+    <text class="node-text" x="982" y="856">Candidate Archive Retriever</text>
+    <text class="node-text" x="982" y="884">Places Search + Candidate Scorer</text>
+    <text class="node-text" x="982" y="912">Route / Weather / Traffic Checker</text>
+    <text class="node-text" x="982" y="940">General LLM + Web Search fallback</text>
+    <rect x="982" y="956" width="118" height="26" rx="8" fill="#fff4e8"/>
+    <text class="tag" x="1000" y="975">可重複呼叫</text>
+  </g>
+
+  <path class="arrow-orange" d="M 1450 730 C 1412 746 1402 782 1390 836"/>
+
+  <!-- Patch -->
+  <g class="shadow">
+    <rect class="orange-box" x="540" y="775" width="340" height="155" rx="8"/>
+    <text class="node-title" x="572" y="820">Proposed Patch</text>
+    <text class="node-text" x="572" y="856">只提出局部修訂</text>
+    <text class="node-text" x="572" y="884">替換模糊活動或微調時間</text>
+    <text class="node-text" x="572" y="912">不是整份行程重生</text>
+  </g>
+
+  <path class="arrow-orange" d="M 950 870 C 928 872 912 876 890 884"/>
+
+  <!-- Rule validator -->
+  <g class="shadow">
+    <rect class="green-box" x="80" y="775" width="380" height="155" rx="8"/>
+    <text class="node-title" x="112" y="820">Rule Validator</text>
+    <text class="node-text" x="112" y="856">檢查時間重疊、通勤距離</text>
+    <text class="node-text" x="112" y="884">開放時間與 locked 行程</text>
+    <text class="node-text" x="112" y="912">通過後才更新狀態</text>
+  </g>
+
+  <path class="arrow-orange" d="M 540 852 L 470 852"/>
+  <path class="arrow-green" d="M 270 775 C 410 674 538 625 680 574"/>
+  <path class="arrow-green" d="M 1230 525 C 1325 526 1370 520 1440 512"/>
+
+  <!-- Notes -->
+  <g>
+    <rect x="80" y="965" width="520" height="56" rx="8" fill="#ffffff" stroke="#d8dee9" stroke-width="2"/>
+    <text class="small" x="110" y="999">實線：目前已完成或部分完成的主流程；虛線：修訂時由使用者觸發的迴圈入口</text>
+  </g>
+  <g>
+    <rect x="1238" y="965" width="600" height="56" rx="8" fill="#ffffff" stroke="#d8dee9" stroke-width="2"/>
+    <text class="small" x="1268" y="999">重點：每次修訂都以 Current Itinerary State 為基準，產生可驗證的局部更新</text>
+  </g>
+</svg>

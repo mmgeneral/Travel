@@ -1,0 +1,23 @@
+{
+  "destination": "上海",
+  "lodging_area": "",
+  "lodging_type": "飯店",
+  "query": "上海 飯店",
+  "checkin_date": "2024-11-15",
+  "checkout_date": "2024-11-17",
+  "nights": 2,
+  "adults": 2,
+  "currency": "TWD",
+  "gl": "tw",
+  "hl": "zh-tw",
+  "budget_total": 3400.0,
+  "budget_per_night_cap": 595.0,
+  "lodging_preferences": [],
+  "avoid_areas": [],
+  "priority_order": [
+    3,
+    1,
+    2
+  ],
+  "can_search_live_price": true
+}

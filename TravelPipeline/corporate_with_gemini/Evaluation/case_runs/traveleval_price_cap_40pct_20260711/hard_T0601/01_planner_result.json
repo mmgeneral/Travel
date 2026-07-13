@@ -1,0 +1,509 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-12-15",
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "sunday",
+          "start_time": "08:00",
+          "end_time": "13:00",
+          "time": "08:00~13:00",
+          "activity": "從北京乘坐高鐵前往上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "sunday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "抵達上海並入住酒店",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "酒店名",
+          "route_entry_place": "酒店",
+          "route_exit_place": "酒店",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "sunday",
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "time": "15:00~17:00",
+          "activity": "參觀西延堂教堂",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "西延堂教堂",
+          "route_entry_place": "西延堂教堂",
+          "route_exit_place": "西延堂教堂",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "sunday",
+          "start_time": "17:00",
+          "end_time": "18:00",
+          "time": "17:00~18:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": "sunday",
+          "start_time": "18:00",
+          "end_time": "19:00",
+          "time": "18:00~19:00",
+          "activity": "享用本幫菜晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "monday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "monday",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "探訪朱家角古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "朱家角古鎮",
+          "route_entry_place": "朱家角古鎮",
+          "route_exit_place": "朱家角古鎮",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "monday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用當地特色小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "monday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "monday",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀廣富林文化遺址公園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "廣富林文化遺址公園",
+          "route_entry_place": "廣富林文化遺址公園",
+          "route_exit_place": "廣富林文化遺址公園",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "tuesday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "tuesday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海鐵道博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海鐵道博物館",
+          "route_entry_place": "上海鐵道博物館",
+          "route_exit_place": "上海鐵道博物館",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "tuesday",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot03",
+          "day_of_week": "tuesday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用特色午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot04",
+          "day_of_week": "tuesday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot05",
+          "day_of_week": "tuesday",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "探訪大境閣與古城牆",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "大境閣",
+          "route_entry_place": "大境閣",
+          "route_exit_place": "大境閣",
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "date_description": "第四天",
+      "day_of_week": "wednesday",
+      "schedule": [
+        {
+          "slot_id": "day4_slot01",
+          "day_of_week": "wednesday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "探索錦澤古鎮",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "錦澤古鎮",
+          "route_entry_place": "錦澤古鎮",
+          "route_exit_place": "錦澤古鎮",
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot02",
+          "day_of_week": "wednesday",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot03",
+          "day_of_week": "wednesday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用午後茶點",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot04",
+          "day_of_week": "wednesday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day4_slot05",
+          "day_of_week": "wednesday",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "自由探索市區小眾文化",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "date_description": "第五天",
+      "day_of_week": "thursday",
+      "schedule": [
+        {
+          "slot_id": "day5_slot01",
+          "day_of_week": "thursday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀古筆墨館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "古筆墨館",
+          "route_entry_place": "古筆墨館",
+          "route_exit_place": "古筆墨館",
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot02",
+          "day_of_week": "thursday",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot03",
+          "day_of_week": "thursday",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "享用本幫菜午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot04",
+          "day_of_week": "thursday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day5_slot05",
+          "day_of_week": "thursday",
+          "start_time": "14:00",
+          "end_time": "18:00",
+          "time": "14:00~18:00",
+          "activity": "返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "寒冷時節，請攜帶禦寒服裝。",
+    "部分景區週一休館，請確認開放時間。",
+    "上海地鐵票價低廉，可作為市區移動主要方式。",
+    "建議預先線上訂票以節省時間。"
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [
+        "friends"
+      ],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "朱家角古鎮",
+        "廣富林文化遺址公園",
+        "大境閣"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 5,
+      "duration_nights": 4,
+      "travel_start_date": "2024-12-15",
+      "travel_end_date": "2024-12-19",
+      "season_or_month": "冬季",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [
+        "朱家角古鎮",
+        "廣富林文化遺址公園"
+      ],
+      "desired_experiences": [
+        "小眾秘境",
+        "歷史古蹟"
+      ],
+      "activity_types": [
+        "culture",
+        "history"
+      ],
+      "food_preferences": [
+        "local_cuisine",
+        "not_huoguo_or_sichuan"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": [
+        "central_location",
+        "free_parking"
+      ]
+    },
+    "why": {
+      "trip_goal": "探索上海的小眾秘境與歷史古蹟",
+      "success_criteria": [
+        "預算不超過3200元",
+        "不吃火鍋和川菜",
+        "住宿位置好并免費停車"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3
+      ]
+    },
+    "how": {
+      "budget": 3200,
+      "preferred_transportation": "high_speed_train",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "route_feasibility"
+      ],
+      "hard_constraints": [
+        "no_flight"
+      ],
+      "soft_preferences": []
+    }
+  }
+}

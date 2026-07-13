@@ -1,0 +1,437 @@
+{
+  "summary": {
+    "departure": "北京",
+    "destination": "上海",
+    "total_days": 3,
+    "total_travelers": 2,
+    "total_budget": 3400.0,
+    "budget_currency": "CNY",
+    "cost_currency": "CNY",
+    "currency_conversion": {
+      "TWD_PER_CNY": 5.0,
+      "formula": "CNY = TWD / TWD_PER_CNY"
+    },
+    "calculated_total_cost": 2487.8,
+    "is_within_budget": true,
+    "source_note": "Converted from FinalItineraryAgent output for no-Gaode offline scoring."
+  },
+  "intercity_transport": {
+    "transport_type": [],
+    "note": "FinalItineraryAgent output has arrival/return anchors but no train or flight ticket detail."
+  },
+  "accommodation": {
+    "hotel_name": "上海新世界麗笙大酒店",
+    "room_type": [
+      {
+        "type": "雙人房",
+        "quantity": 1,
+        "price_per_night": 583.9,
+        "nights": 2,
+        "currency": "CNY",
+        "original_price": {
+          "currency": "TWD",
+          "per_night": 2919,
+          "total": 5839,
+          "source": "serpapi_google_hotels"
+        },
+        "source": "serpapi_google_hotels",
+        "availability_confirmed": null
+      }
+    ],
+    "total_cost": 1167.8
+  },
+  "daily_plans": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "starting_point": "上海新世界麗笙大酒店",
+      "activities": [
+        {
+          "type": "flexible",
+          "location_name": "上海火車站",
+          "description": "抵達上海並入住酒店",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "cost": 0.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 0,
+              "party_total": 0,
+              "source": "llm_estimated",
+              "confidence": 0.9,
+              "note": "住宿費已包含於酒店價格之中。"
+            },
+            "converted_total": 0.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day1_slot01",
+          "source_slot_type": "flexible"
+        },
+        {
+          "type": "meal",
+          "location_name": "佳家湯包",
+          "description": "享用午餐 - 佳家湯包",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "cost": 200.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 100,
+              "party_total": 200,
+              "source": "llm_estimated",
+              "confidence": 0.8,
+              "note": "估計餐費每人100元。"
+            },
+            "converted_total": 200.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day1_slot02",
+          "source_slot_type": "meal"
+        },
+        {
+          "type": "intracity_transport",
+          "location_name": "外灘",
+          "description": "預留通勤時間",
+          "start_time": "13:00",
+          "end_time": "13:30",
+          "cost": 0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 30.0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 0,
+              "party_total": 30,
+              "source": "llm_estimated",
+              "confidence": 0.7,
+              "note": "交通預估花費。"
+            },
+            "converted_total": 30.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day1_slot03",
+          "source_slot_type": "transport"
+        },
+        {
+          "type": "attraction",
+          "location_name": "外灘",
+          "description": "外灘與南京路步行街觀光",
+          "start_time": "13:30",
+          "end_time": "17:00",
+          "cost": 0.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 0,
+              "party_total": 0,
+              "source": "free",
+              "confidence": 1.0,
+              "note": "免費景點。"
+            },
+            "converted_total": 0.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day1_slot04",
+          "source_slot_type": "attraction"
+        }
+      ],
+      "ending_point": {
+        "type": "ending_point",
+        "location_name": "外灘",
+        "description": "當日結束點",
+        "start_time": "17:00",
+        "end_time": "17:00",
+        "cost": 0,
+        "transportation_to": "地鐵",
+        "transportation_cost": 0,
+        "details": null
+      }
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "starting_point": "上海新世界麗笙大酒店",
+      "activities": [
+        {
+          "type": "attraction",
+          "location_name": "豫園",
+          "description": "參觀豫園與城隍廟",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "cost": 0.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 0,
+              "party_total": 0,
+              "source": "free",
+              "confidence": 1.0,
+              "note": "免費景點。"
+            },
+            "converted_total": 0.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day2_slot01",
+          "source_slot_type": "attraction"
+        },
+        {
+          "type": "meal",
+          "location_name": "萊萊小吃湯包館",
+          "description": "享用午餐 - 萊萊小吃湯包館",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "cost": 160.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 80,
+              "party_total": 160,
+              "source": "llm_estimated",
+              "confidence": 0.8,
+              "note": "預估午餐費用每人80元。"
+            },
+            "converted_total": 160.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day2_slot02",
+          "source_slot_type": "meal"
+        },
+        {
+          "type": "intracity_transport",
+          "location_name": "法租界",
+          "description": "預留通勤時間",
+          "start_time": "13:00",
+          "end_time": "13:30",
+          "cost": 0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 30.0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 0,
+              "party_total": 30,
+              "source": "llm_estimated",
+              "confidence": 0.7,
+              "note": "交通預估花費。"
+            },
+            "converted_total": 30.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day2_slot03",
+          "source_slot_type": "transport"
+        },
+        {
+          "type": "attraction",
+          "location_name": "法租界上海製針總場舊址",
+          "description": "法租界上海製針總場舊址",
+          "start_time": "13:30",
+          "end_time": "17:00",
+          "cost": 0.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 0,
+              "party_total": 0,
+              "source": "free",
+              "confidence": 1.0,
+              "note": "文化遺跡參觀。"
+            },
+            "converted_total": 0.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day2_slot04",
+          "source_slot_type": "attraction"
+        }
+      ],
+      "ending_point": {
+        "type": "ending_point",
+        "location_name": "法租界上海製針總場舊址",
+        "description": "當日結束點",
+        "start_time": "17:00",
+        "end_time": "17:00",
+        "cost": 0,
+        "transportation_to": "地鐵",
+        "transportation_cost": 0,
+        "details": null
+      }
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "starting_point": "上海新世界麗笙大酒店",
+      "activities": [
+        {
+          "type": "attraction",
+          "location_name": "上海中心大廈",
+          "description": "參觀上海中心大廈及浦東金融中心觀景台",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "cost": 360.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 180,
+              "party_total": 360,
+              "source": "llm_estimated",
+              "confidence": 0.9,
+              "note": "觀景台門票估價。"
+            },
+            "converted_total": 360.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day3_slot01",
+          "source_slot_type": "attraction"
+        },
+        {
+          "type": "meal",
+          "location_name": "藍帝老上海本幫菜",
+          "description": "享用午餐 - 藍帝老上海本幫菜",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "cost": 240.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 120,
+              "party_total": 240,
+              "source": "llm_estimated",
+              "confidence": 0.8,
+              "note": "午餐佳餚預估。"
+            },
+            "converted_total": 240.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day3_slot02",
+          "source_slot_type": "meal"
+        },
+        {
+          "type": "attraction",
+          "location_name": "上海朱家角古鎮旅遊區",
+          "description": "遊覽上海朱家角古鎮旅遊區",
+          "start_time": "13:00",
+          "end_time": "16:00",
+          "cost": 200.0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 100,
+              "party_total": 200,
+              "source": "llm_estimated",
+              "confidence": 0.85,
+              "note": "大致的交通和參觀費用。"
+            },
+            "converted_total": 200.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day3_slot03",
+          "source_slot_type": "attraction"
+        },
+        {
+          "type": "intracity_transport",
+          "location_name": "上海火車站",
+          "description": "返程至上海火車站",
+          "start_time": "16:00",
+          "end_time": "18:00",
+          "cost": 0,
+          "transportation_to": "地鐵",
+          "transportation_cost": 100.0,
+          "details": null,
+          "cost_estimate": {
+            "original": {
+              "currency": "CNY",
+              "per_person": 50,
+              "party_total": 100,
+              "source": "llm_estimated",
+              "confidence": 0.75,
+              "note": "回程交通費用估算。"
+            },
+            "converted_total": 100.0,
+            "converted_currency": "CNY",
+            "source_currency": "CNY",
+            "conversion": null
+          },
+          "source_slot_id": "day3_slot04",
+          "source_slot_type": "transport"
+        }
+      ],
+      "ending_point": {
+        "type": "ending_point",
+        "location_name": "上海火車站",
+        "description": "當日結束點",
+        "start_time": "18:00",
+        "end_time": "18:00",
+        "cost": 0,
+        "transportation_to": "地鐵",
+        "transportation_cost": 0,
+        "details": null
+      }
+    }
+  ],
+  "cost_breakdown": {
+    "attractions": 560.0,
+    "intercity_transportation": 0.0,
+    "intracity_transportation": 160.0,
+    "accommodation": 1167.8,
+    "meals": 600.0,
+    "other": 0.0,
+    "total": 2487.8
+  },
+  "conversion_notes": [
+    "保持 TravelEval 期待的 summary/intercity_transport/accommodation/daily_plans/cost_breakdown 結構。",
+    "預算以 CNY 評分；SerpApi 住宿若是 TWD，先用 CNY = TWD / 5 換算。",
+    "若 final result 的 slot 有 cost_estimate 會優先採用；缺少時用 TravelEval DB 或保守預設值 fallback。"
+  ]
+}

@@ -1,0 +1,1857 @@
+{
+  "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot04",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:30",
+      "end_time": "13:30",
+      "time": "12:30~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用午餐",
+      "reason_for_search": "缺乏具體店家，需搜尋美食地點",
+      "target_terms": [
+        "美食",
+        "午餐",
+        "夜市",
+        "自然景點"
+      ],
+      "location_terms": [
+        "花蓮",
+        "燕子口",
+        "火車站附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "午餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot04",
+        "slot_id": "day1_slot04",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "12:30",
+        "end_time": "13:30",
+        "time": "12:30~13:30",
+        "slot_type": "meal",
+        "original_activity": "享用午餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot02",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "10:00",
+          "end_time": "12:00",
+          "time": "10:00~12:00",
+          "activity": "參觀太魯閣砂卡礑步道",
+          "query": "花蓮 砂卡礑步道",
+          "place": {
+            "place_id": "ChIJJyMSInuCaDQRzZ8QPigmNKQ",
+            "resource_name": "places/ChIJJyMSInuCaDQRzZ8QPigmNKQ",
+            "name": "砂卡礑步道",
+            "address": "972花蓮縣秀林鄉富世村砂卡礑步道",
+            "latitude": 24.1729478,
+            "longitude": 121.6173446,
+            "primary_type": null,
+            "types": [
+              "route"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=11832124075290959821&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 砂卡礑步道",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day1_slot06",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀清水斷崖",
+          "query": "花蓮 清水斷崖",
+          "place": {
+            "place_id": "ChIJI327WbwrZjQRS4-WgIH1GAQ",
+            "resource_name": "places/ChIJI327WbwrZjQRS4-WgIH1GAQ",
+            "name": "清水斷崖",
+            "address": "972花蓮縣秀林鄉清水斷崖",
+            "latitude": 24.2188889,
+            "longitude": 121.6930556,
+            "primary_type": "natural_feature",
+            "types": [
+              "natural_feature",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=295255712149704523&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 清水斷崖",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJX10lb2ufaDQR_6BQTdcVStQ",
+          "name": "餵咖哩WAIT CURRY花蓮美食＃後站美食#花蓮車站美食#慈濟美食#北埔美食花蓮",
+          "address": "970花蓮縣花蓮市國裕里富強路7號",
+          "latitude": 23.995195199999998,
+          "longitude": 121.5957528,
+          "google_maps_uri": "https://maps.google.com/?cid=15297063098776592639&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.9,
+          "user_rating_count": 224,
+          "score": 0.2802,
+          "score_breakdown": {
+            "total": 0.2802,
+            "relevance": 0.2928,
+            "quality": 0.1967,
+            "opening": 1.0,
+            "route": 0.0992,
+            "google_rank": 0.2,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6818
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 19.886,
+            "candidate_to_next_km": 26.763,
+            "previous_to_next_km": 9.223,
+            "route_distance_km": 46.649,
+            "detour_km": 37.426,
+            "max_leg_km": 26.763,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀太魯閣砂卡礑步道",
+              "query": "花蓮 砂卡礑步道",
+              "place_id": "ChIJJyMSInuCaDQRzZ8QPigmNKQ",
+              "name": "砂卡礑步道",
+              "address": "972花蓮縣秀林鄉富世村砂卡礑步道",
+              "latitude": 24.1729478,
+              "longitude": 121.6173446
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "參觀清水斷崖",
+              "query": "花蓮 清水斷崖",
+              "place_id": "ChIJI327WbwrZjQRS4-WgIH1GAQ",
+              "name": "清水斷崖",
+              "address": "972花蓮縣秀林鄉清水斷崖",
+              "latitude": 24.2188889,
+              "longitude": 121.6930556
+            }
+          },
+          "matched_queries": [
+            "花蓮 火車站附近 午餐"
+          ],
+          "why": "符合「美食、花蓮」；Google 評分 4.9，224 則評論；由查詢「花蓮 火車站附近 午餐」命中；前後站直線路徑約 46.649 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.4402
+        },
+        {
+          "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+          "name": "東大門夜市",
+          "address": "970花蓮縣花蓮市民主里中山路50號",
+          "latitude": 23.973585099999998,
+          "longitude": 121.61089009999999,
+          "google_maps_uri": "https://maps.google.com/?cid=13725167229950632165&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 74428,
+          "score": 0.2758,
+          "score_breakdown": {
+            "total": 0.2758,
+            "relevance": 0.2417,
+            "quality": 0.82,
+            "opening": 0.08,
+            "route": 0.092,
+            "google_rank": 1.0,
+            "type": 0.82,
+            "penalty": 0.0,
+            "relevance_gate": 0.6588
+          },
+          "opening": {
+            "coverage": 0.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 22.178,
+            "candidate_to_next_km": 28.523,
+            "previous_to_next_km": 9.223,
+            "route_distance_km": 50.701,
+            "detour_km": 41.478,
+            "max_leg_km": 28.523,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀太魯閣砂卡礑步道",
+              "query": "花蓮 砂卡礑步道",
+              "place_id": "ChIJJyMSInuCaDQRzZ8QPigmNKQ",
+              "name": "砂卡礑步道",
+              "address": "972花蓮縣秀林鄉富世村砂卡礑步道",
+              "latitude": 24.1729478,
+              "longitude": 121.6173446
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "參觀清水斷崖",
+              "query": "花蓮 清水斷崖",
+              "place_id": "ChIJI327WbwrZjQRS4-WgIH1GAQ",
+              "name": "清水斷崖",
+              "address": "972花蓮縣秀林鄉清水斷崖",
+              "latitude": 24.2188889,
+              "longitude": 121.6930556
+            }
+          },
+          "matched_queries": [
+            "花蓮 夜市"
+          ],
+          "why": "符合「夜市」；Google 評分 4.1，74428 則評論；由查詢「花蓮 夜市」命中；前後站直線路徑約 50.701 km",
+          "warnings": [
+            "行程時段可能未營業",
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.4358
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day1_slot10",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "18:30",
+      "end_time": "20:00",
+      "time": "18:30~20:00",
+      "slot_type": "meal",
+      "original_activity": "花蓮市區享用晚餐",
+      "reason_for_search": "缺乏具體店家，需搜尋花蓮市區美食選擇",
+      "target_terms": [
+        "美食",
+        "餐廳",
+        "夜市",
+        "文化餐廳",
+        "中式餐廳"
+      ],
+      "location_terms": [
+        "花蓮市區"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "晚餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot10",
+        "slot_id": "day1_slot10",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "18:30",
+        "end_time": "20:00",
+        "time": "18:30~20:00",
+        "slot_type": "meal",
+        "original_activity": "花蓮市區享用晚餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot08",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "16:30",
+          "end_time": "18:00",
+          "time": "16:30~18:00",
+          "activity": "遊覽七星潭",
+          "query": "花蓮 七星潭",
+          "place": {
+            "place_id": "ChIJ9SCI5oedaDQRijf91YB4Ag0",
+            "resource_name": "places/ChIJ9SCI5oedaDQRijf91YB4Ag0",
+            "name": "七星潭",
+            "address": "花蓮縣七星潭",
+            "latitude": 24.0430498,
+            "longitude": 121.62249260000002,
+            "primary_type": "beach",
+            "types": [
+              "beach",
+              "natural_feature",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=937444167187773322&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 七星潭",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day1_slot11",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "20:00",
+          "end_time": "22:00",
+          "time": "20:00~22:00",
+          "activity": "東大門夜市品嚐美食",
+          "query": "花蓮 東大門夜市",
+          "place": {
+            "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+            "resource_name": "places/ChIJKQxO8emfaDQR5SAKaOCWeb4",
+            "name": "東大門夜市",
+            "address": "970花蓮縣花蓮市民主里中山路50號",
+            "latitude": 23.973585099999998,
+            "longitude": 121.61089009999999,
+            "primary_type": "market",
+            "types": [
+              "tourist_attraction",
+              "market",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=13725167229950632165&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 東大門夜市",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJwZZ2c7GfaDQRRZRrV3ht3k0",
+          "name": "萬寶家食堂-花蓮美食 花蓮餐廳 花蓮推薦美食 花蓮聚餐 花蓮早午餐 花蓮午餐",
+          "address": "970花蓮縣花蓮市民主里花崗街42巷2號",
+          "latitude": 23.9759398,
+          "longitude": 121.61385039999999,
+          "google_maps_uri": "https://maps.google.com/?cid=5611042549380387909&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.7,
+          "user_rating_count": 509,
+          "score": 0.6531,
+          "score_breakdown": {
+            "total": 0.6531,
+            "relevance": 0.7125,
+            "quality": 0.375,
+            "opening": 1.0,
+            "route": 0.7975,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8706
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 7.514,
+            "candidate_to_next_km": 0.399,
+            "previous_to_next_km": 7.814,
+            "route_distance_km": 7.913,
+            "detour_km": 0.099,
+            "max_leg_km": 7.514,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽七星潭",
+              "query": "花蓮 七星潭",
+              "place_id": "ChIJ9SCI5oedaDQRijf91YB4Ag0",
+              "name": "七星潭",
+              "address": "花蓮縣七星潭",
+              "latitude": 24.0430498,
+              "longitude": 121.62249260000002
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "東大門夜市品嚐美食",
+              "query": "花蓮 東大門夜市",
+              "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+              "name": "東大門夜市",
+              "address": "970花蓮縣花蓮市民主里中山路50號",
+              "latitude": 23.973585099999998,
+              "longitude": 121.61089009999999
+            }
+          },
+          "matched_queries": [
+            "花蓮市區 晚餐 餐廳",
+            "花蓮市區 中式餐廳"
+          ],
+          "why": "符合「美食、餐廳」；Google 評分 4.7，509 則評論；由查詢「花蓮市區 晚餐 餐廳」命中；前後站直線路徑約 7.913 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.8931
+        },
+        {
+          "place_id": "ChIJG1nLseufaDQR5FS2b2nSw4g",
+          "name": "貨櫃屋台灣料理 - 花蓮 人氣必吃中式熱炒 在地特色宵夜美食 團體合菜聚餐小酌 燒烤火鍋海鮮餐廳 平價推薦相片",
+          "address": "970花蓮縣花蓮市中山路143號",
+          "latitude": 23.975780099999998,
+          "longitude": 121.61019110000001,
+          "google_maps_uri": "https://maps.google.com/?cid=9854951759904396516&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.5,
+          "user_rating_count": 597,
+          "score": 0.6091,
+          "score_breakdown": {
+            "total": 0.6091,
+            "relevance": 0.7238,
+            "quality": 0.4046,
+            "opening": 1.0,
+            "route": 0.8136,
+            "google_rank": 0.1667,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8757
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 7.584,
+            "candidate_to_next_km": 0.254,
+            "previous_to_next_km": 7.814,
+            "route_distance_km": 7.838,
+            "detour_km": 0.024,
+            "max_leg_km": 7.584,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽七星潭",
+              "query": "花蓮 七星潭",
+              "place_id": "ChIJ9SCI5oedaDQRijf91YB4Ag0",
+              "name": "七星潭",
+              "address": "花蓮縣七星潭",
+              "latitude": 24.0430498,
+              "longitude": 121.62249260000002
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "東大門夜市品嚐美食",
+              "query": "花蓮 東大門夜市",
+              "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+              "name": "東大門夜市",
+              "address": "970花蓮縣花蓮市民主里中山路50號",
+              "latitude": 23.973585099999998,
+              "longitude": 121.61089009999999
+            }
+          },
+          "matched_queries": [
+            "花蓮市區 中式餐廳"
+          ],
+          "why": "符合「美食、餐廳、中式餐廳」；Google 評分 4.5，597 則評論；由查詢「花蓮市區 中式餐廳」命中；前後站直線路徑約 7.838 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.7691
+        }
+      ]
+    },
+    {
+      "slot_index": 3,
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "12:30",
+      "time": "11:00~12:30",
+      "slot_type": "attraction",
+      "original_activity": "參觀光復糖廠或林田山文化園區",
+      "reason_for_search": "需確認具體參觀地點",
+      "target_terms": [
+        "糖廠",
+        "文化園區",
+        "光復糖廠",
+        "林田山文化園區",
+        "文化景點",
+        "休閒活動"
+      ],
+      "location_terms": [
+        "花蓮"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot03",
+        "slot_id": "day2_slot03",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "11:00",
+        "end_time": "12:30",
+        "time": "11:00~12:30",
+        "slot_type": "attraction",
+        "original_activity": "參觀光復糖廠或林田山文化園區",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot01",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "time": "09:00~10:30",
+          "activity": "參觀瑞穗牧場",
+          "query": "花蓮 瑞穗牧場",
+          "place": {
+            "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+            "resource_name": "places/ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+            "name": "瑞穗牧場",
+            "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+            "latitude": 23.479209299999997,
+            "longitude": 121.34595650000001,
+            "primary_type": "lodging",
+            "types": [
+              "tourist_attraction",
+              "ranch",
+              "farm",
+              "lodging",
+              "point_of_interest",
+              "service",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=51172475088977732&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 瑞穗牧場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day2_slot06",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "六十石山賞金針花",
+          "query": "花蓮 六十石山",
+          "place": {
+            "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "resource_name": "places/ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "name": "六十石山",
+            "address": "983花蓮縣富里鄉六十石山",
+            "latitude": 23.218788,
+            "longitude": 121.317725,
+            "primary_type": "mountain_peak",
+            "types": [
+              "mountain_peak",
+              "natural_feature",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1051646585337771459&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 六十石山",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJpcSL78qyaDQRpJX500RPFLo",
+          "name": "花蓮觀光糖廠",
+          "address": "97642花蓮縣光復鄉大進村糖廠街19號",
+          "latitude": 23.6586905,
+          "longitude": 121.4206067,
+          "google_maps_uri": "https://maps.google.com/?cid=13408429147621528996&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 22999,
+          "score": 0.5463,
+          "score_breakdown": {
+            "total": 0.5463,
+            "relevance": 0.5588,
+            "quality": 0.82,
+            "opening": 1.0,
+            "route": 0.0736,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8014
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 21.358,
+            "candidate_to_next_km": 50.028,
+            "previous_to_next_km": 29.101,
+            "route_distance_km": 71.387,
+            "detour_km": 42.286,
+            "max_leg_km": 50.028,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀瑞穗牧場",
+              "query": "花蓮 瑞穗牧場",
+              "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+              "name": "瑞穗牧場",
+              "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+              "latitude": 23.479209299999997,
+              "longitude": 121.34595650000001
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            }
+          },
+          "matched_queries": [
+            "花蓮 光復糖廠"
+          ],
+          "why": "符合「糖廠、光復糖廠、花蓮」；Google 評分 4.1，22999 則評論；由查詢「花蓮 光復糖廠」命中；前後站直線路徑約 71.387 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.7863
+        },
+        {
+          "place_id": "ChIJF-zJY5WfaDQR_9vugkAyG4k",
+          "name": "花蓮文化創意產業園區",
+          "address": "970花蓮縣花蓮市主工里中華路144號",
+          "latitude": 23.976243999999998,
+          "longitude": 121.6048577,
+          "google_maps_uri": "https://maps.google.com/?cid=9879545460223302655&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.1,
+          "user_rating_count": 12726,
+          "score": 0.4993,
+          "score_breakdown": {
+            "total": 0.4993,
+            "relevance": 0.5404,
+            "quality": 0.82,
+            "opening": 1.0,
+            "route": 0.0328,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7932
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 61.23,
+            "candidate_to_next_km": 89.162,
+            "previous_to_next_km": 29.101,
+            "route_distance_km": 150.392,
+            "detour_km": 121.292,
+            "max_leg_km": 89.162,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀瑞穗牧場",
+              "query": "花蓮 瑞穗牧場",
+              "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+              "name": "瑞穗牧場",
+              "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+              "latitude": 23.479209299999997,
+              "longitude": 121.34595650000001
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            }
+          },
+          "matched_queries": [
+            "花蓮 文化景點"
+          ],
+          "why": "符合「文化園區、花蓮」；Google 評分 4.1，12726 則評論；由查詢「花蓮 文化景點」命中；前後站直線路徑約 150.392 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.6593
+        }
+      ]
+    },
+    {
+      "slot_index": 4,
+      "slot_id": "day2_slot04",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "12:30",
+      "end_time": "13:30",
+      "time": "12:30~13:30",
+      "slot_type": "meal",
+      "original_activity": "享用午餐",
+      "reason_for_search": "缺乏具體店家，需搜尋午餐地點",
+      "target_terms": [
+        "午餐",
+        "餐廳",
+        "小吃"
+      ],
+      "location_terms": [
+        "花蓮",
+        "火車站附近",
+        "海邊",
+        "景點"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot04",
+        "slot_id": "day2_slot04",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "12:30",
+        "end_time": "13:30",
+        "time": "12:30~13:30",
+        "slot_type": "meal",
+        "original_activity": "享用午餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot01",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "time": "09:00~10:30",
+          "activity": "參觀瑞穗牧場",
+          "query": "花蓮 瑞穗牧場",
+          "place": {
+            "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+            "resource_name": "places/ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+            "name": "瑞穗牧場",
+            "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+            "latitude": 23.479209299999997,
+            "longitude": 121.34595650000001,
+            "primary_type": "lodging",
+            "types": [
+              "tourist_attraction",
+              "ranch",
+              "farm",
+              "lodging",
+              "point_of_interest",
+              "service",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=51172475088977732&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 瑞穗牧場",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day2_slot06",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "六十石山賞金針花",
+          "query": "花蓮 六十石山",
+          "place": {
+            "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "resource_name": "places/ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "name": "六十石山",
+            "address": "983花蓮縣富里鄉六十石山",
+            "latitude": 23.218788,
+            "longitude": 121.317725,
+            "primary_type": "mountain_peak",
+            "types": [
+              "mountain_peak",
+              "natural_feature",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1051646585337771459&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 六十石山",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJU0V-bZadaDQRUqU38uhQ_u4",
+          "name": "洄瀾灣景觀餐廳｜洄瀾灣親子農場｜洄瀾灣親子動物區",
+          "address": "972花蓮縣秀林鄉景美村6-6號",
+          "latitude": 24.067180099999998,
+          "longitude": 121.60746189999999,
+          "google_maps_uri": "https://maps.google.com/?cid=17221290986537723218&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 7570,
+          "score": 0.4055,
+          "score_breakdown": {
+            "total": 0.4055,
+            "relevance": 0.3379,
+            "quality": 0.9595,
+            "opening": 1.0,
+            "route": 0.0291,
+            "google_rank": 0.25,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7021
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 70.588,
+            "candidate_to_next_km": 98.846,
+            "previous_to_next_km": 29.101,
+            "route_distance_km": 169.433,
+            "detour_km": 140.333,
+            "max_leg_km": 98.846,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀瑞穗牧場",
+              "query": "花蓮 瑞穗牧場",
+              "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+              "name": "瑞穗牧場",
+              "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+              "latitude": 23.479209299999997,
+              "longitude": 121.34595650000001
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            }
+          },
+          "matched_queries": [
+            "花蓮 景點 午餐"
+          ],
+          "why": "符合「餐廳」；Google 評分 4.8，7570 則評論；由查詢「花蓮 景點 午餐」命中；前後站直線路徑約 169.433 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.5655
+        },
+        {
+          "place_id": "ChIJUaA-9WCfaDQR1axCfoCuZN4",
+          "name": "成功牛排 花蓮店-花蓮牛排吃到飽|花蓮火車站牛排|在地推薦牛排館｜親子餐廳|花蓮平價牛排｜花蓮自助吧牛排｜東大門夜市牛排｜花蓮慈濟大學推薦牛排｜熱門美食 ｜",
+          "address": "970花蓮縣花蓮市國裕里富安路2號",
+          "latitude": 23.992181600000002,
+          "longitude": 121.59796029999998,
+          "google_maps_uri": "https://maps.google.com/?cid=16025125240988413141&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 1227,
+          "score": 0.3788,
+          "score_breakdown": {
+            "total": 0.3788,
+            "relevance": 0.3596,
+            "quality": 0.6786,
+            "opening": 1.0,
+            "route": 0.0322,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7118
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 62.542,
+            "candidate_to_next_km": 90.614,
+            "previous_to_next_km": 29.101,
+            "route_distance_km": 153.156,
+            "detour_km": 124.055,
+            "max_leg_km": 90.614,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "參觀瑞穗牧場",
+              "query": "花蓮 瑞穗牧場",
+              "place_id": "ChIJR32Q_HJGbzQRRL_0TxjNtQA",
+              "name": "瑞穗牧場",
+              "address": "978花蓮縣瑞穗鄉舞鶴村6鄰157號",
+              "latitude": 23.479209299999997,
+              "longitude": 121.34595650000001
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            }
+          },
+          "matched_queries": [
+            "花蓮 火車站附近 餐廳"
+          ],
+          "why": "符合「餐廳、花蓮、火車站」；Google 評分 4.8，1227 則評論；由查詢「花蓮 火車站附近 餐廳」命中；前後站直線路徑約 153.156 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.3788
+        }
+      ]
+    },
+    {
+      "slot_index": 5,
+      "slot_id": "day2_slot07",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "16:00",
+      "end_time": "18:00",
+      "time": "16:00~18:00",
+      "slot_type": "attraction",
+      "original_activity": "賞鯨活動",
+      "reason_for_search": "需確認具體賞鯨活動供應商",
+      "target_terms": [
+        "賞鯨",
+        "活動",
+        "鯨豚觀賞",
+        "鯨魚旅遊",
+        "旅遊團"
+      ],
+      "location_terms": [
+        "花蓮"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [
+        "適合午後"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot07",
+        "slot_id": "day2_slot07",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "16:00",
+        "end_time": "18:00",
+        "time": "16:00~18:00",
+        "slot_type": "attraction",
+        "original_activity": "賞鯨活動",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot06",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "六十石山賞金針花",
+          "query": "花蓮 六十石山",
+          "place": {
+            "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "resource_name": "places/ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "name": "六十石山",
+            "address": "983花蓮縣富里鄉六十石山",
+            "latitude": 23.218788,
+            "longitude": 121.317725,
+            "primary_type": "mountain_peak",
+            "types": [
+              "mountain_peak",
+              "natural_feature",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1051646585337771459&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 六十石山",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day2_slot10",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "20:00",
+          "end_time": "22:00",
+          "time": "20:00~22:00",
+          "activity": "再次逛東大門夜市",
+          "query": "花蓮 東大門夜市",
+          "place": {
+            "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+            "resource_name": "places/ChIJKQxO8emfaDQR5SAKaOCWeb4",
+            "name": "東大門夜市",
+            "address": "970花蓮縣花蓮市民主里中山路50號",
+            "latitude": 23.973585099999998,
+            "longitude": 121.61089009999999,
+            "primary_type": "market",
+            "types": [
+              "tourist_attraction",
+              "market",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=13725167229950632165&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 東大門夜市",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJwbVUoIMgZjQRRjAozdSOrlI",
+          "name": "鯨世界賞鯨 (花蓮港)",
+          "address": "970花蓮縣花蓮市民享三街42號",
+          "latitude": 23.9937376,
+          "longitude": 121.63212519999999,
+          "google_maps_uri": "https://maps.google.com/?cid=5957856401683918918&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.9,
+          "user_rating_count": 7047,
+          "score": 0.6387,
+          "score_breakdown": {
+            "total": 0.6387,
+            "relevance": 0.6688,
+            "quality": 0.9791,
+            "opening": 1.0,
+            "route": 0.25,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "penalty": 0.0,
+            "relevance_gate": 0.8509
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 91.932,
+            "candidate_to_next_km": 3.111,
+            "previous_to_next_km": 89.087,
+            "route_distance_km": 95.043,
+            "detour_km": 5.955,
+            "max_leg_km": 91.932,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "再次逛東大門夜市",
+              "query": "花蓮 東大門夜市",
+              "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+              "name": "東大門夜市",
+              "address": "970花蓮縣花蓮市民主里中山路50號",
+              "latitude": 23.973585099999998,
+              "longitude": 121.61089009999999
+            }
+          },
+          "matched_queries": [
+            "花蓮 賞鯨 活動",
+            "花蓮 鯨豚觀賞",
+            "花蓮 鯨魚旅遊",
+            "花蓮 旅遊團 賞鯨"
+          ],
+          "why": "符合「賞鯨、花蓮」；Google 評分 4.9，7047 則評論；由查詢「花蓮 賞鯨 活動」命中；前後站直線路徑約 95.043 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.7987
+        },
+        {
+          "place_id": "ChIJffDURJAgZjQRrUkd6YipZ84",
+          "name": "花蓮賞鯨體驗/旅遊行程規劃/導覽(市區可預約接送)",
+          "address": "970花莲县花莲市国联里国联一路43號1樓",
+          "latitude": 23.992852,
+          "longitude": 121.60376029999999,
+          "google_maps_uri": "https://maps.google.com/?cid=14873042699906009517&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 271,
+          "score": 0.5293,
+          "score_breakdown": {
+            "total": 0.5293,
+            "relevance": 0.7446,
+            "quality": 0.2279,
+            "opening": 1.0,
+            "route": 0.3137,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.8851
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 90.872,
+            "candidate_to_next_km": 2.262,
+            "previous_to_next_km": 89.087,
+            "route_distance_km": 93.134,
+            "detour_km": 4.046,
+            "max_leg_km": 90.872,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "再次逛東大門夜市",
+              "query": "花蓮 東大門夜市",
+              "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+              "name": "東大門夜市",
+              "address": "970花蓮縣花蓮市民主里中山路50號",
+              "latitude": 23.973585099999998,
+              "longitude": 121.61089009999999
+            }
+          },
+          "matched_queries": [
+            "花蓮 鯨魚旅遊",
+            "花蓮 旅遊團 賞鯨"
+          ],
+          "why": "符合「賞鯨、鯨魚旅遊、花蓮」；Google 評分 4.8，271 則評論；由查詢「花蓮 鯨魚旅遊」命中；前後站直線路徑約 93.134 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.6893
+        }
+      ]
+    },
+    {
+      "slot_index": 6,
+      "slot_id": "day2_slot09",
+      "day": 2,
+      "day_of_week": null,
+      "start_time": "18:30",
+      "end_time": "20:00",
+      "time": "18:30~20:00",
+      "slot_type": "meal",
+      "original_activity": "回市區享用晚餐",
+      "reason_for_search": "缺乏具體店家，需搜尋市區美食選擇",
+      "target_terms": [
+        "晚餐",
+        "餐廳",
+        "美食",
+        "小吃",
+        "景點"
+      ],
+      "location_terms": [
+        "花蓮市區",
+        "花蓮",
+        "市區"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day2_slot09",
+        "slot_id": "day2_slot09",
+        "day": 2,
+        "day_of_week": null,
+        "start_time": "18:30",
+        "end_time": "20:00",
+        "time": "18:30~20:00",
+        "slot_type": "meal",
+        "original_activity": "回市區享用晚餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day2_slot06",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "六十石山賞金針花",
+          "query": "花蓮 六十石山",
+          "place": {
+            "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "resource_name": "places/ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+            "name": "六十石山",
+            "address": "983花蓮縣富里鄉六十石山",
+            "latitude": 23.218788,
+            "longitude": 121.317725,
+            "primary_type": "mountain_peak",
+            "types": [
+              "mountain_peak",
+              "natural_feature",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1051646585337771459&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 六十石山",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day2_slot10",
+          "day": 2,
+          "day_of_week": null,
+          "start_time": "20:00",
+          "end_time": "22:00",
+          "time": "20:00~22:00",
+          "activity": "再次逛東大門夜市",
+          "query": "花蓮 東大門夜市",
+          "place": {
+            "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+            "resource_name": "places/ChIJKQxO8emfaDQR5SAKaOCWeb4",
+            "name": "東大門夜市",
+            "address": "970花蓮縣花蓮市民主里中山路50號",
+            "latitude": 23.973585099999998,
+            "longitude": 121.61089009999999,
+            "primary_type": "market",
+            "types": [
+              "tourist_attraction",
+              "market",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=13725167229950632165&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 東大門夜市",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJwZZ2c7GfaDQRRZRrV3ht3k0",
+          "name": "萬寶家食堂-花蓮美食 花蓮餐廳 花蓮推薦美食 花蓮聚餐 花蓮早午餐 花蓮午餐",
+          "address": "970花蓮縣花蓮市民主里花崗街42巷2號",
+          "latitude": 23.9759398,
+          "longitude": 121.61385039999999,
+          "google_maps_uri": "https://maps.google.com/?cid=5611042549380387909&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.7,
+          "user_rating_count": 509,
+          "score": 0.5107,
+          "score_breakdown": {
+            "total": 0.5107,
+            "relevance": 0.5117,
+            "quality": 0.375,
+            "opening": 1.0,
+            "route": 0.5764,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7803
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 89.435,
+            "candidate_to_next_km": 0.399,
+            "previous_to_next_km": 89.087,
+            "route_distance_km": 89.834,
+            "detour_km": 0.747,
+            "max_leg_km": 89.435,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "再次逛東大門夜市",
+              "query": "花蓮 東大門夜市",
+              "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+              "name": "東大門夜市",
+              "address": "970花蓮縣花蓮市民主里中山路50號",
+              "latitude": 23.973585099999998,
+              "longitude": 121.61089009999999
+            }
+          },
+          "matched_queries": [
+            "花蓮 晚餐 餐廳",
+            "花蓮 市區 美食"
+          ],
+          "why": "符合「餐廳、美食、花蓮」；Google 評分 4.7，509 則評論；由查詢「花蓮 晚餐 餐廳」命中；前後站直線路徑約 89.834 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.7507
+        },
+        {
+          "place_id": "ChIJGSgJgfCVbjQRoepfIPNTC20",
+          "name": "不時不食（店休日在IG)/no time no eat/restaurants/晚餐/美食/takeout/吃的/附近美食",
+          "address": "970花蓮縣花蓮市仁愛街22號",
+          "latitude": 23.972858799999997,
+          "longitude": 121.60654660000002,
+          "google_maps_uri": "https://maps.google.com/?cid=7857466278563277473&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.8,
+          "user_rating_count": 213,
+          "score": 0.4242,
+          "score_breakdown": {
+            "total": 0.4242,
+            "relevance": 0.4817,
+            "quality": 0.1842,
+            "opening": 1.0,
+            "route": 0.6671,
+            "google_rank": 0.1667,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7668
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 88.864,
+            "candidate_to_next_km": 0.449,
+            "previous_to_next_km": 89.087,
+            "route_distance_km": 89.312,
+            "detour_km": 0.225,
+            "max_leg_km": 88.864,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "六十石山賞金針花",
+              "query": "花蓮 六十石山",
+              "place_id": "ChIJA_rZsVFsbzQRw3VPXP8ymA4",
+              "name": "六十石山",
+              "address": "983花蓮縣富里鄉六十石山",
+              "latitude": 23.218788,
+              "longitude": 121.317725
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "再次逛東大門夜市",
+              "query": "花蓮 東大門夜市",
+              "place_id": "ChIJKQxO8emfaDQR5SAKaOCWeb4",
+              "name": "東大門夜市",
+              "address": "970花蓮縣花蓮市民主里中山路50號",
+              "latitude": 23.973585099999998,
+              "longitude": 121.61089009999999
+            }
+          },
+          "matched_queries": [
+            "花蓮 晚餐 餐廳"
+          ],
+          "why": "符合「晚餐、美食」；Google 評分 4.8，213 則評論；由查詢「花蓮 晚餐 餐廳」命中；前後站直線路徑約 89.312 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.5842
+        }
+      ]
+    },
+    {
+      "slot_index": 7,
+      "slot_id": "day3_slot03",
+      "day": 3,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "12:00",
+      "time": "11:00~12:00",
+      "slot_type": "meal",
+      "original_activity": "市區午餐",
+      "reason_for_search": "缺乏具體店家，需搜尋市區午餐選擇",
+      "target_terms": [
+        "小吃店",
+        "午餐",
+        "餐廳",
+        "文化景點",
+        "夜市",
+        "美食"
+      ],
+      "location_terms": [
+        "花蓮市區",
+        "花蓮",
+        "市區"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "午餐",
+        "在市區",
+        "適合午餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day3_slot03",
+        "slot_id": "day3_slot03",
+        "day": 3,
+        "day_of_week": null,
+        "start_time": "11:00",
+        "end_time": "12:00",
+        "time": "11:00~12:00",
+        "slot_type": "meal",
+        "original_activity": "市區午餐",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day3_slot01",
+          "day": 3,
+          "day_of_week": null,
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "time": "09:00~10:30",
+          "activity": "遊覽雲山水夢幻湖",
+          "query": "花蓮 雲山水夢幻湖",
+          "place": {
+            "place_id": "ChIJjUh15b2laDQRVjXq04Hj33k",
+            "resource_name": "places/ChIJjUh15b2laDQRVjXq04Hj33k",
+            "name": "花蓮雲山水夢幻湖",
+            "address": "974花蓮縣壽豐鄉豐坪路二段2巷201弄18號",
+            "latitude": 23.8285824,
+            "longitude": 121.5155814,
+            "primary_type": "garden",
+            "types": [
+              "garden",
+              "tourist_attraction",
+              "association_or_organization",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=8781987945141384534&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮 雲山水夢幻湖",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day3_slot04",
+          "day": 3,
+          "day_of_week": null,
+          "start_time": "12:00",
+          "end_time": "14:00",
+          "time": "12:00~14:00",
+          "activity": "購買花蓮伴手禮",
+          "query": "花蓮伴手禮",
+          "place": {
+            "place_id": "ChIJZbNXw8GfaDQRgrPCrmn-5Xk",
+            "resource_name": "places/ChIJZbNXw8GfaDQRgrPCrmn-5Xk",
+            "name": "杜倫先生丨花蓮名產丨伴手禮｜麻糬｜甜點｜蛋糕",
+            "address": "970花蓮縣花蓮市民生里中華路23號",
+            "latitude": 23.9762012,
+            "longitude": 121.60934549999999,
+            "primary_type": "dessert_shop",
+            "types": [
+              "dessert_shop",
+              "gift_shop",
+              "confectionery",
+              "point_of_interest",
+              "food_store",
+              "store",
+              "food",
+              "service",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=8783706378113037186&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "花蓮伴手禮",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJwZZ2c7GfaDQRRZRrV3ht3k0",
+          "name": "萬寶家食堂-花蓮美食 花蓮餐廳 花蓮推薦美食 花蓮聚餐 花蓮早午餐 花蓮午餐",
+          "address": "970花蓮縣花蓮市民主里花崗街42巷2號",
+          "latitude": 23.9759398,
+          "longitude": 121.61385039999999,
+          "google_maps_uri": "https://maps.google.com/?cid=5611042549380387909&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.7,
+          "user_rating_count": 509,
+          "score": 0.6021,
+          "score_breakdown": {
+            "total": 0.6021,
+            "relevance": 0.7808,
+            "quality": 0.375,
+            "opening": 0.55,
+            "route": 0.6345,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.9014
+          },
+          "opening": {
+            "coverage": 0.5,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 19.191,
+            "candidate_to_next_km": 0.459,
+            "previous_to_next_km": 18.981,
+            "route_distance_km": 19.649,
+            "detour_km": 0.668,
+            "max_leg_km": 19.191,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽雲山水夢幻湖",
+              "query": "花蓮 雲山水夢幻湖",
+              "place_id": "ChIJjUh15b2laDQRVjXq04Hj33k",
+              "name": "花蓮雲山水夢幻湖",
+              "address": "974花蓮縣壽豐鄉豐坪路二段2巷201弄18號",
+              "latitude": 23.8285824,
+              "longitude": 121.5155814
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "購買花蓮伴手禮",
+              "query": "花蓮伴手禮",
+              "place_id": "ChIJZbNXw8GfaDQRgrPCrmn-5Xk",
+              "name": "杜倫先生丨花蓮名產丨伴手禮｜麻糬｜甜點｜蛋糕",
+              "address": "970花蓮縣花蓮市民生里中華路23號",
+              "latitude": 23.9762012,
+              "longitude": 121.60934549999999
+            }
+          },
+          "matched_queries": [
+            "花蓮 小吃店 午餐",
+            "花蓮 餐廳 午餐"
+          ],
+          "why": "符合「午餐、餐廳、美食、花蓮」；Google 評分 4.7，509 則評論；由查詢「花蓮 小吃店 午餐」命中；前後站直線路徑約 19.649 km",
+          "warnings": [
+            "營業時間只覆蓋部分行程時段",
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.8421
+        },
+        {
+          "place_id": "ChIJe4DU6oyfaDQRy9HtIPmDbFw",
+          "name": "壽豐小吃-慶豐店",
+          "address": "973花蓮縣吉安鄉慶豐村中山路三段318號",
+          "latitude": 23.978233799999998,
+          "longitude": 121.57033999999999,
+          "google_maps_uri": "https://maps.google.com/?cid=6659843054996672971&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": 4.7,
+          "user_rating_count": 3715,
+          "score": 0.4659,
+          "score_breakdown": {
+            "total": 0.4659,
+            "relevance": 0.295,
+            "quality": 0.9171,
+            "opening": 1.0,
+            "route": 0.4459,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6828
+          },
+          "opening": {
+            "coverage": 1.0,
+            "weekday_known": false,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 17.547,
+            "candidate_to_next_km": 3.969,
+            "previous_to_next_km": 18.981,
+            "route_distance_km": 21.516,
+            "detour_km": 2.535,
+            "max_leg_km": 17.547,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "遊覽雲山水夢幻湖",
+              "query": "花蓮 雲山水夢幻湖",
+              "place_id": "ChIJjUh15b2laDQRVjXq04Hj33k",
+              "name": "花蓮雲山水夢幻湖",
+              "address": "974花蓮縣壽豐鄉豐坪路二段2巷201弄18號",
+              "latitude": 23.8285824,
+              "longitude": 121.5155814
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "購買花蓮伴手禮",
+              "query": "花蓮伴手禮",
+              "place_id": "ChIJZbNXw8GfaDQRgrPCrmn-5Xk",
+              "name": "杜倫先生丨花蓮名產丨伴手禮｜麻糬｜甜點｜蛋糕",
+              "address": "970花蓮縣花蓮市民生里中華路23號",
+              "latitude": 23.9762012,
+              "longitude": 121.60934549999999
+            }
+          },
+          "matched_queries": [
+            "花蓮 小吃店 午餐"
+          ],
+          "why": "符合「小吃店」；Google 評分 4.7，3715 則評論；由查詢「花蓮 小吃店 午餐」命中；前後站直線路徑約 21.516 km",
+          "warnings": [
+            "候選點與前後站其中一段直線距離偏遠"
+          ],
+          "selection_score": 0.6259
+        }
+      ]
+    }
+  ]
+}

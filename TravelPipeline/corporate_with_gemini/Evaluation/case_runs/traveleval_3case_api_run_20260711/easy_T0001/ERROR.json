@@ -1,0 +1,7 @@
+{
+  "uid": "T0001",
+  "difficulty": "easy",
+  "error_type": "HTTPError",
+  "error": "400 Client Error: Bad Request for url: https://serpapi.com/search.json?engine=google_hotels&q=%E4%B8%8A%E6%B5%B7+%E9%A3%AF%E5%BA%97&check_in_date=2024-11-15&check_out_date=2024-11-17&adults=2&currency=TWD&gl=tw&hl=zh-tw&api_key=<REDACTED>",
+  "traceback": "Traceback (most recent call last):\n  File \"corporate_with_gemini/Evaluation/run_traveleval_case_pipeline.py\", line 373, in main\n    result = run_case(case, run_dir)\n  File \"corporate_with_gemini/Evaluation/run_traveleval_case_pipeline.py\", line 297, in run_case\n    lodging = run_stage(case_dir, \"05_lodging_search\", search_lodging_serpapi, lodging_ctx, max_results=20)\n  File \"corporate_with_gemini/Evaluation/run_traveleval_case_pipeline.py\", line 81, in run_stage\n    return func(*args, **kwargs)\n  File \"/Users/xuchengyan/travel_agent/corporate_with_gemini/LodgingSearchAgent.py\", line 272, in search_lodging_serpapi\n    response.raise_for_status()\n  File \"/Users/xuchengyan/Library/Python/3.8/lib/python/site-packages/requests/models.py\", line 1026, in raise_for_status\n    raise HTTPError(http_error_msg, response=self)\nrequests.exceptions.HTTPError: 400 Client Error: Bad Request for url: https://serpapi.com/search.json?engine=google_hotels&q=%E4%B8%8A%E6%B5%B7+%E9%A3%AF%E5%BA%97&check_in_date=2024-11-15&check_out_date=2024-11-17&adults=2&currency=TWD&gl=tw&hl=zh-tw&api_key=<REDACTED>"
+}

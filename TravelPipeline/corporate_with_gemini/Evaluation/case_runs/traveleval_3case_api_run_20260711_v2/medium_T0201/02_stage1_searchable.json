@@ -1,0 +1,80 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "day_of_week": "friday",
+      "start_time": "14:30",
+      "end_time": "18:00",
+      "time": "14:30~18:00",
+      "slot_type": "attraction",
+      "original_activity": "逛南京東路和外灘",
+      "reason_for_search": "需要進一步了解南京東路和外灘的具體活動或商店",
+      "suggested_search_query": "南京東路 外灘 活動 店家",
+      "target_terms": [
+        "南京東路",
+        "外灘"
+      ],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    },
+    {
+      "slot_id": "day2_slot02",
+      "day": 2,
+      "day_of_week": "saturday",
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用當地午餐",
+      "reason_for_search": "缺乏具體的餐廳建議",
+      "suggested_search_query": "上海 必吃 午餐 餐廳",
+      "target_terms": [],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day3_slot02",
+      "day": 3,
+      "day_of_week": "sunday",
+      "start_time": "12:30",
+      "end_time": "14:00",
+      "time": "12:30~14:00",
+      "slot_type": "meal",
+      "original_activity": "於新天地享用午餐",
+      "reason_for_search": "需要進一步了解新天地附近的餐廳選項",
+      "suggested_search_query": "新天地 午餐 餐廳",
+      "target_terms": [],
+      "location_terms": [
+        "新天地",
+        "上海"
+      ],
+      "intent_type": "restaurant",
+      "must_have": []
+    },
+    {
+      "slot_id": "day4_slot01",
+      "day": 4,
+      "day_of_week": "monday",
+      "start_time": "09:00",
+      "end_time": "11:30",
+      "time": "09:00~11:30",
+      "slot_type": "flexible",
+      "original_activity": "自由活動",
+      "reason_for_search": "需要進一步的建議或選擇活動",
+      "suggested_search_query": "上海 自由活動 建議",
+      "target_terms": [],
+      "location_terms": [
+        "上海"
+      ],
+      "intent_type": "local_culture",
+      "must_have": []
+    }
+  ]
+}

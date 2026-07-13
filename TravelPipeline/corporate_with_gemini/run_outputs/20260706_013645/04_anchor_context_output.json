@@ -1,0 +1,171 @@
+{
+  "anchor_context_version": "anchor_resolver_v0.1",
+  "created_at": "2026-07-06T02:53:46",
+  "destination_hint": "台南",
+  "default_start_anchor": "台南火車站",
+  "default_end_anchor": "台南火車站",
+  "distance_note": "Anchor Resolver only resolves nearby schedule anchors. CandidateScorer uses straight-line distance as a routing proxy.",
+  "slot_anchors": [
+    {
+      "slot_key": "1|12:10~13:30|在國華街享用午餐（牛肉湯、虱目魚肚等小吃）",
+      "day": 1,
+      "time": "12:10~13:30",
+      "original_activity": "在國華街享用午餐（牛肉湯、虱目魚肚等小吃）",
+      "previous_anchor": {
+        "source": "schedule",
+        "role": "previous",
+        "day": 1,
+        "time": "10:30~12:00",
+        "activity": "參觀赤崁樓",
+        "query": "台南 赤崁樓",
+        "place": {
+          "place_id": "ChIJbYl7d2F2bjQRnFdvyMBuZfI",
+          "resource_name": "places/ChIJbYl7d2F2bjQRnFdvyMBuZfI",
+          "name": "赤崁樓",
+          "address": "700臺南市中西區赤嵌里民族路二段212號",
+          "latitude": 22.997477999999997,
+          "longitude": 120.2025433,
+          "primary_type": null,
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17466488504101853084&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台南 赤崁樓",
+              "intent": "anchor",
+              "rank": 1
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "schedule",
+        "role": "next",
+        "day": 1,
+        "time": "13:50~15:00",
+        "activity": "參觀台南孔廟",
+        "query": "台南孔廟",
+        "place": {
+          "place_id": "ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+          "resource_name": "places/ChIJFbzVrGJ2bjQRkZC9jslaIgs",
+          "name": "臺南孔廟",
+          "address": "700臺南市中西區永華里南門路2號",
+          "latitude": 22.9905296,
+          "longitude": 120.2040401,
+          "primary_type": "place_of_worship",
+          "types": [
+            "place_of_worship",
+            "tourist_attraction",
+            "historical_landmark",
+            "historical_place",
+            "association_or_organization",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=802303505355083921&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台南孔廟",
+              "intent": "anchor",
+              "rank": 1
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "2|12:10~13:30|安平老街午餐（豆花、蝦捲等）",
+      "day": 2,
+      "time": "12:10~13:30",
+      "original_activity": "安平老街午餐（豆花、蝦捲等）",
+      "previous_anchor": {
+        "source": "schedule",
+        "role": "previous",
+        "day": 2,
+        "time": "10:30~12:00",
+        "activity": "探索安平古堡和安平樹屋",
+        "query": "台南 安平樹屋",
+        "place": {
+          "place_id": "ChIJlynOByF3bjQR_IzNSlgH-Ss",
+          "resource_name": "places/ChIJlynOByF3bjQR_IzNSlgH-Ss",
+          "name": "安平樹屋",
+          "address": "708臺南市安平區王城里古堡街104號",
+          "latitude": 23.0038453,
+          "longitude": 120.1598012,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=3168571888625356028&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台南 安平樹屋",
+              "intent": "anchor",
+              "rank": 1
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "schedule",
+        "role": "next",
+        "day": 2,
+        "time": "13:50~15:30",
+        "activity": "參觀德記洋行與台南美術館二館",
+        "query": "台南 德記洋行",
+        "place": {
+          "place_id": "ChIJo7avkR12bjQR9Gvc2sRtx40",
+          "resource_name": "places/ChIJo7avkR12bjQR9Gvc2sRtx40",
+          "name": "英商德記洋行",
+          "address": "708臺南市安平區王城里古堡街108號",
+          "latitude": 23.003446699999998,
+          "longitude": 120.1597835,
+          "primary_type": null,
+          "types": [
+            "historical_landmark",
+            "tourist_attraction",
+            "historical_place",
+            "museum",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=10216254971966155764&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台南 德記洋行",
+              "intent": "anchor",
+              "rank": 1
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    }
+  ]
+}

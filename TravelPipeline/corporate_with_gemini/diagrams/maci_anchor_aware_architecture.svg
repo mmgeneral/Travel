@@ -1,0 +1,82 @@
+<svg width="1280" height="720" viewBox="0 0 1280 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="720" fill="#F7F8FA"/>
+  <text x="640" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#172033">MACI-inspired Anchor-aware Travel Planning Framework</text>
+  <text x="640" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#526070">Planning and validation are separated into narrow, constraint-oriented agents.</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#526070"/>
+    </marker>
+    <filter id="shadow" x="-8%" y="-18%" width="116%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#142033" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="48" y="160" width="150" height="92" rx="10" fill="#FFFFFF" stroke="#D7DEE8"/>
+    <text x="123" y="194" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#172033">User Query</text>
+    <text x="123" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#526070">natural language</text>
+
+    <rect x="250" y="145" width="170" height="122" rx="10" fill="#FFFFFF" stroke="#75A7FF" stroke-width="2"/>
+    <text x="335" y="178" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Meta-Planner</text>
+    <text x="335" y="201" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#526070">Constraint Compiler</text>
+    <text x="335" y="226" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">PlannerAgent.py</text>
+    <text x="335" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">trip context, slots</text>
+
+    <rect x="472" y="145" width="170" height="122" rx="10" fill="#FFFFFF" stroke="#7CCBA2" stroke-width="2"/>
+    <text x="557" y="178" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Ambiguity</text>
+    <text x="557" y="201" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Detection</text>
+    <text x="557" y="226" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">Mcp.py</text>
+    <text x="557" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">fuzzy slots</text>
+
+    <rect x="694" y="145" width="170" height="122" rx="10" fill="#FFFFFF" stroke="#F2B66D" stroke-width="2"/>
+    <text x="779" y="178" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Anchor</text>
+    <text x="779" y="201" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Resolution</text>
+    <text x="779" y="226" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">AnchorResolver.py</text>
+    <text x="779" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">previous / next</text>
+
+    <rect x="916" y="145" width="170" height="122" rx="10" fill="#FFFFFF" stroke="#B99BFF" stroke-width="2"/>
+    <text x="1001" y="178" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Evidence</text>
+    <text x="1001" y="201" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Retrieval</text>
+    <text x="1001" y="226" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">PlacesSearchAgent.py</text>
+    <text x="1001" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">Google Places</text>
+
+    <rect x="805" y="388" width="198" height="126" rx="10" fill="#FFFFFF" stroke="#F07D7D" stroke-width="2"/>
+    <text x="904" y="420" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Independent</text>
+    <text x="904" y="443" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Validation / Ranking</text>
+    <text x="904" y="470" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">CandidateScorer.py</text>
+    <text x="904" y="491" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">relevance, opening, route</text>
+
+    <rect x="1080" y="404" width="152" height="94" rx="10" fill="#FFFFFF" stroke="#D7DEE8"/>
+    <text x="1156" y="439" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Final</text>
+    <text x="1156" y="462" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#172033">Itinerary</text>
+    <text x="1156" y="485" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#526070">grounded shortlist</text>
+  </g>
+
+  <path d="M198 206 H242" stroke="#526070" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M420 206 H464" stroke="#526070" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M642 206 H686" stroke="#526070" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M864 206 H908" stroke="#526070" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M1001 267 C1001 318 948 338 914 382" stroke="#526070" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M1003 451 H1072" stroke="#526070" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <rect x="92" y="340" width="250" height="190" rx="12" fill="#EEF5FF" stroke="#BBD3FF"/>
+  <text x="217" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#172033">Borrowed from MACI</text>
+  <text x="116" y="407" font-family="Arial, sans-serif" font-size="14" fill="#172033">1. Meta-planning as constraint compiling</text>
+  <text x="116" y="434" font-family="Arial, sans-serif" font-size="14" fill="#172033">2. Planning / validation separation</text>
+  <text x="116" y="461" font-family="Arial, sans-serif" font-size="14" fill="#172033">3. Specialized narrow agents</text>
+  <text x="116" y="488" font-family="Arial, sans-serif" font-size="14" fill="#172033">4. Dependency-aware reasoning</text>
+  <text x="116" y="515" font-family="Arial, sans-serif" font-size="14" fill="#172033">5. External evidence augmentation</text>
+
+  <rect x="390" y="340" width="335" height="190" rx="12" fill="#FFF8EC" stroke="#F1CEA0"/>
+  <text x="558" y="374" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#172033">Not Borrowed</text>
+  <text x="414" y="407" font-family="Arial, sans-serif" font-size="14" fill="#172033">No full MACI runtime</text>
+  <text x="414" y="434" font-family="Arial, sans-serif" font-size="14" fill="#172033">No agent registry / protobuf layer</text>
+  <text x="414" y="461" font-family="Arial, sans-serif" font-size="14" fill="#172033">No dynamic agent selection claim</text>
+  <text x="414" y="488" font-family="Arial, sans-serif" font-size="14" fill="#172033">No TravelEval-filled result as main score</text>
+
+  <rect x="805" y="560" width="427" height="92" rx="12" fill="#F2FFF7" stroke="#BDE8CC"/>
+  <text x="1018" y="594" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#172033">Evaluation Policy</text>
+  <text x="831" y="624" font-family="Arial, sans-serif" font-size="14" fill="#172033">Main: Direct LLM vs MACI-inspired pipeline with minimal adapter</text>
+  <text x="831" y="648" font-family="Arial, sans-serif" font-size="14" fill="#172033">Appendix: TravelEval-filled output as upper-bound / normalization analysis</text>
+</svg>

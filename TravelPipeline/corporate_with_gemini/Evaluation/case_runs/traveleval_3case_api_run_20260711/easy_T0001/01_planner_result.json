@@ -1,0 +1,301 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "北京",
+    "destination": "上海",
+    "country_code": "CN",
+    "region_code": "CN",
+    "language_code": "zh-TW",
+    "travel_start_date": "2024-11-15",
+    "arrival_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "上海火車站",
+      "place_query": "上海火車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": "friday",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": "friday",
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "從北京出發至上海的高鐵",
+          "slot_type": "flexible",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "北京",
+          "route_exit_place": "上海",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": "friday",
+          "start_time": "15:00",
+          "end_time": "17:00",
+          "time": "15:00~17:00",
+          "activity": "參觀上海外灘",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海外灘",
+          "route_entry_place": "上海外灘",
+          "route_exit_place": "上海外灘",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": "friday",
+          "start_time": "17:00",
+          "end_time": "17:30",
+          "time": "17:00~17:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": "friday",
+          "start_time": "17:30",
+          "end_time": "19:00",
+          "time": "17:30~19:00",
+          "activity": "參觀豫園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "豫園",
+          "route_entry_place": "豫園",
+          "route_exit_place": "豫園",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot05",
+          "day_of_week": "friday",
+          "start_time": "19:00",
+          "end_time": "20:00",
+          "time": "19:00~20:00",
+          "activity": "享用上海特色小吃",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "day_of_week": "saturday",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "day_of_week": "saturday",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "法租界漫步",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "法租界",
+          "route_entry_place": "法租界",
+          "route_exit_place": "法租界",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot02",
+          "day_of_week": "saturday",
+          "start_time": "11:00",
+          "end_time": "11:30",
+          "time": "11:00~11:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot03",
+          "day_of_week": "saturday",
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "time": "11:30~13:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot04",
+          "day_of_week": "saturday",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "享用法租界咖啡廳午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day2_slot05",
+          "day_of_week": "saturday",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "自由探索老城區巷弄",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "day_of_week": "sunday",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "18:00",
+          "time": "09:00~18:00",
+          "activity": "遊玩上海迪士尼樂園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海迪士尼樂園",
+          "route_entry_place": "上海迪士尼樂園",
+          "route_exit_place": "上海迪士尼樂園",
+          "locked": false
+        },
+        {
+          "slot_id": "day3_slot02",
+          "day_of_week": "sunday",
+          "start_time": "18:00",
+          "end_time": null,
+          "time": null,
+          "activity": "返回北京",
+          "slot_type": "flexible",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": "上海",
+          "route_exit_place": "北京",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "11月上海氣候舒適，建議攜帶薄外套。",
+    "高鐵票價約498–673元/人，需提前購票。",
+    "上海市內交通便利，建議使用地鐵通行。"
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": 2,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "北京",
+      "destination": "上海",
+      "key_areas": [
+        "外灘",
+        "豫園",
+        "法租界",
+        "上海博物館",
+        "上海迪士尼樂園"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 3,
+      "duration_nights": 2,
+      "travel_start_date": "2024-11-15",
+      "travel_end_date": "2024-11-17",
+      "season_or_month": "秋季",
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [],
+      "desired_experiences": [
+        "當地美食",
+        "城市漫步",
+        "文化探索"
+      ],
+      "activity_types": [
+        "culture",
+        "local_food",
+        "theme_park"
+      ],
+      "food_preferences": [],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "探索上海城市風光與文化",
+      "success_criteria": [],
+      "priority_order": [
+        3,
+        1,
+        2
+      ]
+    },
+    "how": {
+      "budget": 3400,
+      "preferred_transportation": "高鐵",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours",
+        "route_feasibility"
+      ],
+      "hard_constraints": [],
+      "soft_preferences": []
+    }
+  }
+}

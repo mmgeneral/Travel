@@ -1,0 +1,114 @@
+{
+  "case_ids": [
+    "T0001",
+    "T0201",
+    "T0601"
+  ],
+  "cases": [
+    {
+      "uid": "T0001",
+      "tag": "easy",
+      "start_city": "北京",
+      "target_city": "上海",
+      "days": 3,
+      "people_number": 2,
+      "people_composition": {
+        "adults": 2,
+        "children": 0,
+        "seniors": 0
+      },
+      "budget": 3400,
+      "dates": "2024-11-15 to 2024-11-17",
+      "transportation": {},
+      "accommodations": {},
+      "diet": {},
+      "attractions": {},
+      "rhythm": {},
+      "nature_language": "我们两个人想从北京去上海玩3天，预算3400元。",
+      "nature_language_en": "We two people want to travel from Beijing to Shanghai for 3 days with a budget of 3400 RMB.",
+      "difficulty": "easy"
+    },
+    {
+      "uid": "T0201",
+      "tag": "medium",
+      "start_city": "北京",
+      "target_city": "上海",
+      "days": 4,
+      "people_number": 2,
+      "people_composition": {
+        "adults": 2,
+        "children": 0,
+        "seniors": 0
+      },
+      "budget": 5600,
+      "dates": "2024-11-15 to 2024-11-18",
+      "transportation": {
+        "preferences": [
+          "高铁"
+        ],
+        "constraints": []
+      },
+      "accommodations": {
+        "preferences": [
+          "设计师酒店",
+          "位置超好"
+        ],
+        "constraints": []
+      },
+      "diet": {},
+      "attractions": {},
+      "rhythm": {},
+      "nature_language": "我们两个人想11月中旬从北京坐高铁去上海玩4天，预算5600元，希望住设计师酒店且位置要特别好。",
+      "nature_language_en": "We two people want to take the high-speed train from Beijing to Shanghai for 4 days in mid-November with a budget of 5600 RMB, preferring designer hotels in excellent locations.",
+      "difficulty": "medium"
+    },
+    {
+      "uid": "T0601",
+      "tag": "hard",
+      "start_city": "北京",
+      "target_city": "上海",
+      "days": 5,
+      "people_number": 2,
+      "people_composition": {
+        "adults": 2,
+        "children": 0,
+        "seniors": 0
+      },
+      "budget": 3200,
+      "dates": "2024-12-15 to 2024-12-19",
+      "transportation": {
+        "preferences": [
+          "高铁"
+        ],
+        "constraints": [
+          "飞机"
+        ]
+      },
+      "accommodations": {
+        "preferences": [
+          "位置超好",
+          "免费停车"
+        ],
+        "constraints": []
+      },
+      "diet": {
+        "preferences": [],
+        "constraints": [
+          "火锅",
+          "川菜"
+        ]
+      },
+      "attractions": {
+        "preferences": [
+          "小众秘境",
+          "历史古迹"
+        ],
+        "constraints": []
+      },
+      "rhythm": {},
+      "nature_language": "我和朋友想从北京坐高铁去上海玩5天，预算3200元，不要坐飞机，住宿要位置好有免费停车，不吃火锅和川菜，偏爱小众秘境和历史古迹。",
+      "nature_language_en": "My friend and I want to travel from Beijing to Shanghai by high-speed rail for 5 days with a budget of 3200 RMB, no flights, accommodation with good location and free parking, no hotpot or Sichuan cuisine, prefer hidden gems and historical sites.",
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,538 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-11T21:40:38",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "大部分的景點都可以找到直接替換的候選項目，符合單純替換策略。",
+      "住宿方面，任務建議盡量使用單一酒店，因此採用 single_hotel 策略。"
+    ],
+    "warnings": []
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+        "property_token": "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB",
+        "name": "Meego Qingwen Hotel",
+        "latitude": 31.235129999999995,
+        "longitude": 121.45161399999999,
+        "price": {
+          "currency": "TWD",
+          "per_night": 757.0,
+          "total": 1514.0,
+          "nights": 2,
+          "availability_confirmed": true,
+          "source": "serpapi_google_hotels"
+        },
+        "rating": 4.2,
+        "user_rating_count": 25,
+        "hotel_class": "1 星級飯店"
+      },
+      "reason": "選擇位於上海市中心且評價良好的酒店，符合策略要求。"
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot02",
+      "day": 1,
+      "original_activity": "辦理入住並休息",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJ8-VLqlBwsjUR7Fjsy4_c6e8",
+        "name": "上海子魚居南京東路店",
+        "address": "中國上海市黃浦區 郵政編碼: 200002",
+        "latitude": 31.239921000000002,
+        "longitude": 121.48532999999998
+      },
+      "reason": "該酒店位置理想且具有良好的評價。"
+    },
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "original_activity": "南京東路步行街購物與小吃",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJYfQySkdwsjURExO_It75d-0",
+        "name": "南翔小籠上海小吃",
+        "address": "上海市黃浦區新閘路200號 郵政編碼: 200001",
+        "latitude": 31.2386309,
+        "longitude": 121.46972219999999
+      },
+      "reason": "選擇靠近南京東路且受歡迎的小吃店。"
+    },
+    {
+      "slot_id": "day2_slot03",
+      "day": 2,
+      "original_activity": "法租界漫步",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJnYKyU596sjURiclNuZoMC94",
+        "name": "法租界上海製針總場舊址",
+        "address": "上海市黃浦區打浦橋泰康路6F59+5H5 郵政編碼: 200023",
+        "latitude": 31.207897,
+        "longitude": 121.46899699999997
+      },
+      "reason": "提供了具體的法租界景點，符合要求。"
+    },
+    {
+      "slot_id": "day2_slot04",
+      "day": 2,
+      "original_activity": "享用法租界特色午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJwb83l1hwsjURvOkovWQR1cc",
+        "name": "法國餐廳",
+        "address": "上海市黃浦區外灘中山東一路3號外灘號三號行政辦公樓 4F 郵政編碼: 200002",
+        "latitude": 31.234108999999997,
+        "longitude": 121.490816
+      },
+      "reason": "靠近法租界且具有良好口碑的法國餐廳。"
+    },
+    {
+      "slot_id": "day2_slot05",
+      "day": 2,
+      "original_activity": "在武康路與思南路漫步並拍照",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJFezOP0llsjURgZUzT-yILHw",
+        "name": "武康大樓",
+        "address": "上海市徐匯區淮海中路1850號 郵政編碼: 200031",
+        "latitude": 31.204479999999997,
+        "longitude": 121.438326
+      },
+      "reason": "提供了具體的漫步與拍照地點，符合原活動意圖。"
+    },
+    {
+      "slot_id": "day2_slot08",
+      "day": 2,
+      "original_activity": "夜間市中心生活體驗",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJE-I-loRwsjURCc0o6_knUc0",
+        "name": "非常時髦酒吧",
+        "address": "上海市虹口區黃浦路199號 郵政編碼: 200080",
+        "latitude": 31.2455237,
+        "longitude": 121.4933637
+      },
+      "reason": "提供了具體的夜生活體驗地點，符合活動設定。"
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "08:00",
+          "end_time": "12:30",
+          "time": "08:00~12:30",
+          "activity": "搭乘高鐵從北京到上海",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "北京火車站",
+          "route_exit_place": "上海火車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 500,
+            "party_total": 1000,
+            "source": "llm_estimated",
+            "confidence": 0.8,
+            "note": "估計從北京到上海的高鐵票價"
+          }
+        },
+        {
+          "slot_id": "day1_slot02",
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "辦理入住並休息",
+          "slot_type": "lodging",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海子魚居南京東路店",
+          "route_entry_place": "上海火車站",
+          "route_exit_place": "上海子魚居南京東路店",
+          "cost_estimate": {
+            "currency": "TWD",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "serpapi_google_hotels",
+            "confidence": 1.0,
+            "note": "酒店費用已由住宿候選提供"
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "14:00",
+          "end_time": "16:00",
+          "time": "14:00~16:00",
+          "activity": "參觀外灘",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "外灘",
+          "route_entry_place": "外灘",
+          "route_exit_place": "外灘",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "外灘免費參觀"
+          }
+        },
+        {
+          "slot_id": "day1_slot04",
+          "start_time": "16:00",
+          "end_time": "16:30",
+          "time": "16:00~16:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "外灘",
+          "route_exit_place": "南京東路",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.7,
+            "note": "城市內步行或公共交通無需額外费用"
+          }
+        },
+        {
+          "slot_id": "day1_slot05",
+          "start_time": "16:30",
+          "end_time": "18:00",
+          "time": "16:30~18:00",
+          "activity": "南京東路步行街購物與小吃",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "南翔小籠上海小吃",
+          "route_entry_place": "南京東路",
+          "route_exit_place": "南京東路",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 50,
+            "party_total": 100,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "預計小吃和購物花費"
+          }
+        },
+        {
+          "slot_id": "day1_slot06",
+          "start_time": "18:00",
+          "end_time": "19:00",
+          "time": "18:00~19:00",
+          "activity": "享用上海小籠包晚餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "南京東路步行街",
+          "route_entry_place": "南京東路",
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 60,
+            "party_total": 120,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "兩人份的小籠包晚餐估算費用"
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date_description": "第二天",
+      "schedule": [
+        {
+          "slot_id": "day2_slot01",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "參觀上海博物館",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "上海博物館",
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "上海博物館",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "上海博物館免費入場"
+          }
+        },
+        {
+          "slot_id": "day2_slot02",
+          "start_time": "11:00",
+          "end_time": "11:30",
+          "time": "11:00~11:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海博物館",
+          "route_exit_place": "法租界",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.7,
+            "note": "城市內步行或公共交通無需額外费用"
+          }
+        },
+        {
+          "slot_id": "day2_slot03",
+          "start_time": "11:30",
+          "end_time": "13:00",
+          "time": "11:30~13:00",
+          "activity": "法租界上海製針總場舊址",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "法租界",
+          "route_entry_place": "法租界",
+          "route_exit_place": "法租界",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.6,
+            "note": "法租界參觀無需額外费用"
+          }
+        },
+        {
+          "slot_id": "day2_slot04",
+          "start_time": "13:00",
+          "end_time": "14:00",
+          "time": "13:00~14:00",
+          "activity": "法國餐廳午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "法國餐廳",
+          "route_entry_place": "法租界",
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 200,
+            "party_total": 400,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "估算兩人法國餐的費用"
+          }
+        },
+        {
+          "slot_id": "day2_slot05",
+          "start_time": "14:00",
+          "end_time": "15:00",
+          "time": "14:00~15:00",
+          "activity": "武康大樓拍照",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "武康大樓",
+          "route_entry_place": "法租界",
+          "route_exit_place": "法租界",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.8,
+            "note": "拍照無需額外费用"
+          }
+        },
+        {
+          "slot_id": "day2_slot06",
+          "start_time": "15:00",
+          "end_time": "15:30",
+          "time": "15:00~15:30",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "法租界",
+          "route_exit_place": "市中心",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.7,
+            "note": "城市內步行或公共交通無需額外费用"
+          }
+        },
+        {
+          "slot_id": "day2_slot07",
+          "start_time": "16:00",
+          "end_time": "18:00",
+          "time": "16:00~18:00",
+          "activity": "咖啡館休憩",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "思南路",
+          "route_entry_place": "市中心",
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 40,
+            "party_total": 80,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "咖啡及小點心的預估費用"
+          }
+        },
+        {
+          "slot_id": "day2_slot08",
+          "start_time": "18:30",
+          "end_time": "20:00",
+          "time": "18:30~20:00",
+          "activity": "非常時髦酒吧",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "市中心",
+          "route_entry_place": "非常時髦酒吧",
+          "route_exit_place": "市中心",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 100,
+            "party_total": 200,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "晚間飲料和小吃的預估費用"
+          }
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date_description": "第三天",
+      "schedule": [
+        {
+          "slot_id": "day3_slot01",
+          "start_time": "09:00",
+          "end_time": "10:30",
+          "time": "09:00~10:30",
+          "activity": "新天地早晨漫步與購物",
+          "slot_type": "shopping",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "新天地",
+          "route_entry_place": "新天地",
+          "route_exit_place": "新天地",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 50,
+            "party_total": 100,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "購物費用估算"
+          }
+        },
+        {
+          "slot_id": "day3_slot02",
+          "start_time": "10:30",
+          "end_time": "11:00",
+          "time": "10:30~11:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "新天地",
+          "route_exit_place": "新天地",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.7,
+            "note": "城市內步行或公共交通無需額外费用"
+          }
+        },
+        {
+          "slot_id": "day3_slot03",
+          "start_time": "11:00",
+          "end_time": "12:00",
+          "time": "11:00~12:00",
+          "activity": "１９６５東南亞街頭美食",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "新天地",
+          "route_entry_place": "新天地",
+          "route_exit_place": null,
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 70,
+            "party_total": 140,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "兩人午餐的費用估算"
+          }
+        },
+        {
+          "slot_id": "day3_slot04",
+          "start_time": "12:30",
+          "end_time": "16:30",
+          "time": "12:30~16:30",
+          "activity": "搭乘高鐵從上海返回北京",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": "上海火車站",
+          "route_exit_place": "北京火車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 500,
+            "party_total": 1000,
+            "source": "llm_estimated",
+            "confidence": 0.8,
+            "note": "估計從上海返回北京的高鐵票價"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJ8-VLqlBwsjUR7Fjsy4_c6e8",
+      "ChIJYfQySkdwsjURExO_It75d-0",
+      "ChIJnYKyU596sjURiclNuZoMC94",
+      "ChIJwb83l1hwsjURvOkovWQR1cc",
+      "ChIJFezOP0llsjURgZUzT-yILHw",
+      "ChIJE-I-loRwsjURCc0o6_knUc0",
+      "ChIJ2ZKxgnFwsjUROVpCH9XEpUM",
+      "ChIJu-Pz3xJwsjURzHzDEi0k7TI"
+    ],
+    "lodging": [
+      "ChoInrvCtqWVgt-iARoNL2cvMTFoN2ZfN3BwZBAB"
+    ]
+  }
+}

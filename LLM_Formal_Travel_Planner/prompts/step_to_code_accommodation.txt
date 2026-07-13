@@ -1,0 +1,32 @@
+# Python script for testing satisfiability of the accommodation constraint of a travel plan problem. 
+
+# Run AccommodationSearch to get accommodation info and accommodation constraints for city_0 and city_1
+accommodation_info, accommodation_constraints = AccommodationSearch.run_for_all_cities(cities, [city_0, city_1]) 
+# Run AccommodationSearch to get accommodation info and accommodation constraints for city_0
+accommodation_info, accommodation_constraints = AccommodationSearch.run_for_all_cities(cities, [city_0]) 
+# Set 'accommodation_index' variables for 2 (1 per city) accommodations
+variables['accommodation_index'] = [Int('accommodation_{}_index'.format(i)) for i in range(2)]
+# For each 'accommodation_index', get specific price info based on accommodation in which city variable, assert 'accommodation_index' variable are within valid range, calculate number of room need for 2 people and accommodation price
+all_accommodation_price = 0
+for i, variable in enumerate(variables['accommodation_index']):
+    accommodation_price_list, accommodation_list_length = AccommodationSearch.get_info(accommodation_info, variables['city'][i], 'Price')
+    s.assert_and_track(And(variable >= 0, variable < accommodation_list_length), 'valid accomodation index')
+    accommodation_maximum_occupancy_list, _ = AccommodationSearch.get_info(accommodation_info, variables['city'][i], 'Maximum_occupancy')
+    num_room = convert_to_int(RealVal(2) / AccommodationSearch.get_info_for_index(accommodation_maximum_occupancy_list, variable))
+    all_accommodation_price += (variables['departure_dates'][i+1] - variables['departure_dates'][i]) * num_room * AccommodationSearch.get_info_for_index(accommodation_price_list, variable)
+# For each city, get accommodation minimum night info and assert it to be less than the days stay in this city
+for index, city in enumerate(variables['city']):
+    accommodation_minimum_nights_list, _ = AccommodationSearch.get_info(accommodation_info, city, 'Minimum_nights')
+    minimum_night = AccommodationSearch.get_info_for_index(accommodation_minimum_nights_list, variables['accommodation_index'][index])
+    s.assert_and_track(minimum_night <= variables['departure_dates'][index+1]- variables['departure_dates'][index], 'minimum nights satisfied')
+# For each 'accommodation_index', get specific room type and house rules info, assert 'Entire home/apt' exist for all accommodations, assert 'Shared room' does not exist for all accommodations, assert 'No parties' does not exist for all accommodations
+for i, variable in enumerate(variables['accommodation_index']):
+        accommodation_room_types_list, _ = AccommodationSearch.get_info(accommodation_constraints, variables['city'][i], 'Room_types')
+        accommodation_house_rules_list, _ = AccommodationSearch.get_info(accommodation_constraints, variables['city'][i], 'House_rules')
+        s.assert_and_track(AccommodationSearch.check_exists('Entire home/apt', accommodation_room_types_list, variable) == True,  'Entire home/apt' + 'types accomadation visited')
+        s.assert_and_track(AccommodationSearch.check_exists('Shared room', accommodation_room_types_list, variable) == False,  'Shared room' + 'types accomadation visited')
+        s.assert_and_track(AccommodationSearch.check_exists('No parties', accommodation_house_rules_list, variable) == False,  'No parties' + 'rules accomadation not visited')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# Follow the code structure variable names in examples
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Accommodation response########## and end with ########## Accommodation response ends##########.

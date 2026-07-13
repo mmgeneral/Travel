@@ -1,0 +1,63 @@
+As a travel planner, you have some constraints in JSON format to satisfy for a round trip travel plan problem. 
+The trip spans "date", goes from "org", travels "dest" city, and then goes back to "org"
+For example, if "org" is city_0, and "dest" is city_1, then the transportations would be [city_0->city_1,city_1->city_0]
+In addition, "local_constraint" contains four possible constraints. Possible options of "house rule" includes ["parties", "smoking", "children under 10", "pets", "visitors"]. Possible options of "cuisine" includes ["Chinese", "American", "Italian", "Mexican", "Indian", "Mediterranean", "French"]. Possible options of "house type" includes ["entire room", "private room", "shared room", "not shared room"]. Possible options of "transportation" includes ["no flight", "no self-driving"]. If the field value is null in JSON, this specific hard constraint is not included. 
+The specified "house rule" and "house type" needs to be satisfied by all accommodations. The specified "transportation" needs to be satisfied by all transportations. All cuisines in "cuisine" needs to be satisfied, and a cuisine could be satisfied if it exists for one restaurant. 
+After anaylzed these constraints, you found they are not satisfiable under current setting.
+Collect information or, based on the information you collect, analyze current situation or give a suggested modification to the constraints. 
+Info collecting can take 6 different actions: 
+(1) DrivingCheck[Departure City, Destination City]:
+Description: A driving information checking tool that checks if driving is feasible.
+Parameters:
+    Departure City: The city you'll be driving out from.
+    Destination City: The city you aim to reach.
+Example: DrivingCheck[Grand Forks, Minneapolis] would check if driving is feasible from Grand Forks to Minneapolis.
+
+(2) DrivingSearch[Departure City]:
+Description: A driving information retrieval tool that returns all reachable cities.
+Parameters:
+    Departure City: The city you'll be driving out from.
+Example: DrivingSearch[Grand Forks] would return all reachable cities from Grand Forks through driving.
+
+(3) FlightCheck[Departure City, Destination City, Date]:
+Description: A flight information checking tool that checks if flight is feasible.
+Parameters:
+    Departure City: The city you'll be flying out from.
+    Destination City: The city you aim to reach.
+    Date: The date you take the flight.
+Example: FlightCheck[Grand Forks, Minneapolis, 2022-06-05] would check if flight is feasible from Grand Forks to Minneapolis on 2022-06-05.
+
+(4) FlightSearch[Departure City, Date]:
+Description: A flight information retrieval tool that returns all reachable cities.
+Parameters:
+    Departure City: The city you'll be flying out from.
+    Date: The date you take the flight.
+Example: FlightSearch[Grand Forks, 2022-06-05] would return all reachable cities from Grand Forks through flight on 2022-06-05.
+
+(5) AccommodationSearch[City]:
+Description: Find accommodations types in a city of your choice.
+Parameter: City - The name of the city where you're seeking accommodations. 
+Example: AccommodationSearch[Grand Forks] would return accommodation categories in Grand Forks.
+
+(6) TypeSearch[Type]:
+Description: Find cities contain accommodations of input type.
+Parameter: Type - The accommodation type where you want to visit. 
+Example: TypeSearch[entire room] would return all cities where entire room type accommodation exist.
+
+You need to take an action analyze current situation and plan your future steps after each DrivingCheck, DrivingSearch, FlightCheck, FlightSearch, AccommodationSearch, or TypeSearch.
+Example: Analyze[your analysis of current situation and plan for future]
+
+You can suggest to remove the "house type" constraint, suggest to remove the "transportation" constraint, suggest to change destination cities(but keep number of destination cities unchanged), or suggest to raise budget. 
+Do not give other suggestions that change other fields in JSON input, such as origin, number of visit cities, etc.
+Please give a reasonable suggestion to modify the constraint only when you think you've collected enough information and the suggestion has high chance to be satisfiable. For example, if destination city does not have required accomadation type, you should suggest to change destination city if info shows the new city has the required type
+Please try to keep original constraint and make minimal change to original constraint only when it is necessary.
+You can give one or more suggestions if you think one is not enough. Please separate the suggestions with ;
+Examples: 
+    Suggest[raise budget to 5000]
+    Suggest[change destination cities to be Minneapolis]
+    Suggest[remove the house type constraint]
+    Suggest[remove the flight/no flight/ no self-driving assertion for transportations]
+    Suggest[raise budget to 2000, change destination cities to be Chicago]
+
+Now, based on the input query and collected information, please give the next action(only one action) you want to take only with no explainations, you need to give a suggestion within 15 iterations: 
+Input query: 

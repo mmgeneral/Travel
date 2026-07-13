@@ -1,0 +1,270 @@
+You are given a constraint to satisfy for a travel plan problem in JSON format. Your job is to give a detailed step by step instuction to encode this constraint as code. 
+You are given some examples of JSON-to-step translations, but the example JSON constraints have different fields than the input JSON.
+In the example JSON, "org" denotes the departure city. When total travel days is 5 or 7, "dest" denotes the destination state; when total travel day is 3, "dest" denotes the destination city. "days" denotes the total number of travel days. When "days" equals 5 or 7, "visiting_city_number" specifies the number of cities to be covered in the destination state. "date" includes the specific date to visit.
+In addition, "local_constraint" contains four possible constraints. Possible options of "house rule" includes ["parties", "smoking", "children under 10", "pets", "visitors"]. Possible options of "cuisine" includes ["Chinese", "American", "Italian", "Mexican", "Indian", "Mediterranean", "French"]. Possible options of "house type" includes ["entire room", "private room", "shared room", "not shared room"]. Possible options of "transportation" includes ["no flight", "no self-driving"]. If the field value is null in JSON, this specific hard constraint is not included. 
+Here are some example steps for different constraint:
+-----EXAMPLE 1-----
+JSON Constraint:
+{
+    "org": "Atlanta", 
+    "dest": "Minnesota", 
+    "days": 5, 
+    "visiting_city_number": 2, 
+    "date": ["2022-03-03", "2022-03-04", "2022-03-05", "2022-03-06", "2022-03-07"], 
+    "people_number": 3, 
+    "local_constraint": {
+        "house rule": "parties", 
+        "cuisine": null, 
+        "room type": "entire room", 
+        "transportation": "no self-driving"
+    }, 
+    "budget": 7900
+}
+Steps:
+# Destination cities # 
+# Run CitySearch to get all possible destination cities in Minnesota State from origin 'Atlanta', remove origin 'Atlanta' if it is in list
+# Loop through cities for 2 destination cities
+# Initialize Z3 solver s
+# Set 'city' variable to be indexes of 2 destination cities
+# If city_0_index and city_1_index are not same, assert 2 'city' variables equal to city index
+
+# Departure dates # 
+# Set 'departure_dates' variables for 3 transportations between cities
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 4), and second transportation could happen at any day in between
+
+# Transportation methods # 
+# Set transportation method (flight, self-driving, taxi) variable for 3 transportations between cities
+# Assert only one of flight, self-driving, or taxi is used for 3 transportations between cities, self-driving is not valid if taxi or flight is used for any transportation
+# Assert all 3 transportations between cities are not self-driving
+
+# Flight information # 
+# Run FlightSearch to get flight info for Atlanta as origin, city_0 and city_1, and dates
+# Get specific flight price info with Atlanta as origin and final destination, specific city variable, and departure date for 3 transportations
+# Set 'flight_index' variable for 3 transportations
+# Assert 3 'flight_index' variables are within valid range if taking flight, assert flight index to be -1 if not taking flight
+# Calculate flight price for 3 people for 3 transportations based on flight index variable
+# Get specific flight arrival time info with Atlanta as origin and final destination, specific city, and departure date for 3 transportations
+# Calculate flight arrival time for 3 transportations based on flight index variable
+
+# Driving information # 
+# Run DistanceSearch to get driving info for Atlanta as origin and city_0 and city_1
+# Get specific driving distance info with Atlanta as origin and final destination, specific city, and departure date for 3 transportations
+# Assert driving info is not empty if driving
+# Calculate self-driving and taxi price for 3 people and 3 transportations based on driving distance
+# Get driving arrival time with Atlanta as origin and final destination, specific city, and departure date for 3 transportations
+
+# Restaurant information # 
+# Get arrivals and city list for each day based on 3 transportations, 5 total travel day, and departure dates variables
+# Run RestaurantSearch to get restaurant price info and cuisine info for city_0 and city_1
+# Set 'restaurant_in_which_city' variables for 15 (3 meals per day, 5 days) meals
+# For each 'restaurant_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'restaurant_index' variables for 15 (3 meals per day, 5 days) meals
+# For each 'restaurant_index', get specific price info based on 'restaurant_in_which_city' variable, assert index are within valid range, assert restaurants in same city are not repeated, and calculate restaurant price for 3 people
+# Calculate restaurant price based on restaurant index
+
+# Attraction information # 
+# Run AttractionSearch to get attraction info for city_0 and city_1
+# Set 'attraction_in_which_city' variables for 5 (1 per day) attractions
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'attraction_index' variables for 5 (1 per day) attractions
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+
+
+# Accommodation information # 
+# Run AccommodationSearch to get accommodation info and accommodation constraints for city_0 and city_1
+# Set 'accommodation_index' variables for 2 (1 per city) accommodations
+# For each 'accommodation_index', get specific price info based on accommodation in which city variable, assert 'accommodation_index' variable are within valid range, calculate number of room need for 3 people and accommodation price
+# For each city, get accommodation minimum night info and assert it to be less than the days stay in this city
+# For each 'accommodation_index', get specific room type and house rules info, assert 'Entire home/apt' exist for all accommodations, assert 'No parties' does not exist for all accommodations
+
+
+# Budget # 
+# Set budget limit variable to be 7900
+# Add 3 transportation price to spent, according to whether transportation method is flight, self-driving, or taxi
+# Add restaurant price to spent
+# Add accommodation price to spent
+# Assert current spent is within budget
+
+-----EXAMPLE 2-----
+JSON Constraint:
+{
+    'org': 'Indianapolis', 
+    'dest': 'Colorado', 
+    'days': 7, 
+    'visiting_city_number': 3, 
+    'date': ['2022-03-11', '2022-03-12', '2022-03-13', '2022-03-14', '2022-03-15', '2022-03-16', '2022-03-17'], 
+    'people_number': 5, 
+    'local_constraint': {
+        'house rule': 'pets', 
+        'cuisine': ['Mexican', 'Italian', 'Mediterranean', 'Indian'], 
+        'room type': 'entire room', 
+        'transportation': None
+    }, 
+    'budget': 15100
+    }
+Steps:
+# Destination cities # 
+# Run CitySearch to get all possible destination cities in Colorado State from origin 'Indianapolis', remove origin 'Indianapolis' if it is in list
+# Loop through cities for 3 destination cities
+# Initialize Z3 solver s
+# Set 'city' variable to be indexes of 3 destination cities
+# If city_0_index, city_1_index, city_2_index are not same, assert 3 'city' variables equal to city index
+
+# Departure dates # 
+# Set 'departure_dates' variables for 4 transportations between cities
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 6), second and third transportation happen in between but not at the same day
+
+# Transportation methods # 
+# Set transportation method (flight, self-driving, taxi) variable for 4 transportations between cities
+# Assert only one of flight, self-driving, or taxi is used for 4 transportations between cities, self-driving is not valid if taxi or flight is used for any transportation
+
+# Flight information # 
+# Run FlightSearch to get flight info for Indianapolis as origin, city_0, city_1 and city_2, and dates
+# Get specific flight price info with Indianapolis as origin and final destination, specific city variable, and departure date for 4 transportations
+# Set 'flight_index' variable for 4 transportations
+# Assert 4 'flight_index' variables are within valid range if taking flight, assert flight index to be -1 if not taking flight
+# Calculate flight price for 5 people for 4 transportations based on flight index variable
+# Get specific flight arrival time info with Indianapolis as origin and final destination, specific city, and departure date for 4 transportations
+# Calculate flight arrival time for 4 transportations based on flight index variable
+
+# Driving information # 
+# Run DistanceSearch to get driving info for Indianapolis as origin and city_0, city_1 and city_2
+# Get specific driving distance info with Indianapolis as origin and final destination, specific city, and departure date for 4 transportations
+# Assert driving info is not empty if driving
+# Calculate self-driving and taxi price for 5 people and 4 transportations based on driving distance
+# Get driving arrival time with Indianapolis as origin and final destination, specific city, and departure date for 4 transportations
+
+# Restaurant information # 
+# Get arrivals and city list for each day based on 4 transportations, 7 total travel day, and departure dates variables
+# Run RestaurantSearch to get restaurant price info and cuisine info for city_0, city_1 and city_2
+# Set 'restaurant_in_which_city' variables for 21 (3 meals per day, 7 days) meals
+# For each 'restaurant_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'restaurant_index' variables for 21 (3 meals per day, 7 days) meals
+# For each 'restaurant_index', get specific price info based on 'restaurant_in_which_city' variable, assert index are within valid range, assert restaurants in same city are not repeated, and calculate restaurant price for 5 people
+# Set 'cuisine_type' variables for each cuisine type required
+# For each cuisine type, iterate through all restaurant to check if it is satisfied
+
+# Attraction information # 
+# Run AttractionSearch to get attraction info for city_0, city_1 and city_2
+# Set 'attraction_in_which_city' variables for 7 (1 per day) attractions
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'attraction_index' variables for 7 (1 per day) attractions
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+
+
+# Accommodation information # 
+# Run AccommodationSearch to get accommodation info and accommodation constraints for city_0, city_1 and city_2
+# Set 'accommodation_index' variables for 3 (1 per city) accommodations
+# For each 'accommodation_index', get specific price info based on accommodation in which city variable, assert 'accommodation_index' variable are within valid range, calculate number of room need for 5 people and accommodation price
+# For each city, get accommodation minimum night info and assert it to be less than the days stay in this city
+# For each 'accommodation_index', get specific room type and house rules info, assert 'Entire home/apt' exist for all accommodations, assert 'No pets' does not exist for all accommodations
+
+# Budget # 
+# Set budget limit variable to be 15100
+# Add 4 transportation price to spent, according to whether transportation method is flight, self-driving, or taxi
+# Add restaurant price to spent
+# Add accommodation price to spent
+# Assert current spent is within budget
+-----EXAMPLES 3-----
+JSON Constraint:
+{
+    "org": "Fort Lauderdale", 
+    "dest": "Milwaukee", 
+    "days": 3, 
+    "visiting_city_number": 1, 
+    "date": ["2022-03-08", "2022-03-09", "2022-03-10"], 
+    "people_number": 2, 
+    "local_constraint": {
+        "house rule": null, 
+        "cuisine": ["American", "Chinese"], 
+        "room type": null, 
+        "transportation": "no flight"
+        }, 
+    "budget": 1100
+}
+Steps:
+# Destination cities # 
+# Set cities to be a list includes Milwaukee only
+# Loop through cities for 1 destination cities
+# Initialize Z3 solver s
+# Set 'city' variable to be indexes of 1 destination cities
+# Assert 'city' variable equal to city index
+
+# Departure dates # 
+# Set 'departure_dates' variables for 2 transportations between cities
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 2)
+
+# Transportation methods # 
+# Set transportation method (flight, self-driving, taxi) variable for 2 transportations between cities
+# Assert only one of flight, self-driving, or taxi is used for 2 transportations between cities, self-driving is not valid if taxi or flight is used for any transportation
+# Assert all 2 transportations between cities are not flight
+
+# Flight information # 
+# Run FlightSearch to get flight info for Fort Lauderdale as origin, city_0, and dates
+# Get specific flight price info with Fort Lauderdale as origin and final destination, specific city, and departure date for 2 transportations
+# Set 'flight_index' variable for 2 transportations
+# Assert 2 'flight_index' variables are within valid range if taking flight, assert flight index to be -1 if not taking flight
+# Calculate flight price for 2 people for 2 transportations based on flight index variable
+# Get specific flight arrival time info with Fort Lauderdale as origin and final destination, specific city, and departure date for 2 transportations
+# Calculate flight arrival time for 2 transportations based on flight index variable
+
+# Driving information # 
+# Run DistanceSearch to get driving info for Fort Lauderdale as origin and city_0
+# Get specific driving distance info with Fort Lauderdale as origin and final destination, specific city, and departure date for 2 transportations
+# Assert driving info is not empty if driving
+# Calculate self-driving and taxi price for 2 people and 2 transportations based on driving distance
+# Get driving arrival time with Fort Lauderdale as origin and final destination, specific city, and departure date for 2 transportations
+
+# Restaurant information # 
+# Get arrivals and city list for each day based on 2 transportations, 3 total travel day, and departure dates variables
+# Run RestaurantSearch to get restaurant price info and cuisine info for city_0
+# Set 'restaurant_in_which_city' variables for 9 (3 meals per day, 3 days) meals
+# For each 'restaurant_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'restaurant_index' variables for 9 (3 meals per day, 3 days) meals
+# For each 'restaurant_index', get specific price info based on 'restaurant_in_which_city' variable, assert index are within valid range, assert restaurants in same city are not repeated, and calculate restaurant price for 2 people
+# Set 'cuisine_type' variables for each cuisine type required
+# For each cuisine type, iterate through all restaurant to check if it is satisfied
+
+# Attraction information # 
+# Run AttractionSearch to get attraction info for city_0
+# Set 'attraction_in_which_city' variables for 3 (1 per day) attractions
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'attraction_index' variables for 3 (1 per day) attractions
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+
+
+# Accommodation information # 
+# Run AccommodationSearch to get accommodation info and accommodation constraints for city_0
+# Set 'accommodation_index' variables for 1 (1 per city) accommodations
+# For each 'accommodation_index', get specific price info based on accommodation in which city variable, assert 'accommodation_index' variable are within valid range, calculate number of room need for 2 people and accommodation price
+# For each city, get accommodation minimum night info and assert it to be less than the days stay in this city
+
+# Budget # 
+# Set budget limit variable to be 1100
+# Add 2 transportation price to spent, according to whether transportation method is flight, self-driving, or taxi
+# Add restaurant price to spent
+# Add accommodation price to spent
+# Assert current spent is within budget
+-----EXAMPLES END-----
+Based on the examples above, can you give the steps for following JSON constraint with different fields.
+In the input JSON, "org" denotes the departure city. "dest" denotes the destination city/cities. "days" denotes the total number of travel days. When "days" equals 5 or 7. "date" includes the specific date to visit.
+In addition, "local_constraint" contains three possible constraints. "flight rule" specifies the whether "non-stop" is required or not. "airlines" specifies a list of a airlines you can accept. Possible options of "attraction_category" specifies a list of categories of attractions want to visit. "transportation" is always 'flight'. If the field value is null in JSON, this specific hard constraint is not included. 
+The specified "flight rule" needs to be satisfied by all flights. All flights need to be one of the accepted "airlines". All categories in "attraction_category" needs to be satisfied, and a category could be satisfied if it exists for one attraction.
+We do not consider restaurant information or accommodation information, instead, we fix each restaurant price to be 30 per person per meal and accommodation to be 100 per person per night. 
+Note to keep the format in examples and start each line containing steps with '#' 
+JSON Constraint:
+{
+    "org": "Hong Kong", 
+    "dest": ["New York City", "Bangkok"], 
+    "days": 5, 
+    "visiting_city_number": 2, 
+    "date": ["2023-12-22", "2023-12-23", "2023-12-24", "2023-12-25", "2023-12-26"], 
+    "people_number": 3, 
+    "local_constraint": {
+        "flight rule": "non-stop", 
+        "airlines": ["United", "Emirates"], 
+        "attraction_category": ["Garden", "Historical Landmarks"],
+        "transportation": "flight"
+    }, 
+    "budget": 5000
+}

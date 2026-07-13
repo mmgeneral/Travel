@@ -1,0 +1,56 @@
+# Python script for testing satisfiability of the restaurant constraint of a travel plan problem. 
+
+# Get arrivals and city list for each day based on 3 transportations, 5 total travel day, and departure dates variables
+transportation_0_arrtime = If(variables['flight'][0], flight_0_arrtime, driving_0_arrtime)
+transportation_1_arrtime = If(variables['flight'][1], flight_1_arrtime, driving_1_arrtime)
+transportation_2_arrtime = If(variables['flight'][2], flight_2_arrtime, driving_2_arrtime)
+arrives = get_arrivals_list([transportation_0_arrtime, transportation_1_arrtime, transportation_2_arrtime], 5, variables['departure_dates'])
+city_list = get_city_list(variables['city'], 5, variables['departure_dates'])
+# Run RestaurantSearch to get restaurant price info and cuisine info for city_0 and city_1
+restaurant_price, restaurant_cuisines = RestaurantSearch.run_for_all_cities(cities, [city_0, city_1]) 
+# Run RestaurantSearch to get restaurant price info and cuisine info for city_0
+restaurant_price, restaurant_cuisines = RestaurantSearch.run_for_all_cities(cities, [city_0]) 
+# Set 'restaurant_in_which_city' variables for 15 (3 meals per day, 5 days) meals
+variables['restaurant_in_which_city'] = [Int('restaurant_' + str(i)) for i in range(3*5)]
+# For each 'restaurant_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+for i, variable in enumerate(variables['restaurant_in_which_city']):
+    date_index = i // 3
+    meal_index = i % 3
+    if meal_index == 0: # breakfast
+        s.assert_and_track(Or(variable == city_list[date_index], variable == city_list[date_index+1]),  'eat in which city b')
+        s.assert_and_track(Implies(arrives[date_index]> 10, variable == city_list[date_index]),'eat in which city b')
+        s.assert_and_track(Implies(arrives[date_index]< 5, variable == city_list[date_index+1]),'eat in which city b')
+    if meal_index == 1: # lunch
+        s.assert_and_track(Or(variable == city_list[date_index], variable == city_list[date_index+1]),  'eat in which city l')
+        s.assert_and_track(Implies(arrives[date_index]> 15, variable == city_list[date_index]),'eat in which city l')
+        s.assert_and_track(Implies(arrives[date_index]< 10, variable == city_list[date_index+1]),'eat in which city l')
+    if meal_index == 2: # dinner
+        s.assert_and_track(Or(variable == city_list[date_index], variable == city_list[date_index+1]),  'eat in which city d')
+        s.assert_and_track(Implies(arrives[date_index]> 22, variable == city_list[date_index]),'eat in which city d')
+        s.assert_and_track(Implies(arrives[date_index]< 17, variable == city_list[date_index+1]),'eat in which city d')
+# Set 'restaurant_index' variables for 15 (3 meals per day, 5 days) meals
+variables['restaurant_index'] = [Int('restaurant_{}_index'.format(i)) for i in range(3*5)]
+# For each 'restaurant_index', get specific price info based on 'restaurant_in_which_city' variable, assert index are within valid range, assert restaurants in same city are not repeated, and calculate restaurant price for 2 people
+all_restaurant_price = 0
+for i, variable in enumerate(variables['restaurant_index']):
+    restaurant_price_list, restaurant_list_length = RestaurantSearch.get_info(restaurant_price, variables['restaurant_in_which_city'][i], 'Price')
+    s.assert_and_track(Implies(variables['restaurant_in_which_city'][i] != -1, And(variable >= 0, variable < restaurant_list_length)), 'valid restaurant index')
+    s.assert_and_track(Implies(variables['restaurant_in_which_city'][i] == -1, variable == -1), 'valid restaurant index')
+    for j in range(i-1, -1, -1):
+        s.assert_and_track(Implies(And(variables['restaurant_in_which_city'][i] != -1, variables['restaurant_in_which_city'][i] == variables['restaurant_in_which_city'][j]), variable != variables['restaurant_index'][j]), 'non repeating restaurant index')
+    Calculate restaurant price based on restaurant index
+    all_restaurant_price += 2 * If(variables['restaurant_in_which_city'][i] != -1,  RestaurantSearch.get_info_for_index(restaurant_price_list, variable), 0)
+# Set 'cuisine_type' variables for each cuisine type ['Mexican', 'Italian', 'Mediterranean', 'Indian'] required
+variables['cuisines_type'] = [Int('cuisines_' + i) for i in ['Mexican', 'Italian', 'Mediterranean', 'Indian']]
+# For each cuisine type, iterate through all restaurant to check if it is satisfied
+for index, cuisine in enumerate(['Mexican', 'Italian', 'Mediterranean', 'Indian']):
+    count = 0
+    for i, variable in enumerate(variables['restaurant_index']):
+        restaurant_cuisines_list, _ = RestaurantSearch.get_info(restaurant_cuisines, variables['restaurant_in_which_city'][i], 'Cuisines')
+        count += If(RestaurantSearch.check_exists(cuisine, restaurant_cuisines_list, variable), 1, 0)
+    s.assert_and_track(variables['cuisines_type'][index] == count,  cuisine + 'type restaurant')
+    s.assert_and_track(variables['cuisines_type'][index] > 0,  cuisine + 'type restaurant is visited')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# Follow the code structure variable names in examples
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Restaurant response########## and end with ########## Restaurant response ends##########.

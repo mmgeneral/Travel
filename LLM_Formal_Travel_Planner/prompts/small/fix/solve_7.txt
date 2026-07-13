@@ -1,0 +1,15 @@
+                if s.check() == sat:
+                    print('ok')
+                    plan = generate_as_plan(s, variables, query_json)
+                    with open(path+'plans/' + 'plan.txt', 'w') as f:
+                        f.write(plan)
+                    f.close()
+                    success = True
+                    break
+                else:
+                    print('not ok')
+                    c = s.unsat_core()
+                    unsat_cores.append(str(c))
+                    print(c)
+        if success: break
+    if success: break

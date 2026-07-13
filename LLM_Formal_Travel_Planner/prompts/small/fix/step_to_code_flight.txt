@@ -1,0 +1,37 @@
+# Python script for testing satisfiability of the flight constraint constraint of a travel plan problem. 
+
+# Run FlightSearch to get flight info for Atlanta as origin, city_0 and city_1, and dates
+flight_info, flight_rule_info, flight_airline_info  = FlightSearch.run_for_all_cities_and_dates('Atlanta', cities, [city_0, city_1], query_json['date'])
+# Get specific flight price info with Atlanta as origin and final destination, specific city variable, and departure date for 3 transportations
+flight_0_price_list, flight_0_price_list_length = FlightSearch.get_info(flight_info, 'Atlanta', variables['city'][0], variables['departure_dates'][0], 'Price')
+flight_1_price_list, flight_1_price_list_length = FlightSearch.get_info(flight_info, variables['city'][0], variables['city'][1], variables['departure_dates'][1], 'Price')
+flight_2_price_list, flight_2_price_list_length = FlightSearch.get_info(flight_info, variables['city'][1], 'Atlanta', variables['departure_dates'][2], 'Price')
+# Set 'flight_index' variable for 3 transportations
+variables['flight_index'] = [Int('flight_{}_index'.format(i)) for i in range(3)]
+# Assert 3 'flight_index' variables are within valid range
+s.assert_and_track(And(variables['flight_index'][0] >= 0,variables['flight_index'][0] < flight_0_price_list_length), 'valid flight index for flight 0')
+s.assert_and_track(And(variables['flight_index'][1] >= 0,variables['flight_index'][1] < flight_1_price_list_length), 'valid flight index for flight 1')
+s.assert_and_track(And(variables['flight_index'][2] >= 0,variables['flight_index'][2] < flight_2_price_list_length), 'valid flight index for flight 2')
+# Calculate flight price for 2 people for 3 transportations based on flight index variable
+flight_0_price = 2 * FlightSearch.get_info_for_index(flight_0_price_list, variables['flight_index'][0])
+flight_1_price = 2 * FlightSearch.get_info_for_index(flight_1_price_list, variables['flight_index'][1])
+flight_2_price = 2 * FlightSearch.get_info_for_index(flight_2_price_list, variables['flight_index'][2])
+# Get specific flight arrival time info with Atlanta as origin and final destination, specific city, and departure date for 3 transportations
+flight_0_arrtime_list, _ = FlightSearch.get_info(flight_info, 'Atlanta', variables['city'][0], variables['departure_dates'][0], 'ArrTime')
+flight_1_arrtime_list, _ = FlightSearch.get_info(flight_info, variables['city'][0], variables['city'][1], variables['departure_dates'][1], 'ArrTime')
+flight_2_arrtime_list, _ = FlightSearch.get_info(flight_info, variables['city'][1], 'Atlanta', variables['departure_dates'][2], 'ArrTime')
+# Calculate flight arrival time for 3 transportations based on flight index variable
+flight_0_arrtime = FlightSearch.get_info_for_index(flight_0_arrtime_list, variables['flight_index'][0])
+flight_1_arrtime = FlightSearch.get_info_for_index(flight_1_arrtime_list, variables['flight_index'][1])
+flight_2_arrtime = FlightSearch.get_info_for_index(flight_2_arrtime_list, variables['flight_index'][2])
+# Initialize visit city list for "Dubai" as origin and final destination, and other 3 cities in between
+visit_list = ["Hong Kong", variables['city'][0], variables['city'][1],"Hong Kong"]
+# For each 'flight_index', get specific flight rule and airline info based on visit city and departure date, assert non-stop is satisfied, and either "United" or "Emirates" is satisfied
+for i in range(len(variables['flight_index'])):
+    flight_rule_list, _ = FlightSearch.get_info(flight_rule_info, visit_list[i], visit_list[i+1], variables['departure_dates'][i], 'Flight rules')
+    flight_airline_list, _ = FlightSearch.get_info(flight_airline_info, visit_list[i], visit_list[i+1], variables['departure_dates'][i], 'Airlines')
+    s.assert_and_track(FlightSearch.check_exists('non-stop', flight_rule_list, variables['flight_index'][i]) == True,  'non-stop types flights not taken')
+    s.assert_and_track(Or(FlightSearch.check_exists('United', flight_airline_list, variables['flight_index'][i]) == True, FlightSearch.check_exists('Emirates', flight_airline_list, variables['flight_index'][i]) == True),  'United or Emirates' + ' airlines not satisfied')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Flight response########## and end with ########## Flight response ends##########.

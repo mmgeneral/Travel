@@ -1,0 +1,271 @@
+﻿Origin,Destination,Sun,Mon,Tu,Wed,Thu,Fri,Sat,Airline,Time,Duration,non-stop,new day
+Bangkok,Dubai,436,437,437,437,436,436,436,Etihad-Bangkok Airways,8:55-12:40,6hr45min,yes,no
+Bangkok,Dubai,483,460,460,460,461,528,528,Emirates,9:30-13:15,6hr45min,yes,no
+Bangkok,Dubai,483,460,460,460,461,566,605,Emirates,20:35-0:50,7hr15min,yes,yes
+Bangkok,Hong Kong,46,46,112,138,138,138,138,Hong Kong Airlines,5:05-8:50,2hr45min,yes,no
+Bangkok,Hong Kong,132,133,132,165,131,149,134,Thai AirAsia,10:00-13:40,2hr40min,yes,no
+Bangkok,Hong Kong,149,197,350,302,302,350,350,Emirates,13:45-17:40,2hr55min,yes,no
+Bangkok,Istanbul,481,481,481,481,481,481,481,THAI,23:45- 6:05,10hr20min,yes,yes
+Bangkok,Istanbul,670,670,670,670,670,677,677,Turkish Airlines,6:25-13:20,10hr55min,yes,no
+Bangkok,Istanbul,670,670,670,670,670,677,677,Turkish Airlines,22:55-5:50,10hr55min,yes,yes
+Bangkok,Kuala Lumpur,83,94,83,83,83,83,83,Thai AirAsia,12:55-16:15,2hr20min,yes,no
+Bangkok,Kuala Lumpur,98,98,105,98,98,98,98,Malindo Air,9:05-12:20,2hr15min,yes,no
+Bangkok,Kuala Lumpur,100,109,109,109,124,100,100,Malaysia Airlines,20:05-23:20,2hr15min,yes,no
+Bangkok,London,487,487,487,516,516,716,837,THAI,0:15-6:20,13hr5min,yes,no
+Bangkok,London,609,588,588,596,609,770,837,THAI,13:20-19:35,13hr15min,yes,no
+Bangkok,London,626,609,609,626,716,787,1689,EVA Air,13:00-19:20,13hr20min,yes,no
+Bangkok,Macau,157,157,217,157,187,134,134,Thai AirAsia,19:25-23:05,2hr35min,yes,no
+Bangkok,Macau,133,134,134,134,134,157,217,Thai AirAsia,6:45-10:20,2hr35min,yes,no
+Bangkok,Macau,134,157,247,134,134,217,156,Thai AirAsia,13:50-17:25,2hr35min,yes,no
+Bangkok,New York City,805,786,786,786,786,805,1366,Qatar Airways,8:25-22:20,25hr55min,no,no
+Bangkok,New York City,795,693,605,888,1117,1131,972,Etihad,8:55-9:30,36hr35min,no,yes
+Bangkok,New York City,917,836,1019,1019,1019,1019,1019,Emirates,3:10-13:55,22hr45min,no,no
+Bangkok,Paris,536,477,477,477,505,536,702,THAI,0:05-6:50,12hr45min,yes,no
+Bangkok,Paris,695,666,666,666,666,695,980,Air France,11:30-18:45,13hr15min,yes,no
+Bangkok,Paris,508,508,508,508,508,614,873,SWISS,13:20-22:15,14hr55min,no,no
+Bangkok,Singapore,121,140,140,121,140,121,140,Thai Lion Air,7:35-11:00,2hr25min,yes,no
+Bangkok,Singapore,121,178,174,176,174,139,141,Thai AirAsia,7:00-10:30,2hr30min,yes,no
+Bangkok,Singapore,148,148,148,126,126,126,170,Jetstar,9:20-12:55,2hr35min,yes,no
+Dubai,Bangkok,612,570,570,570,703,654,570,Air Arabia,22:20-7:20,6hr0min,yes,yes
+Dubai,Bangkok,697,629,697,1032,697,697,629,Emirates,3:05-12:05,6hr0min,yes,no
+Dubai,Bangkok,678,678,798,678,798,825,678,Etihad,10:30-19:30,6hr0min,yes,no
+Dubai,Hong Kong,692,692,692,692,692,692,692,Emirates,3:30-14:45,7hr15min,yes,no
+Dubai,Hong Kong,692,692,692,692,692,692,692,Emirates,10:40-21:50,7hr10min,yes,no
+Dubai,Hong Kong,692,692,692,692,692,692,692,Cathay Pacific,23:40-10:45,7hr5min,yes,yes
+Dubai,Istanbul,115,85,85,124,93,168,105,Pegasus,5:05-9:05,5hr0min,yes,no
+Dubai,Istanbul,164,167,139,270,145,242,139,Turkish Airlines,5:00-9:00,5hr0min,yes,no
+Dubai,Istanbul,253,164,143,143,143,143,143,Air Arabia,19:45-23:40,4hr55min,yes,no
+Dubai,Kuala Lumpur,610,610,744,744,1013,812,610,Emirates,3:30-14:35,7hr5min,yes,no
+Dubai,Kuala Lumpur,486,642,458,710,738,654,682,Air Arabia,21:45-8:40,6hr55min,yes,yes
+Dubai,Kuala Lumpur,638,646,638,646,638,665,665,Etihad,23:35-10:40,7hr5min,yes,yes
+Dubai,London,398,398,504,504,540,540,540,British Airways,13:35-17:25,7hr50min,yes,no
+Dubai,London,548,548,548,548,548,548,548,Emirates,8:20-12:10,7hr50min,yes,no
+Dubai,London,548,548,548,548,548,616,548,Emirates,2:50-6:40,7hr50min,yes,no
+Dubai,Macau,521,572,545,491,545,521,545,China Eastern,21:05-15:30,14hr25min,no,yes
+Dubai,Macau,530,520,488,497,488,497,452,Cebu Pacific,23:10-21:40,18hr30min,no,yes
+Dubai,Macau,602,727,994,727,994,994,727,Singapore Airlines,20:00-17:40,17hr40min,no,yes
+Dubai,New York City,738,738,738,738,738,738,904,United,2:15-8:50,15hr35min,yes,no
+Dubai,New York City,959,959,959,959,959,959,1128,Emirates,8:30-13:55,14hr25min,yes,no
+Dubai,New York City,1049,1217,1217,1217,1217,1343,1174,Etihad,10:10-15:55,14hr45min,yes,no
+Dubai,Paris,556,556,556,556,556,594,594,Air France,1:30-6:05,7hr35min,yes,no
+Dubai,Paris,594,594,594,594,594,659,659,Emirates,2:50-7:30,7hr40min,yes,no
+Dubai,Paris,564,564,564,564,564,591,591,Etihad,2:40-7:05,7hr25min,yes,no
+Dubai,Singapore,540,943,943,540,943,608,608,Emirates,21:15-8:25,7hr10min,yes,yes
+Dubai,Singapore,1013,643,776,978,708,804,670,Etihad,22:15-9:35,7hr20min,yes,yes
+Dubai,Singapore,589,589,972,766,972,972,766,Singapore Airlines,20:00-7:15,7hr15min,yes,yes
+Hong Kong,Bangkok,162,120,148,148,148,148,103,Thai AirAsia,20:10-22:15,3hr5min,yes,no
+Hong Kong,Bangkok,183,147,162,147,150,150,125,Hong Kong Express,16:25-18:30,3hr5min,yes,no
+Hong Kong,Bangkok,209,209,296,209,347,244,209,Hong Kong Airlines,16:55-19:10,3hr15min,yes,no
+Hong Kong,Dubai,867,681,454,454,454,454,454,Emirates,0:35-5:40,9hr5min,yes,no
+Hong Kong,Dubai,454,454,454,454,454,454,454,Emirates,18:00-23:05,9hr5min,yes,no
+Hong Kong,Dubai,667,667,549,667,667,667,667,Cathay Pacific,17:00-22:05,9hr5min,yes,no
+Hong Kong,Istanbul,885,789,789,789,789,789,789,Turkish Airlines,23:30-6:25,11hr55min,yes,yes
+Hong Kong,Istanbul,498,488,488,488,488,507,507,Qatar Airways,0:30-12:10,16hr40min,no,no
+Hong Kong,Istanbul,912,728,912,840,912,912,840,THAI,20:45-6:05,14hr20min,no,yes
+Hong Kong,Kuala Lumpur,141,141,181,141,141,141,129,AirAsia,21:20-1:20,4hr0min,yes,yes
+Hong Kong,Kuala Lumpur,181,181,203,181,181,141,129,AirAsia,15:30-19:25,3hr55min,yes,no
+Hong Kong,Kuala Lumpur,184,214,214,184,184,159,159,Malindo Air,15:10-19:00,3hr50min,yes,no
+Hong Kong,London,604,604,604,604,604,604,604,Cathay Pacific,8:25-15:00,14hr35min,yes,no
+Hong Kong,London,604,604,803,803,1044,604,604,Cathay Pacific,13:30-20:10,14hr40min,yes,no
+Hong Kong,London,815,815,928,928,928,815,778,British Airways,23:40-6:25,14hr45min,yes,yes
+Hong Kong,Macau,190,233,229,169,153,169,160,XienAir,12:20-16:55,28hr35min,no,yes
+Hong Kong,Macau,302,326,330,188,201,288,275,China Eastern,7:40-15:30,7hr50min,no,no
+Hong Kong,Macau,326,395,413,190,180,330,225,China Eastern,12:30-20:20,7hr50min,no,no
+Hong Kong,New York City,1075,1241,1241,1241,1241,1241,1241,Cathay Pacific,3:20-6:00,15hr40min,yes,no
+Hong Kong,New York City,1075,1241,1075,1241,1241,1241,1424,Cathay Pacific,9:30-12:10,15hr40min,yes,no
+Hong Kong,New York City,1075,1241,1241,1664,1424,1424,1424,Cathay Pacific,16:20-19:05,15hr45min,yes,no
+Hong Kong,Paris,834,834,834,834,834,834,834,Cathay Pacific,10:05-7:35,16hr20min,yes,no
+Hong Kong,Paris,840,840,840,840,840,840,840,Air France,22:40-5:50,14hr10min,yes,yes
+Hong Kong,Paris,477,467,467,467,467,353,487,Qatar Airways,0:30-13:15,19hr45min,no,no
+Hong Kong,Singapore,273,273,228,190,137,161,190,Scoot,21:55-2:00,4hr5min,yes,yes
+Hong Kong,Singapore,326,326,326,228,228,228,228,Scoot,11:10-15:10,4hr0min,yes,no
+Hong Kong,Singapore,461,837,837,837,837,613,461,Singapore Airlines,12:30-16:30,4hr0min,yes,no
+Istanbul,Bangkok,1006,1006,2437,1006,1006,573,572,THAI,16:30-5:35,9hr5min,yes,yes
+Istanbul,Bangkok,832,1155,1527,1155,1155,1170,1170,Turkish Airlines,1:55-15:20,9hr25min,yes,no
+Istanbul,Bangkok,928,1155,1036,1527,1527,1542,1170,Turkish Airlines,20:50-10:10,9hr20min,yes,yes
+Istanbul,Dubai,221,221,221,221,221,221,221,Etihad,7:25-12:55,4hr30min,yes,no
+Istanbul,Dubai,228,261,237,228,244,237,244,Air Arabia,14:35-20:00,4hr25min,yes,no
+Istanbul,Dubai,232,232,279,279,350,279,412,Emirates,1:45-7:10,4hr25min,yes,no
+Istanbul,Hong Kong,908,908,908,908,908,908,908,Turkish Airlines,2:00-17:00,10hr0min,yes,no
+Istanbul,Hong Kong,911,911,962,1037,970,922,1047,Qatar Airways,13:45-15:10,20hr25min,no,yes
+Istanbul,Hong Kong,728,1331,3900,1331,1523,1906,728,THAI,16:30-11:45,14hr15min,no,yes
+Istanbul,Kuala Lumpur,903,996,903,1307,996,996,1107,Turkish Airlines,17:10-8:15,10hr5min,yes,yes
+Istanbul,Kuala Lumpur,996,996,996,1671,1510,1403,1403,Turkish Airlines,1:50-17:05,10hr15min,yes,no
+Istanbul,Kuala Lumpur,632,674,674,927,965,927,908,Air Arabia,14:35-8:40,13hr5min,yes,yes
+Istanbul,London,32,32,42,58,80,106,171,Wizz Air,22:05-23:10,4hr5min,yes,no
+Istanbul,London,161,161,151,147,147,168,203,Turkish Airlines,8:20-9:30,4hr10min,yes,no
+Istanbul,London,90,124,152,152,152,221,278,British Airways,14:55-16:00,4hr5min,yes,no
+Istanbul,Macau,1020,1020,1020,870,870,1020,1020,Singapore Airlines,13:25-17:40,23hr15min,no,yes
+Istanbul,Macau,1353,1401,1401,1603,1603,1401,1603,Turkish Airlines,1:55-15:50,32hr55min,no,yes
+Istanbul,Macau,1353,1839,1353,1366,1353,1353,1353,Turkish Airlines,2:20-17:05,33hr45min,no,yes
+Istanbul,New York City,598,598,598,589,598,638,627,Turkish Airlines,7:55-11:10,11hr15min,yes,no
+Istanbul,New York City,598,598,598,598,598,638,638,Turkish Airlines,19:10-22:35,11hr25min,yes,no
+Istanbul,New York City,628,628,628,628,628,666,668,Turkish Airlines,15:10-18:10,11hr0min,yes,no
+Istanbul,Paris,84,98,114,114,114,176,226,Transavia,12:55-14:50,3hr55min,yes,no
+Istanbul,Paris,129,124,118,118,137,309,303,Turkish Airlines,15:40-17:25,3hr45min,yes,no
+Istanbul,Paris,129,124,118,190,263,432,365,Turkish Airlines,10:40-12:20,3hr40min,yes,no
+Istanbul,Singapore,2074,1537,2059,1329,2059,2444,1785,Turkish Airlines,1:55-17:30,10hr35min,yes,no
+Istanbul,Singapore,1552,1537,2444,2444,2444,2059,2074,Turkish Airlines,17:30-8:50,10hr20min,yes,yes
+Istanbul,Singapore,1183,1183,1183,1183,1183,1183,1183,Singapore Airlines,13:25-4:45,10hr20min,yes,yes
+Kuala Lumpur,Bangkok,80,69,69,80,80,80,54,AirAsia,17:10-18:25,2hr15min,yes,no
+Kuala Lumpur,Bangkok,80,69,80,69,80,80,60,AirAsia,10:05-11:15,2hr10min,yes,no
+Kuala Lumpur,Bangkok,77,77,77,64,92,78,64,Malindo Air,16:00-17:10,2hr10min,yes,no
+Kuala Lumpur,Dubai,485,462,462,462,462,462,462,Emirates,13:45-5:05,7hr20min,yes,no
+Kuala Lumpur,Dubai,455,455,441,441,441,445,455,Air Arabia,9:40-13:15,7hr35min,yes,no
+Kuala Lumpur,Dubai,476,476,476,476,476,476,476,Etihad,18:35-22:00,7hr25min,yes,no
+Kuala Lumpur,Hong Kong,175,124,124,124,100,113,100,AirAsia,7:15-11:15,4hr0min,yes,no
+Kuala Lumpur,Hong Kong,124,113,124,158,113,100,113,AirAsia,10:15-14:15,4hr0min,yes,no
+Kuala Lumpur,Hong Kong,143,121,143,143,121,121,143,Malindo Air,10:10-14:10,4hr0min,yes,no
+Kuala Lumpur,Istanbul,493,509,493,493,493,509,509,Turkish Airlines,23:15-6:05,11hr15min,yes,yes
+Kuala Lumpur,Istanbul,560,509,383,493,560,509,509,Turkish Airlines,9:55-16:00,11hr5min,yes,no
+Kuala Lumpur,Istanbul,353,338,338,338,338,359,359,Qatar Airways,9:50-18:35,13hr45min,no,no
+Kuala Lumpur,London,501,501,501,501,501,501,750,Malaysia Airlines,9:25-15:25,14hr0min,yes,no
+Kuala Lumpur,London,501,501,501,501,663,663,596,Malaysia Airlines,23:30-5:35,14hr5min,yes,yes
+Kuala Lumpur,London,407,407,407,407,423,423,423,Turkish Airlines,23:50-9:30,17hr40min,no,yes
+Kuala Lumpur,Macau,122,122,153,153,122,98,122,AirAsia,17:25-21:15,3hr50min,yes,no
+Kuala Lumpur,Macau,234,213,213,122,153,168,122,AirAsia,10:05-13:55,3hr50min,yes,no
+Kuala Lumpur,Macau,223,160,191,163,133,133,133,XienAir,8:00-16:55,8hr55min,no,no
+Kuala Lumpur,New York City,648,899,899,899,964,1167,4106,Etihad,18:35-9:30,27hr55min,no,yes
+Kuala Lumpur,New York City,702,702,702,702,718,718,718,Turkish Airlines,23:50-11:10,24hr20min,no,yes
+Kuala Lumpur,New York City,759,661,609,609,736,759,1103,Qatar Airways,9:50-22:20,25hr30min,no,no
+Kuala Lumpur,Paris,357,357,357,357,355,355,357,XienAir,14:50-6:00,22hr10min,no,yes
+Kuala Lumpur,Paris,350,350,350,350,366,366,366,Turkish Airlines,9:55-12:20,33hr25min,no,yes
+Kuala Lumpur,Paris,380,380,380,380,380,380,396,Etihad,18:35-7:05,19hr30min,no,yes
+Kuala Lumpur,Singapore,49,49,66,34,34,49,49,AirAsia,6:00-7:10,1hr10min,yes,no
+Kuala Lumpur,Singapore,62,62,62,51,51,62,77,Malindo Air,8:45-9:45,1hr0min,yes,no
+Kuala Lumpur,Singapore,56,74,89,74,74,56,74,Jetstar,9:05-10:15,1hr10min,yes,no
+London,Bangkok,1179,885,1338,1338,1338,1338,885,THAI,11:50-6:15,11hr25min,yes,yes
+London,Bangkok,1179,1038,1338,1558,1338,1179,958,THAI,9:35-16:00,11hr25min,yes,yes
+London,Bangkok,1312,1312,1312,3258,3258,3258,1350,EVA Air,21:20-15:45,11hr25min,yes,yes
+London,Dubai,668,643,685,685,685,668,737,Etihad,13:55-12:55,7hr0min,yes,yes
+London,Dubai,715,715,755,977,854,739,674,Emirates,13:55-12:50,6hr55min,yes,yes
+London,Dubai,723,723,723,1037,798,814,738,British Airways,21:35-8:30,6hr55min,yes,yes
+London,Hong Kong,1190,1190,1190,1389,1190,1190,1190,Cathay Pacific,11:00-19:40,12hr40min,yes,yes
+London,Hong Kong,1334,1334,1334,1334,1478,937,1028,British Airways,20:45-17:45,13hr0min,yes,yes
+London,Hong Kong,1190,1190,1190,1190,1190,1190,1190,Cathay Pacific,4:50-13:20,12hr30min,yes,yes
+London,Istanbul,159,176,110,99,88,49,33,Wizz Air,14:25-21:30,4hr5min,yes,no
+London,Istanbul,208,167,128,128,128,78,78,Pegasus,15:50-22:35,3hr45min,yes,no
+London,Istanbul,329,302,285,137,142,123,125,British Airways,7:00-14:00,4hr5min,yes,no
+London,Kuala Lumpur,1440,1440,1562,1801,1801,1801,1562,Malaysia Airlines,21:25-18:20,12hr55min,yes,yes
+London,Kuala Lumpur,1678,1440,1801,1801,2199,2199,2199,Malaysia Airlines,10:25-7:15,12hr50min,yes,yes
+London,Kuala Lumpur,1009,882,1192,1192,985,905,1009,Cathay Pacific,17:50-20:35,18hr45min,no,yes
+London,Macau,655,655,655,655,655,655,533,China Eastern,12:10-12:25,16hr15min,no,yes
+London,Macau,753,655,655,655,655,655,533,China Eastern,12:10-15:30,19hr20min,no,yes
+London,Macau,655,655,594,655,655,533,533,China Eastern,0:10-18:55,22hr45min,no,yes
+London,New York City,403,359,433,448,780,721,542,Norse Atlantic UK,12:35-15:50,8hr15min,yes,no
+London,New York City,879,879,879,879,1075,1308,1308,JetBlue,10:15-13:59,8hr44min,yes,no
+London,New York City,1885,1885,1885,1885,1885,1885,1885,United,8:00-11:25,8hr25min,yes,no
+London,Paris,99,150,204,175,129,189,241,Air France,6:20-8:40,1hr20min,yes,no
+London,Paris,99,204,204,265,165,204,525,Air France,9:00-11:25,1hr20min,yes,no
+London,Paris,99,175,204,241,150,204,283,Air France,17:35-19:55,1hr20min,yes,no
+London,Singapore,1077,1077,1364,1814,1814,1388,1224,Qantas,19:55-17:45,13hr50min,yes,yes
+London,Singapore,1259,1768,1259,1768,1513,1259,1598,British Airways,18:55-15:55,13hr0min,yes,yes
+London,Singapore,1349,1312,1312,2053,2053,2090,1680,Singapore Airlines,9:10-6:05,12hr55min,yes,yes
+Macau,Bangkok,130,107,130,158,130,130,130,Thai AirAsia,17:55-19:50,2hr55min,yes,no
+Macau,Bangkok,105,156,130,145,233,233,233,Thai Lion Air,22:05-23:50,2hr45min,yes,no
+Macau,Bangkok,107,107,107,130,107,107,107,Thai AirAsia,23:35-1:30,2hr55min,yes,yes
+Macau,Dubai,374,353,365,365,348,371,479,Cebu Pacific,22:20-14:55,20hr35min,no,yes
+Macau,Dubai,575,575,510,510,510,782,575,Scoot,18:35-18:45,28hr10min,no,yes
+Macau,Dubai,1518,1473,1971,1473,1473,1473,1518,Air Macau,8:25-23:20,18hr55min,no,no
+Macau,Hong Kong,134,134,127,119,128,148,119,XienAir,18:05-11:20,17hr15min,no,yes
+Macau,Hong Kong,215,252,192,339,338,338,338,China Eastern,16:45-0:15,7hr30min,no,yes
+Macau,Hong Kong,121,166,159,191,191,191,121,China Eastern,12:35-10:30,21hr55min,no,yes
+Macau,Istanbul,550,762,624,663,550,589,550,Scoot,18:35-8:25,18hr50min,no,yes
+Macau,Istanbul,2190,2148,2148,2148,2190,2190,2190,China Eastern,13:25-18:05,33hr40min,no,yes
+Macau,Istanbul,2190,2148,2148,2148,2190,2190,2190,China Eastern,16:45-18:05,30hr20min,no,yes
+Macau,Kuala Lumpur,172,317,411,304,160,139,181,AirAsia,14:25-18:25,4hr0min,yes,no
+Macau,Kuala Lumpur,172,172,181,181,139,108,108,AirAsia,21:50-1:50,4hr0min,yes,yes
+Macau,Kuala Lumpur,262,262,262,325,262,185,166,XienAir,18:05-13:35,19hr30min,no,yes
+Macau,London,544,643,643,544,544,544,650,Scoot,18:35-15:20,28hr45min,no,yes
+Macau,London,650,567,609,619,619,650,677,China Eastern,13:25-14:15,32hr50min,no,yes
+Macau,London,650,609,609,619,619,650,677,China Eastern,16:45-6:30,21hr45min,no,yes
+Macau,New York City,927,927,1287,1287,1959,1287,1959,EVA Air,13:15-21:05,20hr50min,no,no
+Macau,New York City,1335,2767,2767,1918,1108,1335,1173,Jin Air,2:20-10:00,20hr40min,no,no
+Macau,New York City,1779,2195,2195,2195,1779,1779,2566,Scoot,18:35-5:30,23hr55min,no,yes
+Macau,Paris,643,643,544,544,472,472,472,Scoot,18:35-7:15,19hr40min,no,yes
+Macau,Paris,688,688,688,688,688,688,688,EVA Air,20:15-8:25,19hr10min,no,yes
+Macau,Paris,795,795,788,788,828,828,821,China Eastern,16:45-6:00,20hr15min,no,yes
+Macau,Singapore,207,330,279,279,241,241,241,Scoot,18:35-22:45,4hr10min,yes,no
+Macau,Singapore,190,238,177,168,177,163,286,Air Macau,10:30-14:30,4hr0min,yes,no
+Macau,Singapore,214,214,202,237,287,287,287,Thai AirAsia,23:35-10:30,10hr55min,no,yes
+New York City,Bangkok,1406,1536,1536,1536,1259,1167,1059,Qatar Airways,10:25-19:10,20hr45min,no,yes
+New York City,Bangkok,1406,1536,1754,1754,1244,1059,1032,Qatar Airways,1:25-12:05,22hr40min,no,yes
+New York City,Bangkok,1406,1536,1754,1758,1259,1078,1032,Qatar Airways,1:25-12:50,23hr25min,no,yes
+New York City,Dubai,1060,1060,1060,847,768,768,768,United,21:30-19:40,13hr10min,yes,yes
+New York City,Dubai,1176,1015,1015,1015,870,870,870,Emirates,10:40-8:10,12hr30min,yes,yes
+New York City,Dubai,1176,1015,1015,1015,870,870,870,Emirates,23:00-20:25,12hr25min,yes,yes
+New York City,Hong Kong,1849,1663,1663,1663,1369,1204,1204,Cathay Pacific,9:00-14:15,16hr15min,yes,yes
+New York City,Hong Kong,1849,1663,1663,1663,1369,1204,1204,Cathay Pacific,13:50-19:05,16hr15min,yes,yes
+New York City,Hong Kong,2489,1969,1663,1663,1663,1429,1429,Cathay Pacific,1:35-6:35,16hr0min,yes,yes
+New York City,Istanbul,791,791,776,776,816,826,826,Turkish Airlines,23:40-17:25,9hr45min,yes,yes
+New York City,Istanbul,821,821,791,791,830,830,830,Turkish Airlines,20:00-13:55,9hr55min,yes,yes
+New York City,Istanbul,830,830,791,791,831,841,841,Turkish Airlines,0:20-18:20,10hr0min,yes,no
+New York City,Kuala Lumpur,1748,1539,1713,1539,1524,1584,1247,Cathay Pacific,9:00-20:35,22hr35min,no,yes
+New York City,Kuala Lumpur,1191,1191,1438,1658,1221,961,961,Turkish Airlines,0:20-17:05,27hr45min,no,yes
+New York City,Kuala Lumpur,1305,1038,1246,1129,1060,1099,991,Qatar Airways,1:25-20:40,30hr15min,no,yes
+New York City,London,382,382,382,382,432,432,432,JetBlue,8:14-20:45,7hr31min,yes,no
+New York City,London,618,618,959,959,668,668,668,Virgin Atlantic,8:05-19:55,6hr50min,yes,no
+New York City,London,618,453,618,453,668,453,453,United,8:30-20:35,7hr5min,yes,no
+New York City,Macau,5990,5131,5131,3857,1916,3857,1953,EVA Air,0:05-11:55,22hr50min,no,yes
+New York City,Macau,5791,6128,5761,5761,5761,3670,5761,Korean Air,0:50-17:05,27hr15min,no,yes
+New York City,Macau,7188,5142,5342,3944,5342,3670,2073,EVA Air,0:05-18:25,29hr20min,no,yes
+New York City,Paris,280,232,232,260,284,314,349,French bee,23:00-12:00,7hr0min,yes,yes
+New York City,Paris,452,452,452,452,502,502,452,Air France,17:30-6:40,7hr10min,yes,yes
+New York City,Paris,452,452,452,452,502,453,453,United,18:20-7:25,7hr5min,yes,yes
+New York City,Singapore,1400,1290,1080,1290,1290,1400,980,Air India,11:15-21:45,21hr30min,no,yes
+New York City,Singapore,1461,1367,1758,1758,1758,2098,1415,Qatar Airways,10:25-21:40,22hr15min,no,yes
+New York City,Singapore,1724,1716,2196,1713,1524,1584,1584,Cathay Pacific,9:00-19:15,21hr15min,no,yes
+Paris,Bangkok,1071,909,1398,1179,892,917,917,Qatar Airline,8:15-6:50,16hr35min,no,yes
+Paris,Bangkok,970,970,970,970,867,867,867,THAI,12:30-6:00,11hr30min,yes,yes
+Paris,Bangkok,1450,1166,1249,1249,1048,1080,1252,Air France,15:40-9:15,11hr35min,yes,yes
+Paris,Dubai,1017,762,878,878,762,906,789,Emirates,10:00-19:40,6hr40min,yes,no
+Paris,Dubai,1123,925,925,925,967,967,967,Air France,13:35-23:20,6hr45min,yes,no
+Paris,Dubai,1020,1020,1020,701,1020,539,539,Etihad,9:25-19:00,6hr35min,yes,no
+Paris,Hong Kong,1080,1080,1080,1080,1080,1080,950,Air France,23:20-18:30,12hr10min,yes,yes
+Paris,Hong Kong,1126,1126,1455,1126,1126,1126,996,Cathay Pacific,11:40-7:00,12hr20min,yes,yes
+Paris,Hong Kong,1156,749,749,662,537,734,990,Turkish Airlines,18:50-17:00,15hr10min,no,yes
+Paris,Istanbul,508,471,408,302,239,195,143,Pegasus,16:00-21:30,3hr30min,yes,no
+Paris,Istanbul,672,765,518,462,462,213,144,Air France,11:35-17:05,3hr30min,yes,no
+Paris,Istanbul,462,462,405,354,272,212,170,Turkish Airlines,14:15-19:45,3hr30min,yes,no
+Paris,Kuala Lumpur,812,812,812,2179,758,758,926,Qatar Airline,15:15-15:35,17hr20min,no,yes
+Paris,Kuala Lumpur,961,961,961,961,961,1286,1017,Etihad,9:25-10:40,18hr15min,no,yes
+Paris,Kuala Lumpur,1095,1095,1095,1341,1095,991,991,THAI,12:30-11:55,16hr25min,no,yes
+Paris,London,84,199,183,149,149,182,99,Vueling,19:20-19:25,1hr5min,yes,no
+Paris,London,109,175,175,134,131,170,149,easyJet,9:55-10:00,1hr5min,yes,no
+Paris,London,182,226,243,266,400,243,249,British Airways,7:00-7:25,1hr25min,yes,no
+Paris,Macau,1177,1068,1068,1068,1068,1068,1068,China Eastern,12:25-12:25,17hr0min,no,yes
+Paris,Macau,1696,1696,1230,962,1520,1520,1520,EVA Air,11:20-11:55,17hr35min,no,yes
+Paris,Macau,1177,1188,1068,1068,1068,1068,1068,China Eastern,12:25-15:30,20hr5min,no,yes
+Paris,New York City,385,506,506,506,528,528,610,French bee,18:40-21:00,8hr20min,yes,no
+Paris,New York City,1335,1335,1335,1335,1335,1335,1335,United,9:25-11:55,8hr30min,yes,no
+Paris,New York City,852,852,852,852,1144,852,983,American,11:25-14:10,8hr45min,yes,no
+Paris,Singapore,1282,1282,1054,1054,1054,1054,1054,Air France,21:05-16:55,12hr50min,yes,yes
+Paris,Singapore,1494,1282,1894,1894,1494,1494,1494,Singapore Airlines,22:20-17:55,12hr35min,yes,yes
+Paris,Singapore,1894,2283,1894,1494,1894,1894,2283,Singapore Airlines,10:40-6:15,12hr35min,yes,yes
+Singapore,Bangkok,89,114,114,114,114,114,89,Thai AirAsia,22:45-0:10,2hr25min,yes,yes
+Singapore,Bangkok,114,114,130,129,129,130,89,Thai AirAsia,17:10-18:40,2hr30min,yes,no
+Singapore,Bangkok,156,134,182,156,156,156,134,Jetstar,11:20-12:50,2hr30min,yes,no
+Singapore,Dubai,375,351,351,351,351,351,351,Emirates,0:30-4:10,7hr40min,yes,no
+Singapore,Dubai,375,351,351,351,351,351,351,Emirates,21:00-1:00,8hr0min,yes,yes
+Singapore,Dubai,373,335,335,335,335,335,335,Etihad,19:15-23:10,7hr55min,yes,no
+Singapore,Hong Kong,208,208,208,154,138,138,154,Scoot,16:50-20:55,4hr5min,yes,no
+Singapore,Hong Kong,311,266,355,266,221,229,273,Singapore Airlines,14:40-18:40,4hr5min,yes,no
+Singapore,Hong Kong,322,322,322,269,273,273,273,Cathy Pacific,12:55-17:05,4hr10min,yes,no
+Singapore,Istanbul,302,302,302,302,324,324,324,Turkish Airlines,10:20-17:05,11hr45min,yes,no
+Singapore,Istanbul,331,331,331,331,354,354,354,Turkish Airlines,23:35-6:10,11hr35min,yes,yes
+Singapore,Istanbul,1004,1004,1004,1004,1004,1004,1004,Singapore Airlines,13:50-8:25,11hr35min,yes,no
+Singapore,Kuala Lumpur,67,83,100,83,67,67,75,Jetstar,19:40-20:50,1hr10min,yes,no
+Singapore,Kuala Lumpur,67,67,75,75,67,75,59,AirAsia,22:35-23:35,1hr10min,yes,no
+Singapore,Kuala Lumpur,67,93,78,93,78,93,60,Malindo Air,17:00-18:05,1hr5min,yes,no
+Singapore,London,422,422,422,422,422,507,528,Singapore Airlines,9:00-15:20,14hr20min,yes,no
+Singapore,London,422,422,422,525,525,1389,1389,Singapore Airlines,23:45-5:55,14hr10min,yes,yes
+Singapore,London,422,422,1052,1052,1052,1052,1052,Singapore Airlines,12:45-7:10,14hr25min,yes,no
+Singapore,Macau,206,236,305,207,207,182,182,Scoot,13:40-17:40,4hr0min,yes,no
+Singapore,Macau,343,240,343,217,218,203,203,Air Macau,15:30-19:35,4hr5min,yes,no
+Singapore,Macau,228,323,316,227,182,251,182,AirAsia,2:50-21:15,6hr25min,no,no
+Singapore,New York City,719,719,719,719,880,1134,1219,United,22:20-6:59,21hr39min,no,yes
+Singapore,New York City,951,883,1668,1668,1668,1668,1668,EVA Air,13:15-21:05,20hr50min,no,no
+Singapore,New York City,1431,1376,1376,1376,1376,1431,1832,Singapore Airlines,12:35-17:40,18hr5min,yes,no
+Singapore,Paris,501,501,501,436,501,501,501,Singapore Airlines,0:15-7:15,14hr0min,yes,no
+Singapore,Paris,501,538,436,436,436,436,501,Singapore Airlines,13:55-20:55,14hr0min,yes,no
+Singapore,Paris,337,337,337,337,359,389,359,Turkish Airlines,10:20-22:20,19hr0min,no,no

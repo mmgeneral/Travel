@@ -1,0 +1,32 @@
+# Python script for testing satisfiability of the driving constraint of a travel plan problem. 
+
+# Run DistanceSearch to get driving info for Atlanta as origin and city_0 and city_1
+driving_info = DistanceSearch.run_for_all_cities('Atlanta', cities, [city_0, city_1])  # use driving_info, do not customize
+# Run DistanceSearch to get driving info for St. Petersburg as origin and city_0
+driving_info = DistanceSearch.run_for_all_cities('St. Petersburg', cities, [city_0])  # use driving_info, do not customize
+# Get specific driving distance info with Atlanta as origin and final destination, specific city, and departure date for 3 transportations
+driving_0_distance, driving_0_length = DistanceSearch.get_info(driving_info, 'Atlanta', variables['city'][0], 'Distance')
+driving_1_distance, driving_1_length = DistanceSearch.get_info(driving_info, variables['city'][0], variables['city'][1], 'Distance')
+driving_2_distance, driving_2_length = DistanceSearch.get_info(driving_info, variables['city'][1],'Atlanta', 'Distance')
+# Assert driving info is not empty if driving
+s.assert_and_track(Implies(Or(variables['self-driving'][0], variables['taxi'][0]), driving_0_length > 0), 'driving is possible for transportation 0')
+s.assert_and_track(Implies(Or(variables['self-driving'][1], variables['taxi'][1]), driving_1_length > 0), 'driving is possible for transportation 1')
+s.assert_and_track(Implies(Or(variables['self-driving'][2], variables['taxi'][2]), driving_2_length > 0), 'driving is possible for transportation 2')
+# Calculate self-driving and taxi price for 3 people and 3 transportations based on driving distance
+self_driving_0_price = 0.05 * driving_0_distance * math.ceil(3 / 5)
+self_driving_1_price = 0.05 * driving_1_distance * math.ceil(3 / 5)
+self_driving_2_price = 0.05 * driving_2_distance * math.ceil(3 / 5)
+taxi_0_price = driving_0_distance * math.ceil(3 / 4)
+taxi_1_price = driving_1_distance * math.ceil(3 / 4)
+taxi_2_price = driving_2_distance * math.ceil(3 / 4)
+# Get driving arrival time with Atlanta as origin and final destination, specific city, and departure date for 3 transportations
+driving_0_arrtime, _ = DistanceSearch.get_info(driving_info, 'Atlanta', variables['city'][0], 'Duration') # Use driving_0_arrtime, do not customize
+driving_1_arrtime, _ = DistanceSearch.get_info(driving_info, variables['city'][0], variables['city'][1], 'Duration') # Use driving_1_arrtime, do not customize
+driving_2_arrtime, _ = DistanceSearch.get_info(driving_info, variables['city'][1], 'Atlanta', 'Duration') # Use driving_2_arrtime, do not customize
+# Get driving arrival time with St. Petersburg as origin and final destination, specific city, and departure date for 2 transportations 
+driving_0_arrtime, _ = DistanceSearch.get_info(driving_info, 'St. Petersburg', variables['city'][0], 'Duration') # Use driving_0_arrtime, do not customize
+driving_1_arrtime, _ = DistanceSearch.get_info(driving_info, variables['city'][0], 'St. Petersburg', 'Duration') # Use driving_1_arrtime, do not customize
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# Follow the variable names and code structure in examples. Strictly use 'driving_i_arrtime'(where i is a int representing the index, for example driving_0_arrtime, driving_2_arrtime) as variable name to record driving arrival time. DO NOT use different customized variable name in any case. Do not use for loops.
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Driving response########## and end with ########## Driving response ends##########.

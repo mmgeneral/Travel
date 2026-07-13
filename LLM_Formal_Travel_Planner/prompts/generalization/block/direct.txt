@@ -1,0 +1,23 @@
+Now, you are given a JSON constraints of a block picking problem. 
+There are blocks of different colors and scores in the scene. You need to select "block_number" blocks with color in "color" list, while maximizing the score.
+Collect information based on the problem setting or, based on the information you collect, analyze current situation or give a final plan. You can only give a plan once. 
+Info collecting can take 2 different actions: 
+(1) BlockSearch(colors):
+Description: A block information retrieval tool.
+Parameters:
+    colors: The required color list to search for.
+Example: BlockSearch(['red', 'blue']) would fetch blocks of color red and blue.
+
+(2) GetScore(block_index_list):
+Description: Find score of input block list.
+Parameter: block_index_list - The block index list you want to check. 
+Example: GetScore([0,1,2,3,4]) would give the score of block 0, 1, 2, 3, and 4.
+
+You can take an action to analyze current situation and plan your future steps.
+Example: Analyze(your analysis of current situation and plan for future)
+
+You can give a plan based on your collected information and analysis. The plan should include the indexes of block you pick.
+Example: Plan([1,3,45,49])
+
+Now, based on the input JSON query and collected information, please give the next action(only one action from BlockSearch, GetScore, Analyze, Plan) you want to take only with no explainations: 
+Input query: 

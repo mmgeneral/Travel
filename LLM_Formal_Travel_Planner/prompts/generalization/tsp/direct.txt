@@ -1,0 +1,15 @@
+Now, you are given a JSON constraint of a travelling salesperson problem (TSP) problem. 
+Given a list of cities, you need to visit each city exactly once with minimized distance travelled. 
+Collect information based on the problem setting or, based on the information you collect, analyze current situation or give a final plan. You can only give a plan once. 
+Info collecting can take DistanceSearch action: 
+DistanceSearch():
+Description: A distance information retrieval tool that gives a distance matrix of all cities
+
+You can take an action to analyze current situation and plan your future steps.
+Example: Analyze(your analysis of current situation and plan for future)
+
+You can give a plan based on your collected information and analysis. The plan should include the order of city you visit.
+Example: Plan([0,1,2,3,6,7,8,5,9])
+
+Now, based on the input JSON query and collected information, please give the next action(only one action from DistanceSearch, Analyze, Plan) you want to take only with no explainations: 
+Input query: 

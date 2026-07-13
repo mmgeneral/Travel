@@ -1,0 +1,19 @@
+# Python script for testing satisfiability of the budget constraint of a travel plan problem. 
+
+# Set budget limit variable to be 7900
+variables['budget_limit'] = RealVal(7900)
+# Add 3 transportation price to spent, according to whether transportation method is flight, self-driving, or taxi
+spent = 0
+spent += If(variables['flight'][0], flight_0_price, If(variables['self-driving'][0], self_driving_0_price, If(variables['taxi'][0], taxi_0_price, 10000)))
+spent += If(variables['flight'][1], flight_1_price, If(variables['self-driving'][1], self_driving_1_price, If(variables['taxi'][1], taxi_1_price, 10000)))
+spent += If(variables['flight'][2], flight_2_price, If(variables['self-driving'][2], self_driving_2_price, If(variables['taxi'][2], taxi_2_price, 10000)))
+# Add restaurant price to spent
+spent += all_restaurant_price
+# Add accommodation price to spent
+spent += all_accommodation_price
+# Assert current spent is within budget
+s.assert_and_track(spent <= variables['budget_limit'], 'budget enough')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# Follow the examples to use the correct Z3 syntax. Do not use for loop to add transportation prices
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Budget response########## and end with ########## Budget response ends##########.

@@ -1,0 +1,36 @@
+# Python script for testing satisfiability of the attraction constraint of a travel plan problem. 
+
+# Get arrivals and city list for each day based on 3 transportations, 5 total travel day, and departure dates variables
+arrives = get_arrivals_list([flight_0_arrtime, flight_1_arrtime, flight_2_arrtime], 5, variables['departure_dates'])
+city_list = get_city_list(variables['city'], 5, variables['departure_dates'])
+# Run AttractionSearch to get attraction info for city_0 and city_1, record attractions with categories Garden and Historical landmark
+attraction_info, attraction_category_info = AttractionSearch.run_for_all_cities(cities, [city_0, city_1], ["Garden", "Historical landmark"])
+# Run AttractionSearch to get attraction info for city_0, no need to record attractions categories
+attraction_info, attraction_category_info = AttractionSearch.run_for_all_cities(cities, [city_0], None)
+# Set 'attraction_in_which_city' variables for 5 (1 per day) attractions
+variables['attraction_in_which_city'] = [Int('attraction_' + str(i)) for i in range(1*5)]
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+for i, variable in enumerate(variables['attraction_in_which_city']):
+    s.assert_and_track(variable == If(arrives[i]> 18, city_list[i], city_list[i+1]),  'attraction in which city')
+# Set 'attraction_index' variables for 5 (1 per day) attractions
+variables['attraction_index'] = [Int('attraction_{}_index'.format(i)) for i in range(1*5)]
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+for i, variable in enumerate(variables['attraction_index']):
+    attraction_list_length = AttractionSearch.get_info(attraction_info, variables['attraction_in_which_city'][i], 'Length')
+    s.assert_and_track(Implies(variables['attraction_in_which_city'][i] != -1, And(variable >= 0, variable < attraction_list_length)), 'valid attraction index')
+    s.assert_and_track(Implies(variables['attraction_in_which_city'][i] == -1, variable == -1), 'valid attraction index')
+    for j in range(i-1, -1, -1):
+        s.assert_and_track(Implies(And(variables['attraction_in_which_city'][i] != -1, variables['attraction_in_which_city'][i] == variables['attraction_in_which_city'][j]), variable != variables['attraction_index'][j]), 'non repeating attraction index')
+# Set 'attraction_category' variables for each attraction category required
+variables['attraction_category'] = [Int('category_' + i) for i in query_json['local_constraint']['attraction_category']]
+# For each attraction_category type in ["Garden"], iterate through all attractions to check if it is satisfied
+for index, category in enumerate( ["Garden"]):
+    count = 0
+    for i, variable in enumerate(variables['attraction_index']):
+        attractions_category_list = AttractionSearch.get_info(attraction_category_info, variables['attraction_in_which_city'][i], 'Category')
+        count += If(AttractionSearch.check_exists(category, attractions_category_list, variable), 1, 0)
+    s.assert_and_track(variables['attraction_category'][index] == count,  category + 'type attraction')
+    s.assert_and_track(variables['attraction_category'][index] > 0,  category + 'type attraction is not visited')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Attraction response########## and end with ########## Attraction response ends##########.

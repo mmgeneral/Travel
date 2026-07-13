@@ -1,0 +1,174 @@
+You are given a constraint to satisfy for a travel plan problem in JSON format. 
+In the input JSON, "org" denotes the departure city. "dest" denotes the destination city/cities. "days" denotes the total number of travel days. "date" includes the specific date to visit.
+In addition, "local_constraint" contains three possible constraints. "flight rule" specifies the whether "non-stop" is required or not. "airlines" specifies a list of a airlines you can accept. Possible options of "attraction_category" specifies a list of categories of attractions want to visit. If the field value is null in JSON, this specific hard constraint is not included. 
+The specified "flight rule" needs to be satisfied by all flights. All flights need to be one of the accepted "airlines". All categories in "attraction_category" needs to be satisfied, and a category could be satisfied if it exists for one attraction. 
+Your job is to give a detailed step by step instuction to encode this constraint as code. 
+Here are some example steps for different constraint:
+-----EXAMPLE 1-----
+JSON Constraint:
+{
+    "org": "Hong Kong", 
+    "dest": ["New York City", "Bangkok"], 
+    "days": 5, 
+    "visiting_city_number": 2, 
+    "date": ["2023-12-24", "2023-12-25", "2023-12-26", "2023-12-27", "2023-12-28"], 
+    "people_number": 3, 
+    "local_constraint": {
+        "flight rule": "non-stop", 
+        "airlines": ["United", "Emirates"], 
+        "attraction_category": ["Garden", "Historical landmark"]
+    }, 
+    "budget": 5000
+}
+Steps:
+# Destination cities # 
+# Set cities to be a list includes "New York City" and "Bangkok"
+# Loop through cities for 2 destination cities
+# Initialize Z3 solver s
+# Set 'city' variable to be indexes of 2 destination cities
+# If city_0_index and city_1_index are not same, assert 2 'city' variables equal to city index
+
+# Departure dates # 
+# Set 'departure_dates' variables for 3 transportations between cities
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 4), and second transportation could happen at any day in between
+
+# Flight information # 
+# Run FlightSearch to get flight info for "Hong Kong" as origin, city_0 and city_1, and dates
+# Get specific flight price info with "Hong Kong" as origin and final destination, specific city variable, and departure date for 3 transportations
+# Set 'flight_index' variable for 3 transportations
+# Assert 3 'flight_index' variables are within valid range
+# Calculate flight price for 3 people for 3 transportations based on flight index variable
+# Get specific flight arrival time info with "Hong Kong" as origin and final destination, specific city, and departure date for 3 transportations
+# Calculate flight arrival time for 3 transportations based on flight index variable
+# Initialize visit city list for "Hong Kong" as origin and final destination, and other 2 cities in between
+# For each 'flight_index', get specific flight rule and airline info based on visit city and departure date, assert non-stop is satisfied, and either "United" or "Emirates" is satisfied
+
+# Attraction information # 
+# Get arrivals and city list for each day based on 3 transportations, 5 total travel day, and departure dates variables
+# Run AttractionSearch to get attraction info for city_0 and city_1, record attractions with categories Garden and Historical landmark
+# Set 'attraction_in_which_city' variables for 5 (1 per day) attractions
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'attraction_index' variables for 5 (1 per day) attractions
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+# Set 'attraction_category' variables for each attraction category required
+# For each attraction_category type in ["Garden", "Historical landmark"], iterate through all attractions to check if it is satisfied
+
+# Budget # 
+# Set budget limit variable to be 1000
+# Add 3 flight price to spent
+# Add restaurant price (30 per meal per person for 3*5 meals and 3 people) to spent
+# Add accommodation price (100 per night per person for 4 nights and 3 people) to spent
+# Assert current spent is within budget
+
+-----EXAMPLE 2-----
+JSON Constraint:
+{
+    "org": "Dubai", 
+    "dest": ["Singapore", "Paris", "Istanbul"], 
+    "days": 7, 
+    "visiting_city_number": 3, 
+    "date": ["2023-12-24", "2023-12-25", "2023-12-26", "2023-12-27", "2023-12-28", "2023-12-29", "2023-12-30"], 
+    "people_number": 5, 
+    "local_constraint": {
+        "flight rule": "non-stop", 
+        "airlines": null, 
+        "attraction_category": ["Tourist attraction", "Historical landmark", "Animal park"]
+    }, 
+    "budget": 5000
+}
+Steps:
+# Destination cities # 
+# Set cities to be a list includes "Singapore", "Paris", and "Istanbul"
+# Loop through cities for 3 destination cities
+# Initialize Z3 solver s
+# Set 'city' variable to be indexes of 3 destination cities
+# If city_0_index, city_1_index, city_2_index are not same, assert 3 'city' variables equal to city index
+
+# Departure dates # 
+# Set 'departure_dates' variables for 4 transportations between cities
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 6), second and third transportation happen in between but not at the same day
+
+# Flight information # 
+# Run FlightSearch to get flight info for "Dubai" as origin, city_0, city_1 and city_2, and dates
+# Get specific flight price info with "Dubai" as origin and final destination, specific city variable, and departure date for 4 transportations
+# Set 'flight_index' variable for 4 transportations
+# Assert 4 'flight_index' variables are within valid range
+# Calculate flight price for 5 people for 4 transportations based on flight index variable
+# Get specific flight arrival time info with "Dubai" as origin and final destination, specific city, and departure date for 4 transportations
+# Calculate flight arrival time for 4 transportations based on flight index variable
+# Initialize visit city list for "Dubai" as origin and final destination, and other 3 cities in between
+# For each 'flight_index', get specific flight rule info based on visit city and departure date, assert non-stop is satisfied
+
+# Attraction information # 
+# Get arrivals and city list for each day based on 4 transportations, 7 total travel day, and departure dates variables
+# Run AttractionSearch to get attraction info for city_0, city_1 and city_2, record attractions with categories Tourist attraction, Historical landmark, and Animal park
+# Set 'attraction_in_which_city' variables for 7 (1 per day) attractions
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'attraction_index' variables for 7 (1 per day) attractions
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+# Set 'attraction_category' variables for each attraction category required
+# For each attraction_category type in ["Tourist attraction", "Historical landmark", "Animal park"], iterate through all attractions to check if it is satisfied
+
+# Budget # 
+# Set budget limit variable to be 5000
+# Add 4 flight price to spent
+# Add restaurant price (30 per meal per person for 3*7 meals and 5 people) to spent
+# Add accommodation price (100 per night per person for 6 nights and 5 people) to spent
+# Assert current spent is within budget
+-----EXAMPLES 3-----
+JSON Constraint:
+{
+    "org": "London", 
+    "dest": ["Macau"], 
+    "days": 3, 
+    "visiting_city_number": 1, 
+    "date": ["2023-12-26", "2023-12-27", "2023-12-28"], 
+    "people_number": 2, 
+    "local_constraint": {
+        "flight rule": null, 
+        "airlines": ["JetBlue", "EVA Air", "Cathay Pacific"], 
+        "attraction_category": null
+    }, 
+    "budget": 500
+}
+Steps:
+# Destination cities # 
+# Set cities to be a list includes "Macau"
+# Loop through cities for 1 destination cities
+# Initialize Z3 solver s
+# Set 'city' variable to be indexes of 1 destination cities
+# Assert 'city' variable equal to city index
+
+# Departure dates # 
+# Set 'departure_dates' variables for 2 transportations between cities
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 2)
+
+# Flight information # 
+# Run FlightSearch to get flight info for "Macau" as origin, city_0, and dates
+# Get specific flight price info with "Macau" as origin and final destination, specific city, and departure date for 2 transportations
+# Set 'flight_index' variable for 2 transportations
+# Assert 2 'flight_index' variables are within valid range
+# Calculate flight price for 2 people for 2 transportations based on flight index variable
+# Get specific flight arrival time info with "Macau" as origin and final destination, specific city, and departure date for 2 transportations
+# Calculate flight arrival time for 2 transportations based on flight index variable
+# Initialize visit city list for "Macau" as origin and final destination, and other 1 cities in between
+# For each 'flight_index', get specific flight airline info based on visit city and departure date, assert either "JetBlue", "EVA Air", or "Cathay Pacific" is satisfied
+
+# Attraction information # 
+# Get arrivals and city list for each day based on 2 transportations, 3 total travel day, and departure dates variables
+# Run AttractionSearch to get attraction info for city_0, no need to record attractions categories
+# Set 'attraction_in_which_city' variables for 3 (1 per day) attractions
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+# Set 'attraction_index' variables for 3 (1 per day) attractions
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+
+# Budget # 
+# Set budget limit variable to be 500
+# Add 2 flight price to spent
+# Add restaurant price (30 per meal per person for 3*3 meals and 2 people) to spent
+# Add accommodation price (100 per night per person for 2 nights and 2 people) to spent
+# Assert current spent is within budget
+-----EXAMPLES END-----
+Based on the examples above, give the steps for following JSON constraint.
+Note to keep the format in examples and start each line containing steps with '#' 
+JSON Constraint:

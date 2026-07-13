@@ -1,0 +1,49 @@
+As a travel planner, you have some constraints in JSON format to satisfy for a round trip travel plan problem. 
+The trip spans "date", goes from "org", travels "dest" cities in a row in between, and then goes back to "org"
+For example, if "org" is city_0, and "dest" is [city_1, city_2], then the flights could be [city_0->city_1,city_1->city_2,city_2->city_0] or [city_0->city_2,city_2-> city_1,city_1->city_0] 
+In addition, "local_constraint" contains three possible constraints. "flight rule" specifies whether "non-stop" is required or not. "airlines" specifies a list of a airlines user can accept. Possible options of "attraction_category" specifies a list of categories of attractions want to visit. If the field value is null in JSON, this specific hard constraint is not included. 
+The specified "flight rule" needs to be satisfied by all flights. All flights need to be one of the accepted "airlines". All categories in "attraction_category" needs to be satisfied, and a category could be satisfied if it exists for one attraction. 
+After anaylzed these constraints, you found they are not satisfiable under current setting.
+Collect information or, based on the information you collect, analyze current situation or give a suggested modification to the constraints. 
+Info collecting can take 4 different actions: 
+(1) FlightSearch[Departure City, Destination City]:
+Description: A flight information retrieval tool.
+Parameters:
+    Departure City: The city you'll be flying out from.
+    Destination City: The city you aim to reach.
+Example: FlightSearch[New York City, London] would fetch flights from New York City to London.
+
+(2) AirlineSearch[Airline]:
+Description: Find flights of input airline.
+Parameter: Airline - The airline name you want to take. 
+Example: AirlineSearch[United] would return all flights of United airline.
+
+(3) AttractionSearch[City]:
+Description: Find attractions categories in a city of your choice.
+Parameter: City - The name of the city where you're seeking attractions. 
+Example: AttractionSearch[London] would return attraction categories in London.
+
+(4) CategorySearch[Category]:
+Description: Find cities contain attractions of input category.
+Parameter: Category - The attraction category where you want to visit. 
+Example: CategorySearch[Park] would return all cities where attractions of category Park exist.
+
+You need to take an action analyze current situation and plan your future steps after each FlightSearch, AirlineSearch, AttractionSearch, or CategorySearch.
+Example: Analyze[your analysis of current situation and plan for future]
+
+You can suggest to remove the non-stop constraint, suggest to change required airlines, suggest to change destination cities(but keep number of destination cities unchanged), suggest to change attraction categories, or suggest to raise budget. 
+Do not give other suggestions that change other fields in JSON input, such as origin, number of visit cities, etc.
+Please give reasonable suggestions to modify the constraint only when you think you've collected enough information and the suggestion has high chance to be satisfiable. For example, if destination city does not have required attraction category, you should suggest to change destination city if info shows the new city has the required category
+Please try to keep original constraint and make minimal change to original constraint only when it is necessary.
+You can give one or more suggestions if you think one is not enough. Please separate the suggestions with ;
+Examples:  
+    Suggest[raise budget to 5000]
+    Suggest[change destination cities to be Istanbul and Macau]
+    Suggest[remove the non-stop constraint]
+    Suggest[change airlines to be United, Air France, or JetBlue]
+    Suggest[change attraction categories to be Garden and Museum]
+    Suggest[raise budget to 3000; change destination cities to be London]
+
+A list of possible cities is ['Bangkok', 'Dubai', 'Hong Kong', 'Istanbul', 'Kuala Lumpur', 'London', 'Macau', 'New York City', 'Paris', 'Singapore']
+Now, based on the input query and collected information, please give the next action(only one action) you want to take only with no explainations, you need to give suggestions within 15 iterations: 
+Input query: 

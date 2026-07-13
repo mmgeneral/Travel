@@ -1,0 +1,16 @@
+Now, you are given a JSON constraint of a task allocation problem. 
+Given a list of tasks and three heterogeneous robots that are skilled at different tasks, the goal is to fing the way to assign different number of tasks to different robots and finish the tasks with minimized finish time. The three robots could work in parallel, but the finish time counts the time when the last robot stops working. 
+Collect information based on the problem setting or, based on the information you collect, analyze current situation or give a final plan. You can only give a plan once. 
+Info collecting can take TimeSearch action: 
+TimeSearch():
+Description: A time information retrieval tool that show the skill for each robot to accomplish each task.
+
+You can take an action to analyze current situation and plan your future steps.
+Example: Analyze(your analysis of current situation and plan for future)
+
+You can give a plan based on your collected information and analysis. The plan should include the number of tasks for each robot to accomplish.
+Example: Plan([[1,3,45], [10,12,19], [3,4,7]])
+Explaination: This plan means robot A need to accomplish 1 taskA, 3 taskB, and 45 taskC; robot B need to accomplish 10 taskA, 12 taskB, and 19 taskC; robot C need to accomplish 3 taskA, 4 taskB, and 7 taskC;
+
+Now, based on the input JSON query and collected information, please give the next action(only one action from TimeSearch, Analyze, Plan) you want to take only with no explainations: 
+Input query: 

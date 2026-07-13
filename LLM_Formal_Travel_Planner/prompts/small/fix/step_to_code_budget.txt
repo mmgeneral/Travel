@@ -1,0 +1,16 @@
+# Python script for testing satisfiability of the budget constraint of a travel plan problem. 
+
+# Set budget limit variable to be 7900
+variables['budget_limit'] = RealVal(7900)
+# Add 3 flight price to spent
+spent = 0
+spent += flight_0_price + flight_1_price + flight_2_price
+# Add restaurant price (30 per meal per person for 3*5 meals and 3 people) to spent
+spent += 30*3*5*3
+# Add accommodation price (100 per night per person for 4 nights and 3 people) to spent
+spent += 100*4*3
+# Assert current spent is within budget
+s.assert_and_track(spent <= variables['budget_limit'], 'budget enough')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Budget response########## and end with ########## Budget response ends##########.

@@ -1,0 +1,16 @@
+# Python script for testing satisfiability of the departure dates constraint of a travel plan problem. 
+
+# Set 'departure_dates' variables for 3 transportations between cities
+variables['departure_dates'] = [Int('departure_dates_transportation_' + str(i)) for i in range(3)]
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 6), second and third transportation happen in between but not at the same day
+s.assert_and_track(variables['departure_dates'][0] == 0,  'travel start date')
+s.assert_and_track(And(variables['departure_dates'][1] > 0, variables['departure_dates'][1] < variables['departure_dates'][2]),  'valid travel date')
+s.assert_and_track(And(variables['departure_dates'][2] > variables['departure_dates'][1], variables['departure_dates'][1] < 6),  'valid travel date')
+s.assert_and_track(variables['departure_dates'][3] == 6,  'travel end date')
+# Assert first transportation happens at first day (day 0), last transportation happens at last day (day 4), and second transportation could happen at any day in between
+s.assert_and_track(variables['departure_dates'][0] == 0,  'travel start date')
+s.assert_and_track(And(variables['departure_dates'][1] > 0, variables['departure_dates'][1] < 4),  'valid travel date')
+s.assert_and_track(variables['departure_dates'][2] == 4,  'travel end date')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Departure dates response########## and end with ########## Departure dates response ends##########.

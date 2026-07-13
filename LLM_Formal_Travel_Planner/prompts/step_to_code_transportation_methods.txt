@@ -1,0 +1,30 @@
+# Python script for testing satisfiability of the transportation methods constraint of a travel plan problem. 
+
+# Set transportation method variable (flight, self-driving, taxi) for 3 transportations between cities
+variables['flight'] = [Bool('flight_travel_' + str(i)) for i in range(3)]
+variables['self-driving'] = [Bool('self-driving_travel_' + str(i)) for i in range(3)]
+variables['taxi'] = [Bool('taxi_travel_' + str(i)) for i in range(3)]
+# Assert only one of flight, self-driving, or taxi is used for 3 transportations between cities, self-driving is not valid if taxi or flight is used for any transportation
+s.assert_and_track(Or(variables['flight'][0], variables['self-driving'][0], variables['taxi'][0]),  'either flight, self-driving, or taxi for first transportation')
+s.assert_and_track(Or(variables['flight'][1], variables['self-driving'][1], variables['taxi'][1]),  'either flight, self-driving, or taxi for second transportation')
+s.assert_and_track(Or(variables['flight'][2], variables['self-driving'][2], variables['taxi'][2]),  'either flight, self-driving, or taxi for third transportation')
+s.assert_and_track(Not(Or(And(variables['flight'][0], variables['self-driving'][0]), And(variables['flight'][0], variables['taxi'][0]), And(variables['taxi'][0], variables['self-driving'][0]))),  'flight, self-driving, and taxi not simutaneously for first transportation')
+s.assert_and_track(Not(Or(And(variables['flight'][1], variables['self-driving'][1]), And(variables['flight'][1], variables['taxi'][1]), And(variables['taxi'][1], variables['self-driving'][1]))),  'flight, self-driving, and taxi not simutaneously for second transportation')
+s.assert_and_track(Not(Or(And(variables['flight'][2], variables['self-driving'][2]), And(variables['flight'][2], variables['taxi'][2]), And(variables['taxi'][2], variables['self-driving'][2]))),  'flight, self-driving, and taxi not simutaneously for third transportation')
+s.assert_and_track(Implies(Or(variables['flight'][0], variables['flight'][1], variables['flight'][2]), Not(Or(variables['self-driving'][0], variables['self-driving'][1], variables['self-driving'][2]))), 'no self-driving if taken flight for any transportation')
+s.assert_and_track(Implies(Or(variables['taxi'][0], variables['taxi'][1], variables['taxi'][2]), Not(Or(variables['self-driving'][0], variables['self-driving'][1], variables['self-driving'][2]))), 'no self-driving if taken taxi for any transportation')
+# Assert only one of flight, self-driving, or taxi is used for 2 transportations between cities, self-driving is not valid if taxi or flight is used for any transportation
+s.assert_and_track(Or(variables['flight'][0], variables['self-driving'][0], variables['taxi'][0]),  'either flight, self-driving, or taxi for first transportation')
+s.assert_and_track(Or(variables['flight'][1], variables['self-driving'][1], variables['taxi'][1]),  'either flight, self-driving, or taxi for second transportation')
+s.assert_and_track(Not(Or(And(variables['flight'][0], variables['self-driving'][0]), And(variables['flight'][0], variables['taxi'][0]), And(variables['taxi'][0], variables['self-driving'][0]))),  'flight, self-driving, and taxi not simutaneously for first transportation')
+s.assert_and_track(Not(Or(And(variables['flight'][1], variables['self-driving'][1]), And(variables['flight'][1], variables['taxi'][1]), And(variables['taxi'][1], variables['self-driving'][1]))),  'flight, self-driving, and taxi not simutaneously for second transportation')
+s.assert_and_track(Implies(Or(variables['flight'][0], variables['flight'][1]), Not(Or(variables['self-driving'][0], variables['self-driving'][1]))), 'no self-driving if taken flight for any transportation')
+s.assert_and_track(Implies(Or(variables['taxi'][0], variables['taxi'][1]), Not(Or(variables['self-driving'][0], variables['self-driving'][1]))), 'no self-driving if taken taxi for any transportation')
+# Assert all 3 transportations between cities are not self-driving
+s.assert_and_track(Not(variables['self-driving'][0]), 'no self-driving for first transportation')
+s.assert_and_track(Not(variables['self-driving'][1]), 'no self-driving for second transportation')
+s.assert_and_track(Not(variables['self-driving'][2]), 'no self-driving for third transportation')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# Follow the code structure variable names in examples
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Transportation response########## and end with ########## Transportation response ends##########.

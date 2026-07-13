@@ -1,0 +1,28 @@
+# Python script for testing satisfiability of the destination cities constraint of a travel plan problem. 
+
+# Set cities to be a list includes "New York City" and "Bangkok"
+cities = ["New York City", "Bangkok"]
+# Loop through cities for 2 destination cities
+for city_0_index, city_0 in enumerate(cities):
+    for city_1_index, city_1 in enumerate(cities):
+        # Initialize Z3 solver s
+        s = Optimize()
+        # Set 'city' variable to be indexes of 2 destination cities
+        variables['city'] = [Int('city_' + str(i)) for i in range(2)]
+        # If city_0_index and city_1_index are not same, assert 2 'city' variables equal to city index
+        if city_0_index != city_1_index:
+            s.assert_and_track(variables['city'][0] == city_0_index,  'visit city in cities list')
+            s.assert_and_track(variables['city'][1] == city_1_index,  'visit city in cities list')
+# Loop through cities for 1 destination cities
+for city_0_index, city_0 in enumerate(cities):
+    # Initialize Z3 solver s
+    s = Optimize()
+    # Set 'city' variable to be indexes of 1 destination cities
+    variables['city'] = [Int('city_' + str(i)) for i in range(1)]
+    # Assert 'city' variable equal to city index
+    s.assert_and_track(variables['city'][0] == city_0_index,  'visit city in cities list')
+
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Destination cities response########## and end with ########## Destination cities response ends##########.
+

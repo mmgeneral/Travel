@@ -1,0 +1,24 @@
+# Python script for testing satisfiability of the attraction constraint of a travel plan problem. 
+
+# Run AttractionSearch to get attraction info for city_0 and city_1
+attraction_info = AttractionSearch.run_for_all_cities(cities, [city_0, city_1])
+# Run AttractionSearch to get attraction info for city_0
+attraction_info = AttractionSearch.run_for_all_cities(cities, [city_0])
+# Set 'attraction_in_which_city' variables for 5 (1 per day) attractions
+variables['attraction_in_which_city'] = [Int('attraction_' + str(i)) for i in range(1*5)]
+# For each 'attraction_in_which_city' variable, assert it to be either current city or next city based on transportation arrivals time
+for i, variable in enumerate(variables['attraction_in_which_city']):
+    s.assert_and_track(variable == If(arrives[i]> 18, city_list[i], city_list[i+1]),  'attraction in which city')
+# Set 'attraction_index' variables for 5 (1 per day) attractions
+variables['attraction_index'] = [Int('attraction_{}_index'.format(i)) for i in range(1*5)]
+# For each 'attraction_index', get specific length info based on attraction in which city variable, assert index are within valid range, and attrations in same city are not repeated
+for i, variable in enumerate(variables['attraction_index']):
+    attraction_list_length = AttractionSearch.get_info(attraction_info, variables['attraction_in_which_city'][i])
+    s.assert_and_track(Implies(variables['attraction_in_which_city'][i] != -1, And(variable >= 0, variable < attraction_list_length)), 'valid attraction index')
+    s.assert_and_track(Implies(variables['attraction_in_which_city'][i] == -1, variable == -1), 'valid attraction index')
+    for j in range(i-1, -1, -1):
+        s.assert_and_track(Implies(And(variables['attraction_in_which_city'][i] != -1, variables['attraction_in_which_city'][i] == variables['attraction_in_which_city'][j]), variable != variables['attraction_index'][j]), 'non repeating attraction index')
+
+# Based on the examples above, in which the lines start with '#' is the instuction, where the line/lines below it before the next '#' is the corresponding code.
+# Follow the code structure variable names in examples
+# For this below instruction, write corresponding code and respond instruction with code only. Start with ########## Attraction response########## and end with ########## Attraction response ends##########.

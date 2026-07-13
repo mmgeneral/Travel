@@ -1,0 +1,58 @@
+Please assist me in extracting valid information from a given natural language text and reconstructing it in JSON format, as demonstrated in the following example.
+In the input JSON, "org" denotes the departure city. "dest" denotes the destination city/cities. "days" denotes the total number of travel days. "date" includes the specific date to visit.
+In addition, "local_constraint" contains three possible constraints. "flight rule" specifies the whether "non-stop" is required or not. "airlines" specifies a list of a airlines you can accept. Possible options of "attraction_category" specifies a list of categories of attractions want to visit. If the field value is null in JSON, this specific hard constraint is not included. 
+The specified "flight rule" needs to be satisfied by all flights. All flights need to be one of the accepted "airlines". All categories in "attraction_category" needs to be satisfied, and a category could be satisfied if it exists for one attraction. 
+Here are three examples: 
+-----EXAMPLE 1-----
+Text: {Please help me plan a trip from Hong Kong to New York City and Bangkok spanning 5 days from December 24th to December 28th, 2023. We want to take non-stop flights from United or Emirates. We are interested in visiting Garden and Historical landmark. The travel should be planned for three person with a budget of $5,000.}
+JSON:
+{
+    "org": "Hong Kong", 
+    "dest": ["New York City", "Bangkok"], 
+    "days": 5, 
+    "visiting_city_number": 2, 
+    "date": ["2023-12-24", "2023-12-25", "2023-12-26", "2023-12-27", "2023-12-28"], 
+    "people_number": 3, 
+    "local_constraint": {
+        "flight rule": "non-stop", 
+        "airlines": ["United", "Emirates"], 
+        "attraction_category": ["Garden", "Historical landmark"]
+    }, 
+    "budget": 5000
+}
+-----EXAMPLE 2-----
+Text: {Please create a 7-day travel itinerary for 5 people beginning in Dubai and travelling Singapore, Paris, and Istanbul from the 24th to the 30th of December, 2023. Our travel budget is set at $5,000. We want to take non-stop flights and we'd love to experience Tourist attraction, Historical landmark, and Animal park during our journey.}
+JSON:
+{
+    "org": "Dubai", 
+    "dest": ["Singapore", "Paris", "Istanbul"], 
+    "days": 7, 
+    "visiting_city_number": 3, 
+    "date": ["2023-12-24", "2023-12-25", "2023-12-26", "2023-12-27", "2023-12-28", "2023-12-29", "2023-12-30"], 
+    "people_number": 5, 
+    "local_constraint": {
+        "flight rule": "non-stop", 
+        "airlines": null, 
+        "attraction_category": ["Tourist attraction", "Historical landmark", "Animal park"]
+    }, 
+    "budget": 5000
+}
+-----EXAMPLE 3-----
+Text: {Can you create a 3-day travel itinerary for a group of 2, departing from London and visiting Macau from December 26th to December 28th, 2023? We have a budget of $500. We want to take flight airlines from JetBlue, EVA Air, or Cathay Pacific.}
+JSON:
+{
+    "org": "London", 
+    "dest": ["Macau"], 
+    "days": 3, 
+    "visiting_city_number": 1, 
+    "date": ["2023-12-26", "2023-12-27", "2023-12-28"], 
+    "people_number": 2, 
+    "local_constraint": {
+        "flight rule": null, 
+        "airlines": ["JetBlue", "EVA Air", "Cathay Pacific"], 
+        "attraction_category": null
+    }, 
+    "budget": 500
+}
+-----EXAMPLES END-----
+Text:

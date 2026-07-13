@@ -1,0 +1,5 @@
+As a travel planner, you have a JSON that specifies some constraints of a travel plan problem.
+While now some of the constraints are changed, your task is to change the JSON according to the changed constraints. Use null if any local constraint is removed.
+Please respond with JSON only, use double quotes in your response.
+
+Original JSON:

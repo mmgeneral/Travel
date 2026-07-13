@@ -13,3 +13,5 @@ otp_nyc/
 mta_gtfs.zip
 .coverage
 data/default-gh/
+venv/
+LLM_Formal_Travel_Planner/venv_fmtp/

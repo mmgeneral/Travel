@@ -11,6 +11,10 @@ from AnchorResolver import resolve_anchor_context, save_anchor_context_output
 from PlacesSearchAgent import search_places_for_pending_searches
 from CandidateScorer import save_scoring_outputs, score_candidate_slots
 
+# 注意：FinalItineraryAgent 需要額外設定 OPENAI_API_KEY 環境變數
+# （跟其他模組使用的 Gemini key 不同），請確認 .env 或環境變數已設定。
+from FinalItineraryAgent import generate_final_itinerary, save_json_output
+
 
 OUTPUT_ROOT = Path(__file__).resolve().parent / "run_outputs"
 
@@ -136,6 +140,19 @@ async def run_multi_agent_flow(user_query: str = "去台南兩天一夜"):
         print(json.dumps(scoring_result["llm_input"], ensure_ascii=False, indent=2))
         print("📦 [CandidateScorer] 已保留其他候選：")
         print(json.dumps(scoring_paths, ensure_ascii=False, indent=2))
+        print("="*20)
+
+        final_result = generate_final_itinerary(scoring_result["llm_input"])
+        final_paths = save_json_output(
+            final_result,
+            run_dir,
+            "06_final_itinerary_output.json",
+            "final_itinerary",
+        )
+
+        print("🎯 [FinalItineraryAgent] 最終定案行程：")
+        print(json.dumps(final_result.get("decision_summary", {}), ensure_ascii=False, indent=2))
+        print(json.dumps(final_paths, ensure_ascii=False, indent=2))
         print("="*20)
     except RuntimeError as exc:
         _write_json(run_dir / "04_places_search_agent_error.json", {"error": str(exc)})

@@ -1,3 +1,6 @@
+# 注意：__main__ 區塊僅供獨立測試使用（讀取 traced_outputs 下的測試
+# 檔案）。正式流程請透過 subMain.py 呼叫 generate_final_itinerary()，
+# 不會使用這裡的預設路徑。
 from __future__ import annotations
 
 import json

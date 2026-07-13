@@ -15,3 +15,5 @@ mta_gtfs.zip
 data/default-gh/
 venv/
 LLM_Formal_Travel_Planner/venv_fmtp/
+data/taiwan-latest.osm.pbf
+nyc.osm.pbf

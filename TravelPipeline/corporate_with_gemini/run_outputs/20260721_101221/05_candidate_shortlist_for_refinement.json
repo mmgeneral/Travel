@@ -1,0 +1,561 @@
+{
+  "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot02",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:30",
+      "end_time": "13:30",
+      "time": "12:30~13:30",
+      "slot_type": "meal",
+      "original_activity": "在天廚蔬房享用午餐",
+      "reason_for_search": "缺乏具體店家",
+      "target_terms": [
+        "素食",
+        "餐廳"
+      ],
+      "location_terms": [
+        "台東長濱鄉",
+        "長濱公車站附近"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot02",
+        "slot_id": "day1_slot02",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "12:30",
+        "end_time": "13:30",
+        "time": "12:30~13:30",
+        "slot_type": "meal",
+        "original_activity": "在天廚蔬房享用午餐",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱公車站",
+          "query": "長濱公車站",
+          "place": {
+            "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "resource_name": "places/ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "name": "長濱",
+            "address": "962台灣臺東縣長濱鄉",
+            "latitude": 23.317436,
+            "longitude": 121.455726,
+            "primary_type": "bus_stop",
+            "types": [
+              "bus_stop",
+              "transit_stop",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1635570354538280653&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱公車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱公車站",
+          "query": "長濱公車站",
+          "place": {
+            "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "resource_name": "places/ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "name": "長濱",
+            "address": "962台灣臺東縣長濱鄉",
+            "latitude": 23.317436,
+            "longitude": 121.455726,
+            "primary_type": "bus_stop",
+            "types": [
+              "bus_stop",
+              "transit_stop",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1635570354538280653&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱公車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJvVzRTlBdbzQRf9oI6UnGCmk",
+          "name": "長濱100號餐廳",
+          "address": "962臺東縣長濱鄉長濱村長濱92號",
+          "latitude": 23.3176098,
+          "longitude": 121.45582579999999,
+          "google_maps_uri": "https://maps.google.com/?cid=7569080144494123647&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.2857,
+          "score_breakdown": {
+            "total": 0.2857,
+            "relevance": 0.4552,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.9886,
+            "google_rank": 0.3333,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.18,
+            "constraint_penalty": 0.0,
+            "penalty": 0.18,
+            "relevance_gate": 0.7549
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.022,
+            "candidate_to_next_km": 0.022,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 0.044,
+            "detour_km": 0.044,
+            "max_leg_km": 0.022,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            }
+          },
+          "matched_queries": [
+            "台東長濱鄉 餐廳",
+            "長濱公車站附近 餐廳"
+          ],
+          "why": "符合「餐廳」；由查詢「台東長濱鄉 餐廳」命中；前後站直線路徑約 0.044 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "候選地址未明確包含目的地「台東長濱鄉」",
+            "無法驗證價格等級（缺 price_level 資料）",
+            "無法驗證停車位要求（缺資料）"
+          ],
+          "selection_score": 0.4457
+        },
+        {
+          "place_id": "ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+          "name": "馨家小廚",
+          "address": "962001臺東縣長濱鄉112號",
+          "latitude": 23.3181899,
+          "longitude": 121.4561085,
+          "google_maps_uri": "https://maps.google.com/?cid=6814475901215515020&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.2526,
+          "score_breakdown": {
+            "total": 0.2526,
+            "relevance": 0.28,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.9539,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.18,
+            "constraint_penalty": 0.0,
+            "penalty": 0.18,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.092,
+            "candidate_to_next_km": 0.092,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 0.185,
+            "detour_km": 0.185,
+            "max_leg_km": 0.092,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            }
+          },
+          "matched_queries": [
+            "台東長濱鄉 素食",
+            "長濱公車站附近 素食",
+            "台東長濱鄉 餐廳",
+            "長濱公車站附近 餐廳"
+          ],
+          "why": "符合「台東長濱鄉」；由查詢「台東長濱鄉 素食」命中；前後站直線路徑約 0.185 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "候選地址未明確包含目的地「台東長濱鄉」",
+            "無法驗證價格等級（缺 price_level 資料）",
+            "無法驗證停車位要求（缺資料）"
+          ],
+          "selection_score": 0.2526
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day1_slot04",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "17:00",
+      "time": "14:00~17:00",
+      "slot_type": "attraction",
+      "original_activity": "在長濱鄉散步並探索當地風景",
+      "reason_for_search": "缺乏具體景點",
+      "target_terms": [
+        "自然景點"
+      ],
+      "location_terms": [
+        "長濱鄉",
+        "台東",
+        "長濱公車站附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot04",
+        "slot_id": "day1_slot04",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "14:00",
+        "end_time": "17:00",
+        "time": "14:00~17:00",
+        "slot_type": "attraction",
+        "original_activity": "在長濱鄉散步並探索當地風景",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱公車站",
+          "query": "長濱公車站",
+          "place": {
+            "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "resource_name": "places/ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "name": "長濱",
+            "address": "962台灣臺東縣長濱鄉",
+            "latitude": 23.317436,
+            "longitude": 121.455726,
+            "primary_type": "bus_stop",
+            "types": [
+              "bus_stop",
+              "transit_stop",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1635570354538280653&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱公車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱公車站",
+          "query": "長濱公車站",
+          "place": {
+            "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "resource_name": "places/ChIJbaKKaVBdbzQRzfZpY5K2shY",
+            "name": "長濱",
+            "address": "962台灣臺東縣長濱鄉",
+            "latitude": 23.317436,
+            "longitude": 121.455726,
+            "primary_type": "bus_stop",
+            "types": [
+              "bus_stop",
+              "transit_stop",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=1635570354538280653&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱公車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+          "name": "長濱鄉運動公園",
+          "address": "962臺東縣長濱鄉",
+          "latitude": 23.319483299999998,
+          "longitude": 121.4533616,
+          "google_maps_uri": "https://maps.google.com/?cid=11742514406639838336&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3462,
+          "score_breakdown": {
+            "total": 0.3462,
+            "relevance": 0.28,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.8545,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.332,
+            "candidate_to_next_km": 0.332,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 0.664,
+            "detour_km": 0.664,
+            "max_leg_km": 0.332,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            }
+          },
+          "matched_queries": [
+            "長濱鄉 自然景點",
+            "長濱公車站附近 自然景點"
+          ],
+          "why": "符合「長濱鄉」；由查詢「長濱鄉 自然景點」命中；前後站直線路徑約 0.664 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3462
+        },
+        {
+          "place_id": "ChIJ9TdAI9JdbzQRNMmKBWynQ-0",
+          "name": "金剛大道",
+          "address": "962臺東縣長濱鄉長光產業道路",
+          "latitude": 23.33055,
+          "longitude": 121.451369,
+          "google_maps_uri": "https://maps.google.com/?cid=17096692692819822900&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3162,
+          "score_breakdown": {
+            "total": 0.3162,
+            "relevance": 0.28,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.5771,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.525,
+            "candidate_to_next_km": 1.525,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 3.049,
+            "detour_km": 3.049,
+            "max_leg_km": 1.525,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱公車站",
+              "query": "長濱公車站",
+              "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+              "name": "長濱",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.317436,
+              "longitude": 121.455726
+            }
+          },
+          "matched_queries": [
+            "長濱鄉 自然景點",
+            "長濱公車站附近 自然景點"
+          ],
+          "why": "符合「長濱鄉、台東」；由查詢「長濱鄉 自然景點」命中；前後站直線路徑約 3.049 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3162
+        }
+      ]
+    }
+  ]
+}

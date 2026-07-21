@@ -948,5 +948,42 @@
       }
     },
     "error": null
+  },
+  "台東長濱鄉|長濱公車站": {
+    "query": "長濱公車站",
+    "resolved_at": "2026-07-21T10:12:52",
+    "place": {
+      "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+      "resource_name": "places/ChIJbaKKaVBdbzQRzfZpY5K2shY",
+      "name": "長濱",
+      "address": "962台灣臺東縣長濱鄉",
+      "latitude": 23.317436,
+      "longitude": 121.455726,
+      "primary_type": "bus_stop",
+      "types": [
+        "bus_stop",
+        "transit_stop",
+        "transit_station",
+        "transportation_service",
+        "point_of_interest",
+        "establishment"
+      ],
+      "google_maps_uri": "https://maps.google.com/?cid=1635570354538280653&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+      "matched_queries": [
+        {
+          "query": "長濱公車站",
+          "intent": "anchor",
+          "intent_type": "anchor",
+          "rank": 1,
+          "target_terms": [],
+          "location_terms": [],
+          "must_have": []
+        }
+      ],
+      "ranking_signals": {
+        "google_rank_score": 1.0
+      }
+    },
+    "error": null
   }
 }

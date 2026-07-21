@@ -1,0 +1,169 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱公車站",
+      "place_query": "長濱公車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱公車站",
+      "place_query": "長濱公車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "12:30",
+          "time": "11:00~12:30",
+          "activity": "前往長濱鄉，享受沿途風景",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "在天廚蔬房享用午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "天廚蔬房",
+          "route_entry_place": "天廚蔬房",
+          "route_exit_place": "天廚蔬房",
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": null,
+          "start_time": "13:30",
+          "end_time": "14:00",
+          "time": "13:30~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot04",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "在長濱鄉散步並探索當地風景",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "長濱海岸",
+          "route_entry_place": "長濱海岸",
+          "route_exit_place": "長濱海岸",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "天氣較熱，準備防曬用品。",
+    "提前確認餐廳營業時間與設施。",
+    "建議以車輛代步，餐廳未必與景點距離近。"
+  ],
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": null,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "台灣",
+      "destination": "台東長濱鄉",
+      "key_areas": [
+        "天廚蔬房",
+        "長濱海岸"
+      ],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 1,
+      "duration_nights": 0,
+      "travel_start_date": null,
+      "travel_end_date": null,
+      "season_or_month": null,
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [],
+      "desired_experiences": [
+        "local_food",
+        "nature"
+      ],
+      "activity_types": [
+        "local_food",
+        "nature"
+      ],
+      "food_preferences": [
+        "vegetarian"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "半天探索長濱鄉與享受素食美食",
+      "success_criteria": [
+        "找到合適的素食餐廳",
+        "享受長濱鄉的自然風光"
+      ],
+      "priority_order": [
+        1,
+        2
+      ]
+    },
+    "how": {
+      "budget": 200,
+      "preferred_transportation": "car",
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours"
+      ],
+      "hard_constraints": [
+        "素食"
+      ],
+      "soft_preferences": [
+        "營業至晚上"
+      ]
+    }
+  }
+}

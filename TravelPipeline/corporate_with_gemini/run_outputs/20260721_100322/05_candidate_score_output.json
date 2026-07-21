@@ -1,0 +1,234 @@
+{
+  "scoring_version": "candidate_scorer_v0.2",
+  "created_at": "2026-07-21T10:03:56",
+  "run_id": "20260721_100322",
+  "top_n": 2,
+  "weights": {
+    "relevance": 0.3,
+    "quality": 0.21,
+    "opening": 0.17,
+    "route": 0.16,
+    "google_rank": 0.08,
+    "type": 0.08
+  },
+  "anchor_context_version": "anchor_resolver_v0.1",
+  "slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "13:00",
+      "time": "11:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用素食午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家資訊，需確認營業時間與價格",
+      "target_terms": [
+        "素食餐廳"
+      ],
+      "location_terms": [
+        "台東",
+        "長濱鄉",
+        "台東長濱鄉"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "餐廳評分4.8以上",
+        "人均低於200元",
+        "營業至晚上10點"
+      ],
+      "queries": [
+        {
+          "query": "台東長濱鄉 素食餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食餐廳"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": [
+            "餐廳評分4.8以上",
+            "人均低於200元",
+            "營業至晚上10點"
+          ]
+        },
+        {
+          "query": "長濱鄉 素食餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食餐廳"
+          ],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": [
+            "餐廳評分4.8以上",
+            "人均低於200元",
+            "營業至晚上10點"
+          ]
+        },
+        {
+          "query": "台東 午餐 素食餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食餐廳"
+          ],
+          "location_terms": [
+            "台東"
+          ],
+          "must_have": [
+            "餐廳評分4.8以上",
+            "人均低於200元",
+            "營業至晚上10點"
+          ]
+        }
+      ],
+      "candidate_count": 0,
+      "selected_for_llm_count": 0,
+      "archived_count": 0,
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot01",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "11:00",
+        "end_time": "13:00",
+        "time": "11:00~13:00",
+        "slot_type": "meal",
+        "original_activity": "享用素食午餐於天廚蔬房",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱鄉",
+          "query": "長濱鄉",
+          "place": null,
+          "cache_hit": false,
+          "warnings": [
+            "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+          ]
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱鄉",
+          "query": "長濱鄉",
+          "place": null,
+          "cache_hit": false,
+          "warnings": [
+            "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+          ]
+        },
+        "warnings": [
+          "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env.",
+          "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+        ]
+      },
+      "selected_for_llm": [],
+      "all_scored_candidates": [],
+      "constraint_diagnosis": {
+        "satisfiable": false,
+        "satisfying_candidates": [],
+        "diagnosis": "約束組合衝突，建議重新檢視需求"
+      }
+    }
+  ],
+  "llm_input": {
+    "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+    "candidate_slots": [
+      {
+        "slot_index": 1,
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "11:00",
+        "end_time": "13:00",
+        "time": "11:00~13:00",
+        "slot_type": "meal",
+        "original_activity": "享用素食午餐於天廚蔬房",
+        "reason_for_search": "缺乏具體店家資訊，需確認營業時間與價格",
+        "target_terms": [
+          "素食餐廳"
+        ],
+        "location_terms": [
+          "台東",
+          "長濱鄉",
+          "台東長濱鄉"
+        ],
+        "intent_type": "restaurant",
+        "must_have": [
+          "餐廳評分4.8以上",
+          "人均低於200元",
+          "營業至晚上10點"
+        ],
+        "anchor_context": {
+          "slot_key": "slot_id:day1_slot01",
+          "slot_id": "day1_slot01",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "13:00",
+          "time": "11:00~13:00",
+          "slot_type": "meal",
+          "original_activity": "享用素食午餐於天廚蔬房",
+          "previous_anchor": {
+            "source": "default_start",
+            "role": "previous",
+            "slot_id": null,
+            "day": null,
+            "day_of_week": null,
+            "start_time": null,
+            "end_time": null,
+            "time": null,
+            "activity": "長濱鄉",
+            "query": "長濱鄉",
+            "place": null,
+            "cache_hit": false,
+            "warnings": [
+              "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+            ]
+          },
+          "next_anchor": {
+            "source": "default_end",
+            "role": "next",
+            "slot_id": null,
+            "day": null,
+            "day_of_week": null,
+            "start_time": null,
+            "end_time": null,
+            "time": null,
+            "activity": "長濱鄉",
+            "query": "長濱鄉",
+            "place": null,
+            "cache_hit": false,
+            "warnings": [
+              "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+            ]
+          },
+          "warnings": [
+            "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env.",
+            "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+          ]
+        },
+        "top_candidates": []
+      }
+    ]
+  },
+  "archived_records": []
+}

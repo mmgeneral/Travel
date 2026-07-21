@@ -1,0 +1,116 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T10:13:05",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "Selected top candidates with best route and relevance for meal and attraction slots.",
+      "Single hotel strategy is recommended for simplicity given no drastic change in location."
+    ],
+    "warnings": []
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "...",
+        "property_token": "...",
+        "name": "...",
+        "latitude": 0,
+        "longitude": 0,
+        "price": {}
+      },
+      "reason": "Maintain the single hotel strategy as there are no strong reasons to split accommodations."
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot02",
+      "day": 1,
+      "original_activity": "在天廚蔬房享用午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJvVzRTlBdbzQRf9oI6UnGCmk",
+        "name": "長濱100號餐廳",
+        "address": "962臺東縣長濱鄉長濱村長濱92號",
+        "latitude": 23.3176098,
+        "longitude": 121.45582579999999
+      },
+      "reason": "Best route proximity and relevance to anchor location."
+    },
+    {
+      "slot_id": "day1_slot04",
+      "day": 1,
+      "original_activity": "在長濱鄉散步並探索當地風景",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+        "name": "長濱鄉運動公園",
+        "address": "962臺東縣長濱鄉",
+        "latitude": 23.319483299999998,
+        "longitude": 121.4533616
+      },
+      "reason": "Aligns well with the concept of local culture exploration and has best candidate score available."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "...",
+      "schedule": [
+        {
+          "slot_id": "day1_slot02",
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "在長濱100號餐廳享用午餐",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "素食餐廳 台東長濱鄉",
+          "route_entry_place": "長濱公車站",
+          "route_exit_place": "長濱公車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 30,
+            "party_total": 150,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Lunch meal estimate for group."
+          }
+        },
+        {
+          "slot_id": "day1_slot04",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "參觀長濱鄉運動公園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "自然景點 長濱鄉",
+          "route_entry_place": "長濱公車站",
+          "route_exit_place": "長濱公車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 1.0,
+            "note": "Public park, free entry."
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJvVzRTlBdbzQRf9oI6UnGCmk",
+      "ChIJDXdM2FFdbzQRgKSsaaPK9aI"
+    ],
+    "lodging": []
+  }
+}

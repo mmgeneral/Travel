@@ -1,0 +1,121 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": null,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "台灣",
+      "destination": "台東長濱鄉",
+      "key_areas": [],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 1,
+      "duration_nights": 0,
+      "travel_start_date": null,
+      "travel_end_date": null,
+      "season_or_month": null,
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [],
+      "desired_experiences": [
+        "素食餐廳"
+      ],
+      "activity_types": [
+        "local_food"
+      ],
+      "food_preferences": [
+        "vegetarian"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "享受半天的台東長濱鄉遊與素食美食體驗",
+      "success_criteria": [
+        "找到滿足條件的餐廳"
+      ],
+      "priority_order": [
+        1
+      ]
+    },
+    "how": {
+      "budget": null,
+      "preferred_transportation": null,
+      "pace": "moderate",
+      "grounding_needs": [
+        "local_food",
+        "opening_hours"
+      ],
+      "hard_constraints": [
+        "餐廳評分4.8以上",
+        "人均低於200元",
+        "營業至晚上10點"
+      ],
+      "soft_preferences": [
+        "步行5分鐘內可到",
+        "有冷氣",
+        "可以停車"
+      ]
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "第一天",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": null,
+          "start_time": "11:00",
+          "end_time": "13:00",
+          "time": "11:00~13:00",
+          "activity": "享用素食午餐於天廚蔬房",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": "天廚蔬房",
+          "route_entry_place": "天廚蔬房",
+          "route_exit_place": "天廚蔬房",
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "需要聯繫天廚蔬房確認營業時間與價格。",
+    "素食餐館資訊未完全符合使用者條件，請提前核實。",
+    "此行程安排短暫且集中於午餐，若需要額外活動，須自行調整時間。"
+  ]
+}

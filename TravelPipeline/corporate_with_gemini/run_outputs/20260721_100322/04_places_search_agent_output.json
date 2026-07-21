@@ -1,0 +1,136 @@
+{
+  "places_search_version": "places_search_agent_v0.3",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱鄉",
+  "search_locale": {
+    "language_code": "zh-TW",
+    "region_code": "TW"
+  },
+  "candidate_slots": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "13:00",
+      "time": "11:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用素食午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家資訊，需確認營業時間與價格",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [
+        "素食餐廳"
+      ],
+      "location_terms": [
+        "台東",
+        "長濱鄉",
+        "台東長濱鄉"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "餐廳評分4.8以上",
+        "人均低於200元",
+        "營業至晚上10點"
+      ],
+      "structured_constraints": {
+        "min_rating": 4.8,
+        "max_price_level": 2,
+        "open_until": "22:00"
+      },
+      "queries": [
+        {
+          "query": "台東長濱鄉 素食餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食餐廳"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": [
+            "餐廳評分4.8以上",
+            "人均低於200元",
+            "營業至晚上10點"
+          ]
+        },
+        {
+          "query": "長濱鄉 素食餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食餐廳"
+          ],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": [
+            "餐廳評分4.8以上",
+            "人均低於200元",
+            "營業至晚上10點"
+          ]
+        },
+        {
+          "query": "台東 午餐 素食餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食餐廳"
+          ],
+          "location_terms": [
+            "台東"
+          ],
+          "must_have": [
+            "餐廳評分4.8以上",
+            "人均低於200元",
+            "營業至晚上10點"
+          ]
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": null,
+      "candidates": [],
+      "errors": [
+        {
+          "query": "台東長濱鄉 素食餐廳",
+          "error": "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+        },
+        {
+          "query": "長濱鄉 素食餐廳",
+          "error": "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+        },
+        {
+          "query": "台東 午餐 素食餐廳",
+          "error": "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "anchor_context_version": "anchor_resolver_v0.1",
+  "created_at": "2026-07-21T10:03:51",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱鄉",
+  "default_start_anchor": "長濱鄉",
+  "default_end_anchor": "長濱鄉",
+  "distance_note": "Anchor Resolver only resolves nearby schedule anchors. CandidateScorer uses straight-line distance as a routing proxy.",
+  "slot_anchors": [
+    {
+      "slot_key": "slot_id:day1_slot01",
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "13:00",
+      "time": "11:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "享用素食午餐於天廚蔬房",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "長濱鄉",
+        "query": "長濱鄉",
+        "place": null,
+        "cache_hit": false,
+        "warnings": [
+          "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+        ]
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "長濱鄉",
+        "query": "長濱鄉",
+        "place": null,
+        "cache_hit": false,
+        "warnings": [
+          "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+        ]
+      },
+      "warnings": [
+        "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env.",
+        "Missing Google Places API key. Set GOOGLE_PLACES_API_KEY or GOOGLE_MAPS_API_KEY in .env."
+      ]
+    }
+  ]
+}

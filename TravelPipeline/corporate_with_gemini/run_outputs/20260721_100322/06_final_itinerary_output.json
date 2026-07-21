@@ -1,0 +1,60 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T10:03:56",
+  "decision_summary": {
+    "overall_strategy": "major_rebuild",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "Given the absence of top candidates for the 'meal' slot in day 1, I opted for a major rebuild where I need to handle the slot differently. Since there are no candidates, I'll retain the original activity with adjusted costs.",
+      "Lodging remained unchanged as no candidates were provided; assuming existing arrangement is sufficient."
+    ],
+    "warnings": [
+      "No top candidates provided for 'meal' slot replacement, retaining original details."
+    ]
+  },
+  "selected_lodging_by_night": [],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "original_activity": "享用素食午餐於天廚蔬房",
+      "decision": "single_replace",
+      "selected_candidate": null,
+      "reason": "No viable restaurant candidates provided, retaining original planned activity with estimated cost."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "Day 1",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "11:00",
+          "end_time": "13:00",
+          "time": "11:00~13:00",
+          "activity": "享用素食午餐於天廚蔬房",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "素食餐廳",
+          "route_entry_place": "長濱鄉",
+          "route_exit_place": "長濱鄉",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 200,
+            "party_total": 800,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Based on assumed group size of 4 with average local meal cost."
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [],
+    "lodging": []
+  }
+}

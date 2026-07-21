@@ -1094,6 +1094,7 @@ def search_places_for_pending_searches(
                 "location_terms": slot_location_terms,
                 "intent_type": slot_intent_type or None,
                 "must_have": slot_must_have,
+                "structured_constraints": task.get("confirmed_constraints", task.get("structured_constraints", {})),
                 "queries": queries,
                 "search_locale": {
                     "language_code": language_code,

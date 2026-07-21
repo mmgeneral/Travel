@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import json
 import sys
+import re
 from openai import OpenAI
 try:
     from mcp.server.fastmcp import FastMCP
@@ -22,17 +23,39 @@ load_dotenv()  # 載入 .env 檔案中的環境變數
 mcp = FastMCP("TravelAnalyzer")
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+
+def _missing_numeric_constraints(pending_searches: list) -> bool:
+    """
+    如果有任何 pending_search 的 must_have 內含有數字或價格/時間相關關鍵字
+    但 structured_constraints 為空，回傳 True。
+    """
+    for ps in pending_searches:
+        sc = ps.get("structured_constraints", {})
+        if sc:
+            continue
+        must_have = ps.get("must_have", [])
+        for h in must_have:
+            if not isinstance(h, str):
+                continue
+            if re.search(r"\d+|元|點|以上|以下|營業到", h):
+                return True
+    return False
+
+
 # 2. 定義 MCP Tool
 @mcp.tool()
-def extract_searchable_activities(itinerary_json_str: str) -> str:
+def extract_searchable_activities(
+    itinerary_json_str: str,
+    raw_constraints: dict | None = None,
+) -> str:
     """
     接收完整的旅遊行程 JSON 字串。
-    透過 LLM 語意分析，篩選出「需要進一步查詢實際地點或店家」的模糊行程（如：特色小吃、夜市、商圈），
-    並將這些行程打包成一個需要查詢的任務集合回傳。
+    透過 LLM 語意分析，篩選出「需要進一步查詢實際地點或店家」的模糊行程
+    （如：特色小吃、夜市、商圈），並將這些行程打包成一個需要查詢的任務集合回傳。
+
+    可選參數 raw_constraints：由 extract_constraints_from_query 抽取的原始約束。
     """
-    
-    # print("🔍 [MCP Tool 觸發] 正在分析行程中需要額外搜尋的項目...")
-    
+
     system_prompt = """
     你是一個精準的語意拆解 Agent。你的任務是分析使用者提供的「旅遊行程 JSON」，
     辨識出哪些行程是「明確的目的地（如：奇美博物館、赤崁樓）」，哪些是「需要進一步搜尋的概述（如：台南特色牛肉湯、夜市美食、秋葉原探索）」。
@@ -47,7 +70,15 @@ def extract_searchable_activities(itinerary_json_str: str) -> str:
     - intent_type：places 類型或意圖，例如 restaurant、cafe、museum、local_culture、shopping、night_market。
     - must_have：必要條件，例如 ["適合午餐", "可停留兩小時"]；如果沒有就空陣列。
 
-    請嚴格依照以下 JSON 格式輸出：
+    每個 pending_search 都必須包含 "structured_constraints" 欄位（可為空物件 {}）。
+    該欄位可包含以下可量化欄位（不需要的就不填，不要放 null）：
+      - min_rating (0~5 小數, 例 4.2)
+      - max_price_level (0~4 整數)
+      - open_until (HH:MM 格式)
+      - requires_air_conditioning (bool)
+      - requires_parking (bool)
+
+    範例（第二筆展示有實際約束）：
     {
       "pending_searches": [
         {
@@ -64,46 +95,85 @@ def extract_searchable_activities(itinerary_json_str: str) -> str:
           "target_terms": ["牛肉湯"],
           "location_terms": ["台南"],
           "intent_type": "restaurant",
-          "must_have": ["適合早午餐"]
+          "must_have": ["適合早午餐"],
+          "structured_constraints": {}
         },
         {
-          "slot_id": "day1_slot09",
-          "day": 1,
-          "day_of_week": "saturday",
-          "start_time": "17:30",
-          "end_time": "19:00",
-          "time": "17:30~19:00",
+          "slot_id": "day2_slot02",
+          "day": 2,
+          "day_of_week": "sunday",
+          "start_time": "09:00",
+          "end_time": "10:00",
+          "time": "09:00~10:00",
           "slot_type": "meal",
-          "original_activity": "品嚐台南夜市美食",
-          "reason_for_search": "需確認當天哪個夜市有營業",
-          "suggested_search_query": "台南 夜市 美食",
-          "target_terms": ["夜市", "美食"],
-          "location_terms": ["台南"],
-          "intent_type": "night_market",
-          "must_have": ["晚餐時段可安排"]
+          "original_activity": "飯店自助早餐",
+          "reason_for_search": "",
+          "suggested_search_query": "",
+          "target_terms": [],
+          "location_terms": [],
+          "intent_type": "",
+          "must_have": ["停車位", "中等價位"],
+          "structured_constraints": {
+            "requires_parking": true,
+            "max_price_level": 2
+          }
         }
       ]
     }
     """
 
-    try:
-        # 呼叫 LLM 進行語意分析與過濾
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": f"這是準備要分析的行程：\n{itinerary_json_str}"}
-            ],
-            response_format={ "type": "json_object" } # 強制輸出 JSON 格式
+    base_content = f"這是準備要分析的行程：\n{itinerary_json_str}"
+    if raw_constraints and raw_constraints.get("raw_constraints"):
+        raw_val = raw_constraints["raw_constraints"]
+        base_content += f"\n\n【使用者原始約束參考基準】\n{json.dumps(raw_val, ensure_ascii=False, indent=2)}"
+        base_content += (
+            "\n如果行程裡某個 slot 明顯對應這些約束但你判斷有缺漏，優先採用這份參考基準的值。"
         )
-        
-        # 取得 LLM 分析後的 JSON 結果
-        result = response.choices[0].message.content
-        print("✅ [MCP Tool 完成] 成功提取待搜尋項目！")
-        return result
-        
-    except Exception as e:
-        return json.dumps({"error": f"分析行程時發生錯誤: {str(e)}"}, ensure_ascii=False)
+    user_content = base_content
+
+    def _call_llm(user_msg: str) -> str:
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                temperature=0,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_msg},
+                ],
+                response_format={"type": "json_object"},
+            )
+            return response.choices[0].message.content or "{}"
+        except Exception as e:
+            return json.dumps(
+                {"error": f"分析行程時發生錯誤: {str(e)}"}, ensure_ascii=False
+            )
+
+    # 第一次呼叫
+    result_str = _call_llm(user_content)
+    try:
+        data = json.loads(result_str)
+    except json.JSONDecodeError:
+        data = {"pending_searches": []}
+    pending_searches = data.get("pending_searches", [])
+    if not isinstance(pending_searches, list):
+        pending_searches = []
+
+    # 確保每個項目都有 structured_constraints 欄位
+    for ps in pending_searches:
+        if "structured_constraints" not in ps:
+            ps["structured_constraints"] = {}
+
+    # retry 邏輯
+    if _missing_numeric_constraints(pending_searches):
+        extra_reminder = (
+            "先前 LLM 指出下列 slot 的 must_have 含有價格/時間相關文字，"
+            "但 structured_constraints 為空，請務必根據 slot 語意補上適當的約束欄位。"
+        )
+        second_content = base_content + f"\n\n【提醒】{extra_reminder}"
+        result_str = _call_llm(second_content)
+
+    print("✅ [MCP Tool 完成] 成功提取待搜尋項目！")
+    return result_str
 def save_extractor_output(data: str | dict, output_dir: str, filename: str) -> str:
     """
     將 extract_searchable_activities 的輸出存成 JSON 檔。

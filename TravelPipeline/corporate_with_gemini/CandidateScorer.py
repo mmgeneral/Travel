@@ -893,6 +893,63 @@ def _reason_text(
     return "；".join(bits)
 
 
+def _structured_constraint_check(
+    slot: Dict[str, Any],
+    candidate: Dict[str, Any],
+) -> Tuple[float, List[str], List[str]]:
+    """
+    檢查候選點是否符合 slot 的結構化約束。
+    回傳 (soft_penalty, warnings, failed_constraints)
+    """
+    constraints = slot.get("structured_constraints") or slot.get("confirmed_constraints") or {}
+    if not constraints:
+        return 0.0, [], []
+
+    soft_penalty = 0.0
+    warnings: List[str] = []
+    failed_constraints: List[str] = []
+
+    # min_rating
+    min_rating = constraints.get("min_rating")
+    if min_rating is not None:
+        candidate_rating = candidate.get("rating")
+        if candidate_rating is not None:
+            if float(candidate_rating) < float(min_rating):
+                soft_penalty += 0.15
+                failed_constraints.append("min_rating")
+        else:
+            warnings.append("無法驗證評分門檻（缺評分資料）")
+
+    # max_price_level
+    max_price_level = constraints.get("max_price_level")
+    if max_price_level is not None:
+        candidate_price_level = candidate.get("price_level")
+        if candidate_price_level is not None:
+            if int(candidate_price_level) > int(max_price_level):
+                soft_penalty += 0.15
+                failed_constraints.append("max_price_level")
+        else:
+            warnings.append("無法驗證價格等級（缺 price_level 資料）")
+
+    # open_until
+    open_until = constraints.get("open_until")
+    if open_until is not None:
+        warnings.append("無法驗證營業至門檻（缺資料）")
+
+    # requires_air_conditioning
+    requires_ac = constraints.get("requires_air_conditioning")
+    if requires_ac is not None:
+        warnings.append("無法驗證空調要求（缺資料）")
+
+    # requires_parking
+    requires_parking = constraints.get("requires_parking")
+    if requires_parking is not None:
+        warnings.append("無法驗證停車位要求（缺資料）")
+
+    soft_penalty = min(soft_penalty, 0.6)
+    return soft_penalty, warnings, failed_constraints
+
+
 def score_candidate(
     slot: Dict[str, Any],
     candidate: Dict[str, Any],
@@ -907,7 +964,8 @@ def score_candidate(
     route, route_warnings, route_meta = _route_score(candidate, slot_anchor_context)
     penalty, penalty_warnings = _status_penalty(candidate)
     location_penalty, location_warnings = _location_penalty(slot, candidate, destination_hint)
-    total_penalty = _clamp(penalty + location_penalty)
+    constraint_penalty, constraint_warnings, failed_constraints = _structured_constraint_check(slot, candidate)
+    total_penalty = _clamp(penalty + location_penalty + constraint_penalty)
 
     weighted = (
         WEIGHTS["relevance"] * relevance
@@ -926,6 +984,7 @@ def score_candidate(
         + type_warnings
         + penalty_warnings
         + location_warnings
+        + constraint_warnings
     )
     eligible_for_llm = total_score >= 0.35 and total_penalty < 0.4
 
@@ -952,17 +1011,122 @@ def score_candidate(
             "type": round(type_score, 4),
             "status_penalty": round(penalty, 4),
             "location_penalty": round(location_penalty, 4),
+            "constraint_penalty": round(constraint_penalty, 4),
             "penalty": round(total_penalty, 4),
             "relevance_gate": round(relevance_gate, 4),
         },
         "score_weights": WEIGHTS,
         "matched_terms": matched_terms,
         "warnings": warnings,
+        "failed_constraints": failed_constraints,
         "eligible_for_llm": eligible_for_llm,
         "opening_meta": opening_meta,
         "route_meta": route_meta,
         "why": _reason_text(candidate, matched_terms, warnings, route_meta=route_meta),
         "raw_candidate": candidate,
+    }
+
+
+def check_candidates_against_constraints(
+    candidates: List[Dict],
+    constraints: Dict,
+) -> Dict:
+    """
+    使用 z3 求解器檢查候選集合是否整體可滿足約束（min_rating, max_price_level）。
+    若缺 z3，回傳友善訊息。
+    """
+    try:
+        import z3
+    except ImportError:
+        return {
+            "satisfiable": None,
+            "satisfying_candidates": [],
+            "diagnosis": "缺少 z3-solver 套件，請執行 pip install z3-solver",
+        }
+
+    min_rating = constraints.get("min_rating")
+    max_price_level = constraints.get("max_price_level")
+
+    solver = z3.Solver()
+    bool_vars = []
+    for idx, cand in enumerate(candidates):
+        var = z3.Bool(f"cand_{idx}")
+        bool_vars.append(var)
+        if min_rating is not None:
+            rating = cand.get("rating")
+            if rating is not None:
+                solver.add(
+                    z3.Implies(
+                        var,
+                        z3.RealVal(float(rating)) >= z3.RealVal(float(min_rating)),
+                    )
+                )
+        if max_price_level is not None:
+            price_level = cand.get("price_level")
+            if price_level is not None:
+                solver.add(
+                    z3.Implies(
+                        var,
+                        z3.IntVal(int(price_level)) <= z3.IntVal(int(max_price_level)),
+                    )
+                )
+    solver.add(z3.Or(bool_vars))
+
+    result = solver.check()
+    satisfying_candidates: List = []
+    diagnosis: str | None = None
+
+    if result == z3.sat:
+        model = solver.model()
+        for var in bool_vars:
+            if z3.is_true(model[var]):
+                idx = int(str(var).split("_")[1])
+                satisfying_candidates.append(candidates[idx].get("place_id"))
+    elif result == z3.unsat:
+        # 嘗試放寬其中一項約束
+        constraints_to_try = {"min_rating", "max_price_level"}
+        found_reason = False
+        for removal in constraints_to_try:
+            test_solver = z3.Solver()
+            test_vars = []
+            for idx, cand in enumerate(candidates):
+                var = z3.Bool(f"cand_{idx}")
+                test_vars.append(var)
+                if min_rating is not None and removal != "min_rating":
+                    rating = cand.get("rating")
+                    if rating is not None:
+                        test_solver.add(
+                            z3.Implies(
+                                var,
+                                z3.RealVal(float(rating)) >= z3.RealVal(float(min_rating)),
+                            )
+                        )
+                if max_price_level is not None and removal != "max_price_level":
+                    price_level = cand.get("price_level")
+                    if price_level is not None:
+                        test_solver.add(
+                            z3.Implies(
+                                var,
+                                z3.IntVal(int(price_level)) <= z3.IntVal(int(max_price_level)),
+                            )
+                        )
+            test_solver.add(z3.Or(test_vars))
+            if test_solver.check() == z3.sat:
+                if removal == "min_rating":
+                    diagnosis = "拿掉 min_rating 門檻後有解，建議放寬評分要求"
+                else:
+                    diagnosis = "拿掉 max_price_level 門檻後有解，建議放寬價格要求"
+                found_reason = True
+                break
+        if not found_reason:
+            diagnosis = "約束組合衝突，建議重新檢視需求"
+    else:
+        diagnosis = "求解器逾時或未知狀態"
+
+    return {
+        "satisfiable": result == z3.sat,
+        "satisfying_candidates": satisfying_candidates,
+        "diagnosis": diagnosis,
     }
 
 
@@ -1081,16 +1245,18 @@ def score_candidate_slots(
             )
             for candidate in slot.get("candidates", [])
         ]
+        raw_candidates = slot.get("candidates", [])
+        constraints = slot.get("structured_constraints") or slot.get("confirmed_constraints") or {}
+        constraint_diagnosis = check_candidates_against_constraints(raw_candidates, constraints)
+
         scored_candidates.sort(
             key=lambda item: (
-                item.get("eligible_for_llm", False),
                 item.get("scores", {}).get("total", 0),
             ),
             reverse=True,
         )
 
-        eligible_candidates = [item for item in scored_candidates if item.get("eligible_for_llm")]
-        selected = _select_for_llm(slot, eligible_candidates or scored_candidates, top_n)
+        selected = _select_for_llm(slot, scored_candidates, top_n)
         selected_ids = {item.get("place_id") for item in selected}
         archived = [
             item for item in scored_candidates if item.get("place_id") not in selected_ids
@@ -1141,6 +1307,7 @@ def score_candidate_slots(
                 "anchor_context": slot_anchor_context,
                 "selected_for_llm": [_compact_candidate(item) for item in selected],
                 "all_scored_candidates": scored_candidates,
+                "constraint_diagnosis": constraint_diagnosis,
             }
         )
 

@@ -1131,6 +1131,79 @@ def check_candidates_against_constraints(
     }
 
 
+def explain_candidate_ranking(slot: dict, top_candidates: list) -> str:
+    """
+    輸入：slot（含 structured_constraints）+ 排序後的前幾名候選（含 rating, failed_constraints,
+    warnings, score）
+    輸出：一段自然語言文字，解釋為什麼選了第一名，以及跟其他候選比起來的取捨是什麼
+
+    用 OpenAI client，temperature=0.3（可以稍微有點語氣），
+    system_prompt 大意：
+    「你是一個旅遊行程助理。根據以下候選店家的評分資料、約束比對結果，
+    用兩三句白話文解釋：為什麼系統選了第一名的候選，
+    如果有其他候選因為某個具體條件（例如評分、價格）沒有完全符合而排名較後，
+    也要提到具體是哪個條件、差多少，讓使用者知道還有其他選擇存在。
+    不要用專業術語（不要出現 constraint_penalty、failed_constraints 這種字眼），
+    直接講白話，像是在跟朋友解釋為什麼推薦這家店。」
+
+    把 slot 的 structured_constraints、每個候選的 name/rating/failed_constraints/warnings/score
+    整理成文字餵給 LLM，拿到回應後直接回傳字串。
+    """
+    import json
+
+    # Prepare human-readable summary for LLM
+    constraints_summary = json.dumps(
+        slot.get("structured_constraints") or slot.get("confirmed_constraints") or {},
+        ensure_ascii=False,
+    )
+    candidates_lines = []
+    for cand in top_candidates:
+        name = cand.get("name", "?")
+        rating = cand.get("rating", "N/A")
+        failed = cand.get("failed_constraints", [])
+        warnings = cand.get("warnings", [])
+        score = cand.get("scores", {}).get("total", "?")
+        candidate_info = f"- {name}   總分:{score: .3f}   評分:{rating}"
+        if failed:
+            candidate_info += "   約束不符:" + ", ".join(failed)
+        if warnings:
+            candidate_info += "   注意:" + ", ".join(warnings)
+        candidates_lines.append(candidate_info)
+
+    user_prompt = (
+        "以下為行程時段的約束條件：\n"
+        f"{constraints_summary}\n\n"
+        "候選店家排名（從高到低）：\n"
+        + "\n".join(candidates_lines)
+    )
+
+    system_prompt = (
+        "你是一個旅遊行程助理。根據以下候選店家的評分資料、約束比對結果，"
+        "用兩三句白話文解釋：為什麼系統選了第一名的候選，"
+        "如果有其他候選因為某個具體條件（例如評分、價格）沒有完全符合而排名較後，"
+        "也要提到具體是哪個條件、差多少，讓使用者知道還有其他選擇存在。"
+        "不要用專業術語（不要出現 constraint_penalty、failed_constraints 這種字眼），"
+        "直接講白話，像是在跟朋友解釋為什麼推薦這家店。"
+    )
+
+    try:
+        client = OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.3,
+            max_tokens=300,
+        )
+        explanation = response.choices[0].message.content.strip()
+    except Exception:
+        explanation = "候選已依相關性、距離與符合條件程度排序"
+
+    return explanation
+
+
 def _compact_candidate(candidate: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "place_id": candidate.get("place_id"),
@@ -1427,77 +1500,6 @@ def _compact_spaces(value: Any) -> str:
     return " ".join(str(value or "").split())
 
 
-def explain_candidate_ranking(slot: dict, top_candidates: list) -> str:
-    """
-    輸入：slot（含 structured_constraints）+ 排序後的前幾名候選（含 rating, failed_constraints,
-    warnings, score）
-    輸出：一段自然語言文字，解釋為什麼選了第一名，以及跟其他候選比起來的取捨是什麼
-
-    用 OpenAI client，temperature=0.3（可以稍微有點語氣），
-    system_prompt 大意：
-    「你是一個旅遊行程助理。根據以下候選店家的評分資料、約束比對結果，
-    用兩三句白話文解釋：為什麼系統選了第一名的候選，
-    如果有其他候選因為某個具體條件（例如評分、價格）沒有完全符合而排名較後，
-    也要提到具體是哪個條件、差多少，讓使用者知道還有其他選擇存在。
-    不要用專業術語（不要出現 constraint_penalty、failed_constraints 這種字眼），
-    直接講白話，像是在跟朋友解釋為什麼推薦這家店。」
-
-    把 slot 的 structured_constraints、每個候選的 name/rating/failed_constraints/warnings/score
-    整理成文字餵給 LLM，拿到回應後直接回傳字串。
-    """
-    import json
-
-    # Prepare human-readable summary for LLM
-    constraints_summary = json.dumps(
-        slot.get("structured_constraints") or slot.get("confirmed_constraints") or {},
-        ensure_ascii=False,
-    )
-    candidates_lines = []
-    for cand in top_candidates:
-        name = cand.get("name", "?")
-        rating = cand.get("rating", "N/A")
-        failed = cand.get("failed_constraints", [])
-        warnings = cand.get("warnings", [])
-        score = cand.get("scores", {}).get("total", "?")
-        candidate_info = f"- {name}   總分:{score: .3f}   評分:{rating}"
-        if failed:
-            candidate_info += "   約束不符:" + ", ".join(failed)
-        if warnings:
-            candidate_info += "   注意:" + ", ".join(warnings)
-        candidates_lines.append(candidate_info)
-
-    user_prompt = (
-        "以下為行程時段的約束條件：\n"
-        f"{constraints_summary}\n\n"
-        "候選店家排名（從高到低）：\n"
-        + "\n".join(candidates_lines)
-    )
-
-    system_prompt = (
-        "你是一個旅遊行程助理。根據以下候選店家的評分資料、約束比對結果，"
-        "用兩三句白話文解釋：為什麼系統選了第一名的候選，"
-        "如果有其他候選因為某個具體條件（例如評分、價格）沒有完全符合而排名較後，"
-        "也要提到具體是哪個條件、差多少，讓使用者知道還有其他選擇存在。"
-        "不要用專業術語（不要出現 constraint_penalty、failed_constraints 這種字眼），"
-        "直接講白話，像是在跟朋友解釋為什麼推薦這家店。"
-    )
-
-    try:
-        client = OpenAI()
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.3,
-            max_tokens=300,
-        )
-        explanation = response.choices[0].message.content.strip()
-    except Exception as exc:
-        explanation = f"（無法產生解釋：{exc}）"
-
-    return explanation
 
 
 def _planner_duration(planner_result: Dict[str, Any]) -> Tuple[int, int]:

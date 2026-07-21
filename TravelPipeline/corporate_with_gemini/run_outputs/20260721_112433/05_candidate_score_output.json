@@ -1,0 +1,239 @@
+{
+  "scoring_version": "candidate_scorer_v0.2",
+  "created_at": "2026-07-21T11:25:08",
+  "run_id": "20260721_112433",
+  "top_n": 2,
+  "weights": {
+    "relevance": 0.3,
+    "quality": 0.21,
+    "opening": 0.17,
+    "route": 0.16,
+    "google_rank": 0.08,
+    "type": 0.08
+  },
+  "anchor_context_version": "anchor_resolver_v0.1",
+  "slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家資訊，需確認營業時間與菜單",
+      "target_terms": [
+        "vegetarian"
+      ],
+      "location_terms": [
+        "台東",
+        "長濱",
+        "長濱市區"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "queries": [
+        {
+          "query": "台東 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "台東"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        },
+        {
+          "query": "長濱市區 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "長濱市區"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        },
+        {
+          "query": "台東 長濱 午餐 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "台東",
+            "長濱"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        },
+        {
+          "query": "長濱 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "長濱"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        }
+      ],
+      "candidate_count": 0,
+      "selected_for_llm_count": 0,
+      "archived_count": 0,
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot01",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "12:00",
+        "end_time": "13:00",
+        "time": "12:00~13:00",
+        "slot_type": "meal",
+        "original_activity": "午餐於天廚蔬房",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱市區",
+          "query": "長濱市區",
+          "place": null,
+          "cache_hit": false,
+          "warnings": [
+            "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+          ]
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱市區",
+          "query": "長濱市區",
+          "place": null,
+          "cache_hit": false,
+          "warnings": [
+            "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+          ]
+        },
+        "warnings": [
+          "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+          "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        ]
+      },
+      "selected_for_llm": [],
+      "all_scored_candidates": [],
+      "constraint_diagnosis": {
+        "satisfiable": false,
+        "satisfying_candidates": [],
+        "diagnosis": "約束組合衝突，建議重新檢視需求"
+      }
+    }
+  ],
+  "llm_input": {
+    "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+    "candidate_slots": [
+      {
+        "slot_index": 1,
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "12:00",
+        "end_time": "13:00",
+        "time": "12:00~13:00",
+        "slot_type": "meal",
+        "original_activity": "午餐於天廚蔬房",
+        "reason_for_search": "缺乏具體店家資訊，需確認營業時間與菜單",
+        "target_terms": [
+          "vegetarian"
+        ],
+        "location_terms": [
+          "台東",
+          "長濱",
+          "長濱市區"
+        ],
+        "intent_type": "restaurant",
+        "must_have": [
+          "適合午餐"
+        ],
+        "anchor_context": {
+          "slot_key": "slot_id:day1_slot01",
+          "slot_id": "day1_slot01",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "slot_type": "meal",
+          "original_activity": "午餐於天廚蔬房",
+          "previous_anchor": {
+            "source": "default_start",
+            "role": "previous",
+            "slot_id": null,
+            "day": null,
+            "day_of_week": null,
+            "start_time": null,
+            "end_time": null,
+            "time": null,
+            "activity": "長濱市區",
+            "query": "長濱市區",
+            "place": null,
+            "cache_hit": false,
+            "warnings": [
+              "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+            ]
+          },
+          "next_anchor": {
+            "source": "default_end",
+            "role": "next",
+            "slot_id": null,
+            "day": null,
+            "day_of_week": null,
+            "start_time": null,
+            "end_time": null,
+            "time": null,
+            "activity": "長濱市區",
+            "query": "長濱市區",
+            "place": null,
+            "cache_hit": false,
+            "warnings": [
+              "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+            ]
+          },
+          "warnings": [
+            "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n",
+            "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+          ]
+        },
+        "top_candidates": []
+      }
+    ]
+  },
+  "archived_records": []
+}

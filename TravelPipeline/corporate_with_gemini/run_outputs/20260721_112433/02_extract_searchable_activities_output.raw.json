@@ -1,0 +1,27 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家資訊，需確認營業時間與菜單",
+      "suggested_search_query": "台東 長濱 vegetarian 餐廳",
+      "target_terms": ["vegetarian"],
+      "location_terms": ["台東", "長濱"],
+      "intent_type": "restaurant",
+      "must_have": ["適合午餐"],
+      "structured_constraints": {
+        "min_rating": 4.8,
+        "requires_air_conditioning": true,
+        "requires_parking": true,
+        "open_until": "22:00",
+        "max_price_level": 1
+      }
+    }
+  ]
+}

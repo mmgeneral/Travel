@@ -1,0 +1,884 @@
+{
+  "places_search_version": "places_search_agent_v0.3",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉",
+      "place_query": "長濱鄉",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱鄉",
+  "search_locale": {
+    "language_code": "zh-TW",
+    "region_code": "TW"
+  },
+  "candidate_slots": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "13:00",
+      "time": "11:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家，需尋找符合條件的素食餐廳",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [
+        "素食"
+      ],
+      "location_terms": [
+        "台東",
+        "長濱鄉",
+        "台東長濱鄉"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "有冷氣",
+        "可停車",
+        "晚間營業至22:00",
+        "人均低於200元"
+      ],
+      "structured_constraints": {
+        "min_rating": 4.8,
+        "requires_air_conditioning": true,
+        "requires_parking": true,
+        "open_until": "22:00",
+        "max_price_level": 1
+      },
+      "queries": [
+        {
+          "query": "台東長濱鄉 素食",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": [
+            "有冷氣",
+            "可停車",
+            "晚間營業至22:00",
+            "人均低於200元"
+          ]
+        },
+        {
+          "query": "長濱鄉 素食 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": [
+            "有冷氣",
+            "可停車",
+            "晚間營業至22:00",
+            "人均低於200元"
+          ]
+        },
+        {
+          "query": "台東 素食 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "台東"
+          ],
+          "must_have": [
+            "有冷氣",
+            "可停車",
+            "晚間營業至22:00",
+            "人均低於200元"
+          ]
+        },
+        {
+          "query": "台東長濱鄉 午餐 素食",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": []
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": {
+        "circle": {
+          "center": {
+            "latitude": 23.3451824,
+            "longitude": 121.43419
+          },
+          "radius": 1500.0
+        }
+      },
+      "candidates": [
+        {
+          "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "resource_name": "places/ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "name": "長光食作（預約制）",
+          "address": "962001臺東縣長濱鄉長濱村154號一樓",
+          "latitude": 23.3302573,
+          "longitude": 121.4627376,
+          "primary_type": "bistro",
+          "types": [
+            "bistro",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17261979726639058704&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "台東長濱鄉 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJKYv-S85obzQRUO-vnvPI6fQ",
+          "resource_name": "places/ChIJKYv-S85obzQRUO-vnvPI6fQ",
+          "name": "小麗廚房",
+          "address": "962臺東縣長濱鄉10鄰46-5號962",
+          "latitude": 23.2438294,
+          "longitude": 121.4147099,
+          "primary_type": "taiwanese_restaurant",
+          "types": [
+            "taiwanese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17647857563492937552&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+          "resource_name": "places/ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+          "name": "馨家小廚",
+          "address": "962001臺東縣長濱鄉112號",
+          "latitude": 23.3181899,
+          "longitude": 121.4561085,
+          "primary_type": "chinese_restaurant",
+          "types": [
+            "taiwanese_restaurant",
+            "chinese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6814475901215515020&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "台東長濱鄉 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJZzgIad5vbzQR9skZLfkRqCE",
+          "resource_name": "places/ChIJZzgIad5vbzQR9skZLfkRqCE",
+          "name": "沐森海岸 MoonSun Coast（無國界料理餐廳、自家生產農作）預約制",
+          "address": "962臺東縣長濱鄉寧埔村堺橋1號",
+          "latitude": 23.2160174,
+          "longitude": 121.40911310000001,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2425208161240205814&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "台東長濱鄉 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJv6vDxdZdbzQRtZe6g2TdiQk",
+          "resource_name": "places/ChIJv6vDxdZdbzQRtZe6g2TdiQk",
+          "name": "啦啦隊-那邊(laladay)",
+          "address": "962臺東縣長濱鄉三間村真柄15號47",
+          "latitude": 23.346055,
+          "longitude": 121.454168,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=687323841927223221&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          }
+        },
+        {
+          "place_id": "ChIJYQfVy6tbbzQR7LVkGGdEYcU",
+          "resource_name": "places/ChIJYQfVy6tbbzQR7LVkGGdEYcU",
+          "name": "彎進來/住宿/無菜單/在地風味料理/寵物友善/午餐/晚餐",
+          "address": "962003臺東縣長濱鄉樟原村118之10號＆台11線73.5K大馬路旁邊",
+          "latitude": 23.4211852,
+          "longitude": 121.48594879999999,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14222724307794310636&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "台東長濱鄉 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJN0fDr0BpbzQR0c_IJDXNtu4",
+          "resource_name": "places/ChIJN0fDr0BpbzQR0c_IJDXNtu4",
+          "name": "美好拾光（預約制）",
+          "address": "962臺東縣長濱鄉長濱村田組13號",
+          "latitude": 23.30616,
+          "longitude": 121.4434307,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17201161454922289105&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJqTCeKddpbzQRQAnwe_Jsd_M",
+          "resource_name": "places/ChIJqTCeKddpbzQRQAnwe_Jsd_M",
+          "name": "15鄰 異國料理坊",
+          "address": "962台东县长滨乡竹湖村17-3號",
+          "latitude": 23.274382799999998,
+          "longitude": 121.4241738,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17543610662162270528&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            },
+            {
+              "query": "台東長濱鄉 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        },
+        {
+          "place_id": "ChIJsfEhTQ25bzQRfy7Q4Gelm1Q",
+          "resource_name": "places/ChIJsfEhTQ25bzQRfy7Q4Gelm1Q",
+          "name": "歐拉蔬食館 !HOLAi",
+          "address": "950臺東縣臺東市自強里漢中街245號",
+          "latitude": 22.7603907,
+          "longitude": 121.1357515,
+          "primary_type": "vegan_restaurant",
+          "types": [
+            "vegan_restaurant",
+            "vegetarian_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6096648386148052607&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJhfPbdZi5bzQR3mzYimyGdm8",
+          "resource_name": "places/ChIJhfPbdZi5bzQR3mzYimyGdm8",
+          "name": "森森咖啡sunsuncoffe／台東蔬食／台東素食／台東老屋咖啡",
+          "address": "950臺東縣臺東市中心里新生路503巷1號",
+          "latitude": 22.760557799999997,
+          "longitude": 121.13846799999999,
+          "primary_type": "food_store",
+          "types": [
+            "vegan_restaurant",
+            "vegetarian_restaurant",
+            "food_store",
+            "store",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=8031754786205887710&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJKwWzH2AMbzQRLt5iPJzuO8s",
+          "resource_name": "places/ChIJKwWzH2AMbzQRLt5iPJzuO8s",
+          "name": "舒食男孩",
+          "address": "958臺東縣池上鄉福文村中華路69號",
+          "latitude": 23.1259239,
+          "longitude": 121.2170325,
+          "primary_type": "vegetarian_restaurant",
+          "types": [
+            "vegetarian_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14644560968120720942&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJVcVMVz65bzQR1orV5k_H2MI",
+          "resource_name": "places/ChIJVcVMVz65bzQR1orV5k_H2MI",
+          "name": "台東十方素食餐廳（店休日請看FB粉絲頁)",
+          "address": "950臺東縣臺東市文化里更生路50巷18號",
+          "latitude": 22.7567772,
+          "longitude": 121.15097369999998,
+          "primary_type": "vegetarian_restaurant",
+          "types": [
+            "vegetarian_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14040190984316619478&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJx8UPcJq5bzQRn4dsaY7WGGs",
+          "resource_name": "places/ChIJx8UPcJq5bzQRn4dsaY7WGGs",
+          "name": "蔬念Vegine｜台東推薦素食滷味與便當",
+          "address": "950臺東縣臺東市文化里正氣路312巷12號",
+          "latitude": 22.7553794,
+          "longitude": 121.1489225,
+          "primary_type": "vegetarian_restaurant",
+          "types": [
+            "vegetarian_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=7717153868641765279&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          }
+        },
+        {
+          "place_id": "ChIJadW54Di5bzQR_n7SCldqc5o",
+          "resource_name": "places/ChIJadW54Di5bzQR_n7SCldqc5o",
+          "name": "艾薇家蔬食",
+          "address": "95042臺東縣臺東市中正里廣東路151號",
+          "latitude": 22.7539135,
+          "longitude": 121.15540049999998,
+          "primary_type": "vegan_restaurant",
+          "types": [
+            "vegan_restaurant",
+            "vegetarian_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=11129356026238893822&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東 素食 餐廳",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東"
+              ],
+              "must_have": [
+                "有冷氣",
+                "可停車",
+                "晚間營業至22:00",
+                "人均低於200元"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        },
+        {
+          "place_id": "ChIJ6WvYzWNdbzQRmfgOLWEDv1s",
+          "resource_name": "places/ChIJ6WvYzWNdbzQRmfgOLWEDv1s",
+          "name": "海邊小巫",
+          "address": "962臺東縣長濱鄉長濱村142-10號",
+          "latitude": 23.3235122,
+          "longitude": 121.4621111,
+          "primary_type": "italian_restaurant",
+          "types": [
+            "italian_restaurant",
+            "dog_cafe",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6611006493905844377&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

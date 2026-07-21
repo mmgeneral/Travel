@@ -1,0 +1,62 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T11:25:08",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "利用天廚蔬房的具體店家資訊不足，無法提取 top candidates，因此不改變此 slot。",
+      "考量目前行程設定已經簡單無誤，不需要進行 major rebuild。",
+      "住宿上的策略仍以單一飯店為主，基於使用者提供的有限資訊做出適當決策。"
+    ],
+    "warnings": [
+      "缺乏 '午餐於天廚蔬房' 的選項資訊，未能檢驗其正確與否。",
+      "由於 'top_candidates' 信息缺失，計劃時未能做具體店家替換。"
+    ]
+  },
+  "selected_lodging_by_night": [],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "original_activity": "午餐於天廚蔬房",
+      "decision": "single_replace",
+      "selected_candidate": null,
+      "reason": "未能獲得 '午餐於天廚蔬房' 的具體替換選項，所以保留原有計劃。"
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "Day 1",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "午餐於天廚蔬房",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "vegetarian restaurant",
+          "route_entry_place": "長濱市區",
+          "route_exit_place": "長濱市區",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 150,
+            "source": "llm_estimated",
+            "confidence": 0.5,
+            "note": "估價根據類似餐廳的午餐花費進行估算。"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [],
+    "lodging": []
+  }
+}

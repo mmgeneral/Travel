@@ -1,0 +1,229 @@
+{
+  "anchor_context_version": "anchor_resolver_v0.1",
+  "created_at": "2026-07-21T12:27:14",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉",
+      "place_query": "台東長濱",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉",
+      "place_query": "台東長濱",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱",
+  "default_start_anchor": "台東長濱",
+  "default_end_anchor": "台東長濱",
+  "distance_note": "Anchor Resolver only resolves nearby schedule anchors. CandidateScorer uses straight-line distance as a routing proxy.",
+  "slot_anchors": [
+    {
+      "slot_key": "slot_id:day1_slot01",
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "在天廚蔬房享用午餐",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "台東長濱",
+        "query": "台東長濱",
+        "place": {
+          "place_id": "ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "resource_name": "places/ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "name": "長濱",
+          "address": "962臺東縣長濱鄉長濱村長濱",
+          "latitude": 23.3168683,
+          "longitude": 121.45485790000001,
+          "primary_type": null,
+          "types": [
+            "colloquial_area",
+            "locality",
+            "political"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=5950495497708921296&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": false,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "台東長濱",
+        "query": "台東長濱",
+        "place": {
+          "place_id": "ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "resource_name": "places/ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "name": "長濱",
+          "address": "962臺東縣長濱鄉長濱村長濱",
+          "latitude": 23.3168683,
+          "longitude": 121.45485790000001,
+          "primary_type": null,
+          "types": [
+            "colloquial_area",
+            "locality",
+            "political"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=5950495497708921296&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    },
+    {
+      "slot_key": "slot_id:day1_slot03",
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "13:30",
+      "end_time": "14:30",
+      "time": "13:30~14:30",
+      "slot_type": "attraction",
+      "original_activity": "參觀當地景點",
+      "previous_anchor": {
+        "source": "default_start",
+        "role": "previous",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "台東長濱",
+        "query": "台東長濱",
+        "place": {
+          "place_id": "ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "resource_name": "places/ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "name": "長濱",
+          "address": "962臺東縣長濱鄉長濱村長濱",
+          "latitude": 23.3168683,
+          "longitude": 121.45485790000001,
+          "primary_type": null,
+          "types": [
+            "colloquial_area",
+            "locality",
+            "political"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=5950495497708921296&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "next_anchor": {
+        "source": "default_end",
+        "role": "next",
+        "slot_id": null,
+        "day": null,
+        "day_of_week": null,
+        "start_time": null,
+        "end_time": null,
+        "time": null,
+        "activity": "台東長濱",
+        "query": "台東長濱",
+        "place": {
+          "place_id": "ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "resource_name": "places/ChIJg6qRWVBdbzQR0GGAyiBolFI",
+          "name": "長濱",
+          "address": "962臺東縣長濱鄉長濱村長濱",
+          "latitude": 23.3168683,
+          "longitude": 121.45485790000001,
+          "primary_type": null,
+          "types": [
+            "colloquial_area",
+            "locality",
+            "political"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=5950495497708921296&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱",
+              "intent": "anchor",
+              "intent_type": "anchor",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        "cache_hit": true,
+        "warnings": []
+      },
+      "warnings": []
+    }
+  ]
+}

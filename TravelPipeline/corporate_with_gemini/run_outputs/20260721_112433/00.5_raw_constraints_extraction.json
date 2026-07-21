@@ -1,0 +1,10 @@
+{
+  "raw_constraints": {
+    "min_rating": 4.8,
+    "requires_air_conditioning": true,
+    "requires_parking": true,
+    "open_until": "22:00",
+    "max_price_level": 1
+  },
+  "source_query": "去台東長濱鄉玩半天，中午想找一間評分4.8以上、素食、有冷氣、可以停車、晚上10點還在營業、走路5分鐘內可到、人均低於200元的餐廳"
+}

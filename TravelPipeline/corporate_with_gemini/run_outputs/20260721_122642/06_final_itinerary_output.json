@@ -1,0 +1,102 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T12:27:28",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "Candidates provided are suitable replacements for fuzzy slots and align well with user constraints.",
+      "Both meal and attraction slots were straightforward to replace given the strong candidates."
+    ],
+    "warnings": []
+  },
+  "selected_lodging_by_night": [],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "original_activity": "在天廚蔬房享用午餐",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+        "name": "長光食作（預約制）",
+        "address": "962001臺東縣長濱鄉長濱村154號一樓",
+        "latitude": 23.3302573,
+        "longitude": 121.4627376
+      },
+      "reason": "符合餐廳的素食要求和高評分要求，且與下一活動的地理距離較短。"
+    },
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "original_activity": "參觀當地景點",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJ9TdAI9JdbzQRNMmKBWynQ-0",
+        "name": "金剛大道",
+        "address": "962臺東縣長濱鄉長光產業道路",
+        "latitude": 23.33055,
+        "longitude": 121.451369
+      },
+      "reason": "景點符合當地文化體驗需求，並獲得良好評分和較多的訪客反饋。"
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "Day 1",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "午餐於長光食作（預約制）",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "Vegetarian restaurant 長光食作",
+          "route_entry_place": "長濱",
+          "route_exit_place": "長濱",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 600,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Estimated based on average meal cost for a group"
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "13:30",
+          "end_time": "14:30",
+          "time": "13:30~14:30",
+          "activity": "參觀金剛大道",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "金剛大道",
+          "route_entry_place": "長濱",
+          "route_exit_place": "長濱",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 1.0,
+            "note": "Free outdoor scenic area"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+      "ChIJ9TdAI9JdbzQRNMmKBWynQ-0"
+    ],
+    "lodging": []
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "places_search_version": "places_search_agent_v0.3",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱市區",
+      "place_query": "長濱市區",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱市區",
+      "place_query": "長濱市區",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱鄉",
+  "search_locale": {
+    "language_code": "zh-TW",
+    "region_code": "TW"
+  },
+  "candidate_slots": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家資訊，需確認營業時間與菜單",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [
+        "vegetarian"
+      ],
+      "location_terms": [
+        "台東",
+        "長濱",
+        "長濱市區"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "適合午餐"
+      ],
+      "structured_constraints": {
+        "min_rating": 4.8,
+        "requires_air_conditioning": true,
+        "requires_parking": true,
+        "open_until": "22:00",
+        "max_price_level": 1
+      },
+      "queries": [
+        {
+          "query": "台東 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "台東"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        },
+        {
+          "query": "長濱市區 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "長濱市區"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        },
+        {
+          "query": "台東 長濱 午餐 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "台東",
+            "長濱"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        },
+        {
+          "query": "長濱 vegetarian 餐廳",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "vegetarian"
+          ],
+          "location_terms": [
+            "長濱"
+          ],
+          "must_have": [
+            "適合午餐"
+          ]
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": null,
+      "candidates": [],
+      "errors": [
+        {
+          "query": "台東 vegetarian 餐廳",
+          "error": "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "query": "長濱市區 vegetarian 餐廳",
+          "error": "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "query": "台東 長濱 午餐 vegetarian 餐廳",
+          "error": "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        },
+        {
+          "query": "長濱 vegetarian 餐廳",
+          "error": "Google Places Text Search failed (400): {\n  \"error\": {\n    \"code\": 400,\n    \"message\": \"API key not valid. Please pass a valid API key.\",\n    \"status\": \"INVALID_ARGUMENT\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.ErrorInfo\",\n        \"reason\": \"API_KEY_INVALID\",\n        \"domain\": \"googleapis.com\",\n        \"metadata\": {\n          \"service\": \"places.googleapis.com\"\n        }\n      },\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.LocalizedMessage\",\n        \"locale\": \"en-US\",\n        \"message\": \"API key not valid. Please pass a valid API key.\"\n      }\n    ]\n  }\n}\n"
+        }
+      ]
+    }
+  ]
+}

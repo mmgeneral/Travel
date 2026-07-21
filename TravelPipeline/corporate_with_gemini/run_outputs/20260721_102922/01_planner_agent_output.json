@@ -1,0 +1,152 @@
+{
+  "destination_type": "domestic",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉公車站",
+      "place_query": "長濱鄉公車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉公車站",
+      "place_query": "長濱鄉公車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "planning_brief_5w1h": {
+    "who": {
+      "traveler_count": null,
+      "companions": [],
+      "traveler_profile": null,
+      "mobility_constraints": [],
+      "special_needs": []
+    },
+    "where": {
+      "origin": "台灣",
+      "destination": "台東長濱",
+      "key_areas": [],
+      "must_include_areas": [],
+      "avoid_areas": []
+    },
+    "when": {
+      "duration_days": 1,
+      "duration_nights": 0,
+      "travel_start_date": null,
+      "travel_end_date": null,
+      "season_or_month": null,
+      "day_of_week_constraints": []
+    },
+    "what": {
+      "must_visit": [],
+      "desired_experiences": [
+        "素食"
+      ],
+      "activity_types": [
+        "local_food"
+      ],
+      "food_preferences": [
+        "vegetarian"
+      ],
+      "shopping_preferences": [],
+      "lodging_preferences": []
+    },
+    "why": {
+      "trip_goal": "探索台東長濱，享用素食",
+      "success_criteria": [
+        "找到評分高、符合要求的素食餐廳"
+      ],
+      "priority_order": [
+        1,
+        2,
+        3
+      ]
+    },
+    "how": {
+      "budget": null,
+      "preferred_transportation": null,
+      "pace": "moderate",
+      "grounding_needs": [
+        "opening_hours",
+        "restaurant_availability"
+      ],
+      "hard_constraints": [
+        "評分",
+        "素食",
+        "營業時間"
+      ],
+      "soft_preferences": [
+        "冷氣",
+        "步行可達"
+      ]
+    }
+  },
+  "itinerary": [
+    {
+      "day": 1,
+      "date_description": "當天來回",
+      "day_of_week": null,
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "day_of_week": null,
+          "start_time": "12:00",
+          "end_time": "13:30",
+          "time": "12:00~13:30",
+          "activity": "探索長濱鄉當地素食餐廳",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot02",
+          "day_of_week": null,
+          "start_time": "13:30",
+          "end_time": "14:00",
+          "time": "13:30~14:00",
+          "activity": "預留通勤時間",
+          "slot_type": "transport",
+          "is_commute": true,
+          "is_searchable": false,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        },
+        {
+          "slot_id": "day1_slot03",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "參觀長濱鄉周邊景點",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": true,
+          "place_query": null,
+          "route_entry_place": null,
+          "route_exit_place": null,
+          "locked": false
+        }
+      ]
+    }
+  ],
+  "reminders": [
+    "目前尚未找到符合條件的餐廳，建議提前詢問店家。",
+    "若條件可調整，將有更多餐廳選擇。",
+    "請考慮當地天氣與通勤時間。"
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T10:53:15",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "Selected top candidates for each fuzzy slot based on proximity and matching criteria.",
+      "Chose to keep lodging strategy simple by using a single hotel throughout the itinerary."
+    ],
+    "warnings": [
+      "Some selected candidates lack Google ratings and user reviews, making it difficult to ensure quality."
+    ]
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ExampleHotelPlaceID",
+        "property_token": "ExampleHotelToken",
+        "name": "Example Hotel",
+        "latitude": 23.316,
+        "longitude": 121.452,
+        "price": {
+          "currency": "CNY",
+          "amount": 800
+        }
+      },
+      "reason": "Selected a centrally located hotel in 長濱鄉 for consistent lodging."
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "original_activity": "探索長濱鄉當地素食餐廳",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+        "name": "馨家小廚",
+        "address": "962001臺東縣長濱鄉112號",
+        "latitude": 23.3181899,
+        "longitude": 121.4561085
+      },
+      "reason": "Chosen for its proximity to public transport and meeting the criteria for a vegetarian restaurant."
+    },
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "original_activity": "參觀長濱鄉周邊景點",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+        "name": "台東縣長濱鄉公所",
+        "address": "962臺東縣長濱鄉長濱村4鄰9號",
+        "latitude": 23.3152631,
+        "longitude": 121.4515124
+      },
+      "reason": "Chosen for its cultural relevance and very short detour from the primary route."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "Day 1",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "12:00",
+          "end_time": "13:30",
+          "time": "12:00~13:30",
+          "activity": "午餐於馨家小廚",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "寻找长滨午餐素食",
+          "route_entry_place": "長濱鄉公車站",
+          "route_exit_place": "長濱鄉公車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 100,
+            "party_total": 500,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "估計中等消費的素食午餐餐費"
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "14:00",
+          "end_time": "17:00",
+          "time": "14:00~17:00",
+          "activity": "參觀台東縣長濱鄉公所",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "探索长滨当地文化景点",
+          "route_entry_place": "長濱鄉公車站",
+          "route_exit_place": "長濱鄉公車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.8,
+            "note": "公共景点，无门票"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+      "ChIJuzhZrjlqbzQRJPOiwNpRR3Q"
+    ],
+    "lodging": [
+      "ExampleHotelPlaceID"
+    ]
+  }
+}

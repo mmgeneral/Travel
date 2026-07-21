@@ -1,0 +1,285 @@
+{
+  "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "11:00",
+      "end_time": "13:00",
+      "time": "11:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "午餐於天廚蔬房",
+      "reason_for_search": "缺乏具體店家，需尋找符合條件的素食餐廳",
+      "target_terms": [
+        "素食"
+      ],
+      "location_terms": [
+        "台東",
+        "長濱鄉",
+        "台東長濱鄉"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "有冷氣",
+        "可停車",
+        "晚間營業至22:00",
+        "人均低於200元"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot01",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "11:00",
+        "end_time": "13:00",
+        "time": "11:00~13:00",
+        "slot_type": "meal",
+        "original_activity": "午餐於天廚蔬房",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱鄉",
+          "query": "長濱鄉",
+          "place": {
+            "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+            "resource_name": "places/ChIJe9z3WbxCbzQRxzC69COhJaM",
+            "name": "長濱鄉",
+            "address": "臺東縣長濱鄉",
+            "latitude": 23.3451824,
+            "longitude": 121.43419,
+            "primary_type": null,
+            "types": [
+              "administrative_area_level_2",
+              "political"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=11755979578122318023&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱鄉",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱鄉",
+          "query": "長濱鄉",
+          "place": {
+            "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+            "resource_name": "places/ChIJe9z3WbxCbzQRxzC69COhJaM",
+            "name": "長濱鄉",
+            "address": "臺東縣長濱鄉",
+            "latitude": 23.3451824,
+            "longitude": 121.43419,
+            "primary_type": null,
+            "types": [
+              "administrative_area_level_2",
+              "political"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=11755979578122318023&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱鄉",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJhfPbdZi5bzQR3mzYimyGdm8",
+          "name": "森森咖啡sunsuncoffe／台東蔬食／台東素食／台東老屋咖啡",
+          "address": "950臺東縣臺東市中心里新生路503巷1號",
+          "latitude": 22.760557799999997,
+          "longitude": 121.13846799999999,
+          "google_maps_uri": "https://maps.google.com/?cid=8031754786205887710&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.2478,
+          "score_breakdown": {
+            "total": 0.2478,
+            "relevance": 0.2803,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.0339,
+            "google_rank": 0.5,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6762
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 71.704,
+            "candidate_to_next_km": 71.704,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 143.408,
+            "detour_km": 143.408,
+            "max_leg_km": 71.704,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱鄉",
+              "query": "長濱鄉",
+              "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+              "name": "長濱鄉",
+              "address": "臺東縣長濱鄉",
+              "latitude": 23.3451824,
+              "longitude": 121.43419
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱鄉",
+              "query": "長濱鄉",
+              "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+              "name": "長濱鄉",
+              "address": "臺東縣長濱鄉",
+              "latitude": 23.3451824,
+              "longitude": 121.43419
+            }
+          },
+          "matched_queries": [
+            "台東 素食 餐廳"
+          ],
+          "why": "符合「素食、台東」；由查詢「台東 素食 餐廳」命中；前後站直線路徑約 143.408 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "候選點與前後站其中一段直線距離偏遠",
+            "無法驗證評分門檻（缺評分資料）",
+            "無法驗證價格等級（缺 price_level 資料）",
+            "無法驗證營業至門檻（缺資料）",
+            "無法驗證空調要求（缺資料）",
+            "無法驗證停車位要求（缺資料）"
+          ],
+          "selection_score": 0.4078
+        },
+        {
+          "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "name": "長光食作（預約制）",
+          "address": "962001臺東縣長濱鄉長濱村154號一樓",
+          "latitude": 23.3302573,
+          "longitude": 121.4627376,
+          "google_maps_uri": "https://maps.google.com/?cid=17261979726639058704&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3139,
+          "score_breakdown": {
+            "total": 0.3139,
+            "relevance": 0.28,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.3959,
+            "google_rank": 1.0,
+            "type": 1.0,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 3.354,
+            "candidate_to_next_km": 3.354,
+            "previous_to_next_km": 0.0,
+            "route_distance_km": 6.708,
+            "detour_km": 6.708,
+            "max_leg_km": 3.354,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱鄉",
+              "query": "長濱鄉",
+              "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+              "name": "長濱鄉",
+              "address": "臺東縣長濱鄉",
+              "latitude": 23.3451824,
+              "longitude": 121.43419
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱鄉",
+              "query": "長濱鄉",
+              "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+              "name": "長濱鄉",
+              "address": "臺東縣長濱鄉",
+              "latitude": 23.3451824,
+              "longitude": 121.43419
+            }
+          },
+          "matched_queries": [
+            "台東長濱鄉 素食",
+            "長濱鄉 素食 餐廳",
+            "台東長濱鄉 午餐 素食"
+          ],
+          "why": "符合「台東、長濱鄉、台東長濱鄉」；由查詢「台東長濱鄉 素食」命中；前後站直線路徑約 6.708 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "無法驗證評分門檻（缺評分資料）",
+            "無法驗證價格等級（缺 price_level 資料）",
+            "無法驗證營業至門檻（缺資料）",
+            "無法驗證空調要求（缺資料）",
+            "無法驗證停車位要求（缺資料）"
+          ],
+          "selection_score": 0.3139
+        }
+      ]
+    }
+  ]
+}

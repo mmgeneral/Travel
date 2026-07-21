@@ -1,0 +1,1457 @@
+{
+  "places_search_version": "places_search_agent_v0.3",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱鄉",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉公車站",
+      "place_query": "長濱鄉公車站",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉公車站",
+      "place_query": "長濱鄉公車站",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱鄉",
+  "search_locale": {
+    "language_code": "zh-TW",
+    "region_code": "TW"
+  },
+  "candidate_slots": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "09:00",
+      "end_time": "12:00",
+      "time": "09:00~12:00",
+      "slot_type": "attraction",
+      "original_activity": "探索長濱鄉自然風光",
+      "reason_for_search": "缺乏具體地點",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [
+        "自然風光"
+      ],
+      "location_terms": [
+        "長濱鄉",
+        "台東長濱鄉",
+        "長濱鄉公車站附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [
+        "適合09:00~12:00"
+      ],
+      "structured_constraints": {},
+      "queries": [
+        {
+          "query": "台東長濱鄉 自然風光",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "自然風光"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "長濱鄉公車站附近 自然風光",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "自然風光"
+          ],
+          "location_terms": [
+            "長濱鄉公車站附近"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "長濱鄉 上午 自然風光",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "自然風光"
+          ],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": [
+            "適合09:00~12:00"
+          ]
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": {
+        "circle": {
+          "center": {
+            "latitude": 23.3163468,
+            "longitude": 121.4529764
+          },
+          "radius": 1500.0
+        }
+      },
+      "candidates": [
+        {
+          "place_id": "ChIJdQJUyBNpbzQRhclbPvfosdE",
+          "resource_name": "places/ChIJdQJUyBNpbzQRhclbPvfosdE",
+          "name": "竹湖山居 櫟見之丘樹冠滑索 Canopy Zipline（入園採預約制）",
+          "address": "962臺東縣長濱鄉竹湖村41號",
+          "latitude": 23.302841299999997,
+          "longitude": 121.4196057,
+          "primary_type": "playground",
+          "types": [
+            "playground",
+            "scenic_spot",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=15110114373405493637&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 上午 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "適合09:00~12:00"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJo8g7k0pdbzQR6mFPqf9KhCs",
+          "resource_name": "places/ChIJo8g7k0pdbzQR6mFPqf9KhCs",
+          "name": "長光梯田",
+          "address": "962臺東縣長濱鄉長光產業道路",
+          "latitude": 23.3303004,
+          "longitude": 121.4475195,
+          "primary_type": "scenic_spot",
+          "types": [
+            "scenic_spot",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=3135713702474375658&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 上午 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "適合09:00~12:00"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJGVZ_rANbbzQRg-QjPyZLaww",
+          "resource_name": "places/ChIJGVZ_rANbbzQRg-QjPyZLaww",
+          "name": "星龍花園咖啡",
+          "address": "962臺東縣長濱鄉樟原村118之20號",
+          "latitude": 23.4271802,
+          "longitude": 121.4831272,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=894891578603332739&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJvWWOYUpdbzQRtcY9RszWO5M",
+          "resource_name": "places/ChIJvWWOYUpdbzQRtcY9RszWO5M",
+          "name": "長光梯田大道",
+          "address": "962臺東縣長濱鄉台東縣長濱鄉",
+          "latitude": 23.330306999999998,
+          "longitude": 121.44859,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=10609309520041461429&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+          "resource_name": "places/ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+          "name": "長濱鄉運動公園",
+          "address": "962臺東縣長濱鄉",
+          "latitude": 23.319483299999998,
+          "longitude": 121.4533616,
+          "primary_type": "park",
+          "types": [
+            "park",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=11742514406639838336&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 上午 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "適合09:00~12:00"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJcxhs785bbzQRDnsQtnohqTE",
+          "resource_name": "places/ChIJcxhs785bbzQRDnsQtnohqTE",
+          "name": "樟原橋休憩區",
+          "address": "962臺東縣長濱鄉三間村",
+          "latitude": 23.4011171,
+          "longitude": 121.47998790000001,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=3578428189846829838&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        },
+        {
+          "place_id": "ChIJR0HKdlBdbzQR48W4ZCoCpxE",
+          "resource_name": "places/ChIJR0HKdlBdbzQR48W4ZCoCpxE",
+          "name": "長濱天主堂 吳若石神父足部健康驛站",
+          "address": "962臺東縣長濱鄉長濱村13鄰258號",
+          "latitude": 23.317143899999998,
+          "longitude": 121.45657460000001,
+          "primary_type": "church",
+          "types": [
+            "tourist_attraction",
+            "church",
+            "place_of_worship",
+            "association_or_organization",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=1271987800857167331&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJNzaWgE1dbzQR4tjqKKB3qsQ",
+          "resource_name": "places/ChIJNzaWgE1dbzQR4tjqKKB3qsQ",
+          "name": "忠勇自行車道",
+          "address": "962臺東縣長濱鄉東13鄉道",
+          "latitude": 23.3305302,
+          "longitude": 121.45135499999999,
+          "primary_type": "scenic_spot",
+          "types": [
+            "scenic_spot",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14171270707239639266&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+          "resource_name": "places/ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+          "name": "台東縣長濱鄉公所",
+          "address": "962臺東縣長濱鄉長濱村4鄰9號",
+          "latitude": 23.3152631,
+          "longitude": 121.4515124,
+          "primary_type": "local_government_office",
+          "types": [
+            "local_government_office",
+            "government_office",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=8378755631722722084&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        },
+        {
+          "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "resource_name": "places/ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "name": "長光食作（預約制）",
+          "address": "962001臺東縣長濱鄉長濱村154號一樓",
+          "latitude": 23.3302573,
+          "longitude": 121.4627376,
+          "primary_type": "bistro",
+          "types": [
+            "bistro",
+            "restaurant",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17261979726639058704&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 上午 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "適合09:00~12:00"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJN0fDr0BpbzQR0c_IJDXNtu4",
+          "resource_name": "places/ChIJN0fDr0BpbzQR0c_IJDXNtu4",
+          "name": "美好拾光（預約制）",
+          "address": "962臺東縣長濱鄉長濱村田組13號",
+          "latitude": 23.30616,
+          "longitude": 121.4434307,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17201161454922289105&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 上午 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "適合09:00~12:00"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          }
+        },
+        {
+          "place_id": "ChIJ6WvYzWNdbzQRmfgOLWEDv1s",
+          "resource_name": "places/ChIJ6WvYzWNdbzQRmfgOLWEDv1s",
+          "name": "海邊小巫",
+          "address": "962臺東縣長濱鄉長濱村142-10號",
+          "latitude": 23.3235122,
+          "longitude": 121.4621111,
+          "primary_type": "italian_restaurant",
+          "types": [
+            "italian_restaurant",
+            "dog_cafe",
+            "restaurant",
+            "point_of_interest",
+            "food",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6611006493905844377&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 上午 自然風光",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "自然風光"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "適合09:00~12:00"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        }
+      ],
+      "errors": []
+    },
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "18:00",
+      "time": "14:00~18:00",
+      "slot_type": "attraction",
+      "original_activity": "當地文化與手工藝探索",
+      "reason_for_search": "缺乏具體地點",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [
+        "文化",
+        "手工藝"
+      ],
+      "location_terms": [
+        "長濱鄉",
+        "台東長濱鄉",
+        "長濱鄉公車站附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "structured_constraints": {},
+      "queries": [
+        {
+          "query": "台東長濱鄉 文化",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "文化"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "台東長濱鄉 手工藝",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "手工藝"
+          ],
+          "location_terms": [
+            "台東長濱鄉"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "長濱鄉公車站附近 文化",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "文化"
+          ],
+          "location_terms": [
+            "長濱鄉公車站附近"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "長濱鄉公車站附近 手工藝",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [
+            "手工藝"
+          ],
+          "location_terms": [
+            "長濱鄉公車站附近"
+          ],
+          "must_have": []
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": {
+        "circle": {
+          "center": {
+            "latitude": 23.3163468,
+            "longitude": 121.4529764
+          },
+          "radius": 1500.0
+        }
+      },
+      "candidates": [
+        {
+          "place_id": "ChIJnXL-9EddbzQRi25YDsSgowQ",
+          "resource_name": "places/ChIJnXL-9EddbzQRi25YDsSgowQ",
+          "name": "長光岩棺",
+          "address": "962臺東縣長濱鄉27、",
+          "latitude": 23.3288105,
+          "longitude": 121.45829250000001,
+          "primary_type": null,
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=334287561270259339&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+          "resource_name": "places/ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+          "name": "台東縣長濱鄉公所",
+          "address": "962臺東縣長濱鄉長濱村4鄰9號",
+          "latitude": 23.3152631,
+          "longitude": 121.4515124,
+          "primary_type": "local_government_office",
+          "types": [
+            "local_government_office",
+            "government_office",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=8378755631722722084&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJo8g7k0pdbzQR6mFPqf9KhCs",
+          "resource_name": "places/ChIJo8g7k0pdbzQR6mFPqf9KhCs",
+          "name": "長光梯田",
+          "address": "962臺東縣長濱鄉長光產業道路",
+          "latitude": 23.3303004,
+          "longitude": 121.4475195,
+          "primary_type": "scenic_spot",
+          "types": [
+            "scenic_spot",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=3135713702474375658&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJ9TdAI9JdbzQRNMmKBWynQ-0",
+          "resource_name": "places/ChIJ9TdAI9JdbzQRNMmKBWynQ-0",
+          "name": "金剛大道",
+          "address": "962臺東縣長濱鄉長光產業道路",
+          "latitude": 23.33055,
+          "longitude": 121.451369,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17096692692819822900&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJEdRTGEddbzQR8dNuE1Tg1r8",
+          "resource_name": "places/ChIJEdRTGEddbzQR8dNuE1Tg1r8",
+          "name": "長濱鄉農會金剛好事館",
+          "address": "962臺東縣長濱鄉長濱村58-1號",
+          "latitude": 23.326539,
+          "longitude": 121.46114999999999,
+          "primary_type": "store",
+          "types": [
+            "store",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=13823482757968221169&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          }
+        },
+        {
+          "place_id": "ChIJuzhZrjlqbzQRu-QkbJrv_WE",
+          "resource_name": "places/ChIJuzhZrjlqbzQRu-QkbJrv_WE",
+          "name": "台東縣長濱鄉立圖書館",
+          "address": "962臺東縣長濱鄉長濱村13號",
+          "latitude": 23.3156762,
+          "longitude": 121.45261760000001,
+          "primary_type": "library",
+          "types": [
+            "library",
+            "point_of_interest",
+            "service",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=7061063237305164987&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        },
+        {
+          "place_id": "ChIJfy2B9pxdbzQRn0sEYV9Ed24",
+          "resource_name": "places/ChIJfy2B9pxdbzQRn0sEYV9Ed24",
+          "name": "共域工作室｜皮革手作・樹皮藝術・精油芳療",
+          "address": "962臺東縣長濱鄉長濱村25鄰號136號",
+          "latitude": 23.3280995,
+          "longitude": 121.46195169999999,
+          "primary_type": "art_studio",
+          "types": [
+            "art_studio",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=7959906042840894367&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉公車站附近 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJ-4j0fzldbzQR6sJrOp82Cxc",
+          "resource_name": "places/ChIJ-4j0fzldbzQR6sJrOp82Cxc",
+          "name": "金剛大道妮卡兒手作工坊",
+          "address": "962臺東縣長濱鄉忠勇村黎頭針2號",
+          "latitude": 23.329944299999998,
+          "longitude": 121.445731,
+          "primary_type": "rest_stop",
+          "types": [
+            "rest_stop",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=1660480945124000490&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJdaG_eQBpbzQRKFMUxBhGGOs",
+          "resource_name": "places/ChIJdaG_eQBpbzQRKFMUxBhGGOs",
+          "name": "丫貴手工黑糖農庄",
+          "address": "962臺東縣長濱鄉竹湖村移民路36號",
+          "latitude": 23.298525299999998,
+          "longitude": 121.412244,
+          "primary_type": "farm",
+          "types": [
+            "farm",
+            "service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=16940367070536946472&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJY_bDhF1dbzQRc1BMnt8o_8k",
+          "resource_name": "places/ChIJY_bDhF1dbzQRc1BMnt8o_8k",
+          "name": "長濱1號-在地米伴手禮店（米霜淇淋&茶飲&伴手禮）",
+          "address": "962台东县长滨乡长滨村46-1號",
+          "latitude": 23.3164011,
+          "longitude": 121.4545775,
+          "primary_type": "farm",
+          "types": [
+            "farm",
+            "gift_shop",
+            "service",
+            "store",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14555397461583351923&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJ70WJVwBdbzQR4hNGr633aBY",
+          "resource_name": "places/ChIJ70WJVwBdbzQR4hNGr633aBY",
+          "name": "今日有吐司🍞",
+          "address": "962臺東縣長濱鄉長濱村東13鄉道25號",
+          "latitude": 23.319288699999998,
+          "longitude": 121.45681460000002,
+          "primary_type": "bakery",
+          "types": [
+            "bakery",
+            "food_store",
+            "food",
+            "store",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=1614812791754331106&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          }
+        },
+        {
+          "place_id": "ChIJX57MwdhdbzQRF0acGJRWzTw",
+          "resource_name": "places/ChIJX57MwdhdbzQRF0acGJRWzTw",
+          "name": "花宅咖啡HUA Cafe",
+          "address": "962臺東縣長濱鄉長濱149-1號",
+          "latitude": 23.315593999999997,
+          "longitude": 121.45673060000001,
+          "primary_type": "food_store",
+          "types": [
+            "brunch_restaurant",
+            "scenic_spot",
+            "restaurant",
+            "food_store",
+            "food",
+            "store",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=4381253206569403927&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱鄉 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "台東長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        },
+        {
+          "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+          "resource_name": "places/ChIJrX_AUVFdbzQRy5403njjk98",
+          "name": "長濱鄉公所",
+          "address": "962台灣臺東縣長濱鄉",
+          "latitude": 23.314944999999998,
+          "longitude": 121.451698,
+          "primary_type": "bus_stop",
+          "types": [
+            "bus_stop",
+            "transit_stop",
+            "transit_station",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=16110470400297967307&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0
+          }
+        },
+        {
+          "place_id": "ChIJbaKKaVBdbzQRzfZpY5K2shY",
+          "resource_name": "places/ChIJbaKKaVBdbzQRzfZpY5K2shY",
+          "name": "長濱",
+          "address": "962台灣臺東縣長濱鄉",
+          "latitude": 23.317436,
+          "longitude": 121.455726,
+          "primary_type": "bus_stop",
+          "types": [
+            "bus_stop",
+            "transit_stop",
+            "transit_station",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=1635570354538280653&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJX76mU1FdbzQRbOmKBp5EJ9I",
+          "resource_name": "places/ChIJX76mU1FdbzQRbOmKBp5EJ9I",
+          "name": "長濱鄉公所",
+          "address": "962台灣臺東縣長濱鄉",
+          "latitude": 23.31483,
+          "longitude": 121.451805,
+          "primary_type": "bus_stop",
+          "types": [
+            "bus_stop",
+            "transit_stop",
+            "transit_station",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=15143147717561870700&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333
+          }
+        },
+        {
+          "place_id": "ChIJ1ao9_1BdbzQRVW_jSdyW204",
+          "resource_name": "places/ChIJ1ao9_1BdbzQRVW_jSdyW204",
+          "name": "長濱分駐所",
+          "address": "962台灣臺東縣長濱鄉",
+          "latitude": 23.316656,
+          "longitude": 121.454444,
+          "primary_type": "bus_station",
+          "types": [
+            "bus_station",
+            "transit_station",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=5682301227734626133&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJuY8MalBdbzQRBAKE-ouSqQo",
+          "resource_name": "places/ChIJuY8MalBdbzQRBAKE-ouSqQo",
+          "name": "長濱",
+          "address": "962台灣臺東縣長濱鄉",
+          "latitude": 23.317541,
+          "longitude": 121.455642,
+          "primary_type": "bus_stop",
+          "types": [
+            "bus_stop",
+            "transit_stop",
+            "transit_station",
+            "transportation_service",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=768306341344444932&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 文化",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [
+                "文化"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2
+          }
+        },
+        {
+          "place_id": "ChIJJ742OABdbzQRK--IH1R3tVo",
+          "resource_name": "places/ChIJJ742OABdbzQRK--IH1R3tVo",
+          "name": "書粥",
+          "address": "962台东县长滨乡长滨村24號",
+          "latitude": 23.3160538,
+          "longitude": 121.45367229999998,
+          "primary_type": "book_store",
+          "types": [
+            "book_store",
+            "store",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6536261637388169003&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5
+          }
+        },
+        {
+          "place_id": "ChIJR0HKdlBdbzQR48W4ZCoCpxE",
+          "resource_name": "places/ChIJR0HKdlBdbzQR48W4ZCoCpxE",
+          "name": "長濱天主堂 吳若石神父足部健康驛站",
+          "address": "962臺東縣長濱鄉長濱村13鄰258號",
+          "latitude": 23.317143899999998,
+          "longitude": 121.45657460000001,
+          "primary_type": "church",
+          "types": [
+            "tourist_attraction",
+            "church",
+            "place_of_worship",
+            "association_or_organization",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=1271987800857167331&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25
+          }
+        },
+        {
+          "place_id": "ChIJLdU9mytdbzQRT43yQ_MUl-4",
+          "resource_name": "places/ChIJLdU9mytdbzQRT43yQ_MUl-4",
+          "name": "鳳奶客棧民宿",
+          "address": "962臺東縣長濱鄉長濱村四維路20號",
+          "latitude": 23.3308304,
+          "longitude": 121.458893,
+          "primary_type": "private_guest_room",
+          "types": [
+            "private_guest_room",
+            "lodging",
+            "store",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17192233137559735631&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉公車站附近 手工藝",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [
+                "手工藝"
+              ],
+              "location_terms": [
+                "長濱鄉公車站附近"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667
+          }
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

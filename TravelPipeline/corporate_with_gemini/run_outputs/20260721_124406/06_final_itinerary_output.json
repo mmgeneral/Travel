@@ -1,0 +1,113 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T12:44:49",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "The original meal location lacked specific details, requiring a replacement.",
+      "Long Guang Shi Zuo (長光食作) has a high rating and fits the requirements well."
+    ],
+    "warnings": [
+      "Lack of specific lodging candidates; decision maintained as single_hotel.",
+      "Candidate location is not precisely within '長濱鄉'"
+    ]
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChIJb2XPmX1CbzQRMlTVYZpHa-Q",
+        "property_token": "default_token",
+        "name": "Default Hotel",
+        "latitude": 23.45678,
+        "longitude": 121.65432,
+        "price": {
+          "currency": "CNY",
+          "per_person": 300,
+          "party_total": 900,
+          "source": "llm_estimated",
+          "confidence": 0.7,
+          "note": "Estimated based on location and ratings"
+        }
+      },
+      "reason": "Maintained single lodging due to lack of options."
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "original_activity": "用餐於天廚蔬房",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+        "name": "長光食作（預約制）",
+        "address": "962001臺東縣長濱鄉長濱村154號一樓",
+        "latitude": 23.3302573,
+        "longitude": 121.4627376
+      },
+      "reason": "Selected due to high ratings and opening hours suitable for lunch."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "Day 1: Arrival and Lunch at Taitung",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "09:00",
+          "end_time": "11:00",
+          "time": "09:00~11:00",
+          "activity": "Arrive at Taitung",
+          "slot_type": "transport",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "Taitung arrival",
+          "route_entry_place": "Taipei",
+          "route_exit_place": "Taitung",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 150,
+            "party_total": 450,
+            "source": "llm_estimated",
+            "confidence": 0.8,
+            "note": "Estimated high-speed train fare"
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "12:00",
+          "end_time": "13:00",
+          "time": "12:00~13:00",
+          "activity": "Lunch at Long Guang Shi Zuo (長光食作)",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "素食",
+          "route_entry_place": "長濱鄉",
+          "route_exit_place": "長濱鄉",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 100,
+            "party_total": 300,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Estimated meal cost per person"
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJDxUJbW5dbzQREM9Qfhrfju8"
+    ],
+    "lodging": [
+      "ChIJb2XPmX1CbzQRMlTVYZpHa-Q"
+    ]
+  }
+}

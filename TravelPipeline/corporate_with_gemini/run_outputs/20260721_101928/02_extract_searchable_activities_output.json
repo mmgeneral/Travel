@@ -1,0 +1,47 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "09:00",
+      "end_time": "12:00",
+      "time": "09:00~12:00",
+      "slot_type": "attraction",
+      "original_activity": "探索長濱鄉自然風光",
+      "reason_for_search": "缺乏具體地點",
+      "suggested_search_query": "長濱鄉 自然風光",
+      "target_terms": [
+        "自然風光"
+      ],
+      "location_terms": [
+        "長濱鄉"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "structured_constraints": {}
+    },
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "18:00",
+      "time": "14:00~18:00",
+      "slot_type": "attraction",
+      "original_activity": "當地文化與手工藝探索",
+      "reason_for_search": "缺乏具體地點",
+      "suggested_search_query": "長濱鄉 文化 手工藝",
+      "target_terms": [
+        "文化",
+        "手工藝"
+      ],
+      "location_terms": [
+        "長濱鄉"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "structured_constraints": {}
+    }
+  ]
+}

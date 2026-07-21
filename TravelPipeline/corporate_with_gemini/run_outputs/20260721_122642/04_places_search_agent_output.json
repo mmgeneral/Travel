@@ -1,0 +1,5651 @@
+{
+  "places_search_version": "places_search_agent_v0.3",
+  "trip_context": {
+    "origin": "台灣",
+    "destination": "台東長濱",
+    "country_code": "TW",
+    "region_code": "TW",
+    "language_code": "zh-TW",
+    "travel_start_date": null,
+    "arrival_anchor": {
+      "name": "長濱鄉",
+      "place_query": "台東長濱",
+      "anchor_type": "arrival_station"
+    },
+    "return_anchor": {
+      "name": "長濱鄉",
+      "place_query": "台東長濱",
+      "anchor_type": "return_station"
+    },
+    "lodging_anchor": {
+      "name": null,
+      "place_query": null,
+      "anchor_type": "lodging"
+    }
+  },
+  "destination_hint": "台東長濱",
+  "search_locale": {
+    "language_code": "zh-TW",
+    "region_code": "TW"
+  },
+  "candidate_slots": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:00",
+      "time": "12:00~13:00",
+      "slot_type": "meal",
+      "original_activity": "在天廚蔬房享用午餐",
+      "reason_for_search": "缺乏具體店家",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [
+        "素食"
+      ],
+      "location_terms": [
+        "台東長濱",
+        "長濱鄉"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "評分4.8以上餐廳",
+        "低於200元人均消費"
+      ],
+      "structured_constraints": {
+        "min_rating": 4.8,
+        "max_price_level": 1,
+        "requires_air_conditioning": true,
+        "requires_parking": true,
+        "open_until": "22:00"
+      },
+      "queries": [
+        {
+          "query": "台東長濱 素食",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "台東長濱"
+          ],
+          "must_have": [
+            "評分4.8以上餐廳",
+            "低於200元人均消費"
+          ]
+        },
+        {
+          "query": "長濱鄉 素食",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": [
+            "評分4.8以上餐廳",
+            "低於200元人均消費"
+          ]
+        },
+        {
+          "query": "台東長濱 午餐 素食",
+          "intent": "restaurant",
+          "intent_type": "restaurant",
+          "target_terms": [
+            "素食"
+          ],
+          "location_terms": [
+            "台東長濱"
+          ],
+          "must_have": [
+            "評分4.8以上餐廳",
+            "低於200元人均消費"
+          ]
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": {
+        "circle": {
+          "center": {
+            "latitude": 23.3168683,
+            "longitude": 121.4548579
+          },
+          "radius": 1500.0
+        }
+      },
+      "candidates": [
+        {
+          "place_id": "ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+          "resource_name": "places/ChIJiRY5UVhdbzQRjCFpPrrhkV4",
+          "name": "馨家小廚",
+          "address": "962001臺東縣長濱鄉112號",
+          "latitude": 23.3181899,
+          "longitude": 121.4561085,
+          "primary_type": "chinese_restaurant",
+          "types": [
+            "taiwanese_restaurant",
+            "chinese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=6814475901215515020&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "台東長濱 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 0.94
+          },
+          "rating": 4.7,
+          "user_rating_count": 997,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:00 – 14:00, 17:00 – 20:00",
+              "星期二: 11:00 – 14:00, 17:00 – 20:00",
+              "星期三: 休息",
+              "星期四: 11:00 – 14:00, 17:00 – 20:00",
+              "星期五: 11:00 – 14:00, 17:00 – 20:00",
+              "星期六: 11:00 – 14:00, 17:00 – 20:00",
+              "星期日: 11:00 – 14:00, 17:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:00 – 14:00, 17:00 – 20:00",
+              "星期二: 11:00 – 14:00, 17:00 – 20:00",
+              "星期三: 休息",
+              "星期四: 11:00 – 14:00, 17:00 – 20:00",
+              "星期五: 11:00 – 14:00, 17:00 – 20:00",
+              "星期六: 11:00 – 14:00, 17:00 – 20:00",
+              "星期日: 11:00 – 14:00, 17:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "resource_name": "places/ChIJDxUJbW5dbzQREM9Qfhrfju8",
+          "name": "長光食作（預約制）",
+          "address": "962001臺東縣長濱鄉長濱村154號一樓",
+          "latitude": 23.3302573,
+          "longitude": 121.4627376,
+          "primary_type": "bistro",
+          "types": [
+            "bistro",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17261979726639058704&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 2,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "台東長濱 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 1,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 1.0
+          },
+          "rating": 5,
+          "user_rating_count": 493,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 50,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 59,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:50 – 13:30, 17:50 – 19:30",
+              "星期二: 11:50 – 13:30, 17:50 – 19:30",
+              "星期三: 11:50 – 13:30, 17:50 – 19:30",
+              "星期四: 11:50 – 13:30, 17:50 – 19:30",
+              "星期五: 11:50 – 13:30, 17:50 – 19:30",
+              "星期六: 11:50 – 13:30, 17:59 – 19:30",
+              "星期日: 11:50 – 13:30, 17:50 – 19:30"
+            ],
+            "nextCloseTime": "2026-07-21T05:30:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 50
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 59
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 30
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:50 – 13:30, 17:50 – 19:30",
+              "星期二: 11:50 – 13:30, 17:50 – 19:30",
+              "星期三: 11:50 – 13:30, 17:50 – 19:30",
+              "星期四: 11:50 – 13:30, 17:50 – 19:30",
+              "星期五: 11:50 – 13:30, 17:50 – 19:30",
+              "星期六: 11:50 – 13:30, 17:59 – 19:30",
+              "星期日: 11:50 – 13:30, 17:50 – 19:30"
+            ],
+            "nextCloseTime": "2026-07-21T05:30:00Z"
+          },
+          "website_uri": "https://www.facebook.com/profile.php?id=100086536684553&mibextid=LQQJ4d"
+        },
+        {
+          "place_id": "ChIJN0fDr0BpbzQR0c_IJDXNtu4",
+          "resource_name": "places/ChIJN0fDr0BpbzQR0c_IJDXNtu4",
+          "name": "美好拾光（預約制）",
+          "address": "962臺東縣長濱鄉長濱村田組13號",
+          "latitude": 23.30616,
+          "longitude": 121.4434307,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17201161454922289105&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "台東長濱 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 487,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 13,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 12:00 – 13:30, 18:00 – 19:30",
+              "星期二: 12:00 – 13:30, 18:00 – 19:30",
+              "星期三: 休息",
+              "星期四: 休息",
+              "星期五: 12:00 – 13:30, 18:00 – 19:30",
+              "星期六: 12:00 – 13:30, 18:00 – 19:30",
+              "星期日: 12:00 – 13:30, 18:00 – 19:30"
+            ],
+            "nextCloseTime": "2026-07-21T05:30:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 13,
+                  "minute": 30
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 30
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 12:00 – 13:30, 18:00 – 19:30",
+              "星期二: 12:00 – 13:30, 18:00 – 19:30",
+              "星期三: 休息",
+              "星期四: 休息",
+              "星期五: 12:00 – 13:30, 18:00 – 19:30",
+              "星期六: 12:00 – 13:30, 18:00 – 19:30",
+              "星期日: 12:00 – 13:30, 18:00 – 19:30"
+            ],
+            "nextCloseTime": "2026-07-21T05:30:00Z"
+          },
+          "website_uri": "https://www.facebook.com/goodtime11/"
+        },
+        {
+          "place_id": "ChIJQ9IBXVBdbzQRKktJNqjVE20",
+          "resource_name": "places/ChIJQ9IBXVBdbzQRKktJNqjVE20",
+          "name": "翔美食堂",
+          "address": "962臺東縣長濱鄉203號",
+          "latitude": 23.3168388,
+          "longitude": 121.4568814,
+          "primary_type": "japanese_restaurant",
+          "types": [
+            "japanese_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=7859860693133642538&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 3,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.9
+          },
+          "rating": 4.5,
+          "user_rating_count": 302,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:30 – 14:00, 17:00 – 19:00",
+              "星期二: 11:30 – 14:00, 17:00 – 19:00",
+              "星期三: 11:30 – 14:00, 17:00 – 19:00",
+              "星期四: 11:30 – 14:00, 17:00 – 19:00",
+              "星期五: 11:30 – 14:00, 17:00 – 19:00",
+              "星期六: 11:30 – 14:00, 17:00 – 19:00",
+              "星期日: 休息"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 30
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:30 – 14:00, 17:00 – 19:00",
+              "星期二: 11:30 – 14:00, 17:00 – 19:00",
+              "星期三: 11:30 – 14:00, 17:00 – 19:00",
+              "星期四: 11:30 – 14:00, 17:00 – 19:00",
+              "星期五: 11:30 – 14:00, 17:00 – 19:00",
+              "星期六: 11:30 – 14:00, 17:00 – 19:00",
+              "星期日: 休息"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJv6vDxdZdbzQRtZe6g2TdiQk",
+          "resource_name": "places/ChIJv6vDxdZdbzQRtZe6g2TdiQk",
+          "name": "啦啦隊-那邊(laladay)",
+          "address": "962臺東縣長濱鄉三間村真柄15號47",
+          "latitude": 23.346055,
+          "longitude": 121.454168,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=687323841927223221&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "台東長濱 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2,
+            "rating_score": 1.0
+          },
+          "rating": 5,
+          "user_rating_count": 63,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 18,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:00 – 20:00",
+              "星期二: 11:00 – 20:00",
+              "星期三: 休息",
+              "星期四: 休息",
+              "星期五: 11:00 – 20:00",
+              "星期六: 11:00 – 20:18",
+              "星期日: 11:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T12:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 18
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:00 – 20:00",
+              "星期二: 11:00 – 20:00",
+              "星期三: 休息",
+              "星期四: 休息",
+              "星期五: 11:00 – 20:00",
+              "星期六: 11:00 – 20:18",
+              "星期日: 11:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T12:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJvVzRTlBdbzQR52q9XW-1agY",
+          "resource_name": "places/ChIJvVzRTlBdbzQR52q9XW-1agY",
+          "name": "魯瑪私房菜",
+          "address": "962臺東縣長濱鄉長濱村37號",
+          "latitude": 23.316456799999997,
+          "longitude": 121.45410219999998,
+          "primary_type": "seafood_restaurant",
+          "types": [
+            "seafood_restaurant",
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=462381401677589223&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            },
+            {
+              "query": "長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 438,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 休息",
+              "星期二: 11:00 – 14:00, 17:00 – 19:00",
+              "星期三: 11:00 – 14:00, 17:00 – 19:00",
+              "星期四: 11:00 – 14:00, 17:00 – 19:00",
+              "星期五: 11:00 – 14:00, 17:00 – 19:00",
+              "星期六: 11:00 – 14:00, 17:00 – 19:00",
+              "星期日: 11:00 – 14:00, 17:00 – 19:00"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 休息",
+              "星期二: 11:00 – 14:00, 17:00 – 19:00",
+              "星期三: 11:00 – 14:00, 17:00 – 19:00",
+              "星期四: 11:00 – 14:00, 17:00 – 19:00",
+              "星期五: 11:00 – 14:00, 17:00 – 19:00",
+              "星期六: 11:00 – 14:00, 17:00 – 19:00",
+              "星期日: 11:00 – 14:00, 17:00 – 19:00"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJS-fcWVBdbzQRDOmzwKO-jIY",
+          "resource_name": "places/ChIJS-fcWVBdbzQRDOmzwKO-jIY",
+          "name": "長濱蔬果行",
+          "address": "962臺東縣長濱鄉長濱村長濱路56號",
+          "latitude": 23.3168619,
+          "longitude": 121.45494099999999,
+          "primary_type": "food_store",
+          "types": [
+            "food_store",
+            "store",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=9695333708343798028&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 6,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.1667,
+            "rating_score": 0.88
+          },
+          "rating": 4.4,
+          "user_rating_count": 7,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 6,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 06:00 – 18:00",
+              "星期二: 06:00 – 18:00",
+              "星期三: 06:00 – 18:00",
+              "星期四: 06:00 – 18:00",
+              "星期五: 06:00 – 18:00",
+              "星期六: 06:00 – 18:00",
+              "星期日: 06:00 – 18:00"
+            ],
+            "nextCloseTime": "2026-07-21T10:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 6,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 06:00 – 18:00",
+              "星期二: 06:00 – 18:00",
+              "星期三: 06:00 – 18:00",
+              "星期四: 06:00 – 18:00",
+              "星期五: 06:00 – 18:00",
+              "星期六: 06:00 – 18:00",
+              "星期日: 06:00 – 18:00"
+            ],
+            "nextCloseTime": "2026-07-21T10:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJYQfVy6tbbzQR7LVkGGdEYcU",
+          "resource_name": "places/ChIJYQfVy6tbbzQR7LVkGGdEYcU",
+          "name": "彎進來/住宿/無菜單/在地風味料理/寵物友善/午餐/晚餐",
+          "address": "962003臺東縣長濱鄉樟原村118之10號＆台11線73.5K大馬路旁邊",
+          "latitude": 23.4211852,
+          "longitude": 121.48594879999999,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14222724307794310636&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 4,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 244,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:00 – 20:00",
+              "星期二: 11:00 – 20:00",
+              "星期三: 11:00 – 20:00",
+              "星期四: 11:00 – 20:00",
+              "星期五: 11:00 – 20:00",
+              "星期六: 11:00 – 20:00",
+              "星期日: 11:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T12:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 11,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 11:00 – 20:00",
+              "星期二: 11:00 – 20:00",
+              "星期三: 11:00 – 20:00",
+              "星期四: 11:00 – 20:00",
+              "星期五: 11:00 – 20:00",
+              "星期六: 11:00 – 20:00",
+              "星期日: 11:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T12:00:00Z"
+          }
+        },
+        {
+          "place_id": "ChIJZzgIad5vbzQR9skZLfkRqCE",
+          "resource_name": "places/ChIJZzgIad5vbzQR9skZLfkRqCE",
+          "name": "沐森海岸 MoonSun Coast（無國界料理餐廳、自家生產農作）預約制",
+          "address": "962臺東縣長濱鄉寧埔村堺橋1號",
+          "latitude": 23.2160174,
+          "longitude": 121.40911310000001,
+          "primary_type": "restaurant",
+          "types": [
+            "restaurant",
+            "food",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=2425208161240205814&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 午餐 素食",
+              "intent": "restaurant",
+              "intent_type": "restaurant",
+              "rank": 5,
+              "target_terms": [
+                "素食"
+              ],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": [
+                "評分4.8以上餐廳",
+                "低於200元人均消費"
+              ]
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.2,
+            "rating_score": 1.0
+          },
+          "rating": 5,
+          "user_rating_count": 144,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 21,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 21,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 21,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 12:00 – 14:00, 18:00 – 21:00",
+              "星期二: 12:00 – 14:00, 18:00 – 20:00",
+              "星期三: 12:00 – 14:00, 18:00 – 20:00",
+              "星期四: 12:00 – 14:00, 18:00 – 20:00",
+              "星期五: 12:00 – 14:00, 18:00 – 21:00",
+              "星期六: 12:00 – 14:00, 18:00 – 21:00",
+              "星期日: 12:00 – 14:00, 18:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 21,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 21,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 12,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 14,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 21,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 12:00 – 14:00, 18:00 – 21:00",
+              "星期二: 12:00 – 14:00, 18:00 – 20:00",
+              "星期三: 12:00 – 14:00, 18:00 – 20:00",
+              "星期四: 12:00 – 14:00, 18:00 – 20:00",
+              "星期五: 12:00 – 14:00, 18:00 – 21:00",
+              "星期六: 12:00 – 14:00, 18:00 – 21:00",
+              "星期日: 12:00 – 14:00, 18:00 – 20:00"
+            ],
+            "nextCloseTime": "2026-07-21T06:00:00Z"
+          },
+          "website_uri": "https://m.facebook.com/pages/category/Product-Service/MoonSun-Coast-%E6%B2%90%E6%A3%AE%E6%B5%B7%E5%B2%B8-108712077560978/"
+        }
+      ],
+      "errors": []
+    },
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "13:30",
+      "end_time": "14:30",
+      "time": "13:30~14:30",
+      "slot_type": "attraction",
+      "original_activity": "參觀當地景點",
+      "reason_for_search": "缺乏具體景點",
+      "previous_place_hint": null,
+      "next_place_hint": null,
+      "neighbor_hints": null,
+      "target_terms": [],
+      "location_terms": [
+        "長濱鄉",
+        "台東長濱"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "structured_constraints": {},
+      "queries": [
+        {
+          "query": "台東長濱 景點",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [],
+          "location_terms": [
+            "台東長濱"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "長濱鄉 景點",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": []
+        },
+        {
+          "query": "長濱鄉 參觀",
+          "intent": "local_culture",
+          "intent_type": "local_culture",
+          "target_terms": [],
+          "location_terms": [
+            "長濱鄉"
+          ],
+          "must_have": []
+        }
+      ],
+      "search_locale": {
+        "language_code": "zh-TW",
+        "region_code": "TW"
+      },
+      "location_bias": {
+        "circle": {
+          "center": {
+            "latitude": 23.3168683,
+            "longitude": 121.4548579
+          },
+          "radius": 1500.0
+        }
+      },
+      "candidates": [
+        {
+          "place_id": "ChIJ9TdAI9JdbzQRNMmKBWynQ-0",
+          "resource_name": "places/ChIJ9TdAI9JdbzQRNMmKBWynQ-0",
+          "name": "金剛大道",
+          "address": "962臺東縣長濱鄉長光產業道路",
+          "latitude": 23.33055,
+          "longitude": 121.451369,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=17096692692819822900&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 參觀",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 1,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 1.0,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 2535,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "website_uri": "https://www.eastcoast-nsa.gov.tw/zh-tw/attractions/detail/236/"
+        },
+        {
+          "place_id": "ChIJR0HKdlBdbzQR48W4ZCoCpxE",
+          "resource_name": "places/ChIJR0HKdlBdbzQR48W4ZCoCpxE",
+          "name": "長濱天主堂 吳若石神父足部健康驛站",
+          "address": "962臺東縣長濱鄉長濱村13鄰258號",
+          "latitude": 23.317143899999998,
+          "longitude": 121.45657460000001,
+          "primary_type": "church",
+          "types": [
+            "tourist_attraction",
+            "church",
+            "place_of_worship",
+            "association_or_organization",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=1271987800857167331&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.96
+          },
+          "rating": 4.8,
+          "user_rating_count": 822,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": false,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 26
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 22
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 23
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 24
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 12,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 25
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期二: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期三: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期四: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期五: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期六: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期日: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00"
+            ],
+            "nextOpenTime": "2026-07-21T05:00:00Z"
+          },
+          "regular_opening_hours": {
+            "openNow": false,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 12,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 13,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 17,
+                  "minute": 0
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 18,
+                  "minute": 0
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 20,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期二: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期三: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期四: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期五: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期六: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00",
+              "星期日: 09:00 – 12:00, 13:00 – 17:00, 18:00 – 20:00"
+            ],
+            "nextOpenTime": "2026-07-21T05:00:00Z"
+          },
+          "website_uri": "http://www.frjosef.org/"
+        },
+        {
+          "place_id": "ChIJo8g7k0pdbzQR6mFPqf9KhCs",
+          "resource_name": "places/ChIJo8g7k0pdbzQR6mFPqf9KhCs",
+          "name": "長光梯田",
+          "address": "962臺東縣長濱鄉長光產業道路",
+          "latitude": 23.3303004,
+          "longitude": 121.4475195,
+          "primary_type": "scenic_spot",
+          "types": [
+            "scenic_spot",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=3135713702474375658&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 0.9
+          },
+          "rating": 4.5,
+          "user_rating_count": 965,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          }
+        },
+        {
+          "place_id": "ChIJX-jByA1obzQRUqFwrTCuq-s",
+          "resource_name": "places/ChIJX-jByA1obzQRUqFwrTCuq-s",
+          "name": "齒草橋休息區",
+          "address": "962臺東縣長濱鄉",
+          "latitude": 23.295714,
+          "longitude": 121.43644289999999,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=16981858344022090066&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 參觀",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.86
+          },
+          "rating": 4.3,
+          "user_rating_count": 436,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "website_uri": "https://www.eastcoast-nsa.gov.tw/zh-tw"
+        },
+        {
+          "place_id": "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+          "resource_name": "places/ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+          "name": "長濱鄉運動公園",
+          "address": "962臺東縣長濱鄉",
+          "latitude": 23.319483299999998,
+          "longitude": 121.4533616,
+          "primary_type": "park",
+          "types": [
+            "park",
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=11742514406639838336&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 參觀",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.82
+          },
+          "rating": 4.1,
+          "user_rating_count": 56,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "website_uri": "http://www.changbin.gov.tw/home.php"
+        },
+        {
+          "place_id": "ChIJvWWOYUpdbzQRtcY9RszWO5M",
+          "resource_name": "places/ChIJvWWOYUpdbzQRtcY9RszWO5M",
+          "name": "長光梯田大道",
+          "address": "962臺東縣長濱鄉台東縣長濱鄉",
+          "latitude": 23.330306999999998,
+          "longitude": 121.44859,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=10609309520041461429&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "台東長濱 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 6,
+              "target_terms": [],
+              "location_terms": [
+                "台東長濱"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 參觀",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 4,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.25,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 109,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          }
+        },
+        {
+          "place_id": "ChIJzwUGYEpdbzQREeP3pRdVtZA",
+          "resource_name": "places/ChIJzwUGYEpdbzQREeP3pRdVtZA",
+          "name": "金剛望海亭",
+          "address": "962臺東縣長濱鄉長濱村",
+          "latitude": 23.330043399999997,
+          "longitude": 121.44851709999999,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=10427334072303346449&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 景點",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 3,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            },
+            {
+              "query": "長濱鄉 參觀",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 5,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.3333,
+            "rating_score": 0.92
+          },
+          "rating": 4.6,
+          "user_rating_count": 119,
+          "business_status": "OPERATIONAL",
+          "current_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 0,
+                  "minute": 0,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 21
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 23,
+                  "minute": 59,
+                  "truncated": true,
+                  "date": {
+                    "year": 2026,
+                    "month": 7,
+                    "day": 27
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "regular_opening_hours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 0,
+                  "minute": 0
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "星期一: 24 小時營業",
+              "星期二: 24 小時營業",
+              "星期三: 24 小時營業",
+              "星期四: 24 小時營業",
+              "星期五: 24 小時營業",
+              "星期六: 24 小時營業",
+              "星期日: 24 小時營業"
+            ]
+          },
+          "website_uri": "http://www.changbin.gov.tw/home.php"
+        },
+        {
+          "place_id": "ChIJUwfOOgBdbzQRCQiPfidYncY",
+          "resource_name": "places/ChIJUwfOOgBdbzQRCQiPfidYncY",
+          "name": "加走灣瞭望台",
+          "address": "962臺東縣長濱鄉長濱村長濱1號",
+          "latitude": 23.3143039,
+          "longitude": 121.4514327,
+          "primary_type": "tourist_attraction",
+          "types": [
+            "tourist_attraction",
+            "point_of_interest",
+            "establishment"
+          ],
+          "google_maps_uri": "https://maps.google.com/?cid=14311692117503576073&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "matched_queries": [
+            {
+              "query": "長濱鄉 參觀",
+              "intent": "local_culture",
+              "intent_type": "local_culture",
+              "rank": 2,
+              "target_terms": [],
+              "location_terms": [
+                "長濱鄉"
+              ],
+              "must_have": []
+            }
+          ],
+          "ranking_signals": {
+            "google_rank_score": 0.5,
+            "rating_score": 1.0
+          },
+          "rating": 5,
+          "user_rating_count": 4,
+          "business_status": "OPERATIONAL"
+        }
+      ],
+      "errors": []
+    }
+  ]
+}

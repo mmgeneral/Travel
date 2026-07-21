@@ -1,0 +1,145 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T10:20:11",
+  "decision_summary": {
+    "overall_strategy": "minor_adjustment",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "The candidate places provided suitable replacements for fuzzy slots with high proximity to existing itinerary location.",
+      "The decision prioritizes minimal changes while enhancing itinerary specificity."
+    ],
+    "warnings": [
+      "Some candidate places lack ratings and user reviews."
+    ]
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+        "property_token": "sample_property_token",
+        "name": "天廚蔬房(素食料理)",
+        "latitude": 23.3177485,
+        "longitude": 121.45425480000002,
+        "price": {
+          "currency": "CNY",
+          "value": 500,
+          "source": "candidate_price"
+        }
+      },
+      "reason": "A convenient location near the itinerary attractions."
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "original_activity": "探索長濱鄉自然風光",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+        "name": "長濱鄉運動公園",
+        "address": "962臺東縣長濱鄉",
+        "latitude": 23.319483299999998,
+        "longitude": 121.4533616
+      },
+      "reason": "Proximity to the previous and next activities and aligns with the natural scenery theme."
+    },
+    {
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "original_activity": "當地文化與手工藝探索",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJfy2B9pxdbzQRn0sEYV9Ed24",
+        "name": "共域工作室｜皮革手作・樹皮藝術・精油芳療",
+        "address": "962臺東縣長濱鄉長濱村25鄰號136號",
+        "latitude": 23.3280995,
+        "longitude": 121.46195169999999
+      },
+      "reason": "Provides a hands-on cultural and craft experience as intended."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "Day 1",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "time": "09:00~12:00",
+          "activity": "長濱鄉運動公園",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "長濱鄉運動公園",
+          "route_entry_place": "長濱鄉公車站",
+          "route_exit_place": "天廚蔬房(素食料理)",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 0,
+            "source": "free",
+            "confidence": 0.9,
+            "note": "Free public park."
+          }
+        },
+        {
+          "slot_id": "day1_slot03",
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "午餐於天廚蔬房(素食料理)",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "台東長濱鄉 天廚蔬房",
+          "route_entry_place": "長濱鄉運動公園",
+          "route_exit_place": "台東長濱鄉 天廚蔬房",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 100,
+            "source": "llm_estimated",
+            "confidence": 0.7,
+            "note": "Estimated group meal cost at a vegetarian restaurant."
+          }
+        },
+        {
+          "slot_id": "day1_slot05",
+          "start_time": "14:00",
+          "end_time": "18:00",
+          "time": "14:00~18:00",
+          "activity": "共域工作室｜皮革手作・樹皮藝術・精油芳療",
+          "slot_type": "attraction",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "共域工作室",
+          "route_entry_place": "台東長濱鄉 天廚蔬房",
+          "route_exit_place": "長濱鄉公車站",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 0,
+            "party_total": 150,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Estimated cost for workshop participation."
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+      "ChIJfy2B9pxdbzQRn0sEYV9Ed24"
+    ],
+    "lodging": [
+      "ChIJU1QVEVBdbzQRWr3AAi5eJ2E"
+    ]
+  }
+}

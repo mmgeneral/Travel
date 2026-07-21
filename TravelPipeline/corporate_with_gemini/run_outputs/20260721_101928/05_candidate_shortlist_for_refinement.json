@@ -1,0 +1,553 @@
+{
+  "instruction": "Only use these top candidates when replacing fuzzy itinerary slots. Do not invent new places.",
+  "candidate_slots": [
+    {
+      "slot_index": 1,
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "09:00",
+      "end_time": "12:00",
+      "time": "09:00~12:00",
+      "slot_type": "attraction",
+      "original_activity": "探索長濱鄉自然風光",
+      "reason_for_search": "缺乏具體地點",
+      "target_terms": [
+        "自然風光"
+      ],
+      "location_terms": [
+        "長濱鄉",
+        "台東長濱鄉",
+        "長濱鄉公車站附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [
+        "適合09:00~12:00"
+      ],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot01",
+        "slot_id": "day1_slot01",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "09:00",
+        "end_time": "12:00",
+        "time": "09:00~12:00",
+        "slot_type": "attraction",
+        "original_activity": "探索長濱鄉自然風光",
+        "previous_anchor": {
+          "source": "default_start",
+          "role": "previous",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱鄉公車站",
+          "query": "長濱鄉公車站",
+          "place": {
+            "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+            "resource_name": "places/ChIJrX_AUVFdbzQRy5403njjk98",
+            "name": "長濱鄉公所",
+            "address": "962台灣臺東縣長濱鄉",
+            "latitude": 23.314944999999998,
+            "longitude": 121.451698,
+            "primary_type": "bus_stop",
+            "types": [
+              "bus_stop",
+              "transit_stop",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=16110470400297967307&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱鄉公車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "schedule",
+          "role": "next",
+          "slot_id": "day1_slot03",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "午餐於天廚蔬房",
+          "query": "台東長濱鄉 天廚蔬房",
+          "place": {
+            "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+            "resource_name": "places/ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+            "name": "天廚蔬房(素食料理)",
+            "address": "962臺東縣長濱鄉長濱村中興路25号號",
+            "latitude": 23.3177485,
+            "longitude": 121.45425480000002,
+            "primary_type": "vegetarian_restaurant",
+            "types": [
+              "vegetarian_restaurant",
+              "restaurant",
+              "food",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=7000667697478417754&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台東長濱鄉 天廚蔬房",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": false,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJDXdM2FFdbzQRgKSsaaPK9aI",
+          "name": "長濱鄉運動公園",
+          "address": "962臺東縣長濱鄉",
+          "latitude": 23.319483299999998,
+          "longitude": 121.4533616,
+          "google_maps_uri": "https://maps.google.com/?cid=11742514406639838336&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3511,
+          "score_breakdown": {
+            "total": 0.3511,
+            "relevance": 0.28,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.9,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.532,
+            "candidate_to_next_km": 0.213,
+            "previous_to_next_km": 0.407,
+            "route_distance_km": 0.746,
+            "detour_km": 0.339,
+            "max_leg_km": 0.532,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱鄉公車站",
+              "query": "長濱鄉公車站",
+              "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+              "name": "長濱鄉公所",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.314944999999998,
+              "longitude": 121.451698
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "午餐於天廚蔬房",
+              "query": "台東長濱鄉 天廚蔬房",
+              "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+              "name": "天廚蔬房(素食料理)",
+              "address": "962臺東縣長濱鄉長濱村中興路25号號",
+              "latitude": 23.3177485,
+              "longitude": 121.45425480000002
+            }
+          },
+          "matched_queries": [
+            "台東長濱鄉 自然風光",
+            "長濱鄉公車站附近 自然風光",
+            "長濱鄉 上午 自然風光"
+          ],
+          "why": "符合「長濱鄉」；由查詢「台東長濱鄉 自然風光」命中；前後站直線路徑約 0.746 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.3511
+        },
+        {
+          "place_id": "ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+          "name": "台東縣長濱鄉公所",
+          "address": "962臺東縣長濱鄉長濱村4鄰9號",
+          "latitude": 23.3152631,
+          "longitude": 121.4515124,
+          "google_maps_uri": "https://maps.google.com/?cid=8378755631722722084&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3136,
+          "score_breakdown": {
+            "total": 0.3136,
+            "relevance": 0.2611,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.9719,
+            "google_rank": 0.1667,
+            "type": 0.82,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.6675
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.04,
+            "candidate_to_next_km": 0.393,
+            "previous_to_next_km": 0.407,
+            "route_distance_km": 0.434,
+            "detour_km": 0.027,
+            "max_leg_km": 0.393,
+            "previous_anchor": {
+              "source": "default_start",
+              "activity": "長濱鄉公車站",
+              "query": "長濱鄉公車站",
+              "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+              "name": "長濱鄉公所",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.314944999999998,
+              "longitude": 121.451698
+            },
+            "next_anchor": {
+              "source": "schedule",
+              "activity": "午餐於天廚蔬房",
+              "query": "台東長濱鄉 天廚蔬房",
+              "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+              "name": "天廚蔬房(素食料理)",
+              "address": "962臺東縣長濱鄉長濱村中興路25号號",
+              "latitude": 23.3177485,
+              "longitude": 121.45425480000002
+            }
+          },
+          "matched_queries": [
+            "長濱鄉公車站附近 自然風光"
+          ],
+          "why": "符合「長濱鄉、台東長濱鄉」；由查詢「長濱鄉公車站附近 自然風光」命中；前後站直線路徑約 0.434 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料"
+          ],
+          "selection_score": 0.3136
+        }
+      ]
+    },
+    {
+      "slot_index": 2,
+      "slot_id": "day1_slot05",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "18:00",
+      "time": "14:00~18:00",
+      "slot_type": "attraction",
+      "original_activity": "當地文化與手工藝探索",
+      "reason_for_search": "缺乏具體地點",
+      "target_terms": [
+        "文化",
+        "手工藝"
+      ],
+      "location_terms": [
+        "長濱鄉",
+        "台東長濱鄉",
+        "長濱鄉公車站附近"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "anchor_context": {
+        "slot_key": "slot_id:day1_slot05",
+        "slot_id": "day1_slot05",
+        "day": 1,
+        "day_of_week": null,
+        "start_time": "14:00",
+        "end_time": "18:00",
+        "time": "14:00~18:00",
+        "slot_type": "attraction",
+        "original_activity": "當地文化與手工藝探索",
+        "previous_anchor": {
+          "source": "schedule",
+          "role": "previous",
+          "slot_id": "day1_slot03",
+          "day": 1,
+          "day_of_week": null,
+          "start_time": "12:30",
+          "end_time": "13:30",
+          "time": "12:30~13:30",
+          "activity": "午餐於天廚蔬房",
+          "query": "台東長濱鄉 天廚蔬房",
+          "place": {
+            "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+            "resource_name": "places/ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+            "name": "天廚蔬房(素食料理)",
+            "address": "962臺東縣長濱鄉長濱村中興路25号號",
+            "latitude": 23.3177485,
+            "longitude": 121.45425480000002,
+            "primary_type": "vegetarian_restaurant",
+            "types": [
+              "vegetarian_restaurant",
+              "restaurant",
+              "food",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=7000667697478417754&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "台東長濱鄉 天廚蔬房",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "next_anchor": {
+          "source": "default_end",
+          "role": "next",
+          "slot_id": null,
+          "day": null,
+          "day_of_week": null,
+          "start_time": null,
+          "end_time": null,
+          "time": null,
+          "activity": "長濱鄉公車站",
+          "query": "長濱鄉公車站",
+          "place": {
+            "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+            "resource_name": "places/ChIJrX_AUVFdbzQRy5403njjk98",
+            "name": "長濱鄉公所",
+            "address": "962台灣臺東縣長濱鄉",
+            "latitude": 23.314944999999998,
+            "longitude": 121.451698,
+            "primary_type": "bus_stop",
+            "types": [
+              "bus_stop",
+              "transit_stop",
+              "transit_station",
+              "transportation_service",
+              "point_of_interest",
+              "establishment"
+            ],
+            "google_maps_uri": "https://maps.google.com/?cid=16110470400297967307&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+            "matched_queries": [
+              {
+                "query": "長濱鄉公車站",
+                "intent": "anchor",
+                "intent_type": "anchor",
+                "rank": 1,
+                "target_terms": [],
+                "location_terms": [],
+                "must_have": []
+              }
+            ],
+            "ranking_signals": {
+              "google_rank_score": 1.0
+            }
+          },
+          "cache_hit": true,
+          "warnings": []
+        },
+        "warnings": []
+      },
+      "top_candidates": [
+        {
+          "place_id": "ChIJfy2B9pxdbzQRn0sEYV9Ed24",
+          "name": "共域工作室｜皮革手作・樹皮藝術・精油芳療",
+          "address": "962臺東縣長濱鄉長濱村25鄰號136號",
+          "latitude": 23.3280995,
+          "longitude": 121.46195169999999,
+          "google_maps_uri": "https://maps.google.com/?cid=7959906042840894367&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.4378,
+          "score_breakdown": {
+            "total": 0.4378,
+            "relevance": 0.5487,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.5836,
+            "google_rank": 1.0,
+            "type": 0.68,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.7969
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 1.394,
+            "candidate_to_next_km": 1.799,
+            "previous_to_next_km": 0.407,
+            "route_distance_km": 3.193,
+            "detour_km": 2.786,
+            "max_leg_km": 1.799,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "午餐於天廚蔬房",
+              "query": "台東長濱鄉 天廚蔬房",
+              "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+              "name": "天廚蔬房(素食料理)",
+              "address": "962臺東縣長濱鄉長濱村中興路25号號",
+              "latitude": 23.3177485,
+              "longitude": 121.45425480000002
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱鄉公車站",
+              "query": "長濱鄉公車站",
+              "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+              "name": "長濱鄉公所",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.314944999999998,
+              "longitude": 121.451698
+            }
+          },
+          "matched_queries": [
+            "台東長濱鄉 手工藝",
+            "長濱鄉公車站附近 手工藝"
+          ],
+          "why": "符合「手工藝」；由查詢「台東長濱鄉 手工藝」命中；前後站直線路徑約 3.193 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料",
+            "Google 類型與查詢意圖未明顯對齊"
+          ],
+          "selection_score": 0.5978
+        },
+        {
+          "place_id": "ChIJuzhZrjlqbzQRJPOiwNpRR3Q",
+          "name": "台東縣長濱鄉公所",
+          "address": "962臺東縣長濱鄉長濱村4鄰9號",
+          "latitude": 23.3152631,
+          "longitude": 121.4515124,
+          "google_maps_uri": "https://maps.google.com/?cid=8378755631722722084&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA",
+          "rating": null,
+          "user_rating_count": null,
+          "score": 0.3394,
+          "score_breakdown": {
+            "total": 0.3394,
+            "relevance": 0.28,
+            "quality": 0.3025,
+            "opening": 0.55,
+            "route": 0.9719,
+            "google_rank": 0.5,
+            "type": 0.82,
+            "status_penalty": 0.0,
+            "location_penalty": 0.0,
+            "constraint_penalty": 0.0,
+            "penalty": 0.0,
+            "relevance_gate": 0.676
+          },
+          "opening": {
+            "coverage": null,
+            "source": "all_weekday_descriptions",
+            "day_of_week": null
+          },
+          "route": {
+            "available": true,
+            "method": "straight_line_distance_proxy",
+            "distance_unit": "km",
+            "previous_to_candidate_km": 0.393,
+            "candidate_to_next_km": 0.04,
+            "previous_to_next_km": 0.407,
+            "route_distance_km": 0.434,
+            "detour_km": 0.027,
+            "max_leg_km": 0.393,
+            "previous_anchor": {
+              "source": "schedule",
+              "activity": "午餐於天廚蔬房",
+              "query": "台東長濱鄉 天廚蔬房",
+              "place_id": "ChIJU1QVEVBdbzQRWr3AAi5eJ2E",
+              "name": "天廚蔬房(素食料理)",
+              "address": "962臺東縣長濱鄉長濱村中興路25号號",
+              "latitude": 23.3177485,
+              "longitude": 121.45425480000002
+            },
+            "next_anchor": {
+              "source": "default_end",
+              "activity": "長濱鄉公車站",
+              "query": "長濱鄉公車站",
+              "place_id": "ChIJrX_AUVFdbzQRy5403njjk98",
+              "name": "長濱鄉公所",
+              "address": "962台灣臺東縣長濱鄉",
+              "latitude": 23.314944999999998,
+              "longitude": 121.451698
+            }
+          },
+          "matched_queries": [
+            "台東長濱鄉 文化",
+            "長濱鄉公車站附近 文化",
+            "長濱鄉公車站附近 手工藝"
+          ],
+          "why": "符合「長濱鄉、台東長濱鄉」；由查詢「台東長濱鄉 文化」命中；前後站直線路徑約 0.434 km",
+          "warnings": [
+            "缺少 Google 評分",
+            "缺少評論數",
+            "缺少營業時間資料"
+          ],
+          "selection_score": 0.3394
+        }
+      ]
+    }
+  ]
+}

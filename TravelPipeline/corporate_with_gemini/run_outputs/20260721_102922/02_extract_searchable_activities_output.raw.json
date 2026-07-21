@@ -1,0 +1,61 @@
+{
+  "pending_searches": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "12:00",
+      "end_time": "13:30",
+      "time": "12:00~13:30",
+      "slot_type": "meal",
+      "original_activity": "探索長濱鄉當地素食餐廳",
+      "reason_for_search": "缺乏具體店家",
+      "suggested_search_query": "長濱 素食 餐廳",
+      "target_terms": [
+        "素食"
+      ],
+      "location_terms": [
+        "長濱"
+      ],
+      "intent_type": "restaurant",
+      "must_have": [
+        "評分高",
+        "冷氣",
+        "停車位"
+      ],
+      "structured_constraints": {
+        "min_rating": 4.8,
+        "requires_air_conditioning": true,
+        "requires_parking": true,
+        "open_until": "22:00",
+        "max_price_level": 1
+      },
+      "confirmed_constraints": {
+        "min_rating": 4.8,
+        "requires_air_conditioning": true,
+        "requires_parking": true,
+        "max_price_level": 1
+      }
+    },
+    {
+      "slot_id": "day1_slot03",
+      "day": 1,
+      "day_of_week": null,
+      "start_time": "14:00",
+      "end_time": "17:00",
+      "time": "14:00~17:00",
+      "slot_type": "attraction",
+      "original_activity": "參觀長濱鄉周邊景點",
+      "reason_for_search": "缺乏具體景點",
+      "suggested_search_query": "長濱 鄉周邊 景點",
+      "target_terms": [],
+      "location_terms": [
+        "長濱"
+      ],
+      "intent_type": "local_culture",
+      "must_have": [],
+      "structured_constraints": {},
+      "confirmed_constraints": {}
+    }
+  ]
+}

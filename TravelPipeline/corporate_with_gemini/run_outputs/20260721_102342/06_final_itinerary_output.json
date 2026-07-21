@@ -1,0 +1,88 @@
+{
+  "final_itinerary_version": "final_itinerary_agent_v0.1",
+  "created_at": "2026-07-21T10:24:15",
+  "decision_summary": {
+    "overall_strategy": "single_replace",
+    "lodging_decision": "single_hotel",
+    "reasoning": [
+      "The itinerary contains a slot for a meal that lacks specific details. Given the candidate options, a single replacement with a suitable restaurant candidate is more efficient than restructuring the entire plan.",
+      "Both provided candidates for the meal comply with the search query context regarding vegetarian criteria. However, the choice of '長光食作（預約制）' offers convenience regarding proximity, avoiding unnecessary detours."
+    ],
+    "warnings": [
+      "Information gaps exist regarding rating and facilities at selected meal location."
+    ]
+  },
+  "selected_lodging_by_night": [
+    {
+      "night": 1,
+      "day_after": 1,
+      "hotel": {
+        "place_id": "ChIJe9z3WbxCbzQRxzC69COhJaM",
+        "property_token": "example_token",
+        "name": "Sample Hotel",
+        "latitude": 23.3451824,
+        "longitude": 121.43419,
+        "price": {
+          "currency": "CNY",
+          "per_person": 300,
+          "party_total": 600
+        }
+      },
+      "reason": "Consistent with lodging strategy to maintain a single hotel for the duration of the stay."
+    }
+  ],
+  "slot_decisions": [
+    {
+      "slot_id": "day1_slot01",
+      "day": 1,
+      "original_activity": "午餐於天廚蔬房",
+      "decision": "single_replace",
+      "selected_candidate": {
+        "place_id": "ChIJDxUJbW5dbzQREM9Qfhrfju8",
+        "name": "長光食作（預約制）",
+        "address": "962001臺東縣長濱鄉長濱村154號一樓",
+        "latitude": 23.3302573,
+        "longitude": 121.4627376
+      },
+      "reason": "The candidate '長光食作（預約制）' was chosen due to its proximity and relevance to the search parameters."
+    }
+  ],
+  "final_itinerary": [
+    {
+      "day": 1,
+      "date_description": "2026-07-21",
+      "schedule": [
+        {
+          "slot_id": "day1_slot01",
+          "start_time": "11:00",
+          "end_time": "13:00",
+          "time": "11:00~13:00",
+          "activity": "Lunch at 長光食作（預約制）",
+          "slot_type": "meal",
+          "is_commute": false,
+          "is_searchable": false,
+          "place_query": "長光食作（預約制）",
+          "route_entry_place": "長濱鄉",
+          "route_exit_place": "長濱鄉",
+          "cost_estimate": {
+            "currency": "CNY",
+            "per_person": 80,
+            "party_total": 160,
+            "source": "llm_estimated",
+            "confidence": 0.6,
+            "note": "Estimated meal cost based on local dining prices."
+          }
+        }
+      ]
+    }
+  ],
+  "reminders": [],
+  "used_candidate_ids": {
+    "places": [
+      "ChIJDxUJbW5dbzQREM9Qfhrfju8"
+    ],
+    "lodging": [
+      "ChIJe9z3WbxCbzQRxzC69COhJaM"
+    ]
+  }
+}

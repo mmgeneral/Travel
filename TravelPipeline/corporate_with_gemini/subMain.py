@@ -10,6 +10,9 @@ from Mcp import extract_searchable_activities
 from AnchorResolver import resolve_anchor_context, save_anchor_context_output
 from PlacesSearchAgent import search_places_for_pending_searches
 from CandidateScorer import save_scoring_outputs, score_candidate_slots
+from ConstraintExtractor import extract_constraints_from_query
+from Verifier import verify_planner_slots
+from constraint_ui import run_constraint_confirmation
 
 # 注意：FinalItineraryAgent 需要額外設定 OPENAI_API_KEY 環境變數
 # （跟其他模組使用的 Gemini key 不同），請確認 .env 或環境變數已設定。
@@ -61,7 +64,18 @@ async def run_multi_agent_flow(user_query: str = "去台南兩天一夜"):
 
     print(f"📁 [Run Output] 本次輸出資料夾：{run_dir}")
 
+    raw_constraints_result = extract_constraints_from_query(user_query)
+    _write_json(
+        run_dir / "00.5_raw_constraints_extraction.json",
+        raw_constraints_result,
+    )
+    print("📋 [ConstraintExtractor] 抽取的原始約束：")
+    print(json.dumps(raw_constraints_result, ensure_ascii=False, indent=2))
+    print("=" * 20)
+
     planner_result = generate_travel_itinerary_json(user_query)
+    planner_result = verify_planner_slots(planner_result, raw_constraints_result)
+
     destination_hint = (
         env_destination_hint
         or _trip_context_value(planner_result, "destination")
@@ -87,8 +101,14 @@ async def run_multi_agent_flow(user_query: str = "去台南兩天一夜"):
     print(itinerary_str)
     print("="*20)
 
-    searchable_activities = extract_searchable_activities(itinerary_str)
+    searchable_activities = extract_searchable_activities(itinerary_str, raw_constraints=raw_constraints_result)
     searchable_activities_json = _parse_json_if_possible(searchable_activities)
+
+    skip_confirmation = os.environ.get("SKIP_CONFIRMATION", "").lower() in ("1", "true", "yes")
+    if not skip_confirmation and "raw_text" not in searchable_activities_json:
+        searchable_activities_json = run_constraint_confirmation(searchable_activities_json)
+        searchable_activities = json.dumps(searchable_activities_json, ensure_ascii=False, indent=2)
+
     _write_text(run_dir / "02_extract_searchable_activities_output.raw.json", searchable_activities)
     _write_json(
         run_dir / "02_extract_searchable_activities_output.json",
@@ -160,5 +180,9 @@ async def run_multi_agent_flow(user_query: str = "去台南兩天一夜"):
         print(str(exc))
 
 if __name__ == "__main__":
-    query = " ".join(sys.argv[1:]).strip() or os.getenv("TRAVEL_TEST_QUERY", "去台南兩天一夜")
+    args = list(sys.argv[1:])
+    if "--skip-confirmation" in args:
+        os.environ["SKIP_CONFIRMATION"] = "1"
+        args.remove("--skip-confirmation")
+    query = " ".join(args).strip() or os.getenv("TRAVEL_TEST_QUERY", "去台南兩天一夜")
     asyncio.run(run_multi_agent_flow(query))

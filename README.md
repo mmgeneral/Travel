@@ -254,3 +254,22 @@ route_intent → retriever → researcher → critic ⟲ (up to 3 iterations)
 - `tests/legacy/test_idempotency.py` — idempotency replay tests.
 - `tests/legacy/test_saga_compensation.py` — Saga rollback tests.
 - `tests/legacy/test_resilience.py` — circuit-breaker + retry resilience tests.
+
+---
+
+## Checkpoint Scheduling Prototype (v1)
+
+The following `[SIMPLIFIED]` assumptions are used in the checkpoint scheduling module
+(`slot_model.py`, `belief_store.py`, `layer0_validator.py`, `checkpoint_dp.py`).
+
+- **Layer 0** is a pre‑filter only: it runs synchronously, triggers a background repair
+  stub, and increments failure beta counts.  It does **not** participate in the DP decision space.
+- **Pairwise interactions** are the only joint term learned.  Slots with **3+ risk tags** use a
+  geometric‑mean heuristic over all per‑pair shrink probabilities (`combine_multi_tag_probability`).
+- **`t_confirm` and `t_diagnose` are flat constants** (default 60s / 120s) across all slot periods.
+- **`affected_scope` is supplied by the pipeline** as an input; the scheduler does not compute it.
+- The DP redo term is based on `affected_scope(m)` summed over slots with index ≥ m,
+  **including slots beyond the next checkpoint** if the blast radius extends past it.
+- The DP error branch treats a first error as a one‑time `t_diagnose + redo` cost and then
+  continues from the same interval start; a more accurate recurrence would recurse from the
+  error location itself.

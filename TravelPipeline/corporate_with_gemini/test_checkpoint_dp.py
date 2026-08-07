@@ -25,63 +25,58 @@ class FixedBeliefStore:
 
 
 def test_probability_sums_to_one_for_any_subrange() -> None:
-    """For any i,j the probabilities of no‑error and first‑error sum to 1."""
-    p_success = [0.9, 0.8, 0.7]
-    L = len(p_success)
-    for i in range(L):
-        for j in range(i + 1, L + 1):
-            inclusive_end = min(j, L - 1)
-
-            prob_no_error = 1.0
-            for k in range(i + 1, inclusive_end + 1):
-                prob_no_error *= p_success[k]
-
-            prob_first_err_sum = 0.0
-            for m in range(i + 1, inclusive_end + 1):
-                prob_until_m = 1.0
-                for k in range(i + 1, m):
-                    prob_until_m *= p_success[k]
-                prob_first_err_sum += prob_until_m * (1.0 - p_success[m])
-
-            assert abs(prob_no_error + prob_first_err_sum - 1.0) < 1e-9
+    """For any i,j: P_ok(i,j) + sum of P_fail_at(i,m) for m in [i,j] == 1."""
+    p_success = [0.9, 0.8, 0.7, 0.85]
+    n = len(p_success)
+    for i in range(n):
+        for j in range(i, n):
+            prob_ok = 1.0
+            for k in range(i, j + 1):
+                prob_ok *= p_success[k]
+            prob_until_m = 1.0
+            total_fail = 0.0
+            for m in range(i, j + 1):
+                total_fail += prob_until_m * (1.0 - p_success[m])
+                prob_until_m *= p_success[m]
+            assert abs(prob_ok + total_fail - 1.0) < 1e-9
 
 
-def test_final_checkpoint_always_included() -> None:
-    """Last slot must always appear in the returned checkpoint list."""
+def test_final_slot_always_covered() -> None:
+    """The last real slot must always be part of some checkpoint's span."""
     slots = [
         Slot(slot_id="day1_lunch", day=1, period="lunch", risk_tags=["t1"]),
         Slot(slot_id="day1_dinner", day=1, period="dinner", risk_tags=["t2"]),
         Slot(slot_id="day2_breakfast", day=2, period="breakfast", risk_tags=["t3"]),
     ]
-
     store = FixedBeliefStore([0.9, 0.8, 0.7])
     result = solve_checkpoints(slots, store)
-
     assert result
     assert result[-1] == slots[-1].slot_id
 
 
 def test_empty_slots_return_empty() -> None:
-    """Empty list yields empty checkpoint list (no off‑by‑one crash)."""
     assert solve_checkpoints([], FixedBeliefStore([])) == []
 
 
-def test_intermediate_checkpoints_appear_with_distance_scaled_diagnosis() -> None:
-    """With realistic parameters, the DP should NOT collapse to 'always skip to the end'.
+def test_intermediate_checkpoints_emerge_with_bounded_cascading_redo() -> None:
+    """When redo cost genuinely grows with detection delay (affected_scope
+    cascades forward, bounded by the checkpoint position), the DP should
+    place more than just the final mandatory checkpoint.
 
-    Regression test for the bug where flat t_diagnose caused solve_checkpoints
-    to always place a single checkpoint at the last slot regardless of risk.
+    Regression test for the bug where redo cost wasn't bounded by the
+    checkpoint position j, which removed the incentive for early detection
+    and caused solve_checkpoints to always collapse to a single final
+    checkpoint.
     """
+    ids = [f"s{i}" for i in range(5)]
     slots = [
-        Slot(slot_id=f"s{i}", day=1, period="x", risk_tags=[f"tag{i}"],
-             affected_scope=[f"s{i}"], redo_cost_seconds=1.0)
+        Slot(slot_id=ids[i], day=1, period="x", risk_tags=[f"tag{i}"],
+             affected_scope=ids[i:], redo_cost_seconds=1.0)
         for i in range(5)
     ]
     store = FixedBeliefStore([0.7, 0.7, 0.9, 0.85, 0.85])
     result = solve_checkpoints(slots, store, t_confirm=1.0, t_diagnose_per_state=1.0)
-
-    # Must have more than just the final mandatory checkpoint.
     assert len(result) > 1, (
-        f"Expected multiple checkpoints (distance-scaled diagnosis cost should "
-        f"favor intermediate checkpoints), got only {result}"
+        f"Expected multiple checkpoints when redo cost cascades and is "
+        f"bounded by checkpoint position, got only {result}"
     )

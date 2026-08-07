@@ -2,20 +2,24 @@
 
 The recurrence is the classic backward‑induction structure of
 "Expectation of remaining user time" but with the redo term based on
-``affected_scope`` rather than a linear position range.
+``affected_scope`` and bounded by the checkpoint position.
 
 ``[SIMPLIFIED]`` assumptions:
-- t_confirm and t_diagnose are flat constants (same for all periods).
-- The DP treats a first‑error as a one‑time cost followed by continuing
-  from the same interval start; a more faithful implementation would
-  recursively call the DP from the error location.
+- t_confirm is a flat constant for every checkpoint.
+- t_diagnose_per_state is the cost of inspecting a single state while
+  walking backwards; the total diagnosis cost scales linearly with the
+  distance to the first error.
+- The DP recurses via ``dp[m+1]`` after the first error at slot ``m``.
+- There is no sentinel ``j == n`` branch; every chosen ``j`` is a real
+  slot index, and the final slot is naturally covered as part of some
+  checkpoint span.
 - The solver returns a list of slot_ids to pause at.  This list is
   deterministic for the given slots/belief store.
 """
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from belief_store import BeliefStore
 from slot_model import Slot
@@ -56,48 +60,39 @@ def solve_checkpoints(
     # per‑slot success probability using §3 feature‑indexed beliefs
     p_success = [belief_store.probability_for_tags(s.risk_tags) for s in slots]
 
-    # dp[i] = minimal expected remaining user time after being verified at slot i
-    #         (i ranges 0..n, where n is the virtual sentinel after the last slot)
+    # dp[i] = minimal expected remaining user time given slots 0..i‑1 are
+    #         already verified and slot i (if i < n) has not yet been examined.
+    # dp[n] = 0 (base case: all n slots verified).
     dp = [0.0] * (n + 1)
-    next_checkpoint = [None] * (n + 1)
+    next_checkpoint = [None] * (n + 1)  # chosen real slot index for next checkpoint
 
     for i in range(n - 1, -1, -1):
         best = float("inf")
         best_j = None
 
-        # try every possible position j (i+1 … n) for the *next verified slot*
-        # (j == n means we skip any further checkpoint until the end)
-        for j in range(i + 1, n + 1):
-            # probability that no error occurs in (i, j]
-            # Includes success of slot j when j is a real checkpoint slot.
-            inclusive_end = min(j, n - 1)
-            prob_no_error = 1.0
-            for k in range(i + 1, inclusive_end + 1):
-                prob_no_error *= p_success[k]
+        # choose a real slot j in [i, n‑1] as the next checkpoint
+        for j in range(i, n):
+            # probability all slots from i to j inclusive are correct
+            prob_ok = 1.0
+            for k in range(i, j + 1):
+                prob_ok *= p_success[k]
 
-            # expected confirm cost at j (only if we actually place a checkpoint at j)
-            confirm_cost = t_confirm if j < n else 0.0
-            expected_cost = prob_no_error * (confirm_cost + dp[j])
+            expected_cost = prob_ok * (t_confirm + dp[j + 1])
 
-            # accumulate expected cost due to a first error at each m ∈ (i, inclusive_end]
-            for m in range(i + 1, inclusive_end + 1):
-                # probability that the first error happens at m
-                prob_until_m = 1.0
-                for k in range(i + 1, m):
-                    prob_until_m *= p_success[k]
-                prob_first_err = prob_until_m * (1.0 - p_success[m])
+            prob_until_m = 1.0
+            for m in range(i, j + 1):
+                prob_fail_m = prob_until_m * (1.0 - p_success[m])
+                diagnose_cost = t_diagnose_per_state * (m - i + 1)
 
-                # redo cost for all slots in affected_scope(m) that are at or after m
                 redo_cost = 0.0
                 for scoped in slots[m].affected_scope:
                     idx = slot_index.get(scoped)
-                    if idx is None or idx < m:
-                        # affected slot missing or lies before the failure => ignore for v1
+                    if idx is None or idx < m or idx > j:
                         continue
                     redo_cost += slots[idx].redo_cost_seconds
 
-                diagnose_cost = t_diagnose_per_state * (m - i)
-                expected_cost += prob_first_err * (diagnose_cost + redo_cost)
+                expected_cost += prob_fail_m * (diagnose_cost + redo_cost + dp[m + 1])
+                prob_until_m *= p_success[m]
 
             if expected_cost < best:
                 best = expected_cost
@@ -106,19 +101,15 @@ def solve_checkpoints(
         dp[i] = best
         next_checkpoint[i] = best_j
 
-    # reconstruct checkpoint locations
+    # reconstruct checkpoint locations (i advances to j+1)
     checkpoint_slot_ids: List[str] = []
     i = 0
     while i < n:
         j = next_checkpoint[i]
         if j is None:
-            break
-        if j == n:
+            # Should never happen for a correct DP, but guard for safety.
             break
         checkpoint_slot_ids.append(slots[j].slot_id)
-        i = j
-
-    if n > 0 and (not checkpoint_slot_ids or checkpoint_slot_ids[-1] != slots[n - 1].slot_id):
-        checkpoint_slot_ids.append(slots[n - 1].slot_id)
+        i = j + 1
 
     return checkpoint_slot_ids

@@ -65,16 +65,18 @@ def solve_checkpoints(
         # (j == n means we skip any further checkpoint until the end)
         for j in range(i + 1, n + 1):
             # probability that no error occurs in (i, j]
+            # Includes success of slot j when j is a real checkpoint slot.
+            inclusive_end = min(j, n - 1)
             prob_no_error = 1.0
-            for k in range(i + 1, j):
+            for k in range(i + 1, inclusive_end + 1):
                 prob_no_error *= p_success[k]
 
             # expected confirm cost at j (only if we actually place a checkpoint at j)
             confirm_cost = t_confirm if j < n else 0.0
             expected_cost = prob_no_error * (confirm_cost + dp[j])
 
-            # accumulate expected cost due to a first error at each m ∈ (i, j)
-            for m in range(i + 1, j):
+            # accumulate expected cost due to a first error at each m ∈ (i, inclusive_end]
+            for m in range(i + 1, inclusive_end + 1):
                 # probability that the first error happens at m
                 prob_until_m = 1.0
                 for k in range(i + 1, m):
@@ -110,5 +112,8 @@ def solve_checkpoints(
             break
         checkpoint_slot_ids.append(slots[j].slot_id)
         i = j
+
+    if n > 0 and (not checkpoint_slot_ids or checkpoint_slot_ids[-1] != slots[n - 1].slot_id):
+        checkpoint_slot_ids.append(slots[n - 1].slot_id)
 
     return checkpoint_slot_ids

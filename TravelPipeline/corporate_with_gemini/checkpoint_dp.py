@@ -25,7 +25,7 @@ def solve_checkpoints(
     slots: List[Slot],
     belief_store: BeliefStore,
     t_confirm: float = 60.0,
-    t_diagnose: float = 120.0,
+    t_diagnose_per_state: float = 30.0,
 ) -> List[str]:
     """Return slot_ids where the UI should show a Layer‑1 confirmation dialog.
 
@@ -35,8 +35,12 @@ def solve_checkpoints(
         Slots sorted in itinerary order (index 0 = first slot).
     belief_store:
         Feature‑indexed belief store with probabilities from ``probability_for_tags``.
-    t_confirm, t_diagnose:
-        Flat constants for the v1 prototype.
+    t_confirm:
+        Flat per‑checkpoint confirmation cost (seconds).
+    t_diagnose_per_state:
+        Per‑state inspection cost used when walking backwards to locate the
+        first error.  In the reference model this cost scales linearly with
+        the distance between the last verified slot and the error slot.
 
     Returns
     -------
@@ -92,7 +96,8 @@ def solve_checkpoints(
                         continue
                     redo_cost += slots[idx].redo_cost_seconds
 
-                expected_cost += prob_first_err * (t_diagnose + redo_cost)
+                diagnose_cost = t_diagnose_per_state * (m - i)
+                expected_cost += prob_first_err * (diagnose_cost + redo_cost)
 
             if expected_cost < best:
                 best = expected_cost

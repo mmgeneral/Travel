@@ -64,3 +64,24 @@ def test_final_checkpoint_always_included() -> None:
 def test_empty_slots_return_empty() -> None:
     """Empty list yields empty checkpoint list (no off‑by‑one crash)."""
     assert solve_checkpoints([], FixedBeliefStore([])) == []
+
+
+def test_intermediate_checkpoints_appear_with_distance_scaled_diagnosis() -> None:
+    """With realistic parameters, the DP should NOT collapse to 'always skip to the end'.
+
+    Regression test for the bug where flat t_diagnose caused solve_checkpoints
+    to always place a single checkpoint at the last slot regardless of risk.
+    """
+    slots = [
+        Slot(slot_id=f"s{i}", day=1, period="x", risk_tags=[f"tag{i}"],
+             affected_scope=[f"s{i}"], redo_cost_seconds=1.0)
+        for i in range(5)
+    ]
+    store = FixedBeliefStore([0.7, 0.7, 0.9, 0.85, 0.85])
+    result = solve_checkpoints(slots, store, t_confirm=1.0, t_diagnose_per_state=1.0)
+
+    # Must have more than just the final mandatory checkpoint.
+    assert len(result) > 1, (
+        f"Expected multiple checkpoints (distance-scaled diagnosis cost should "
+        f"favor intermediate checkpoints), got only {result}"
+    )

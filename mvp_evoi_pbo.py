@@ -396,22 +396,24 @@ def main():
     for series in plot_series:
         axes[0].plot(rounds, series["spearman_mean"], label=series["label"])
         axes[0].fill_between(rounds,
-                             series["spearman_mean"] - series["spearman_std"],
+                             np.maximum(series["spearman_mean"] - series["spearman_std"], 0.0),
                              series["spearman_mean"] + series["spearman_std"],
                              alpha=0.2)
         axes[1].plot(rounds, series["regret_mean"], label=series["label"])
         axes[1].fill_between(rounds,
-                             series["regret_mean"] - series["regret_std"],
+                             np.maximum(series["regret_mean"] - series["regret_std"], 0.0),
                              series["regret_mean"] + series["regret_std"],
                              alpha=0.2)
     axes[0].set_xlabel("Round")
     axes[0].set_ylabel("Mean Spearman correlation")
     axes[0].legend()
     axes[0].grid(True)
+    axes[0].set_ylim(bottom=0)
     axes[1].set_xlabel("Round")
     axes[1].set_ylabel("Mean Simple Regret")
     axes[1].legend()
     axes[1].grid(True)
+    axes[1].set_ylim(bottom=0)
     plt.tight_layout()
     plt.savefig("mvp_evoi_convergence_scaled.png", dpi=150)
     plt.close(fig)

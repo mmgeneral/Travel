@@ -81,6 +81,19 @@ def simulate_user(w_true, phi_vals, A, B, rng):
     return 1 if rng.random() < p else 0
 
 
+def neg_log_posterior(w, diffs, labels, sigma0):
+    """Negative log-posterior for MAP Newton line search."""
+    z = diffs @ w
+    # log likelihood for each observation:
+    #   y * log(sigmoid(z)) + (1-y) * log(1 - sigmoid(z))
+    # using logaddexp to avoid overflow
+    log_lik = np.sum(
+        labels * (-np.logaddexp(0, -z)) + (1 - labels) * (-np.logaddexp(0, z))
+    )
+    log_prior = -0.5 * np.dot(w, w) / (sigma0 ** 2)
+    return -(log_lik + log_prior)
+
+
 def bayesian_fit(phi_vals, comparisons, sigma0=SIGMA0, max_iter=25, tol=1e-6):
     """MAP fit via manual Newton-Raphson + Laplace covariance."""
     if len(comparisons) == 0:
@@ -111,8 +124,29 @@ def bayesian_fit(phi_vals, comparisons, sigma0=SIGMA0, max_iter=25, tol=1e-6):
         except np.linalg.LinAlgError:
             H += np.eye(d) * 1e-6
             delta = np.linalg.solve(H, grad)
-        w = w - delta
-        if np.linalg.norm(delta) < tol:
+
+        # Backtracking line search: only accept a step that decreases
+        # the negative log-posterior; otherwise shrink the step.
+        current_nlp = neg_log_posterior(w, diffs, labels, sigma0)
+        step_scale = 1.0
+        max_backtrack = 20
+        w_candidate = None
+        for _ in range(max_backtrack):
+            w_candidate = w - step_scale * delta
+            candidate_nlp = neg_log_posterior(w_candidate, diffs, labels, sigma0)
+            if candidate_nlp <= current_nlp:
+                break
+            step_scale *= 0.5
+        else:
+            # Backtracking exhausted without improvement; keep current w
+            # and stop the outer loop to avoid a bad step.
+            w_candidate = None
+        if w_candidate is None:
+            # No improving step found, stop iterating as requested
+            break
+        w = w_candidate
+        effective_delta = step_scale * delta
+        if np.linalg.norm(effective_delta) < tol:
             break
 
     # Laplace covariance at MAP

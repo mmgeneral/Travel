@@ -1,9 +1,37 @@
-"""Slot data model for checkpoint scheduling (v1 prototype)."""
+"""Slot data model for checkpoint scheduling (v1 prototype).
+
+Known risk_tags:
+    Content risks (isolated):
+        invalid_name, rating_threshold, budget_ceiling, dietary_filter
+    Temporal risks (cascade forward):
+        drifted_anchor, time_overflow, operating_hours_strict, reservation_required
+
+    The former ``multi_constraint`` tag has been removed; use the specific
+    content and/or temporal tags above instead.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import List
+
+KNOWN_RISK_TAGS = {
+    "invalid_name",
+    "rating_threshold",
+    "budget_ceiling",
+    "dietary_filter",
+    "drifted_anchor",
+    "time_overflow",
+    "operating_hours_strict",
+    "reservation_required",
+}
+
+TEMPORAL_RISK_TAGS = {
+    "drifted_anchor",
+    "time_overflow",
+    "operating_hours_strict",
+    "reservation_required",
+}
 
 
 @dataclass

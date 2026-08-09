@@ -1,3 +1,4 @@
+import itertools
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -33,7 +34,7 @@ def sigmoid(x):
 
 
 def generate_itineraries(seed):
-    """Return itinerary feature matrix."""
+    """Return itinerary feature matrix for SLOTS slots."""
     rng = np.random.default_rng(seed)
     slot_options = []
     for _ in range(SLOTS):
@@ -46,18 +47,22 @@ def generate_itineraries(seed):
         slot_options.append(np.array(opts))   # shape (4,3)
 
     phis = []
-    for i in range(OPTIONS_PER_SLOT):
-        for j in range(OPTIONS_PER_SLOT):
-            for k in range(OPTIONS_PER_SLOT):
-                feat = np.concatenate([
-                    slot_options[0][i],
-                    slot_options[1][j],
-                    slot_options[2][k],
-                ])
-                total_price = slot_options[0][i][0] + slot_options[1][j][0] + slot_options[2][k][0]
-                feat = np.concatenate([feat, [total_price]])
-                phis.append(feat)
+    for combo in itertools.product(range(OPTIONS_PER_SLOT), repeat=SLOTS):
+        feats = [slot_options[s][combo[s]] for s in range(SLOTS)]
+        feat = np.concatenate(feats)
+        total_price = sum(f[0] for f in feats)
+        feat = np.concatenate([feat, [total_price]])
+        phis.append(feat)
     return np.array(phis, dtype=float)
+
+
+def standardize_features(phi_vals):
+    """Z-score standardize each feature dimension. Returns (phi_std, mean, std)."""
+    mean = phi_vals.mean(axis=0)
+    std = phi_vals.std(axis=0)
+    std_safe = np.where(std < 1e-8, 1.0, std)
+    phi_std = (phi_vals - mean) / std_safe
+    return phi_std, mean, std_safe
 
 
 def print_feature_scale_diagnostic(phi_vals):
@@ -265,11 +270,25 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
 
 def main():
     # Fixed itinerary attributes across all repetitions/conditions
-    phi_vals = generate_itineraries(BASE_SEED)
+    phi_vals_raw = generate_itineraries(BASE_SEED)
+    phi_vals, feat_mean, feat_std = standardize_features(phi_vals_raw)
     print_feature_scale_diagnostic(phi_vals)
     # Hidden true preference (same for every rep)
     rng_true = np.random.default_rng(BASE_SEED + 99)
     w_true = rng_true.normal(size=D)
+
+    # EVOI magnitude diagnostic (early round)
+    print("=== EVOI magnitude diagnostic (early round) ===")
+    rng_diag = np.random.default_rng(12345)
+    mu_diag = np.zeros(D)
+    Sigma_diag = np.eye(D) * (SIGMA0 ** 2)
+    comparisons_diag = []
+    for i in range(3):
+        A_d, B_d = select_query_thompson(mu_diag, Sigma_diag, phi_vals, rng_diag)
+        for cc in [0.05, 0.01]:
+            ev = compute_evoi(mu_diag, Sigma_diag, phi_vals, comparisons_diag, A_d, B_d, rng_diag, c_int=cc)
+            print(f"  pair {i} (A={A_d},B={B_d}) c={cc:.2f}: EVOI={ev:.4f}")
+    print()
 
     c_values = [0.05, 0.01]
     baseline_conds = ["thompson_always_ask", "random_always_ask"]

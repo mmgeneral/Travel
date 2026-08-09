@@ -7,7 +7,7 @@ from scipy.stats import spearmanr
 # ----------------------------------------------------------------------
 # Constants
 # ----------------------------------------------------------------------
-SLOTS = 3
+SLOTS = 6
 OPTIONS_PER_SLOT = 4
 ATTR_PER_OPT = 3          # [price, rating, is_outdoor]
 D = SLOTS * ATTR_PER_OPT + 1   # 10 dims
@@ -33,7 +33,7 @@ def sigmoid(x):
 
 
 def generate_itineraries(seed):
-    """Return phi-matrix of shape (64,10)."""
+    """Return itinerary feature matrix."""
     rng = np.random.default_rng(seed)
     slot_options = []
     for _ in range(SLOTS):
@@ -58,6 +58,14 @@ def generate_itineraries(seed):
                 feat = np.concatenate([feat, [total_price]])
                 phis.append(feat)
     return np.array(phis, dtype=float)
+
+
+def print_feature_scale_diagnostic(phi_vals):
+    print("=== Feature scale diagnostic ===")
+    for i in range(phi_vals.shape[1]):
+        col = phi_vals[:, i]
+        print(f"  dim {i:2d}: min={col.min():10.2f} max={col.max():10.2f} std={col.std():10.2f}")
+    print()
 
 
 def compute_metrics(mu, phi_vals, true_scores, f_true_best):
@@ -258,57 +266,125 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
 def main():
     # Fixed itinerary attributes across all repetitions/conditions
     phi_vals = generate_itineraries(BASE_SEED)
+    print_feature_scale_diagnostic(phi_vals)
     # Hidden true preference (same for every rep)
     rng_true = np.random.default_rng(BASE_SEED + 99)
     w_true = rng_true.normal(size=D)
 
-    conditions = ["full_evoi", "thompson_always_ask", "random_always_ask"]
-    results = {c: {"spearman": np.zeros((N_REPS, T_ROUNDS)),
-                   "regret": np.zeros((N_REPS, T_ROUNDS)),
-                   "questions": np.zeros(N_REPS)}
-               for c in conditions}
+    c_values = [0.05, 0.01]
+    baseline_conds = ["thompson_always_ask", "random_always_ask"]
 
+    # Run the two baselines once (they don't depend on c_interruption)
+    baseline_results = {}
+    for cond in baseline_conds:
+        baseline_results[cond] = {
+            "spearman": np.zeros((N_REPS, T_ROUNDS)),
+            "regret": np.zeros((N_REPS, T_ROUNDS)),
+            "questions": np.zeros(N_REPS),
+        }
     for rep in range(N_REPS):
         rep_seed = BASE_SEED + 1000 + rep * 37
-        for cond in conditions:
+        for cond in baseline_conds:
             sp, rg, q = run_condition(cond, phi_vals, w_true, rep_seed)
-            results[cond]["spearman"][rep] = sp
-            results[cond]["regret"][rep] = rg
-            results[cond]["questions"][rep] = q
+            baseline_results[cond]["spearman"][rep] = sp
+            baseline_results[cond]["regret"][rep] = rg
+            baseline_results[cond]["questions"][rep] = q
 
-    # Aggregate stats
-    summary = {}
-    rounds = np.arange(1, T_ROUNDS + 1)
-    for cond in conditions:
-        mean_sp = results[cond]["spearman"].mean(axis=0)
-        std_sp = results[cond]["spearman"].std(axis=0, ddof=1)
-        mean_rg = results[cond]["regret"].mean(axis=0)
-        std_rg = results[cond]["regret"].std(axis=0, ddof=1)
-        mean_q = results[cond]["questions"].mean()
-        summary[cond] = (mean_sp, std_sp, mean_rg, std_rg, mean_q)
-
-    # Rounds to reach Spearman >= threshold
-    spearman_rounds = {}
-    for cond in conditions:
-        rep_rounds = []
-        reached = 0
+    # Run full_evoi separately for each c_interruption
+    full_evoi_by_c = {}
+    for c_val in c_values:
+        full_evoi_by_c[c_val] = {
+            "spearman": np.zeros((N_REPS, T_ROUNDS)),
+            "regret": np.zeros((N_REPS, T_ROUNDS)),
+            "questions": np.zeros(N_REPS),
+        }
         for rep in range(N_REPS):
-            curve = results[cond]["spearman"][rep]
-            r = rounds_to_threshold(curve, SPEARMAN_THRESHOLD)
-            if r is not None:
-                rep_rounds.append(r)
-                reached += 1
-        mean_round = np.mean(rep_rounds) if rep_rounds else float('nan')
-        spearman_rounds[cond] = (mean_round, reached)
+            rep_seed = BASE_SEED + 1000 + rep * 37
+            sp, rg, q = run_condition("full_evoi", phi_vals, w_true, rep_seed, c_int=c_val)
+            full_evoi_by_c[c_val]["spearman"][rep] = sp
+            full_evoi_by_c[c_val]["regret"][rep] = rg
+            full_evoi_by_c[c_val]["questions"][rep] = q
+
+    rounds = np.arange(1, T_ROUNDS + 1)
+
+    def compute_stats(res):
+        sp_mean = res["spearman"].mean(axis=0)
+        sp_std = res["spearman"].std(axis=0, ddof=1)
+        rg_mean = res["regret"].mean(axis=0)
+        rg_std = res["regret"].std(axis=0, ddof=1)
+        q_mean = res["questions"].mean()
+        return sp_mean, sp_std, rg_mean, rg_std, q_mean
+
+    baseline_stats = {}
+    plot_series = []
+    for cond in baseline_conds:
+        s = compute_stats(baseline_results[cond])
+        baseline_stats[cond] = s
+        plot_series.append({
+            "label": cond,
+            "spearman_mean": s[0],
+            "spearman_std": s[1],
+            "regret_mean": s[2],
+            "regret_std": s[3],
+        })
+
+    for c_val in c_values:
+        print(f"=== c_interruption = {c_val} ===")
+        # Build stats for full_evoi
+        fe_stats = compute_stats(full_evoi_by_c[c_val])
+        summary = {"full_evoi": fe_stats}
+        for cond in baseline_conds:
+            summary[cond] = baseline_stats[cond]
+
+        # Rounds to reach Spearman >= threshold
+        spearman_rounds = {}
+        for cond in summary.keys():
+            data = baseline_results[cond] if cond in baseline_conds else full_evoi_by_c[c_val]
+            rep_rounds = []
+            reached = 0
+            for rep in range(N_REPS):
+                r = rounds_to_threshold(data["spearman"][rep], SPEARMAN_THRESHOLD)
+                if r is not None:
+                    rep_rounds.append(r)
+                    reached += 1
+            mean_round = np.mean(rep_rounds) if rep_rounds else float('nan')
+            spearman_rounds[cond] = (mean_round, reached)
+
+        header = (f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}"
+                  f"{'Avg Questions':<15}{'Rounds to Sp>=0.95':<23}{'Reps reached':<15}")
+        print(header)
+        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask"]:
+            ms, ss, mr, sr, mq = summary[cond]
+            mean_round, reached = spearman_rounds[cond]
+            if np.isnan(mean_round):
+                round_str = "N/A"
+            else:
+                round_str = f"{mean_round:.2f}"
+            print(f"{cond:<28}{ms[-1]:<20.4f}{mr[-1]:<20.4f}{mq:<15.2f}"
+                  f"{round_str:<23}{reached}/{N_REPS}")
+        print()
+
+        plot_series.append({
+            "label": f"full_evoi (c={c_val})",
+            "spearman_mean": fe_stats[0],
+            "spearman_std": fe_stats[1],
+            "regret_mean": fe_stats[2],
+            "regret_std": fe_stats[3],
+        })
 
     # Plot
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
-    for cond in conditions:
-        ms, ss, mr, sr, _ = summary[cond]
-        axes[0].plot(rounds, ms, label=cond)
-        axes[0].fill_between(rounds, ms - ss, ms + ss, alpha=0.2)
-        axes[1].plot(rounds, mr, label=cond)
-        axes[1].fill_between(rounds, mr - sr, mr + sr, alpha=0.2)
+    for series in plot_series:
+        axes[0].plot(rounds, series["spearman_mean"], label=series["label"])
+        axes[0].fill_between(rounds,
+                             series["spearman_mean"] - series["spearman_std"],
+                             series["spearman_mean"] + series["spearman_std"],
+                             alpha=0.2)
+        axes[1].plot(rounds, series["regret_mean"], label=series["label"])
+        axes[1].fill_between(rounds,
+                             series["regret_mean"] - series["regret_std"],
+                             series["regret_mean"] + series["regret_std"],
+                             alpha=0.2)
     axes[0].set_xlabel("Round")
     axes[0].set_ylabel("Mean Spearman correlation")
     axes[0].legend()
@@ -318,25 +394,12 @@ def main():
     axes[1].legend()
     axes[1].grid(True)
     plt.tight_layout()
-    plt.savefig("mvp_evoi_convergence.png", dpi=150)
+    plt.savefig("mvp_evoi_convergence_scaled.png", dpi=150)
     plt.close(fig)
 
-    # Print summary table
-    header = (f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}"
-              f"{'Avg Questions':<15}{'Rounds to Sp>=0.95':<23}{'Reps reached':<15}")
-    print(header)
-    for cond in conditions:
-        ms, ss, mr, sr, mq = summary[cond]
-        mean_round, reached = spearman_rounds[cond]
-        if np.isnan(mean_round):
-            round_str = "N/A"
-        else:
-            round_str = f"{mean_round:.2f}"
-        print(f"{cond:<28}{ms[-1]:<20.4f}{mr[-1]:<20.4f}{mq:<15.2f}"
-              f"{round_str:<23}{reached}/{N_REPS}")
     print()
     print("Note: Simple Regret saturates to 0 for all three conditions within the")
-    print("first several rounds at this task scale (3 slots, 64 itineraries) and")
+    print("first several rounds at this task scale (6 slots, 4096 itineraries) and")
     print("is not informative for distinguishing strategies beyond that point.")
     print("Spearman correlation and rounds-to-threshold are the more informative")
     print("metrics for this MVP's scale.")

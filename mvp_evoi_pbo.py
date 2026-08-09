@@ -18,6 +18,7 @@ C_INTERRUPTION = 0.05
 T_ROUNDS = 30
 N_REPS = 10
 BASE_SEED = 12345
+SPEARMAN_THRESHOLD = 0.95
 # ----------------------------------------------------------------------
 
 
@@ -194,6 +195,24 @@ def select_query_thompson(mu, Sigma, phi_vals, rng):
     return A, B
 
 
+def rounds_to_threshold(spearman_curve, threshold=SPEARMAN_THRESHOLD):
+    """Return the 1-indexed round at which spearman_curve first reaches
+    `threshold` and stays at or above it for all subsequent rounds in
+    this curve; return None if never reached."""
+    hits = np.where(spearman_curve >= threshold)[0]
+    if len(hits) == 0:
+        return None
+    # confirm it doesn't dip back below threshold afterward
+    first_hit = hits[0]
+    if np.all(spearman_curve[first_hit:] >= threshold):
+        return first_hit + 1
+    # if it dips back down, find the last stretch that stays above threshold
+    for start in hits:
+        if np.all(spearman_curve[start:] >= threshold):
+            return start + 1
+    return None
+
+
 def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION):
     rng = np.random.default_rng(seed)
     comparisons = []
@@ -268,6 +287,20 @@ def main():
         mean_q = results[cond]["questions"].mean()
         summary[cond] = (mean_sp, std_sp, mean_rg, std_rg, mean_q)
 
+    # Rounds to reach Spearman >= threshold
+    spearman_rounds = {}
+    for cond in conditions:
+        rep_rounds = []
+        reached = 0
+        for rep in range(N_REPS):
+            curve = results[cond]["spearman"][rep]
+            r = rounds_to_threshold(curve, SPEARMAN_THRESHOLD)
+            if r is not None:
+                rep_rounds.append(r)
+                reached += 1
+        mean_round = np.mean(rep_rounds) if rep_rounds else float('nan')
+        spearman_rounds[cond] = (mean_round, reached)
+
     # Plot
     fig, axes = plt.subplots(1, 2, figsize=(13, 5))
     for cond in conditions:
@@ -289,11 +322,24 @@ def main():
     plt.close(fig)
 
     # Print summary table
-    header = f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}{'Avg Questions':<15}"
+    header = (f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}"
+              f"{'Avg Questions':<15}{'Rounds to Sp>=0.95':<23}{'Reps reached':<15}")
     print(header)
     for cond in conditions:
         ms, ss, mr, sr, mq = summary[cond]
-        print(f"{cond:<28}{ms[-1]:<20.4f}{mr[-1]:<20.4f}{mq:<15.2f}")
+        mean_round, reached = spearman_rounds[cond]
+        if np.isnan(mean_round):
+            round_str = "N/A"
+        else:
+            round_str = f"{mean_round:.2f}"
+        print(f"{cond:<28}{ms[-1]:<20.4f}{mr[-1]:<20.4f}{mq:<15.2f}"
+              f"{round_str:<23}{reached}/{N_REPS}")
+    print()
+    print("Note: Simple Regret saturates to 0 for all three conditions within the")
+    print("first several rounds at this task scale (3 slots, 64 itineraries) and")
+    print("is not informative for distinguishing strategies beyond that point.")
+    print("Spearman correlation and rounds-to-threshold are the more informative")
+    print("metrics for this MVP's scale.")
 
 
 if __name__ == "__main__":

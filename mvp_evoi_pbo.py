@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from scipy.stats import spearmanr
+from scipy.stats import spearmanr, norm
 
 # ----------------------------------------------------------------------
 # Constants
@@ -20,7 +20,7 @@ T_ROUNDS = 30
 N_REPS = 10
 BASE_SEED = 12345
 SPEARMAN_THRESHOLD = 0.95
-DISPLAY_THRESHOLD = 1.0   # starting guess for display-only threshold, needs empirical sanity-check
+Z_THRESHOLD = 1.645  # standard normal 95th percentile — statistical constant
 # ----------------------------------------------------------------------
 
 
@@ -209,15 +209,15 @@ def select_query_thompson(mu, Sigma, phi_vals, rng):
     return A, B
 
 
-def select_display_state(mu, Sigma, phi_vals, display_threshold):
+def select_display_state(mu, Sigma, phi_vals):
     """Purely for UI framing — does NOT drive the learning loop or gate
-    any actual query. Reuses the max-variance criterion to decide what
-    the interface would show this round: a pairwise comparison (if the
-    top-1 item still has a meaningfully uncertain rival) or a single
-    top-1 recommendation (if uncertainty around the top choice is low).
-
-    Returns (A, B) if the display would show a pairwise card, or None
-    if it would show a single Top-1 card.
+    any actual query. Picks the current top-1 item under `mu`, finds its
+    most uncertain rival (by predictive variance, same candidate-finding
+    step as before), then computes the dimensionless Z-score for whether
+    top-1 has statistically significantly beaten that rival. Returns
+    (A, B) if the contest is still genuinely uncertain (Z < 1.645, i.e.
+    less than 95% confident top-1 truly wins), or None if top-1 is a
+    statistically clear winner (display should show a single Top-1 card).
     """
     scores = phi_vals @ mu
     A = int(np.argmax(scores))
@@ -225,8 +225,12 @@ def select_display_state(mu, Sigma, phi_vals, display_threshold):
     variances = np.einsum('ij,jk,ik->i', diffs, Sigma, diffs)
     variances[A] = -np.inf
     B = int(np.argmax(variances))
-    max_var = variances[B]
-    if max_var > display_threshold:
+
+    mu_d = float(mu @ (phi_vals[A] - phi_vals[B]))
+    sigma_d = float(np.sqrt(max(variances[B], 1e-12)))
+    Z = mu_d / sigma_d
+
+    if Z < Z_THRESHOLD:
         return A, B
     return None
 
@@ -271,7 +275,7 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
 
     for t in range(T):
         if cond == "decoupled_ui":
-            curr_disp = select_display_state(mu, Sigma, phi_vals, DISPLAY_THRESHOLD)
+            curr_disp = select_display_state(mu, Sigma, phi_vals)
             if t > 0:
                 # flicker based only on pair-vs-None, not exact identities
                 if (curr_disp is None) != (display_prev is None):
@@ -334,6 +338,32 @@ def main():
             print(f"  pair {i} (A={A_d},B={B_d}) c={cc:.2f}: EVOI={ev:.4f}")
     print()
 
+    # Z-value diagnostic for decoupled_ui display logic
+    print("=== Z-value diagnostic (decoupled_ui early rounds) ===")
+    rng_z = np.random.default_rng(BASE_SEED + 1000)
+    comparisons_z = []
+    mu_z = np.zeros(D)
+    Sigma_z = np.eye(D) * (SIGMA0 ** 2)
+    for rr in range(min(15, T_ROUNDS)):
+        scores_z = phi_vals @ mu_z
+        A_top = int(np.argmax(scores_z))
+        diffs_z = phi_vals - phi_vals[A_top]
+        variances_z = np.einsum('ij,jk,ik->i', diffs_z, Sigma_z, diffs_z)
+        variances_z[A_top] = -np.inf
+        B_rival = int(np.argmax(variances_z))
+        mu_d = float(mu_z @ (phi_vals[A_top] - phi_vals[B_rival]))
+        sigma_d = float(np.sqrt(max(variances_z[B_rival], 1e-12)))
+        Z = mu_d / sigma_d
+        state = "pair" if Z < Z_THRESHOLD else "Top-1"
+        print(f"  round {rr+1}: A={A_top}, B={B_rival}, mu_d={mu_d:.4f}, sigma_d={sigma_d:.4f}, Z={Z:.3f}, display={state}")
+        A_q, B_q = select_query_thompson(mu_z, Sigma_z, phi_vals, rng_z)
+        ev_z = compute_evoi(mu_z, Sigma_z, phi_vals, comparisons_z, A_q, B_q, rng_z, c_int=C_INTERRUPTION)
+        if ev_z <= 0:
+            continue
+        y_z = simulate_user(w_true, phi_vals, A_q, B_q, rng_z)
+        comparisons_z.append((A_q, B_q, y_z))
+        mu_z, Sigma_z = bayesian_fit(phi_vals, comparisons_z)
+    print()
 
     cond_skip_max = {}
     c_values = [0.05, 0.01]

@@ -20,6 +20,7 @@ T_ROUNDS = 30
 N_REPS = 10
 BASE_SEED = 12345
 SPEARMAN_THRESHOLD = 0.95
+DISPLAY_THRESHOLD = 1.0   # starting guess for display-only threshold, needs empirical sanity-check
 # ----------------------------------------------------------------------
 
 
@@ -208,35 +209,26 @@ def select_query_thompson(mu, Sigma, phi_vals, rng):
     return A, B
 
 
-def select_query_max_variance(mu, Sigma, phi_vals):
-    """Select the candidate pair whose feature difference has the
-    largest posterior predictive variance: argmax over (A,B) of
-    (phi_A - phi_B)^T Sigma (phi_A - phi_B).
+def select_display_state(mu, Sigma, phi_vals, display_threshold):
+    """Purely for UI framing — does NOT drive the learning loop or gate
+    any actual query. Reuses the max-variance criterion to decide what
+    the interface would show this round: a pairwise comparison (if the
+    top-1 item still has a meaningfully uncertain rival) or a single
+    top-1 recommendation (if uncertainty around the top choice is low).
 
-    This targets the comparison the model is currently most uncertain
-    about, rather than the comparison between the two currently-highest
-    ranked items (which is what caused select_query_top1_top2 to deadlock).
-
-    For computational tractability, do not scan all O(|pool|^2) pairs.
-    Instead:
-      1. Rank all itineraries by predictive variance against the CURRENT
-         top-1 item under `mu` (i.e., variance of phi_top1 - phi_i for
-         each i in the pool).
-      2. Take the item with the highest such variance as B.
-      3. Take the top-1 item under `mu` as A.
-    This is an O(|pool|) approximation, not a full O(|pool|^2) search —
-    document this as a simplification in a comment, consistent with the
-    project's existing pattern of noting [SIMPLIFIED] assumptions.
+    Returns (A, B) if the display would show a pairwise card, or None
+    if it would show a single Top-1 card.
     """
     scores = phi_vals @ mu
     A = int(np.argmax(scores))
-
-    diffs = phi_vals - phi_vals[A]          # (pool_size, D), row i = phi_i - phi_A
-    variances = np.einsum('ij,jk,ik->i', diffs, Sigma, diffs)  # (phi_i - phi_A)^T Sigma (phi_i - phi_A)
-    variances[A] = -np.inf                   # exclude comparing A against itself
+    diffs = phi_vals - phi_vals[A]
+    variances = np.einsum('ij,jk,ik->i', diffs, Sigma, diffs)
+    variances[A] = -np.inf
     B = int(np.argmax(variances))
-
-    return A, B
+    max_var = variances[B]
+    if max_var > display_threshold:
+        return A, B
+    return None
 
 
 def rounds_to_threshold(spearman_curve, threshold=SPEARMAN_THRESHOLD):
@@ -273,15 +265,26 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
     skip_streak = 0
     max_skip_streak_seen = 0
 
+    display_prev = None
+    display_flips = 0
+    display_final = None
+
     for t in range(T):
+        if cond == "decoupled_ui":
+            curr_disp = select_display_state(mu, Sigma, phi_vals, DISPLAY_THRESHOLD)
+            if t > 0:
+                # flicker based only on pair-vs-None, not exact identities
+                if (curr_disp is None) != (display_prev is None):
+                    display_flips += 1
+            display_prev = curr_disp
+            display_final = curr_disp
+
         if cond == "random_always_ask":
             A, B = rng.choice(np.arange(POOL_SIZE), size=2, replace=False)
-        elif cond == "max_variance_evoi":
-            A, B = select_query_max_variance(mu, Sigma, phi_vals)
-        else:   # full_evoi or thompson_always_ask
+        else:   # full_evoi, thompson_always_ask, or decoupled_ui
             A, B = select_query_thompson(mu, Sigma, phi_vals, rng)
 
-        if cond in ("full_evoi", "max_variance_evoi"):
+        if cond in ("full_evoi", "decoupled_ui"):
             evoi = compute_evoi(mu, Sigma, phi_vals, comparisons, A, B, rng, c_int)
             if evoi <= 0:
                 skip_streak += 1
@@ -306,7 +309,7 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
         spearman_hist[t] = corr
         regret_hist[t] = regret
 
-    return spearman_hist, regret_hist, questions, max_skip_streak_seen
+    return spearman_hist, regret_hist, questions, max_skip_streak_seen, display_flips, display_final
 
 
 def main():
@@ -334,7 +337,7 @@ def main():
 
     cond_skip_max = {}
     c_values = [0.05, 0.01]
-    baseline_conds = ["thompson_always_ask", "random_always_ask", "max_variance_evoi"]
+    baseline_conds = ["thompson_always_ask", "random_always_ask", "decoupled_ui"]
 
     # Run the three baselines once (they don't depend on c_interruption)
     baseline_results = {}
@@ -344,14 +347,19 @@ def main():
             "regret": np.zeros((N_REPS, T_ROUNDS)),
             "questions": np.zeros(N_REPS),
         }
+    decoupled_ui_flips = np.zeros(N_REPS)
+    decoupled_ui_final = [None] * N_REPS
     for rep in range(N_REPS):
         rep_seed = BASE_SEED + 1000 + rep * 37
         for cond in baseline_conds:
-            sp, rg, q, skip_max = run_condition(cond, phi_vals, w_true, rep_seed)
+            sp, rg, q, skip_max, disp_flips, disp_final = run_condition(cond, phi_vals, w_true, rep_seed)
             baseline_results[cond]["spearman"][rep] = sp
             baseline_results[cond]["regret"][rep] = rg
             baseline_results[cond]["questions"][rep] = q
             cond_skip_max[cond] = max(cond_skip_max.get(cond, 0), skip_max)
+            if cond == "decoupled_ui":
+                decoupled_ui_flips[rep] = disp_flips
+                decoupled_ui_final[rep] = disp_final
 
     # Run full_evoi separately for each c_interruption
     full_evoi_by_c = {}
@@ -363,7 +371,7 @@ def main():
         }
         for rep in range(N_REPS):
             rep_seed = BASE_SEED + 1000 + rep * 37
-            sp, rg, q, skip_max = run_condition("full_evoi", phi_vals, w_true, rep_seed, c_int=c_val)
+            sp, rg, q, skip_max, _, _ = run_condition("full_evoi", phi_vals, w_true, rep_seed, c_int=c_val)
             full_evoi_by_c[c_val]["spearman"][rep] = sp
             full_evoi_by_c[c_val]["regret"][rep] = rg
             full_evoi_by_c[c_val]["questions"][rep] = q
@@ -374,6 +382,16 @@ def main():
     print("=== Skip-streak diagnostic ===")
     for label, val in sorted(cond_skip_max.items()):
         print(f"{label}: max skip streak across all reps = {val}")
+    print()
+
+    # Display-flip diagnostic for decoupled_ui
+    print("=== Display-flip diagnostic (decoupled_ui) ===")
+    for rep in range(N_REPS):
+        final_str = "Top-1 (None)" if decoupled_ui_final[rep] is None \
+            else f"pair ({decoupled_ui_final[rep][0]}, {decoupled_ui_final[rep][1]})"
+        print(f"rep {rep}: {int(decoupled_ui_flips[rep])} flips out of {T_ROUNDS} rounds, "
+              f"final display state = {final_str}")
+    print(f"mean flips across {N_REPS} reps = {decoupled_ui_flips.mean():.2f}")
     print()
 
     rounds = np.arange(1, T_ROUNDS + 1)
@@ -424,7 +442,7 @@ def main():
         header = (f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}"
                   f"{'Avg Questions':<15}{'Rounds to Sp>=0.95':<23}{'Reps reached':<15}")
         print(header)
-        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask", "max_variance_evoi"]:
+        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask", "decoupled_ui"]:
             ms, ss, mr, sr, mq = summary[cond]
             mean_round, reached = spearman_rounds[cond]
             if np.isnan(mean_round):

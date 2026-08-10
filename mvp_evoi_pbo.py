@@ -20,6 +20,8 @@ T_ROUNDS = 30
 N_REPS = 10
 BASE_SEED = 12345
 SPEARMAN_THRESHOLD = 0.95
+EPSILON = 0.5   # score-proximity threshold, in standardized-utility units
+DELTA = 1.0     # feature-diversity threshold, in standardized-feature units
 # ----------------------------------------------------------------------
 
 
@@ -208,6 +210,29 @@ def select_query_thompson(mu, Sigma, phi_vals, rng):
     return A, B
 
 
+def select_query_top1_top2(mu, phi_vals, epsilon, delta):
+    """Deterministic candidate-pair selection: rank all itineraries by
+    the current posterior mean, take the top-1 and top-2 by that ranking.
+    Only return them as a candidate query if they're close in predicted
+    utility (the ranking is genuinely uncertain between them) AND far
+    apart in feature space (they represent a meaningfully different
+    trade-off, not two near-duplicate options).
+
+    Returns (A, B) if both conditions hold, or None if the top-1 item is
+    already a clear, stable winner and shouldn't be second-guessed.
+    """
+    scores = phi_vals @ mu
+    ranked = np.argsort(scores)[::-1]
+    A, B = int(ranked[0]), int(ranked[1])
+
+    score_gap = abs(scores[A] - scores[B])
+    feature_dist = np.linalg.norm(phi_vals[A] - phi_vals[B])
+
+    if score_gap < epsilon and feature_dist > delta:
+        return A, B
+    return None
+
+
 def rounds_to_threshold(spearman_curve, threshold=SPEARMAN_THRESHOLD):
     """Return the 1-indexed round at which spearman_curve first reaches
     `threshold` and stays at or above it for all subsequent rounds in
@@ -243,10 +268,19 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
     for t in range(T):
         if cond == "random_always_ask":
             A, B = rng.choice(np.arange(POOL_SIZE), size=2, replace=False)
+        elif cond == "top1_top2_evoi":
+            pair = select_query_top1_top2(mu, phi_vals, EPSILON, DELTA)
+            if pair is None:
+                corr, regret = compute_metrics(mu, phi_vals, true_scores, f_true_best)
+                spearman_hist[t] = corr
+                regret_hist[t] = regret
+                # no query, no refit
+                continue
+            A, B = pair
         else:   # full_evoi or thompson_always_ask
             A, B = select_query_thompson(mu, Sigma, phi_vals, rng)
 
-        if cond == "full_evoi":
+        if cond in ("full_evoi", "top1_top2_evoi"):
             evoi = compute_evoi(mu, Sigma, phi_vals, comparisons, A, B, rng, c_int)
             if evoi <= 0:
                 corr, regret = compute_metrics(mu, phi_vals, true_scores, f_true_best)
@@ -277,6 +311,9 @@ def main():
     rng_true = np.random.default_rng(BASE_SEED + 99)
     w_true = rng_true.normal(size=D)
 
+    true_scores_all = phi_vals @ w_true
+    f_true_best_all = float(true_scores_all.max())
+
     # EVOI magnitude diagnostic (early round)
     print("=== EVOI magnitude diagnostic (early round) ===")
     rng_diag = np.random.default_rng(12345)
@@ -290,10 +327,41 @@ def main():
             print(f"  pair {i} (A={A_d},B={B_d}) c={cc:.2f}: EVOI={ev:.4f}")
     print()
 
-    c_values = [0.05, 0.01]
-    baseline_conds = ["thompson_always_ask", "random_always_ask"]
+    print("=== EPSILON/DELTA diagnostic (top1_top2_evoi selection) ===")
+    rng_diag2 = np.random.default_rng(98765)
+    mu_diag2 = np.zeros(D)
+    Sigma_diag2 = np.eye(D) * (SIGMA0 ** 2)
+    comparisons_diag2 = []
+    for t_diag in range(10):
+        pair = select_query_top1_top2(mu_diag2, phi_vals, EPSILON, DELTA)
+        if pair is None:
+            corr_d, regret_d = compute_metrics(mu_diag2, phi_vals, true_scores_all, f_true_best_all)
+            print(f"  round {t_diag+1}: no candidate pair selected (top-1 stable); "
+                  f"spearman={corr_d:.4f} regret={regret_d:.4f}")
+            continue
+        A_d2, B_d2 = pair
+        scores = phi_vals @ mu_diag2
+        sg = abs(scores[A_d2] - scores[B_d2])
+        fd = np.linalg.norm(phi_vals[A_d2] - phi_vals[B_d2])
+        print(f"  round {t_diag+1}: A={A_d2}, B={B_d2}, score_gap={sg:.4f}, feature_dist={fd:.4f}")
+        ev = compute_evoi(mu_diag2, Sigma_diag2, phi_vals, comparisons_diag2, A_d2, B_d2,
+                          rng_diag2, c_int=C_INTERRUPTION)
+        print(f"    EVOI (c={C_INTERRUPTION}): {ev:.4f}")
+        if ev <= 0:
+            corr_d, regret_d = compute_metrics(mu_diag2, phi_vals, true_scores_all, f_true_best_all)
+            print(f"    skip, no ask; spearman={corr_d:.4f} regret={regret_d:.4f}")
+            continue
+        y_d = simulate_user(w_true, phi_vals, A_d2, B_d2, rng_diag2)
+        comparisons_diag2.append((A_d2, B_d2, y_d))
+        mu_diag2, Sigma_diag2 = bayesian_fit(phi_vals, comparisons_diag2)
+        corr_d, regret_d = compute_metrics(mu_diag2, phi_vals, true_scores_all, f_true_best_all)
+        print(f"    ask, refit; spearman={corr_d:.4f} regret={regret_d:.4f}")
+    print()
 
-    # Run the two baselines once (they don't depend on c_interruption)
+    c_values = [0.05, 0.01]
+    baseline_conds = ["thompson_always_ask", "random_always_ask", "top1_top2_evoi"]
+
+    # Run the three baselines once (they don't depend on c_interruption)
     baseline_results = {}
     for cond in baseline_conds:
         baseline_results[cond] = {
@@ -372,7 +440,7 @@ def main():
         header = (f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}"
                   f"{'Avg Questions':<15}{'Rounds to Sp>=0.95':<23}{'Reps reached':<15}")
         print(header)
-        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask"]:
+        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask", "top1_top2_evoi"]:
             ms, ss, mr, sr, mq = summary[cond]
             mean_round, reached = spearman_rounds[cond]
             if np.isnan(mean_round):
@@ -419,7 +487,7 @@ def main():
     plt.close(fig)
 
     print()
-    print("Note: Simple Regret saturates to 0 for all three conditions within the")
+    print("Note: Simple Regret saturates to 0 for all four conditions within the")
     print("first several rounds at this task scale (6 slots, 4096 itineraries) and")
     print("is not informative for distinguishing strategies beyond that point.")
     print("Spearman correlation and rounds-to-threshold are the more informative")

@@ -20,8 +20,6 @@ T_ROUNDS = 30
 N_REPS = 10
 BASE_SEED = 12345
 SPEARMAN_THRESHOLD = 0.95
-EPSILON = 0.5   # score-proximity threshold, in standardized-utility units
-DELTA = 1.0     # feature-diversity threshold, in standardized-feature units
 # ----------------------------------------------------------------------
 
 
@@ -210,27 +208,35 @@ def select_query_thompson(mu, Sigma, phi_vals, rng):
     return A, B
 
 
-def select_query_top1_top2(mu, phi_vals, epsilon, delta):
-    """Deterministic candidate-pair selection: rank all itineraries by
-    the current posterior mean, take the top-1 and top-2 by that ranking.
-    Only return them as a candidate query if they're close in predicted
-    utility (the ranking is genuinely uncertain between them) AND far
-    apart in feature space (they represent a meaningfully different
-    trade-off, not two near-duplicate options).
+def select_query_max_variance(mu, Sigma, phi_vals):
+    """Select the candidate pair whose feature difference has the
+    largest posterior predictive variance: argmax over (A,B) of
+    (phi_A - phi_B)^T Sigma (phi_A - phi_B).
 
-    Returns (A, B) if both conditions hold, or None if the top-1 item is
-    already a clear, stable winner and shouldn't be second-guessed.
+    This targets the comparison the model is currently most uncertain
+    about, rather than the comparison between the two currently-highest
+    ranked items (which is what caused select_query_top1_top2 to deadlock).
+
+    For computational tractability, do not scan all O(|pool|^2) pairs.
+    Instead:
+      1. Rank all itineraries by predictive variance against the CURRENT
+         top-1 item under `mu` (i.e., variance of phi_top1 - phi_i for
+         each i in the pool).
+      2. Take the item with the highest such variance as B.
+      3. Take the top-1 item under `mu` as A.
+    This is an O(|pool|) approximation, not a full O(|pool|^2) search —
+    document this as a simplification in a comment, consistent with the
+    project's existing pattern of noting [SIMPLIFIED] assumptions.
     """
     scores = phi_vals @ mu
-    ranked = np.argsort(scores)[::-1]
-    A, B = int(ranked[0]), int(ranked[1])
+    A = int(np.argmax(scores))
 
-    score_gap = abs(scores[A] - scores[B])
-    feature_dist = np.linalg.norm(phi_vals[A] - phi_vals[B])
+    diffs = phi_vals - phi_vals[A]          # (pool_size, D), row i = phi_i - phi_A
+    variances = np.einsum('ij,jk,ik->i', diffs, Sigma, diffs)  # (phi_i - phi_A)^T Sigma (phi_i - phi_A)
+    variances[A] = -np.inf                   # exclude comparing A against itself
+    B = int(np.argmax(variances))
 
-    if score_gap < epsilon and feature_dist > delta:
-        return A, B
-    return None
+    return A, B
 
 
 def rounds_to_threshold(spearman_curve, threshold=SPEARMAN_THRESHOLD):
@@ -264,25 +270,25 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
     spearman_hist = np.zeros(T)
     regret_hist = np.zeros(T)
     questions = 0
+    skip_streak = 0
+    max_skip_streak_seen = 0
 
     for t in range(T):
         if cond == "random_always_ask":
             A, B = rng.choice(np.arange(POOL_SIZE), size=2, replace=False)
-        elif cond == "top1_top2_evoi":
-            pair = select_query_top1_top2(mu, phi_vals, EPSILON, DELTA)
-            if pair is None:
-                corr, regret = compute_metrics(mu, phi_vals, true_scores, f_true_best)
-                spearman_hist[t] = corr
-                regret_hist[t] = regret
-                # no query, no refit
-                continue
-            A, B = pair
+        elif cond == "max_variance_evoi":
+            A, B = select_query_max_variance(mu, Sigma, phi_vals)
         else:   # full_evoi or thompson_always_ask
             A, B = select_query_thompson(mu, Sigma, phi_vals, rng)
 
-        if cond in ("full_evoi", "top1_top2_evoi"):
+        if cond in ("full_evoi", "max_variance_evoi"):
             evoi = compute_evoi(mu, Sigma, phi_vals, comparisons, A, B, rng, c_int)
             if evoi <= 0:
+                skip_streak += 1
+                max_skip_streak_seen = max(max_skip_streak_seen, skip_streak)
+                if skip_streak >= 5:
+                    print(f"  [WARNING] {cond} seed={seed}: skip_streak={skip_streak} at round {t+1} "
+                          f"— possible deadlock, investigate")
                 corr, regret = compute_metrics(mu, phi_vals, true_scores, f_true_best)
                 spearman_hist[t] = corr
                 regret_hist[t] = regret
@@ -294,12 +300,13 @@ def run_condition(cond, phi_vals, w_true, seed, T=T_ROUNDS, c_int=C_INTERRUPTION
         comparisons.append((A, B, y))
         mu, Sigma = bayesian_fit(phi_vals, comparisons)
         questions += 1
+        skip_streak = 0
 
         corr, regret = compute_metrics(mu, phi_vals, true_scores, f_true_best)
         spearman_hist[t] = corr
         regret_hist[t] = regret
 
-    return spearman_hist, regret_hist, questions
+    return spearman_hist, regret_hist, questions, max_skip_streak_seen
 
 
 def main():
@@ -310,9 +317,6 @@ def main():
     # Hidden true preference (same for every rep)
     rng_true = np.random.default_rng(BASE_SEED + 99)
     w_true = rng_true.normal(size=D)
-
-    true_scores_all = phi_vals @ w_true
-    f_true_best_all = float(true_scores_all.max())
 
     # EVOI magnitude diagnostic (early round)
     print("=== EVOI magnitude diagnostic (early round) ===")
@@ -327,39 +331,10 @@ def main():
             print(f"  pair {i} (A={A_d},B={B_d}) c={cc:.2f}: EVOI={ev:.4f}")
     print()
 
-    print("=== EPSILON/DELTA diagnostic (top1_top2_evoi selection) ===")
-    rng_diag2 = np.random.default_rng(98765)
-    mu_diag2 = np.zeros(D)
-    Sigma_diag2 = np.eye(D) * (SIGMA0 ** 2)
-    comparisons_diag2 = []
-    for t_diag in range(10):
-        pair = select_query_top1_top2(mu_diag2, phi_vals, EPSILON, DELTA)
-        if pair is None:
-            corr_d, regret_d = compute_metrics(mu_diag2, phi_vals, true_scores_all, f_true_best_all)
-            print(f"  round {t_diag+1}: no candidate pair selected (top-1 stable); "
-                  f"spearman={corr_d:.4f} regret={regret_d:.4f}")
-            continue
-        A_d2, B_d2 = pair
-        scores = phi_vals @ mu_diag2
-        sg = abs(scores[A_d2] - scores[B_d2])
-        fd = np.linalg.norm(phi_vals[A_d2] - phi_vals[B_d2])
-        print(f"  round {t_diag+1}: A={A_d2}, B={B_d2}, score_gap={sg:.4f}, feature_dist={fd:.4f}")
-        ev = compute_evoi(mu_diag2, Sigma_diag2, phi_vals, comparisons_diag2, A_d2, B_d2,
-                          rng_diag2, c_int=C_INTERRUPTION)
-        print(f"    EVOI (c={C_INTERRUPTION}): {ev:.4f}")
-        if ev <= 0:
-            corr_d, regret_d = compute_metrics(mu_diag2, phi_vals, true_scores_all, f_true_best_all)
-            print(f"    skip, no ask; spearman={corr_d:.4f} regret={regret_d:.4f}")
-            continue
-        y_d = simulate_user(w_true, phi_vals, A_d2, B_d2, rng_diag2)
-        comparisons_diag2.append((A_d2, B_d2, y_d))
-        mu_diag2, Sigma_diag2 = bayesian_fit(phi_vals, comparisons_diag2)
-        corr_d, regret_d = compute_metrics(mu_diag2, phi_vals, true_scores_all, f_true_best_all)
-        print(f"    ask, refit; spearman={corr_d:.4f} regret={regret_d:.4f}")
-    print()
 
+    cond_skip_max = {}
     c_values = [0.05, 0.01]
-    baseline_conds = ["thompson_always_ask", "random_always_ask", "top1_top2_evoi"]
+    baseline_conds = ["thompson_always_ask", "random_always_ask", "max_variance_evoi"]
 
     # Run the three baselines once (they don't depend on c_interruption)
     baseline_results = {}
@@ -372,10 +347,11 @@ def main():
     for rep in range(N_REPS):
         rep_seed = BASE_SEED + 1000 + rep * 37
         for cond in baseline_conds:
-            sp, rg, q = run_condition(cond, phi_vals, w_true, rep_seed)
+            sp, rg, q, skip_max = run_condition(cond, phi_vals, w_true, rep_seed)
             baseline_results[cond]["spearman"][rep] = sp
             baseline_results[cond]["regret"][rep] = rg
             baseline_results[cond]["questions"][rep] = q
+            cond_skip_max[cond] = max(cond_skip_max.get(cond, 0), skip_max)
 
     # Run full_evoi separately for each c_interruption
     full_evoi_by_c = {}
@@ -387,10 +363,18 @@ def main():
         }
         for rep in range(N_REPS):
             rep_seed = BASE_SEED + 1000 + rep * 37
-            sp, rg, q = run_condition("full_evoi", phi_vals, w_true, rep_seed, c_int=c_val)
+            sp, rg, q, skip_max = run_condition("full_evoi", phi_vals, w_true, rep_seed, c_int=c_val)
             full_evoi_by_c[c_val]["spearman"][rep] = sp
             full_evoi_by_c[c_val]["regret"][rep] = rg
             full_evoi_by_c[c_val]["questions"][rep] = q
+            label = f"full_evoi (c={c_val})"
+            cond_skip_max[label] = max(cond_skip_max.get(label, 0), skip_max)
+
+    # Skip-streak diagnostic (max consecutive skipped rounds across all reps)
+    print("=== Skip-streak diagnostic ===")
+    for label, val in sorted(cond_skip_max.items()):
+        print(f"{label}: max skip streak across all reps = {val}")
+    print()
 
     rounds = np.arange(1, T_ROUNDS + 1)
 
@@ -440,7 +424,7 @@ def main():
         header = (f"{'Condition':<28}{'Final Spearman':<20}{'Final Regret':<20}"
                   f"{'Avg Questions':<15}{'Rounds to Sp>=0.95':<23}{'Reps reached':<15}")
         print(header)
-        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask", "top1_top2_evoi"]:
+        for cond in ["full_evoi", "thompson_always_ask", "random_always_ask", "max_variance_evoi"]:
             ms, ss, mr, sr, mq = summary[cond]
             mean_round, reached = spearman_rounds[cond]
             if np.isnan(mean_round):

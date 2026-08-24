@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 
+import numpy as np
+
 from debug_json import debug_json as _dj
 from feasibility_utils import SLOT_CLOCK_HOUR_MINUTE
 from shop_planning import (
@@ -15,6 +17,132 @@ from shop_planning import (
     TasteAuthorityEngine,
     predict_wait_time,
 )
+
+# ---------------------------------------------------------------
+# Phase A1: feature registry, phi(), and trip-frozen z-scoring
+# ---------------------------------------------------------------
+
+FEATURE_NAMES = [
+    "cuisine_match",
+    "fame_touristy",
+    "heaviness",
+    "travel_min",
+    "price_level",
+    "queue_wait",
+]
+
+BLOCK_INDEX = {
+    "taste": [0, 1, 2],
+    "context": [3, 4, 5],
+}
+
+
+def _safe_float(value: object, default: float = 0.0) -> float:
+    """Return float(value) if possible, otherwise default."""
+    try:
+        if value is None:
+            return default
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def phi(item: object, ctx: dict | None = None) -> np.ndarray:
+    """
+    Extract raw 6-dimensional features for a candidate shop.
+
+    Parameters
+    ----------
+    item : object
+        Usually a ShopProfile (or any object exposing needed attributes).
+    ctx : dict, optional
+        Context dictionary may contain:
+            - preferred_tags: iterable[str]
+            - travel_minutes: float
+        Missing attributes are replaced with sensible defaults.
+
+    Returns
+    -------
+    np.ndarray of shape (6,) with raw feature values.
+    """
+    ctx = ctx or {}
+
+    # ---- taste-oriented block (w_T) ----
+    # 1) cuisine_match: Jaccard similarity between requested tags and shop tags
+    wanted_tags = {str(t).lower() for t in ctx.get("preferred_tags", [])}
+    shop_tags = {str(t).lower() for t in getattr(item, "tags", [])}
+    if not wanted_tags or not shop_tags:
+        cuisine_match = 0.0
+    else:
+        inter = len(wanted_tags & shop_tags)
+        union = len(wanted_tags | shop_tags)
+        cuisine_match = inter / union if union else 0.0
+
+    # 2) fame_touristy: rises with review count and authority medal presence
+    review_count = _safe_float(getattr(item, "review_count", None))
+    auth = getattr(item, "authority_data", None)
+    medal = str(getattr(auth, "tablelog_medal", "") or "")
+    fame = min(1.0, review_count / 300.0) if review_count >= 0 else 0.0
+    if medal:
+        fame = min(1.0, fame + 0.3)
+
+    # 3) heaviness: composite of flavor intensity and portion strictness
+    flavor = _safe_float(getattr(item, "flavor_intensity", None))
+    portion = _safe_float(getattr(item, "portion_strictness", None), 0.5)
+    heaviness = min(1.0, flavor * 0.6 + portion * 0.4)
+
+    # ---- situational-cost block (θ) ----
+    # 4) travel_min: context-provided travel estimate
+    travel_min = float(ctx.get("travel_minutes", getattr(item, "default_travel_minutes", 15)))
+
+    # 5) price_level: direct attribute if present, otherwise contextual default
+    price_level = _safe_float(getattr(item, "price_level", None), 2.5)
+
+    # 6) queue_wait: typical queue length in minutes
+    queue_wait = _safe_float(getattr(item, "base_wait_minutes", None))
+
+    return np.array(
+        [cuisine_match, fame, heaviness, travel_min, price_level, queue_wait],
+        dtype=float,
+    )
+
+
+def compute_trip_frozen_scaling(
+    candidates: list[object],
+    ctx: dict | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Compute and freeze per-dimension mean/std on the initial candidate pool.
+
+    Returns (means, stds).  Stored scaling later used by `z_score`.
+    """
+    if not candidates:
+        means = np.zeros(6)
+        stds = np.ones(6)
+        return means, stds
+
+    matrix = np.array([phi(c, ctx) for c in candidates], dtype=float)
+    means = np.mean(matrix, axis=0)
+    stds = np.std(matrix, axis=0)
+    # Avoid division by zero when a dimension has no variance.
+    stds[stds == 0.0] = 1.0
+    return means, stds
+
+
+def z_score(item: object, ctx: dict | None, scaling: tuple[np.ndarray, np.ndarray]) -> np.ndarray:
+    """
+    Apply trip-frozen standardization to a single item.
+
+    scaling = (means, stds) previously computed via `compute_trip_frozen_scaling`.
+    """
+    means, stds = scaling
+    raw = phi(item, ctx)
+    return (raw - means) / stds
+
+
+# ---------------------------------------------------------------
+# (End of Phase A1 feature layer)
+# ---------------------------------------------------------------
 
 
 @dataclass
@@ -1831,4 +1959,56 @@ def choose_health_backup(shops: list[ShopProfile], current: ShopProfile) -> Shop
         key=lambda s: (ScoringEngine.optimized_health_impact(s), -max(0.0, min(1.0, s.customization_score)))
     )
     return candidates[0]
+
+
+if __name__ == "__main__":
+    from types import SimpleNamespace
+
+    def _fake_shop(name: str, **attrs: object) -> SimpleNamespace:
+        """Minimal mock of a ShopProfile for feature verification."""
+        defaults = {
+            "name": name,
+            "tags": [],
+            "flavor_intensity": 0.5,
+            "portion_strictness": 0.5,
+            "review_count": 0,
+            "authority_data": SimpleNamespace(tablelog_medal=""),
+            "base_wait_minutes": 0,
+            "price_level": 2.5,
+        }
+        merged = defaults.copy()
+        merged.update(attrs)
+        return SimpleNamespace(**merged)
+
+    pool = [
+        _fake_shop("店A", tags=["ramen"], review_count=150, base_wait_minutes=15, flavor_intensity=0.8),
+        _fake_shop("店B", tags=["beef"], review_count=80, base_wait_minutes=30, flavor_intensity=0.6),
+        _fake_shop("店C", tags=["cafe"], review_count=200, base_wait_minutes=10, flavor_intensity=0.4),
+        _fake_shop("店D", tags=["ramen"], review_count=250, base_wait_minutes=25, flavor_intensity=0.7),
+        _fake_shop("店E", tags=["sushi"], review_count=40, base_wait_minutes=5, flavor_intensity=0.5),
+    ]
+    ctx = {"preferred_tags": ["ramen"], "travel_minutes": 25}
+
+    means, stds = compute_trip_frozen_scaling(pool, ctx)
+    print("FROZEN_MEANS", means)
+    print("FROZEN_STDS", stds)
+
+    matrix = np.array([phi(c, ctx) for c in pool])
+    norm = (matrix - means) / stds
+    print("NORM_MEAN", np.round(np.mean(norm, axis=0), 6))
+    print("NORM_STD", np.round(np.std(norm, axis=0), 6))
+
+    new_shop = _fake_shop(
+        "店X",
+        tags=["udon"],
+        review_count=400,
+        base_wait_minutes=45,
+        flavor_intensity=0.9,
+    )
+    raw_new = phi(new_shop, ctx)
+    z_new = z_score(new_shop, ctx, (means, stds))
+    print("NEW_RAW", raw_new)
+    print("NEW_Z", np.round(z_new, 4))
+    print("FROZEN_MEANS_AFTER_NEW", means)
+    print("FROZEN_STDS_AFTER_NEW", stds)
 

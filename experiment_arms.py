@@ -15,31 +15,7 @@ from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
 from preference_features import FEATURE_NAMES
 from synthetic_user import SyntheticTripWorld
-from decision_engine import (
-    RankedShop,
-    compute_trip_frozen_scaling,
-    freeze_phase_b_turn_context,
-    generate_cross_block_questions,
-    compute_evoi_for_questions,
-    evaluate_gate,
-)
-
-
-def _make_question(x_e):
-    """Return (j_T, j_C, question_options) using the current event's x_e."""
-    x = np.asarray(x_e, dtype=float)
-    j_T = int(np.argmax(np.abs(x[:3])))
-    j_C = 3 + int(np.argmax(np.abs(x[3:])))
-    opts = [FEATURE_NAMES[j_T], FEATURE_NAMES[j_C], "other"]
-    return j_T, j_C, opts
-
-
-def _expected_max_utility(event, mu, Sigma, n_draws=200, rng=None):
-    if rng is None:
-        rng = np.random.default_rng(0)
-    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
-    utils = event.s0_tilde[None, :] + draws @ event.phi.T
-    return float(utils.max(axis=1).mean())
+from decision_engine import generate_cross_block_questions, evaluate_gate
 
 
 def _sample_from_prob(probs, rng):
@@ -61,21 +37,85 @@ def _synthetic_prompted_answer(beta_star, x_e, j_T, j_C, rng):
     return "other", o
 
 
-def _dummy_shop(i: int, event) -> object:
-    """Build a minimal ShopProfile-shaped object from the synthetic event."""
-    from types import SimpleNamespace
-    phi = event.phi[i]
-    return SimpleNamespace(
-        name=f"cand_{i}",
-        tags=[],
-        flavor_intensity=float(phi[0]),
-        portion_strictness=float(phi[1]),
-        review_count=int(abs(phi[2]) * 100),
-        authority_data=SimpleNamespace(review_count=0, tablelog_medal=""),
-        base_wait_minutes=float(abs(phi[3]) * 60),
-        price_level=float(2.0 + phi[4] * 2),
-        default_travel_minutes=float(abs(phi[5]) * 20),
-    )
+def _expected_max_utility(event, mu, Sigma, n_draws=200, rng=None):
+    if rng is None:
+        rng = np.random.default_rng(0)
+    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
+    utils = event.s0_tilde[None, :] + draws @ event.phi.T
+    return float(utils.max(axis=1).mean())
+
+
+def _compute_contender(event, mu, Sigma, score_sys, M=5, n_draws=200, rng=None):
+    """Return (contender_indices, L_j)."""
+    if rng is None:
+        rng = np.random.default_rng()
+    top = np.argsort(score_sys)[::-1][:M]
+    if len(top) == 0:
+        return np.array([], dtype=int), np.zeros(6)
+    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
+    utils = event.s0_tilde[None, :] + draws @ event.phi.T
+    std_util = utils.std(axis=0)
+    best_idx = top[0]
+    contender = [best_idx]
+    best_score = score_sys[best_idx]
+    for idx in top[1:]:
+        gap = best_score - score_sys[idx]
+        threshold = 2.0 * std_util[idx]
+        if gap <= threshold:
+            contender.append(idx)
+    contender = np.asarray(contender, dtype=int)
+    phi_c = event.phi[contender]
+    L_j = np.std(phi_c, axis=0)
+    if L_j.shape[0] == 0:
+        L_j = np.zeros(6)
+    return contender, L_j
+
+
+def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, c_int, n_draws=100, rng=None):
+    """Monte-Carlo EVOI using the arm's current posterior (no beta_star)."""
+    if rng is None:
+        rng = np.random.default_rng()
+    j_T = q["j_T"]
+    j_C = q["j_C"]
+    opts = q["question_options"]
+    x_e = q["x_e"]
+
+    # p_o averaged over posterior draws
+    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
+    p_o = np.zeros(3)
+    for o in range(3):
+        probs = np.array([
+            prob_prompted(beta, x_e, j_T, j_C, o, lam=LAMBDA, tau=TAU, kappa=KAPPA)
+            for beta in draws
+        ])
+        p_o[o] = probs.mean()
+
+    # current expected max utility
+    cur = _expected_max_utility(event, mu, Sigma, n_draws=n_draws, rng=rng)
+
+    net = 0.0
+    for o in range(3):
+        answer_option = "other" if o == 2 else opts[o]
+        hyp_ev = EvidenceRecord(
+            evidence_id="hyp_evoi",
+            thread_id="hyp",
+            ts="",
+            event_type="clarification_answer",
+            learning=True,
+            censored_feasibility=False,
+            x_e=x_e,
+            question_options=opts,
+            answer_option=answer_option,
+            ask_eligible=True,
+        ).model_dump()
+        rows = list(evidence_log) + [hyp_ev]
+        ev_rows = [EvidenceRecord(**r) if isinstance(r, dict) else r for r in rows]
+        mu_h, Sig_h = refit_laplace(ev_rows)
+        hyp_util = _expected_max_utility(event, mu_h, Sig_h, n_draws=n_draws, rng=rng)
+        net += p_o[o] * hyp_util
+    net -= cur
+    net -= c_int
+    return float(net), p_o
 
 
 @dataclass
@@ -102,7 +142,7 @@ def run_episode(
     c_int: float = 0.05,
     rng: Optional[np.random.Generator] = None,
     force_ask: bool = False,
-    evoi_mc_draws: int = 200,
+    evoi_mc_draws: int = 100,
 ) -> ArmState:
     """Run one arm over the whole episode. Returns its final ArmState."""
     state = ArmState(arm=arm)
@@ -129,7 +169,7 @@ def run_episode(
 
         if arm != "C4":
             rec = EvidenceRecord(
-                evidence_id=f"repl_{arm}_{event_idx}",
+                evidence_id=f"repl_{event_idx}",
                 thread_id="world",
                 ts="",
                 event_type="replacement",
@@ -155,7 +195,7 @@ def run_episode(
                 j = int(np.argmax(np.where(pos, contrib, -np.inf)))
                 if arm != "C4":
                     rec_crit = EvidenceRecord(
-                        evidence_id=f"crit_{arm}_{event_idx}",
+                        evidence_id=f"crit_{event_idx}",
                         thread_id="world",
                         ts="",
                         event_type="explicit_critique",
@@ -190,51 +230,86 @@ def run_episode(
             # C3 goes directly to pairwise block below
             pass
         else:
-            # Reuse frozen Phase-C eligibility + EVOI.
-            q_candidates, eligible = generate_cross_block_questions(
-                Sigma=state.Sigma,
-                L_j=[1.0] * len(state.Sigma),
-                x_e=np.asarray(delta_phi, dtype=float).tolist(),
+            # Use frozen Phase-C eligibility with real contender-based L_j
+            contender, L_j = _compute_contender(
+                event, state.mu, state.Sigma, score_sys,
+                M=5, n_draws=evoi_mc_draws,
+                rng=np.random.default_rng(1000 + event_idx),
             )
-
-            ask = False
-            if eligible and not crit_emitted:
-                # Build a ranked list from current candidates (only used for phase-b context).
-                shops = [_dummy_shop(i, event) for i in range(len(event.phi))]
-                ranked = [RankedShop(shop=shops[i], final_score=float(score_sys[i]))
-                          for i in range(len(event.phi))]
-                feature_means, feature_stds = compute_trip_frozen_scaling(shops, ctx={})
-                phase_b_ctx = freeze_phase_b_turn_context(
-                    ranked, {}, slot_id="lunch", turn_id="t",
-                    feature_means=feature_means, feature_stds=feature_stds,
-                )
-                evoi_results = compute_evoi_for_questions(
-                    questions=q_candidates,
-                    ranked=ranked,
-                    mu=state.mu,
-                    Sigma=state.Sigma,
-                    phase_b_context=phase_b_ctx,
-                    x_e=np.asarray(delta_phi, dtype=float).tolist(),
-                    evidences=[EvidenceRecord(**r) for r in state.evidence_log],
-                    c_int=c_int,
-                    mc_draws=evoi_mc_draws,
-                    seed=1234 + event_idx,
-                    ctx={},
-                )
-                ask = evaluate_gate(
-                    ask_eligible=eligible,
-                    evoi_results=evoi_results,
-                    asked_this_turn=False,
-                    attribution_already_given=crit_emitted,
-                    policy="always_ask" if arm == "C1" else "evoi_gated",
-                    force_ask=force_ask,
-                )
-            else:
-                # Not eligible or attribution already given -> do not ask.
+            if len(contender) <= 1:
                 ask = False
+                chosen_q = None
+            else:
+                q_candidates, eligible = generate_cross_block_questions(
+                    Sigma=state.Sigma,
+                    L_j=L_j.tolist(),
+                    x_e=delta_phi.tolist(),
+                )
+                if not eligible or crit_emitted or not q_candidates:
+                    ask = False
+                    chosen_q = None
+                else:
+                    if arm == "C1":
+                        chosen_q = q_candidates[0]
+                        gate = evaluate_gate(
+                            ask_eligible=True,
+                            evoi_results=None,
+                            asked_this_turn=False,
+                            contender_size=int(len(contender)),
+                            attribution_already_given=crit_emitted,
+                            policy="always_ask",
+                            force_ask=force_ask,
+                        )
+                        ask = gate.get("action") == "ask"
+                    else:  # C2
+                        if force_ask:
+                            chosen_q = q_candidates[0]
+                            gate = evaluate_gate(
+                                ask_eligible=True,
+                                evoi_results=None,
+                                asked_this_turn=False,
+                                contender_size=int(len(contender)),
+                                attribution_already_given=crit_emitted,
+                                policy="evoi_gated",
+                                force_ask=True,
+                            )
+                            ask = gate.get("action") == "ask"
+                        else:
+                            evoi_list = []
+                            for qi, q in enumerate(q_candidates):
+                                net, p_o = _array_evoi_for_question(
+                                    event,
+                                    state.mu,
+                                    state.Sigma,
+                                    state.evidence_log,
+                                    q,
+                                    c_int,
+                                    n_draws=evoi_mc_draws,
+                                    rng=np.random.default_rng(500 + event_idx * 10 + qi),
+                                )
+                                evoi_list.append({
+                                    "question": q,
+                                    "net_evoi": net,
+                                    "p_o": p_o,
+                                })
+                            gate = evaluate_gate(
+                                ask_eligible=True,
+                                evoi_results=evoi_list,
+                                asked_this_turn=False,
+                                contender_size=int(len(contender)),
+                                attribution_already_given=crit_emitted,
+                                policy="evoi_gated",
+                                force_ask=False,
+                            )
+                            ask = gate.get("action") == "ask"
+                            if ask:
+                                # pick question with best net EVOI
+                                best = max(evoi_list, key=lambda x: x["net_evoi"])
+                                chosen_q = best["question"]
+                            else:
+                                chosen_q = None
 
-            if ask and q_candidates:
-                chosen_q = q_candidates[0]
+            if ask and chosen_q is not None:
                 j_T = chosen_q["j_T"]
                 j_C = chosen_q["j_C"]
                 opts = chosen_q["question_options"]
@@ -251,7 +326,7 @@ def run_episode(
                 state.answer_trace.append(answer_option)
                 if arm != "C4":
                     rec_ans = EvidenceRecord(
-                        evidence_id=f"ans_{arm}_{event_idx}",
+                        evidence_id=f"ans_{event_idx}",
                         thread_id="world",
                         ts="",
                         event_type="clarification_answer",
@@ -280,7 +355,7 @@ def run_episode(
             else:
                 rejected, accepted, x_e_pair = b, a, phi_a - phi_b
             rec_pair = EvidenceRecord(
-                evidence_id=f"pair_{arm}_{event_idx}",
+                evidence_id=f"pair_{event_idx}",
                 thread_id="world",
                 ts="",
                 event_type="replacement",

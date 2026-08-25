@@ -1431,6 +1431,131 @@ async def node_plan(state: AgentState, config: Optional[RunnableConfig] = None) 
     return out
 
 
+def _ingest_revision_evidence(
+    *,
+    state: AgentState,
+    rejected_name: str | None,
+    accepted_name: str | None,
+    explicit_critique_dim: int | None,
+    critique_confidence: float,
+    slot_id: str | None,
+) -> AgentState:
+    """Deterministically convert a user revision action into one EvidenceRecord.
+
+    Always returns the (possibly mutated) state dict.
+
+    Rules:
+      - explicit X -> Y                -> replacement learning=True
+      - bare rejection (no accepted)   -> bare_rejection learning=False
+      - explicit_critique              -> explicit_critique learning=True
+    No LLM call is made.
+    """
+    if state.get("_revision_evidence_id") == state.get("_last_processed_revision_id"):
+        # idempotent guard – already processed a previous turn
+        return state
+
+    intent = state.get("intent") or {}
+    rev_op = intent.get("revision_op") or {}
+    if not rev_op:
+        return state
+
+    candidate_lookup: dict[str, ShopProfile] = {}
+    for s in _researcher_shop_pool(state):
+        candidate_lookup[s.name] = s
+
+    ctx_features = {"preferred_tags": list(intent.get("category_tags") or [])}
+    trip_feat = state.get("phase_a_trip_feature_scaling") or {"means": [0.0]*6, "stds": [1.0]*6}
+    means = np.asarray(trip_feat["means"], dtype=float)
+    stds = np.asarray(trip_feat["stds"], dtype=float)
+
+    def _phi_norm(name: str | None) -> np.ndarray:
+        if not name:
+            return np.zeros(6)
+        shop = candidate_lookup.get(name)
+        if shop is None:
+            return np.zeros(6)
+        raw = phi(shop, ctx_features)
+        return (raw - means) / stds
+
+    if accepted_name is not None and rejected_name is not None:
+        x_e = _phi_norm(accepted_name) - _phi_norm(rejected_name)
+        rec = EvidenceRecord(
+            evidence_id=f"repl_{state.get('agent_run_id')}_{rev_op.get('turn_id','')}",
+            thread_id=state.get("agent_run_id") or "",
+            ts="",
+            event_type="replacement",
+            learning=True,
+            censored_feasibility=False,
+            x_e=x_e.tolist(),
+            rejected_item=rejected_name,
+            accepted_item=accepted_name,
+            ask_eligible=False,
+            question_options=None,
+            answer_option=None,
+            attribution_already_given=False,
+        )
+        state.setdefault("phase_c_event_xe", x_e.tolist())
+        state.setdefault("phase_a_evidence_log", []).append(rec.model_dump())
+        state["_last_processed_revision_id"] = state.get("_revision_evidence_id")
+
+        rows = [EvidenceRecord(**r) for r in state["phase_a_evidence_log"] if r.get("learning")]
+        mu, Sigma = refit_laplace(rows)
+        state["phase_a_posterior_mu"] = mu.tolist()
+        state["phase_a_posterior_sigma"] = Sigma.tolist()
+        return state
+
+    if rejected_name is not None and accepted_name is None:
+        rec = EvidenceRecord(
+            evidence_id=f"bare_{state.get('agent_run_id')}_{rev_op.get('turn_id','')}",
+            thread_id=state.get("agent_run_id") or "",
+            ts="",
+            event_type="bare_rejection",
+            learning=False,
+            censored_feasibility=False,
+            x_e=None,
+            rejected_item=rejected_name,
+            accepted_item=None,
+            ask_eligible=False,
+            question_options=None,
+            answer_option=None,
+            attribution_already_given=False,
+        )
+        state.setdefault("phase_a_evidence_log", []).append(rec.model_dump())
+        state["_last_processed_revision_id"] = state.get("_revision_evidence_id")
+        return state
+
+    if explicit_critique_dim is not None:
+        if rejected_name is not None:
+            x_e = -_phi_norm(rejected_name)
+        else:
+            x_e = _phi_norm(accepted_name) if accepted_name else np.zeros(6)
+        rec = EvidenceRecord(
+            evidence_id=f"crit_{state.get('agent_run_id')}_{rev_op.get('turn_id','')}",
+            thread_id=state.get("agent_run_id") or "",
+            ts="",
+            event_type="explicit_critique",
+            learning=True,
+            censored_feasibility=False,
+            x_e=x_e.tolist(),
+            rejected_item=rejected_name,
+            accepted_item=accepted_name,
+            ask_eligible=False,
+            question_options=None,
+            answer_option=None,
+            attribution_already_given=True,
+        )
+        state.setdefault("phase_a_evidence_log", []).append(rec.model_dump())
+        state["_last_processed_revision_id"] = state.get("_revision_evidence_id")
+        rows = [EvidenceRecord(**r) for r in state["phase_a_evidence_log"] if r.get("learning")]
+        mu, Sigma = refit_laplace(rows)
+        state["phase_a_posterior_mu"] = mu.tolist()
+        state["phase_a_posterior_sigma"] = Sigma.tolist()
+        state["phase_c_attribution_already_given"] = True
+        return state
+
+    return state
+
+
 async def _node_plan_core(state: AgentState) -> AgentState:
     # ------------------------------------------------------------------
     # DP planner – uses actual DP solver for unlocked slots.

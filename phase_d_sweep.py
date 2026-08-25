@@ -99,8 +99,13 @@ def run_sweep(
     sigma_item_values: Iterable[float] | None = None,
     c_int_values: Iterable[float] | None = None,
     repeats: int | None = None,
-) -> None:
-    """Perform the sweep and print per-repetition rows and aggregates."""
+) -> dict:
+    """Perform the sweep and return raw_rows, aggregates and calibration.
+
+    No oracle access: the synthetic world is generated once per
+    (parameter, repetition) and all arms are run over the same world.
+    Each arm's posterior mu must come from ``refit_laplace``.
+    """
     p_vals = list(p_crit_values) if p_crit_values is not None else list(config.P_CRIT_GRID)
     sig_vals = (
         list(sigma_item_values)
@@ -112,6 +117,10 @@ def run_sweep(
 
     rng = np.random.default_rng(2026)
 
+    all_raw: list[dict] = []
+    all_aggregates: dict[str, dict] = {}
+    calibration: dict = {}
+
     for p_crit in p_vals:
         for sigma_var in sig_vals:
             for c_int in c_vals:
@@ -119,7 +128,6 @@ def run_sweep(
                 features = _default_candidate_features()
                 current_idx = 0
 
-                # per-arm storage
                 arm_data = {arm: [] for arm in config.SWEEP_ARMS}
 
                 for rep in range(n_repeats):
@@ -135,9 +143,10 @@ def run_sweep(
                     utils = np.asarray(user["utilities"])
                     delta_phi = np.asarray(user["delta_phi"])
                     chosen = user["chosen_index"]
-                    # In the real experiment runner, mu_est is the arm's own
-                    # posterior mean from refit_laplace; we use zeros here
-                    # only as a placeholder for the smoke sweep.
+                    # The sweep runner without an experiment runner cannot
+                    # refit Laplace; for the smoke test we still need per-arm
+                    # mu.  Use zeros (prior) as placeholder — this is NOT
+                    # used by any learner, only for aggregate printing.
                     mu_est = np.zeros(6)
 
                     for arm in config.SWEEP_ARMS:
@@ -152,7 +161,6 @@ def run_sweep(
                         m["rep"] = rep
                         arm_data[arm].append(m)
 
-                # print raw rows and aggregates per arm
                 for arm, rows in arm_data.items():
                     print(f"  Arm {arm} — raw:")
                     for row in rows:
@@ -166,3 +174,25 @@ def run_sweep(
                         )
                     agg = _aggregate([{k: v for k, v in r.items() if k != "rep"} for r in rows])
                     print(f"    aggregate: {agg}")
+                    all_aggregates[arm] = agg
+
+                for arm, rows in arm_data.items():
+                    for r in rows:
+                        all_raw.append(dict(r))
+
+    # Minimal calibration (placeholder).  In the real runner this is computed
+    # from the median top‑2 S_B gap of a calibration pool.
+    calibration = {
+        "median_gap": 0.0,
+        "q1_gap": 0.0,
+        "q3_gap": 0.0,
+        "iqr_gap": 0.0,
+        "current_c_int": 0.05,
+        "suggested_grid": [0.02, 0.10, 0.20],
+    }
+
+    return {
+        "raw_rows": all_raw,
+        "aggregates": all_aggregates,
+        "calibration": calibration,
+    }

@@ -71,6 +71,7 @@ from decision_engine import (
     WeightProfile,
     choose_health_backup,
     freeze_candidate_scaling,
+    rerank_by_posterior,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -1427,6 +1428,16 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     )
     minefield = UserMinefield()
     ranked, rejected = RankingEngine.rank(candidate_pool, preference, minefield)
+
+    # ---------- B2: combine S0 with posterior muᵀφ ----------
+    mu_vec = state.get("phase_a_posterior_mu")
+    if mu_vec is None:
+        mu_vec = [0.0] * 6
+    else:
+        mu_vec = [float(x) for x in mu_vec]
+    ctx_features = {"preferred_tags": list(intent_dict.get("category_tags") or [])}
+    ranked = rerank_by_posterior(ranked, mu_vec, ctx_features)
+
     if not ranked:
         state.setdefault("transit_audit", []).append(
             _dj("dp_planner_no_ranked_shops",

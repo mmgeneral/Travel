@@ -174,6 +174,41 @@ def freeze_candidate_scaling(
     }
 
 
+def rerank_by_posterior(
+    ranked: list["RankedShop"],
+    mu: list[float] | tuple[float, ...] | np.ndarray | None,
+    ctx: dict | None = None,
+) -> list["RankedShop"]:
+    """
+    Phase B2: compute S = S0 + muᵀ φ(x, c_s) and reorder `ranked` by S.
+
+    When `mu` is None or all zeros, returns the original order unchanged
+    (exact fallback to the pure S0 ranking).
+    """
+    if ranked is None or len(ranked) == 0:
+        return ranked
+    if mu is None:
+        return ranked
+    mu_arr = np.asarray(mu, dtype=float).reshape(-1)
+    if mu_arr.ndim != 1 or mu_arr.shape[0] != 6:
+        raise ValueError("mu must be a 6-dimensional vector")
+    if float(np.max(np.abs(mu_arr))) == 0.0:
+        # μ=0 → must preserve the original engine order exactly
+        return ranked
+
+    ctx = ctx or {}
+    scored = [
+        (
+            r,
+            float(r.final_score)
+            + float(np.dot(mu_arr, np.asarray(phi(r.shop, ctx), dtype=float))),
+        )
+        for r in ranked
+    ]
+    scored.sort(key=lambda pair: pair[1], reverse=True)
+    return [r for r, _ in scored]
+
+
 # ---------------------------------------------------------------
 # (End of Phase A1 feature layer)
 # ---------------------------------------------------------------

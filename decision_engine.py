@@ -621,6 +621,51 @@ def evaluate_gate(
     return {"action": "continue", "reason": "attribution_already_given"}
 
 
+def c_int_anchor_diagnostics(
+    score_samples: Iterable[Iterable[float]],
+    current_c_int: float = 0.05,
+    grid_fractions: tuple[float, float, float] = (0.02, 0.10, 0.20),
+) -> dict[str, object]:
+    """
+    Phase C4 — anchor c_int to the typical top‑2 candidate gap.
+
+    For each sample (an iterable of S_B scores for a candidate universe),
+    compute the top‑2 score gap S(x*) − S(x_2nd).  Returns a diagnostics
+    dict containing median/IQR of those gaps, the percentile of
+    ``current_c_int`` within the observed gaps, and a suggested c_int grid
+    formed by multiplying the median gap by each of ``grid_fractions``.
+
+    The caller is responsible for printing the returned dict.
+    """
+    gaps: list[float] = []
+    for sample in score_samples:
+        sorted_scores = sorted((float(x) for x in sample), reverse=True)
+        if len(sorted_scores) >= 2:
+            gaps.append(sorted_scores[0] - sorted_scores[1])
+
+    if not gaps:
+        raise ValueError("score_samples must contain at least one list with ≥2 scores")
+
+    arr = np.asarray(gaps, dtype=float)
+    median = float(np.median(arr))
+    q1 = float(np.percentile(arr, 25))
+    q3 = float(np.percentile(arr, 75))
+    iqr = q3 - q1
+    percentile_cur = float(np.mean(arr <= current_c_int) * 100.0)
+
+    suggested_grid = [round(median * f, 6) for f in grid_fractions]
+
+    return {
+        "median_gap": median,
+        "q1_gap": q1,
+        "q3_gap": q3,
+        "iqr_gap": iqr,
+        "current_c_int": current_c_int,
+        "current_c_int_percentile": percentile_cur,
+        "suggested_grid": suggested_grid,
+    }
+
+
 # ---------------------------------------------------------------
 # (End of Phase A1 feature layer)
 # ---------------------------------------------------------------

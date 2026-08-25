@@ -83,6 +83,7 @@ from decision_engine import (
     compute_evoi_for_questions,
     compute_trip_frozen_scaling,
     evaluate_gate,
+    phi,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict

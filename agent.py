@@ -1,4 +1,5 @@
 from __future__ import annotations
+import numpy as np
 from catalog import (
     _build_shop_catalog,
     _build_shop_catalog_taipei,
@@ -71,6 +72,7 @@ from decision_engine import (
     WeightProfile,
     choose_health_backup,
     freeze_candidate_scaling,
+    contender_set,
     rerank_by_posterior,
 )
 
@@ -1437,6 +1439,32 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         mu_vec = [float(x) for x in mu_vec]
     ctx_features = {"preferred_tags": list(intent_dict.get("category_tags") or [])}
     ranked = rerank_by_posterior(ranked, mu_vec, ctx_features)
+
+    # ---------- B3: contender set (2σ_pred margin filter) ----------
+    if intent_dict.get("is_revision") and state.get("phase_b_frozen_scaling") is not None:
+        _sigma_default = np.eye(6).tolist()
+        Sigma_mat = state.get("phase_a_posterior_sigma", _sigma_default)
+        if Sigma_mat is None:
+            Sigma_mat = _sigma_default
+        _contender, _meta = contender_set(ranked, mu_vec, Sigma_mat, ctx_features)
+        state["phase_b_contender_size"] = int(_meta["size"])
+        state["phase_b_contender_meta"] = _meta
+        if int(_meta["size"]) == 1:
+            state["phase_b_gate_skipped"] = True
+            state["phase_b_mc_calls"] = 0
+        else:
+            state["phase_b_gate_skipped"] = False
+            state["phase_b_mc_calls"] = None
+        state.setdefault("transit_audit", []).append(
+            _dj(
+                "B3_contender_set",
+                contender_size=int(_meta["size"]),
+                candidate_size=len(ranked),
+                mc_calls=state["phase_b_mc_calls"],
+                gate_skipped=state["phase_b_gate_skipped"],
+                L_j=_meta.get("L_j"),
+            )
+        )
 
     if not ranked:
         state.setdefault("transit_audit", []).append(

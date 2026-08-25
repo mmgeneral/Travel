@@ -209,6 +209,57 @@ def rerank_by_posterior(
     return [r for r, _ in scored]
 
 
+def contender_set(
+    ranked: list["RankedShop"],
+    mu: list[float] | tuple[float, ...] | np.ndarray | None,
+    Sigma: list[list[float]] | np.ndarray,
+    ctx: dict | None = None,
+) -> tuple[list["RankedShop"], dict[str, object]]:
+    """
+    Phase B3: compute the contender set C̃(s) using the 2·σ_pred margin filter.
+
+    Returns (contender_list, meta) where meta contains:
+        size    : len(C̃)
+        mc_calls: 0 when |C̃| == 1 (short-circuit), otherwise None
+        L_j     : per-feature std of φ within C̃ (6 floats)
+    """
+    if not ranked:
+        return [], {"size": 0, "mc_calls": None, "L_j": [0.0] * 6}
+    mu_arr = np.asarray(mu if mu is not None else [0.0] * 6, dtype=float).reshape(-1)
+    if mu_arr.ndim != 1 or len(mu_arr) != 6:
+        raise ValueError("mu must be a 6-dimensional vector")
+    Sigma_arr = np.asarray(Sigma, dtype=float)
+    if Sigma_arr.shape != (6, 6):
+        raise ValueError("Sigma must be a 6x6 matrix")
+    ctx = ctx or {}
+    best = ranked[0]
+    best_phi = np.asarray(phi(best.shop, ctx), dtype=float)
+    best_score = float(best.final_score) + float(np.dot(mu_arr, best_phi))
+
+    contender: list[RankedShop] = []
+    for r in ranked:
+        r_phi = np.asarray(phi(r.shop, ctx), dtype=float)
+        r_score = float(r.final_score) + float(np.dot(mu_arr, r_phi))
+        diff = best_score - r_score
+        pred = np.sqrt(float(np.dot(r_phi - best_phi, Sigma_arr.dot(r_phi - best_phi))))
+        if diff <= 2.0 * pred:
+            contender.append(r)
+
+    if contender:
+        phi_matrix = np.array([phi(x.shop, ctx) for x in contender], dtype=float)
+        L_j = np.std(phi_matrix, axis=0).tolist()
+    else:
+        L_j = [0.0] * 6
+
+    mc_calls = 0 if len(contender) == 1 else None
+    meta = {
+        "size": len(contender),
+        "mc_calls": mc_calls,
+        "L_j": L_j,
+    }
+    return contender, meta
+
+
 # ---------------------------------------------------------------
 # (End of Phase A1 feature layer)
 # ---------------------------------------------------------------

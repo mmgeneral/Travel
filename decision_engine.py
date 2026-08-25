@@ -153,7 +153,14 @@ def z_score(item: object, ctx: dict | None, scaling: tuple[np.ndarray, np.ndarra
 
 
 def _model_phi(item: object, ctx: dict | None, phase_b_context: dict[str, object]) -> np.ndarray:
-    """Standardized model feature vector used by A/B inference."""
+    """Standardized model feature vector used by A/B inference.
+
+    Prefer the frozen ``feature_ctx`` from ``phase_b_context`` (Phase B final).
+    Falls back to caller‐supplied ``ctx`` for legacy callers.
+    """
+    feature_ctx = phase_b_context.get("feature_ctx")
+    if feature_ctx is not None:
+        ctx = feature_ctx
     means = np.asarray(phase_b_context["feature_means"], dtype=float)
     stds = np.asarray(phase_b_context["feature_stds"], dtype=float)
     return z_score(item, ctx, (means, stds))
@@ -166,12 +173,16 @@ def freeze_phase_b_turn_context(
     turn_id: str,
     feature_means: list[float] | None = None,
     feature_stds: list[float] | None = None,
+    feature_ctx: dict | None = None,
 ) -> dict[str, object]:
     """
     Freeze the B-turn candidate universe and S0 scaling.
 
     Stores only JSON-serialisable primitives (no Python objects).
     Uses the caller-provided trip feature scaling (A1) — never recomputes it.
+    ``feature_ctx`` is the shallow frozen context actually consumed by ``phi()``
+    during this revision; it is stored for later B/C phases so that
+    ``_model_phi`` never re-evaluates a different context.
     """
     raw_scores = {r.shop.name: float(r.final_score) for r in ranked_full}
     vals = list(raw_scores.values()) if raw_scores else [0.0]
@@ -185,6 +196,13 @@ def freeze_phase_b_turn_context(
         feature_means = [float(x) for x in fm]
         feature_stds = [float(x) for x in fs]
 
+    frozen_feature_ctx: dict = dict(ctx) if ctx else {}
+    frozen_feature_ctx = {
+        k: v
+        for k, v in frozen_feature_ctx.items()
+        if k in {"preferred_tags", "travel_minutes_map", "travel_minutes", "price_level_map", "price_level"}
+    }
+
     return {
         "turn_id": turn_id,
         "slot_id": slot_id,
@@ -195,6 +213,7 @@ def freeze_phase_b_turn_context(
         "s0_scale": s0_scale,
         "feature_means": [float(x) for x in feature_means],
         "feature_stds": [float(x) for x in feature_stds],
+        "feature_ctx": frozen_feature_ctx,
     }
 
 
@@ -459,8 +478,8 @@ def compute_evoi_for_questions(
     phase_b_context: dict[str, object],
     x_e: list[float] | np.ndarray,
     evidences: list[EvidenceRecord] | None = None,
-    c_int: float = 0.25,
-    mc_draws: int = 200,
+    c_int: float = C_INT,
+    mc_draws: int = MC_DRAWS,
     seed: int = 0,
     ctx: dict | None = None,
 ) -> list[dict[str, object]]:
@@ -582,26 +601,21 @@ def evaluate_gate(
     asked_this_turn: bool = False,
     contender_size: int | None = None,
     attribution_already_given: bool = False,
+    policy: str = "evoi_gated",
+    force_ask: bool = False,
 ) -> dict[str, object]:
-    """Phase C3 + D2: decide whether to ask or continue.
+    """Phase C3: decide whether to ask or continue.
 
-    Priority (before arm-specific logic):
-        1. decision_stable
-        2. attribution_already_given
-        3. not_block_ambiguous
-        4. already_asked_this_turn
+    The core C3 policy is EVOI-gated by default (`policy="evoi_gated"`).
+    Experiment arms pass an explicit policy:
 
-    After those, the arm selected in ``config.EXPERIMENT_ARM`` decides:
+        implicit_only  -> never ask
+        always_ask     -> always ask if a question exists
+        evoi_gated     -> ask iff best net_evoi > 0
 
-        C0 -> always continue (implicit-only)
-        C1 -> always ask, provided a question exists
-        C2 -> ask iff best net_evoi > 0 (EVOI-gated)
-        C3 -> same as C2 (pairwise baseline)
-        C4 -> same as C2 (no-learning control, ask rule unchanged)
-
-    When ``config.FORCE_ASK`` is True, the arm-specific block is skipped and
-    any eligible event yields ASK.  This is used by the Phase-D regression
-    test that proves C1/C2 trajectories are bit-identical under that condition.
+    Optional ``force_ask=True`` forces an ASK for any eligible event that has
+    at least one candidate question.  This is used in the Phase-D regression
+    test that proves C1/C2 trajectories are bit-identical.
     """
     if contender_size is not None and contender_size == 1:
         return {"action": "continue", "reason": "decision_stable"}
@@ -617,17 +631,16 @@ def evaluate_gate(
     if evoi_list:
         best = max(evoi_list, key=lambda q: float(q.get("net_evoi", q.get("evoi", -1e18))))
 
-    if _cfg.FORCE_ASK and best is not None:
+    if force_ask and best is not None:
         return {"action": "ask", "q_star": best}
 
-    arm = _cfg.EXPERIMENT_ARM
-    if arm == "C0":
+    if policy == "implicit_only":
         return {"action": "continue", "reason": "implicit_only"}
-    if arm == "C1":
+    if policy == "always_ask":
         if best is not None:
             return {"action": "ask", "q_star": best}
         return {"action": "continue", "reason": "evoi_not_positive"}
-    # C2, C3, C4 (and any unknown fallback) use the current EVOI-gated rule.
+    # fallback (default) = evoi_gated
     if best is not None and float(best.get("net_evoi", best.get("evoi", 0.0))) > 0:
         return {"action": "ask", "q_star": best}
     return {"action": "continue", "reason": "evoi_not_positive"}

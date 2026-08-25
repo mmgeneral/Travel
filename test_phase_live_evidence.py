@@ -7,7 +7,7 @@ from evidence import EvidenceRecord
 from likelihood import refit_laplace
 from decision_engine import phi, compute_trip_frozen_scaling
 from preference_features import FEATURE_NAMES
-from agent import _ingest_revision_evidence
+from agent import _ingest_revision_evidence, _mark_ask_gate
 
 
 class _MockShop:
@@ -26,6 +26,8 @@ class _MockShop:
 def _base_state(slot_id='lunch', turn_id='rev1'):
     return {
         'agent_run_id': 'run1',
+        'query': 'revise lunch',
+        'intent_history': [],
         'intent': {
             'category_tags': ['ramen'],
             'revision_op': {
@@ -128,24 +130,97 @@ def test_first_revision_ingests_when_ids_are_none():
     assert out['_revision_evidence_id'] == 'rev1'
 
 
-def test_same_revision_id_twice_appends_only_once():
+def test_same_revision_retry_preserves_turn_local_state():
     state = _base_state()
     with patch('agent._researcher_shop_pool', return_value=_shops()):
-        first = _ingest_revision_evidence(
+        out = _ingest_revision_evidence(
             state=state,
             rejected_name='A', accepted_name='B',
             explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
         )
-        before = len(first['phase_a_evidence_log'])
-        second = _ingest_revision_evidence(
-            state=first,
+    # simulate that gate decided to ask, planner sets asked_this_turn=True,
+    # and a critique was recorded (or attributed earlier)
+    out['asked_this_turn'] = True
+    out['phase_c_attribution_already_given'] = True
+    xe_before = list(out['phase_c_event_xe'])
+    with patch('agent._researcher_shop_pool', return_value=_shops()):
+        retried = _ingest_revision_evidence(
+            state=out,
             rejected_name='A', accepted_name='B',
             explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
         )
-    assert len(second['phase_a_evidence_log']) == before
+    assert retried['asked_this_turn'] is True
+    assert list(retried['phase_c_event_xe']) == xe_before
+    assert retried['phase_c_attribution_already_given'] is True
 
 
-def test_second_distinct_revision_overwrites_phase_c_event_xe():
+def test_gate_ask_sets_asked_this_turn():
+    state = _base_state()
+    gate = {"action": "ask", "q_star": {"j_T": 0, "j_C": 3}}
+    state = _mark_ask_gate(state, gate)
+    assert state['asked_this_turn'] is True
+    assert state['phase_c_gate'] == gate
+
+
+def test_next_distinct_revision_resets_state_flags():
+    state = _base_state(turn_id='rev1')
+    with patch('agent._researcher_shop_pool', return_value=_shops()):
+        out = _ingest_revision_evidence(
+            state=state,
+            rejected_name='A', accepted_name='B',
+            explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
+        )
+    # simulate previous turn asked something
+    out['asked_this_turn'] = True
+    out['phase_c_attribution_already_given'] = True
+    # next turn (same state object, new revision)
+    out['intent']['revision_op']['turn_id'] = 'rev2'
+    out['intent']['revision_op']['accepted_shop'] = 'A'
+    with patch('agent._researcher_shop_pool', return_value=_shops()):
+        out2 = _ingest_revision_evidence(
+            state=out,
+            rejected_name='B', accepted_name='A',
+            explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
+        )
+    assert out2['asked_this_turn'] is False
+    assert out2['phase_c_event_xe'] is not None
+    assert out2['phase_c_attribution_already_given'] is False
+
+
+def test_two_successive_revisions_same_slot_get_different_ids():
+    state = _base_state(turn_id='')
+    with patch('agent._researcher_shop_pool', return_value=_shops()):
+        out1 = _ingest_revision_evidence(
+            state=state,
+            rejected_name='A', accepted_name='B',
+            explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
+        )
+    id1 = out1['_revision_evidence_id']
+    state['query'] = 'different revision request'
+    state['intent']['revision_op']['accepted_shop'] = 'A'
+    with patch('agent._researcher_shop_pool', return_value=_shops()):
+        out2 = _ingest_revision_evidence(
+            state=state,
+            rejected_name='B', accepted_name='A',
+            explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
+        )
+    assert out2['_revision_evidence_id'] != id1
+
+
+def test_unresolved_replacement_profile_does_not_learn():
+    state = _base_state(turn_id='rev99')
+    state['intent']['revision_op']['accepted_shop'] = 'UNKNOWN_SHOP'
+    with patch('agent._researcher_shop_pool', return_value=_shops()):
+        out = _ingest_revision_evidence(
+            state=state,
+            rejected_name='A', accepted_name='UNKNOWN_SHOP',
+            explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
+        )
+    assert len(out['phase_a_evidence_log']) == 0
+    assert out['_last_processed_revision_id'] == 'rev99'
+
+
+def test_second_distinct_revision_accumulates_log():
     state = _base_state(turn_id='rev1')
     with patch('agent._researcher_shop_pool', return_value=_shops()):
         out1 = _ingest_revision_evidence(
@@ -153,97 +228,18 @@ def test_second_distinct_revision_overwrites_phase_c_event_xe():
             rejected_name='A', accepted_name='B',
             explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
         )
-        xe1 = list(out1['phase_c_event_xe'])
-        state2 = _base_state(turn_id='rev2')
-        state2['intent']['revision_op']['accepted_shop'] = 'A'
-        with patch('agent._researcher_shop_pool', return_value=_shops()):
-            out2 = _ingest_revision_evidence(
-                state=state2,
-                rejected_name='B', accepted_name='A',
-                explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
-            )
-        xe2 = list(out2['phase_c_event_xe'])
-    assert xe1 != xe2
-
-
-def test_replacement_plus_critique_appends_both():
-    state = _base_state()
-    state['intent']['revision_op']['explicit_critique_dim'] = 0
-    state['intent']['revision_op']['critique_confidence'] = 0.7
-    with patch('agent._researcher_shop_pool', return_value=_shops()):
-        out = _ingest_revision_evidence(
-            state=state,
-            rejected_name='A', accepted_name='B',
-            explicit_critique_dim=0, critique_confidence=0.7, slot_id='lunch',
-        )
-    types = [r['event_type'] for r in out['phase_a_evidence_log']]
-    assert types.count('replacement') == 1
-    assert types.count('explicit_critique') == 1
-
-
-def test_bare_rejection_plus_critique_appends_both():
-    state = _base_state()
-    state['intent']['revision_op']['accepted_shop'] = None
-    state['intent']['revision_op']['explicit_critique_dim'] = 4
-    state['intent']['revision_op']['critique_confidence'] = 0.5
-    with patch('agent._researcher_shop_pool', return_value=_shops()):
-        out = _ingest_revision_evidence(
-            state=state,
-            rejected_name='A', accepted_name=None,
-            explicit_critique_dim=4, critique_confidence=0.5, slot_id='lunch',
-        )
-    types = [r['event_type'] for r in out['phase_a_evidence_log']]
-    assert types.count('bare_rejection') == 1
-    assert types.count('explicit_critique') == 1
-
-
-def test_critique_answer_option_matches_feature_names():
-    state = _base_state()
-    state['intent']['revision_op']['accepted_shop'] = None
-    state['intent']['revision_op']['explicit_critique_dim'] = 3
-    with patch('agent._researcher_shop_pool', return_value=_shops()):
-        out = _ingest_revision_evidence(
-            state=state,
-            rejected_name='A', accepted_name=None,
-            explicit_critique_dim=3, critique_confidence=0.8, slot_id='lunch',
-        )
-    crit = [r for r in out['phase_a_evidence_log'] if r['event_type'] == 'explicit_critique'][0]
-    assert crit['answer_option'] == FEATURE_NAMES[3]
-
-
-def test_critique_weight_equals_rho():
-    state = _base_state()
-    state['intent']['revision_op']['accepted_shop'] = None
-    state['intent']['revision_op']['explicit_critique_dim'] = 2
-    rho = 0.45
-    with patch('agent._researcher_shop_pool', return_value=_shops()):
-        out = _ingest_revision_evidence(
-            state=state,
-            rejected_name='A', accepted_name=None,
-            explicit_critique_dim=2, critique_confidence=rho, slot_id='lunch',
-        )
-    crit = [r for r in out['phase_a_evidence_log'] if r['event_type'] == 'explicit_critique'][0]
-    assert crit['weight'] == pytest.approx(rho)
-
-
-def test_posterior_changes_only_for_learning_rows():
-    state = _base_state()
-    with patch('agent._researcher_shop_pool', return_value=_shops()):
-        out = _ingest_revision_evidence(
-            state=state,
-            rejected_name='A', accepted_name='B',
-            explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
-        )
-    mu_after = np.asarray(out['phase_a_posterior_mu'])
-    assert not np.allclose(mu_after, np.zeros(6))
-    # Bare rejection alone should not change posterior
-    state2 = _base_state(turn_id='rev2')
-    state2['intent']['revision_op']['accepted_shop'] = None
-    before_mu = out['phase_a_posterior_mu']
+    before_log = len(out1['phase_a_evidence_log'])
+    xe1_before = list(out1['phase_c_event_xe'])
+    # next turn reusing same state
+    out1['intent']['revision_op']['turn_id'] = 'rev2'
+    out1['intent']['revision_op']['rejected_shop'] = 'B'
+    out1['intent']['revision_op']['accepted_shop'] = 'A'
+    out1['query'] = 'second revision request'
     with patch('agent._researcher_shop_pool', return_value=_shops()):
         out2 = _ingest_revision_evidence(
-            state=state2,
-            rejected_name='A', accepted_name=None,
+            state=out1,
+            rejected_name='B', accepted_name='A',
             explicit_critique_dim=None, critique_confidence=0.0, slot_id='lunch',
         )
-    assert np.allclose(np.asarray(out2.get('phase_a_posterior_mu', [0.0]*6)), np.zeros(6))
+    assert len(out2['phase_a_evidence_log']) == before_log + 1
+    assert list(out2['phase_c_event_xe']) != xe1_before

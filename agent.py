@@ -1446,15 +1446,24 @@ def _ingest_revision_evidence(
     if not rev_op:
         return state
 
-    revision_id = str(rev_op.get("turn_id") or "")
-    if not revision_id:
-        revision_id = f"{state.get('agent_run_id')}_{slot_id or 'unknown'}"
+    # Deterministic user-turn identity.
+    if rev_op.get("turn_id"):
+        revision_id = str(rev_op["turn_id"])
+    else:
+        turn_idx = len(state.get("intent_history") or [])
+        revision_id = (
+            f"{state.get('agent_run_id')}|{turn_idx}|"
+            f"{str(state.get('query',''))[:60]}|{slot_id or 'unknown'}"
+        )
     state["_revision_evidence_id"] = revision_id
-    state["asked_this_turn"] = False
-    state["phase_c_event_xe"] = None
 
     if revision_id and revision_id == state.get("_last_processed_revision_id"):
         return state
+
+    # New revision only: reset turn-local state.
+    state["asked_this_turn"] = False
+    state["phase_c_event_xe"] = None
+    state["phase_c_attribution_already_given"] = False
 
     candidate_lookup: dict[str, ShopProfile] = {}
     for s in _researcher_shop_pool(state):
@@ -1465,11 +1474,13 @@ def _ingest_revision_evidence(
     means = np.asarray(trip_feat["means"], dtype=float)
     stds = np.asarray(trip_feat["stds"], dtype=float)
 
-    def _phi_norm(name: str | None) -> np.ndarray:
+    def _phi_norm(name: str | None, *, require_resolution: bool = False) -> np.ndarray:
         if not name:
             return np.zeros(6)
         shop = candidate_lookup.get(name)
         if shop is None:
+            if require_resolution:
+                raise LookupError(f"Unresolved profile for {name}")
             return np.zeros(6)
         raw = phi(shop, ctx_features)
         return (raw - means) / stds
@@ -1478,25 +1489,33 @@ def _ingest_revision_evidence(
     has_learning = False
 
     if accepted_name is not None and rejected_name is not None:
-        x_e = _phi_norm(accepted_name) - _phi_norm(rejected_name)
-        state["phase_c_event_xe"] = x_e.tolist()
-        rec = EvidenceRecord(
-            evidence_id=f"repl_{state.get('agent_run_id')}_{revision_id}",
-            thread_id=state.get("agent_run_id") or "",
-            ts="",
-            event_type="replacement",
-            learning=True,
-            censored_feasibility=False,
-            x_e=x_e.tolist(),
-            rejected_item=rejected_name,
-            accepted_item=accepted_name,
-            ask_eligible=False,
-            question_options=None,
-            answer_option=None,
-            attribution_already_given=False,
-        ).model_dump()
-        new_rows.append(rec)
-        has_learning = True
+        # Replacement only if both profiles resolve successfully.
+        if (
+            rejected_name in candidate_lookup
+            and accepted_name in candidate_lookup
+        ):
+            x_e = _phi_norm(accepted_name, require_resolution=True) - _phi_norm(
+                rejected_name, require_resolution=True
+            )
+            state["phase_c_event_xe"] = x_e.tolist()
+            rec = EvidenceRecord(
+                evidence_id=f"repl_{state.get('agent_run_id')}_{revision_id}",
+                thread_id=state.get("agent_run_id") or "",
+                ts="",
+                event_type="replacement",
+                learning=True,
+                censored_feasibility=False,
+                x_e=x_e.tolist(),
+                rejected_item=rejected_name,
+                accepted_item=accepted_name,
+                ask_eligible=False,
+                question_options=None,
+                answer_option=None,
+                attribution_already_given=False,
+            ).model_dump()
+            new_rows.append(rec)
+            has_learning = True
+        # If either profile is unresolved, simply do not create a learning row.
 
     elif rejected_name is not None and accepted_name is None:
         rec = EvidenceRecord(
@@ -1562,6 +1581,14 @@ def _ingest_revision_evidence(
         state["phase_a_posterior_sigma"] = Sigma.tolist()
 
     state["_last_processed_revision_id"] = revision_id
+    return state
+
+
+def _mark_ask_gate(state: AgentState, gate: dict) -> AgentState:
+    """Persist Phase C gate decision and set asked_this_turn if we ask."""
+    state["phase_c_gate"] = gate
+    if gate.get("action") == "ask":
+        state["asked_this_turn"] = True
     return state
 
 
@@ -1762,7 +1789,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 contender_size=int(_meta["size"]),
                 attribution_already_given=bool(state.get("phase_c_attribution_already_given", False)),
             )
-            state["phase_c_gate"] = _gate
+            state = _mark_ask_gate(state, _gate)
         else:
             state["phase_b_contender_meta"]["c1_questions"] = []
             state["phase_b_contender_meta"]["c1_ask_eligible"] = False

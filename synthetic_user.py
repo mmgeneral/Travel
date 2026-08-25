@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from dataclasses import dataclass
+
 import numpy as np
 
 from config import P_CRIT_GRID, SIGMA_ITEM_GRID

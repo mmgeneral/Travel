@@ -30,7 +30,7 @@ from duffel import DuffelService
 from openai_completion_client import OpenAIChatCompletionClient
 from saga import SagaEngine, SagaStep
 from shop_catalog_io import load_shop_catalog
-from config import C_INT
+from config import C_INT, M, MC_DRAWS
 from evidence import EvidenceRecord
 from likelihood import refit_laplace
 from likelihood import refit_laplace
@@ -84,6 +84,7 @@ from decision_engine import (
     compute_trip_frozen_scaling,
     evaluate_gate,
     phi,
+    FEATURE_NAMES,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -197,7 +198,6 @@ class AgentState(TypedDict):
     phase_c_event_xe: list[float] | None
     phase_c_evoi_values: list[float]
     phase_c_gate: dict | None
-    phase_c_attribution_already_given: bool
     """LangGraph state; ``intent`` matches ``Intent.as_dict()`` from ``intent_parser``.
 
     ``intent`` is ``None`` until ``node_route_intent`` runs; each snapshot is a plain dict
@@ -288,7 +288,6 @@ class AgentStateModel(BaseModel):
     phase_c_event_xe: list[float] | None = None
     phase_c_evoi_values: list[float] = Field(default_factory=list)
     phase_c_gate: dict | None = None
-    phase_c_attribution_already_given: bool = False
     query: str
     research_log: list[str] = Field(default_factory=list)
     transit_audit: list[str] = Field(default_factory=list)
@@ -1441,7 +1440,7 @@ def _ingest_revision_evidence(
     critique_confidence: float,
     slot_id: str | None,
 ) -> AgentState:
-    """Deterministically convert a user revision action into one EvidenceRecord.
+    """Deterministically convert a user revision action into EvidenceRecord(s).
 
     Always returns the (possibly mutated) state dict.
 
@@ -1451,13 +1450,19 @@ def _ingest_revision_evidence(
       - explicit_critique              -> explicit_critique learning=True
     No LLM call is made.
     """
-    if state.get("_revision_evidence_id") == state.get("_last_processed_revision_id"):
-        # idempotent guard – already processed a previous turn
-        return state
-
     intent = state.get("intent") or {}
     rev_op = intent.get("revision_op") or {}
     if not rev_op:
+        return state
+
+    revision_id = str(rev_op.get("turn_id") or "")
+    if not revision_id:
+        revision_id = f"{state.get('agent_run_id')}_{slot_id or 'unknown'}"
+    state["_revision_evidence_id"] = revision_id
+    state["asked_this_turn"] = False
+    state["phase_c_event_xe"] = None
+
+    if revision_id and revision_id == state.get("_last_processed_revision_id"):
         return state
 
     candidate_lookup: dict[str, ShopProfile] = {}
@@ -1478,10 +1483,14 @@ def _ingest_revision_evidence(
         raw = phi(shop, ctx_features)
         return (raw - means) / stds
 
+    new_rows: list[dict] = []
+    has_learning = False
+
     if accepted_name is not None and rejected_name is not None:
         x_e = _phi_norm(accepted_name) - _phi_norm(rejected_name)
+        state["phase_c_event_xe"] = x_e.tolist()
         rec = EvidenceRecord(
-            evidence_id=f"repl_{state.get('agent_run_id')}_{rev_op.get('turn_id','')}",
+            evidence_id=f"repl_{state.get('agent_run_id')}_{revision_id}",
             thread_id=state.get("agent_run_id") or "",
             ts="",
             event_type="replacement",
@@ -1494,20 +1503,13 @@ def _ingest_revision_evidence(
             question_options=None,
             answer_option=None,
             attribution_already_given=False,
-        )
-        state.setdefault("phase_c_event_xe", x_e.tolist())
-        state.setdefault("phase_a_evidence_log", []).append(rec.model_dump())
-        state["_last_processed_revision_id"] = state.get("_revision_evidence_id")
+        ).model_dump()
+        new_rows.append(rec)
+        has_learning = True
 
-        rows = [EvidenceRecord(**r) for r in state["phase_a_evidence_log"] if r.get("learning")]
-        mu, Sigma = refit_laplace(rows)
-        state["phase_a_posterior_mu"] = mu.tolist()
-        state["phase_a_posterior_sigma"] = Sigma.tolist()
-        return state
-
-    if rejected_name is not None and accepted_name is None:
+    elif rejected_name is not None and accepted_name is None:
         rec = EvidenceRecord(
-            evidence_id=f"bare_{state.get('agent_run_id')}_{rev_op.get('turn_id','')}",
+            evidence_id=f"bare_{state.get('agent_run_id')}_{revision_id}",
             thread_id=state.get("agent_run_id") or "",
             ts="",
             event_type="bare_rejection",
@@ -1520,40 +1522,55 @@ def _ingest_revision_evidence(
             question_options=None,
             answer_option=None,
             attribution_already_given=False,
-        )
-        state.setdefault("phase_a_evidence_log", []).append(rec.model_dump())
-        state["_last_processed_revision_id"] = state.get("_revision_evidence_id")
+        ).model_dump()
+        new_rows.append(rec)
+
+    # Spontaneous critique is allowed alongside replacement/bare rejection.
+    if explicit_critique_dim is not None:
+        try:
+            dim = int(explicit_critique_dim)
+        except (TypeError, ValueError):
+            dim = None
+        if dim is not None and 0 <= dim <= 5:
+            if rejected_name is not None:
+                x_e_crit = -_phi_norm(rejected_name)
+            else:
+                x_e_crit = _phi_norm(accepted_name) if accepted_name else np.zeros(6)
+            if state["phase_c_event_xe"] is None:
+                state["phase_c_event_xe"] = x_e_crit.tolist()
+            rec_crit = EvidenceRecord(
+                evidence_id=f"crit_{state.get('agent_run_id')}_{revision_id}",
+                thread_id=state.get("agent_run_id") or "",
+                ts="",
+                event_type="explicit_critique",
+                learning=True,
+                censored_feasibility=False,
+                x_e=x_e_crit.tolist(),
+                rejected_item=rejected_name,
+                accepted_item=accepted_name,
+                ask_eligible=False,
+                question_options=None,
+                answer_option=FEATURE_NAMES[dim],
+                attribution_already_given=True,
+                weight=float(critique_confidence),
+            ).model_dump()
+            new_rows.append(rec_crit)
+            has_learning = True
+            state["phase_c_attribution_already_given"] = True
+
+    if not new_rows:
+        state["_last_processed_revision_id"] = revision_id
         return state
 
-    if explicit_critique_dim is not None:
-        if rejected_name is not None:
-            x_e = -_phi_norm(rejected_name)
-        else:
-            x_e = _phi_norm(accepted_name) if accepted_name else np.zeros(6)
-        rec = EvidenceRecord(
-            evidence_id=f"crit_{state.get('agent_run_id')}_{rev_op.get('turn_id','')}",
-            thread_id=state.get("agent_run_id") or "",
-            ts="",
-            event_type="explicit_critique",
-            learning=True,
-            censored_feasibility=False,
-            x_e=x_e.tolist(),
-            rejected_item=rejected_name,
-            accepted_item=accepted_name,
-            ask_eligible=False,
-            question_options=None,
-            answer_option=None,
-            attribution_already_given=True,
-        )
-        state.setdefault("phase_a_evidence_log", []).append(rec.model_dump())
-        state["_last_processed_revision_id"] = state.get("_revision_evidence_id")
+    state.setdefault("phase_a_evidence_log", []).extend(new_rows)
+
+    if has_learning:
         rows = [EvidenceRecord(**r) for r in state["phase_a_evidence_log"] if r.get("learning")]
         mu, Sigma = refit_laplace(rows)
         state["phase_a_posterior_mu"] = mu.tolist()
         state["phase_a_posterior_sigma"] = Sigma.tolist()
-        state["phase_c_attribution_already_given"] = True
-        return state
 
+    state["_last_processed_revision_id"] = revision_id
     return state
 
 
@@ -1678,7 +1695,6 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         state["phase_b_turn_context"] = phase_b_context
 
         # ---- B2: posterior rerank on full C0(s), then top-M ---- #
-        M = 5
         reranked_full = phase_b_rerank(full_ranked, mu_vec, phase_b_context, ctx_features)
         ranked = reranked_full[:M]
 
@@ -1722,7 +1738,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                         EvidenceRecord(**row) for row in (state.get("phase_a_evidence_log") or [])
                     ],
                     c_int=C_INT,
-                    mc_draws=200,
+                    mc_draws=MC_DRAWS,
                     ctx=ctx_features,
                 )
                 state["phase_b_contender_meta"]["c1_evoi"] = _c1_evoi_results

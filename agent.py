@@ -76,6 +76,7 @@ from decision_engine import (
     rerank_by_posterior,
     freeze_phase_b_turn_context,
     phase_b_rerank,
+    generate_cross_block_questions,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -1485,6 +1486,23 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         state["phase_b_contender_meta"] = _meta
         state["phase_b_gate_skipped"] = bool(_meta["gate_short_circuit"])
         state["phase_b_mc_calls"] = _meta["mc_calls"]
+
+        # ---- C1: generate cross-block question candidates (only when not singleton) ---- #
+        _xe = state.get("phase_c_event_xe")
+        if not state["phase_b_gate_skipped"] and _xe is not None:
+            _c1_questions, _ask_eligible = generate_cross_block_questions(
+                Sigma=Sigma_mat,
+                L_j=_meta.get("L_j") or [0.0] * 6,
+                x_e=_xe,
+            )
+            if not _ask_eligible:
+                _c1_questions = []
+            state["phase_b_contender_meta"]["c1_questions"] = _c1_questions
+            state["phase_b_contender_meta"]["c1_ask_eligible"] = bool(_ask_eligible)
+        else:
+            state["phase_b_contender_meta"]["c1_questions"] = []
+            state["phase_b_contender_meta"]["c1_ask_eligible"] = False
+
         state.setdefault("transit_audit", []).append(
             _dj(
                 "B3_contender_set",

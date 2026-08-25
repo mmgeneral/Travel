@@ -29,6 +29,8 @@ from preference_features import (
     CONTEXT_INDICES as CONTEXT_INDICES,
 )
 
+C1_ETA = 0.25
+
 BLOCK_INDEX = {
     "taste": TASTE_INDICES,
     "context": CONTEXT_INDICES,
@@ -397,6 +399,73 @@ def contender_set(
         "L_j": L_j,
     }
     return contender, meta
+
+
+def generate_cross_block_questions(
+    *,
+    Sigma: list[list[float]] | np.ndarray,
+    L_j: list[float] | np.ndarray,
+    x_e: list[float] | np.ndarray | None,
+    eta: float = C1_ETA,
+    max_top_per_block: int = 2,
+    max_pairs: int = 4,
+    max_scored_pairs: int = 3,
+) -> tuple[list[dict[str, object]], bool]:
+    """Phase C1 cross-block question generation.
+
+    Returns (questions, ask_eligible):
+    - questions: list of dicts with keys 'j_T', 'j_C', 'question_options', 'score'
+    - ask_eligible: bool indicating whether the event is block-ambiguous
+      (i.e., both taste and context active dims exist).
+    """
+    if x_e is None:
+        return [], False
+    x = np.asarray(x_e, dtype=float).reshape(-1)
+    if x.size != 6:
+        raise ValueError("x_e must have length 6")
+    Sigma_arr = np.asarray(Sigma, dtype=float)
+    if Sigma_arr.shape != (6, 6):
+        raise ValueError("Sigma must be 6x6")
+    L_arr = np.asarray(L_j, dtype=float).reshape(-1)
+    if L_arr.size != 6:
+        raise ValueError("L_j must have length 6")
+
+    active = np.abs(x) > eta
+    taste_active = [j for j in TASTE_INDICES if active[j]]
+    context_active = [j for j in CONTEXT_INDICES if active[j]]
+    if not taste_active or not context_active:
+        return [], False
+
+    scores = {
+        j: float(Sigma_arr[j, j] * (L_arr[j] ** 2)) for j in range(6)
+    }
+    taste_top = sorted(taste_active, key=lambda j: scores[j], reverse=True)[
+        :max_top_per_block
+    ]
+    context_top = sorted(context_active, key=lambda j: scores[j], reverse=True)[
+        :max_top_per_block
+    ]
+
+    pairs: list[tuple[int, int, float]] = []
+    for jT in taste_top:
+        for jC in context_top:
+            pairs.append((jT, jC, scores[jT] + scores[jC]))
+    pairs.sort(key=lambda triple: triple[2], reverse=True)
+    pairs = pairs[:max_pairs]
+
+    questions: list[dict[str, object]] = []
+    for jT, jC, score in pairs[:max_scored_pairs]:
+        name_jT = FEATURE_NAMES[jT]
+        name_jC = FEATURE_NAMES[jC]
+        questions.append(
+            {
+                "j_T": jT,
+                "j_C": jC,
+                "question_options": [name_jT, name_jC, "other"],
+                "score": score,
+            }
+        )
+    return questions, True
 
 
 # ---------------------------------------------------------------

@@ -31,6 +31,7 @@ from openai_completion_client import OpenAIChatCompletionClient
 from saga import SagaEngine, SagaStep
 from shop_catalog_io import load_shop_catalog
 from config import C_INT
+from evidence import EvidenceRecord
 from shop_planning import (
     AuthorityData,
     BookingType,
@@ -78,6 +79,7 @@ from decision_engine import (
     phase_b_rerank,
     generate_cross_block_questions,
     compute_evoi_for_questions,
+    compute_trip_frozen_scaling,
     evaluate_gate,
 )
 

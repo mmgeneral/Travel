@@ -28,3 +28,12 @@ EVOI_DIAGNOSTIC_THRESHOLD = 20  # after this many samples, print diagnostics
 # ----------------------------------------------------------------------
 # Suggested grid fractions relative to the median top‑2 S_B gap.
 C_INT_GRID_FRACTIONS = (0.02, 0.10, 0.20)
+
+# ----------------------------------------------------------------------
+# Phase D — synthetic user generator
+# ----------------------------------------------------------------------
+# σ²_item grid (variance) for item residual sensitivity tests.
+SIGMA_ITEM_GRID = (0.0, 0.25, 1.0, 4.0)
+
+# critique emission probabilities for spontaneous critique frequency.
+P_CRIT_GRID = (0.0, 0.3, 0.6)

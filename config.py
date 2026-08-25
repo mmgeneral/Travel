@@ -60,3 +60,30 @@ EXPERIMENT_ARM = "C2"
 # regression test that proves C1/C2 trajectories are bit-identical when
 # the ask decision is forced.
 FORCE_ASK = False
+
+# ----------------------------------------------------------------------
+# Phase D4 — sweep runner
+# ----------------------------------------------------------------------
+# Default number of independent repetitions per parameter combination.
+SWEEP_REPEATS = 3
+
+# Headline condition for main experiments: p_crit = 0 (implicit-only).
+SWEEP_HEADLINE_P_CRIT = 0.0
+SWEEP_HEADLINE_SIGMA_ITEM = 0.0
+
+# c_int values to sweep, anchored on the current pre-calibration C_INT.
+# The C4 anchoring step recommends grid fractions of the median top-2 gap;
+# here we sweep both the baseline and its fractions.
+SWEEP_C_INT_GRID = (
+    C_INT,
+    C_INT * 0.02,
+    C_INT * 0.10,
+    C_INT * 0.20,
+)
+
+# Estimation noise added to beta* when producing the pseudo-estimated mu_est
+# used in metrics that require both true and estimated parameters.
+SWEEP_EST_NOISE = 0.05
+
+# Experiment arms to iterate over in the sweep output.
+SWEEP_ARMS = ("C0", "C1", "C2", "C3", "C4")

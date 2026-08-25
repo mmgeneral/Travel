@@ -38,7 +38,11 @@ def per_block_recovery(mu_est: np.ndarray, beta_star: np.ndarray) -> dict:
 
 
 def cross_block_cov_shrinkage(Sigma: np.ndarray) -> dict:
-    """Return cross-block covariance magnitude and fraction of total variance."""
+    """Return cross-block covariance magnitude and fraction of total variance.
+
+    The value is a magnitude/fraction, NOT automatically 'shrinkage' from
+    a zero prior.  It is renamed to avoid implying a reference.
+    """
     S = np.asarray(Sigma, dtype=float)
     if S.shape != (6, 6):
         raise ValueError("Sigma must be 6x6")
@@ -46,9 +50,9 @@ def cross_block_cov_shrinkage(Sigma: np.ndarray) -> dict:
     total_norm = float(np.sqrt(np.sum(S**2)))
     cross_norm = float(np.sqrt(np.sum(block**2)))
     return {
-        "cross_block_norm": cross_norm,
+        "cross_block_cov_norm": cross_norm,
         "total_norm": total_norm,
-        "shrinkage_fraction": cross_norm / (total_norm + 1e-12),
+        "cross_block_cov_fraction": cross_norm / (total_norm + 1e-12),
     }
 
 
@@ -87,16 +91,37 @@ def dominant_block_accuracy(
     mu_est: np.ndarray,
     beta_star: np.ndarray,
     delta: float = 0.1,
-) -> str | None:
-    """Return 'taste', 'context', or None when blocks are not clearly separated."""
+) -> dict:
+    """Return structured dominant-block accuracy.
+
+    ``eligible`` is True only when |Δu_T*|−|Δu_C*| > δ.
+    Returns dict with keys: eligible, true_block, predicted_block, correct.
+    """
     true = compute_true_block_contributions(delta_phi, beta_star)
     diff = abs(true["delta_taste"]) - abs(true["delta_context"])
-    if abs(diff) <= delta:
-        return None
+    eligible = abs(diff) > delta
+    if not eligible:
+        return {
+            "eligible": False,
+            "true_block": None,
+            "predicted_block": None,
+            "correct": False,
+        }
     est = compute_estimated_block_contributions(delta_phi, mu_est)
     if diff > 0:
-        return "taste" if abs(est["delta_taste"]) > abs(est["delta_context"]) else "context"
-    return "context" if abs(est["delta_context"]) > abs(est["delta_taste"]) else "taste"
+        true_block = "taste"
+    else:
+        true_block = "context"
+    if abs(est["delta_taste"]) > abs(est["delta_context"]):
+        pred_block = "taste"
+    else:
+        pred_block = "context"
+    return {
+        "eligible": True,
+        "true_block": true_block,
+        "predicted_block": pred_block,
+        "correct": true_block == pred_block,
+    }
 
 
 def regret_from_utilities(utilities: np.ndarray, chosen_index: int) -> float:

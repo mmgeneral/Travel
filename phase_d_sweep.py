@@ -21,12 +21,6 @@ def _default_candidate_features() -> np.ndarray:
     return np.eye(6)[:5]
 
 
-def _estimate_mu(beta_star: np.ndarray, rng: np.random.Generator) -> np.ndarray:
-    """Return a noisy estimate of beta* (used only for metric calculation)."""
-    noise = rng.normal(scale=config.SWEEP_EST_NOISE, size=beta_star.shape)
-    return beta_star + noise
-
-
 def _compute_metrics_for_arm(
     *,
     delta_phi: np.ndarray,
@@ -141,7 +135,10 @@ def run_sweep(
                     utils = np.asarray(user["utilities"])
                     delta_phi = np.asarray(user["delta_phi"])
                     chosen = user["chosen_index"]
-                    mu_est = _estimate_mu(beta_star, rng)
+                    # In the real experiment runner, mu_est is the arm's own
+                    # posterior mean from refit_laplace; we use zeros here
+                    # only as a placeholder for the smoke sweep.
+                    mu_est = np.zeros(6)
 
                     for arm in config.SWEEP_ARMS:
                         m = _compute_metrics_for_arm(

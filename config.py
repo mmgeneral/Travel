@@ -81,9 +81,5 @@ SWEEP_C_INT_GRID = (
     C_INT * 0.20,
 )
 
-# Estimation noise added to beta* when producing the pseudo-estimated mu_est
-# used in metrics that require both true and estimated parameters.
-SWEEP_EST_NOISE = 0.05
-
 # Experiment arms to iterate over in the sweep output.
 SWEEP_ARMS = ("C0", "C1", "C2", "C3", "C4")

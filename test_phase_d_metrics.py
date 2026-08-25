@@ -16,7 +16,7 @@ from phase_d_metrics import (
 
 
 def test_total_explicit_burden():
-    d = total_explicit_burden(2, extra=1)
+    d = total_explicit_burden(2, pairwise_extra=1)
     assert d["clarification_questions"] == 2
     assert d["pairwise_extra"] == 1
     assert d["total_burden"] == 3
@@ -33,8 +33,8 @@ def test_per_block_recovery():
 def test_cross_block_cov_shrinkage():
     S = np.eye(6)
     d = cross_block_cov_shrinkage(S)
-    assert d["cross_block_norm"] == pytest.approx(0.0)
-    assert d["shrinkage_fraction"] == pytest.approx(0.0)
+    assert d["cross_block_cov_norm"] == pytest.approx(0.0)
+    assert d["cross_block_cov_fraction"] == pytest.approx(0.0)
 
 
 def test_contribution_errors_known():
@@ -54,14 +54,22 @@ def test_dominant_block_accuracy_clear():
     delta = np.array([1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
     beta = np.array([1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
     mu = np.array([0.9, 0.0, 0.0, 0.0, 0.0, 0.0])
-    assert dominant_block_accuracy(delta, mu, beta, delta=0.1) == "taste"
+    out = dominant_block_accuracy(delta, mu, beta, delta=0.1)
+    assert out["eligible"] is True
+    assert out["true_block"] == "taste"
+    assert out["predicted_block"] == "taste"
+    assert out["correct"] is True
 
 
 def test_dominant_block_accuracy_ambiguous_returns_none():
     delta = np.array([1.0, 0.0, 0.0, 0.0, 1.0, 0.0])
     beta = np.array([1.0, 0.0, 0.0, 0.0, 1.0, 0.0])
     mu = np.array([0.5, 0.0, 0.0, 0.0, 0.5, 0.0])
-    assert dominant_block_accuracy(delta, mu, beta, delta=0.5) is None
+    out = dominant_block_accuracy(delta, mu, beta, delta=0.5)
+    assert out["eligible"] is False
+    assert out["true_block"] is None
+    assert out["predicted_block"] is None
+    assert out["correct"] is False
 
 
 def test_regret():

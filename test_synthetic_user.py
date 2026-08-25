@@ -35,6 +35,19 @@ def test_chosen_is_not_current():
     assert out["chosen_index"] != 0
 
 
+def test_trip_world_with_residual_and_s0():
+    from synthetic_user import generate_trip_world, SyntheticTripWorld
+    rng = np.random.default_rng(11)
+    world = generate_trip_world(n_events=3, n_candidates=8,
+                                beta_star=None,
+                                residual_multiplier=1.0,
+                                rng=rng)
+    assert isinstance(world, SyntheticTripWorld)
+    assert len(world.events) == 3
+    assert world.events[0].phi.shape == (8, 6)
+    assert world.events[0].true_best_index != world.events[0].system_choice_index
+
+
 def test_critique_only_when_positive_delta():
     features = np.array([
         [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],

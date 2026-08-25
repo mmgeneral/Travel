@@ -32,6 +32,8 @@ from saga import SagaEngine, SagaStep
 from shop_catalog_io import load_shop_catalog
 from config import C_INT
 from evidence import EvidenceRecord
+from likelihood import refit_laplace
+from likelihood import refit_laplace
 from shop_planning import (
     AuthorityData,
     BookingType,
@@ -182,6 +184,9 @@ class AgentState(TypedDict):
     asked_this_turn: bool
     # Phase D state (DV 度量用)
     edits_count: int
+    _revision_evidence_id: str | None
+    _last_processed_revision_id: str | None
+    phase_c_attribution_already_given: bool
     # Phase B state (frozen B-turn Context)
     phase_b_turn_context: dict | None
     phase_b_contender_size: int | None
@@ -248,6 +253,10 @@ class AgentState(TypedDict):
     global_schedule: dict[str, list[str]] | None
     #: Stable UUID-keyed slots; each entry: {slot_id, meal_type, shop_name, locked}
     itinerary_slots: list[dict]
+    #: Internal idempotency guard for evidence ingestion.
+    _last_processed_revision_id: str | None
+    _revision_evidence_id: str | None
+    phase_c_attribution_already_given: bool
     #: key=(meal_type, frozenset(tags)) serialized as str, value=list[str]
     candidate_cache: dict[str, Any]
     #: Conflict found during revision transport check; None if no conflict.
@@ -257,6 +266,9 @@ class AgentState(TypedDict):
 
 
 class AgentStateModel(BaseModel):
+    _last_processed_revision_id: str | None = None
+    _revision_evidence_id: str | None = None
+    phase_c_attribution_already_given: bool = False
     phase_a_posterior_mu: list[float] = Field(default_factory=lambda: [0.0] * 6)
     phase_a_posterior_sigma: list[list[float]] = Field(
         default_factory=lambda: [ [1.0 if i == j else 0.0 for j in range(6)] for i in range(6) ]
@@ -265,6 +277,9 @@ class AgentStateModel(BaseModel):
     phase_a_trip_feature_scaling: dict | None = None
     asked_this_turn: bool = False
     edits_count: int = Field(default_factory=lambda: 0)
+    _revision_evidence_id: str | None = None
+    _last_processed_revision_id: str | None = None
+    phase_c_attribution_already_given: bool = False
     phase_b_turn_context: dict | None = None
     phase_b_contender_size: int | None = None
     phase_b_contender_meta: dict | None = None
@@ -1482,18 +1497,57 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     ctx_features = {"preferred_tags": list(intent_dict.get("category_tags") or [])}
 
     if intent_dict.get("is_revision"):
-        # ---- B1: full C0(s) scoring ---- #
+        # ---- ensure revision evidence is ingested before planning ---- #
+        rev_op = intent_dict.get("revision_op") or {}
+        slot_id = rev_op.get("slot_id")
+        rejected_name = rev_op.get("rejected_shop") or rev_op.get("target_shop")
+        accepted_name = rev_op.get("accepted_shop")
+        explicit_critique_dim = rev_op.get("explicit_critique_dim")
+        crit_confidence = float(rev_op.get("critique_confidence", 0.0)) if rev_op else 0.0
+        state = _ingest_revision_evidence(
+            state=state,
+            rejected_name=rejected_name,
+            accepted_name=accepted_name,
+            explicit_critique_dim=explicit_critique_dim,
+            critique_confidence=crit_confidence,
+            slot_id=slot_id,
+        )
+
+        # ---- B1: full C0(s) scoring -- must be slot-scoped ---- #
+        # Build C0(s) respecting meal-type / exclusion / dietary / timing
+        # hard filters. Reuse existing helpers.
+        slot_meal_type = None
+        for slot in (state.get("itinerary_slots") or []):
+            if slot.get("slot_id") == slot_id:
+                slot_meal_type = slot.get("meal_type")
+                break
+        slot_tag_requirements: set[str] = set()
+        if slot_meal_type:
+            slot_tag_requirements = ItinerarySynthesizer.SLOT_PREFERRED_TAGS.get(
+                slot_meal_type, frozenset()
+            )
+        slot_candidates = [
+            s for s in candidate_pool
+            if (not slot_tag_requirements or (set(s.tags) & slot_tag_requirements))
+            and s.name not in excluded_shop_names
+        ]
+        if len(slot_candidates) < 3:
+            # fallback to meal-type category filter only
+            slot_candidates = [
+                s for s in candidate_pool
+                if s.name not in excluded_shop_names
+            ]
+
         full_ranked, _ = RankingEngine.generate_top_picks(
-            candidate_pool, preference, minefield, return_full=True
+            slot_candidates, preference, minefield, return_full=True
         )
         # ---- B1: freeze S0 scaling and feature scaling for this turn ---- #
         turn_id = state.get("agent_run_id") or uuid.uuid4().hex
-        rev_op = intent_dict.get("revision_op") or {}
-        slot_id = rev_op.get("slot_id")
         trip_feat = state.get("phase_a_trip_feature_scaling") or {"means": [0.0]*6, "stds": [1.0]*6}
         phase_b_context = freeze_phase_b_turn_context(
             full_ranked, ctx_features, slot_id=slot_id, turn_id=turn_id,
             feature_means=trip_feat["means"], feature_stds=trip_feat["stds"],
+            feature_ctx=ctx_features,
         )
         state["phase_b_turn_context"] = phase_b_context
 

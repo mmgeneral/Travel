@@ -92,18 +92,9 @@ def _run_pipeline(arm: str, force_ask: bool):
 
 
 def test_c1_c2_bit_identical_when_force_ask():
-    # save original values
-    old_arm = config.EXPERIMENT_ARM
-    old_force = config.FORCE_ASK
-    try:
-        config.FORCE_ASK = True
-        config.EXPERIMENT_ARM = "C1"
-        out1 = _run_pipeline("C1", force_ask=True)
-        config.EXPERIMENT_ARM = "C2"
-        out2 = _run_pipeline("C2", force_ask=True)
+    # Use explicit policy/force_ask arguments (no global mutation).
+    out1 = _run_pipeline("C1", force_ask=True)
+    out2 = _run_pipeline("C2", force_ask=True)
 
-        assert out1 == out2
-        assert out1["gate"]["action"] == "ask"
-    finally:
-        config.EXPERIMENT_ARM = old_arm
-        config.FORCE_ASK = old_force
+    assert out1 == out2
+    assert out1["gate"]["action"] == "ask"

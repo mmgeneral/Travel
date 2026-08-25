@@ -12,6 +12,74 @@ import numpy as np
 from config import P_CRIT_GRID, SIGMA_ITEM_GRID
 
 
+@dataclass
+class SyntheticDecisionEvent:
+    phi: np.ndarray          # (N,6) model coordinates
+    s0_tilde: np.ndarray     # (N,)
+    item_residual: np.ndarray  # (N,)
+    true_best_index: int
+    system_choice_index: int
+    current_index: int
+
+
+@dataclass
+class SyntheticTripWorld:
+    beta_star: np.ndarray          # (6,)
+    events: list[SyntheticDecisionEvent]
+
+    def get_event(self, idx: int) -> SyntheticDecisionEvent:
+        return self.events[idx]
+
+
+def generate_trip_world(
+    *,
+    n_events: int,
+    n_candidates: int,
+    beta_star: Optional[np.ndarray],
+    residual_multiplier: float,
+    rng: np.random.Generator,
+) -> SyntheticTripWorld:
+    """Create a multi-event synthetic world shared across arms.
+
+    Each event has N>=8 candidates with mixed taste/context variation,
+    an S0_tilde baseline, and fixed item residuals.  beta_star is drawn
+    once for the whole world.
+    """
+    if beta_star is None:
+        beta_star = rng.normal(size=6)
+
+    events: list[SyntheticDecisionEvent] = []
+    for _ in range(n_events):
+        N = max(8, n_candidates)
+        phi = rng.normal(size=(N, 6))
+        # standardize each event matrix roughly to mean 0 / std 1
+        phi = (phi - phi.mean(axis=0)) / (phi.std(axis=0) + 1e-8)
+        s0_tilde = rng.normal(size=N)
+
+        # signal scale for residual multiplier
+        systematic = s0_tilde + phi @ beta_star
+        v_signal = float(np.var(systematic))
+        sigma2_item = residual_multiplier * v_signal
+        residual = rng.normal(scale=np.sqrt(sigma2_item), size=N)
+
+        utilities = systematic + residual
+        true_best = int(np.argmax(utilities))
+        # system choice uses only S0_tilde (μ=0 placeholder)
+        system_choice = int(np.argmax(s0_tilde))
+        current_index = system_choice
+        events.append(
+            SyntheticDecisionEvent(
+                phi=phi,
+                s0_tilde=s0_tilde,
+                item_residual=residual,
+                true_best_index=true_best,
+                system_choice_index=system_choice,
+                current_index=current_index,
+            )
+        )
+    return SyntheticTripWorld(beta_star=beta_star, events=events)
+
+
 def generate_synthetic_user(
     feature_vectors: np.ndarray,
     current_index: int,

@@ -174,16 +174,122 @@ def freeze_candidate_scaling(
     }
 
 
+def _model_phi(item: object, ctx: dict | None, phase_b_context: dict[str, object]) -> np.ndarray:
+    """Standardized model feature vector used by A/B inference."""
+    means = np.asarray(phase_b_context["feature_means"], dtype=float)
+    stds = np.asarray(phase_b_context["feature_stds"], dtype=float)
+    return z_score(item, ctx, (means, stds))
+
+
+def freeze_phase_b_turn_context(
+    ranked_full: list["RankedShop"],
+    ctx: dict | None,
+    slot_id: str | None,
+    turn_id: str,
+) -> dict[str, object]:
+    """
+    Freeze the B-turn candidate universe and S0 scaling.
+
+    Stores only JSON-serialisable primitives (no Python objects).
+    """
+    raw_scores = {r.shop.name: float(r.final_score) for r in ranked_full}
+    vals = list(raw_scores.values()) if raw_scores else [0.0]
+    s0_mean = float(np.mean(vals))
+    s0_std = float(np.std(vals))
+    s0_scale = s0_std if s0_std > 1e-12 else 1.0
+    # A1 feature scaling for the same candidate universe
+    feature_means, feature_stds = compute_trip_frozen_scaling(
+        [r.shop for r in ranked_full], ctx
+    )
+    return {
+        "turn_id": turn_id,
+        "slot_id": slot_id,
+        "candidate_names": [r.shop.name for r in ranked_full],
+        "s0_by_candidate": raw_scores,
+        "s0_mean": s0_mean,
+        "s0_std": s0_std,
+        "s0_scale": s0_scale,
+        "feature_means": [float(x) for x in feature_means],
+        "feature_stds": [float(x) for x in feature_stds],
+    }
+
+
+def phase_b_rerank(
+    ranked: list["RankedShop"],
+    mu: list[float] | tuple[float, ...] | np.ndarray | None,
+    phase_b_context: dict[str, object],
+    ctx: dict | None = None,
+) -> list["RankedShop"]:
+    """
+    Phase B2: compute S_B = S0_tilde + muᵀ φ_model and reorder the full C0(s).
+
+    The returned RankedShop objects have `final_score` set to S_eff = S0 + s0_scale * muᵀ φ_model,
+    so that GraphBuilder/DP consume the correct score while μ=0 exactly reproduces the legacy S0.
+    """
+    if not ranked:
+        return ranked
+    mu_arr = np.asarray(mu if mu is not None else [0.0] * 6, dtype=float).reshape(-1)
+    if len(mu_arr) != 6:
+        raise ValueError("mu must be a 6-dimensional vector")
+
+    s0_mean = float(phase_b_context["s0_mean"])
+    s0_scale = float(phase_b_context["s0_scale"])
+    raw_scores = phase_b_context["s0_by_candidate"]
+
+    out: list[RankedShop] = []
+    for r in ranked:
+        raw = float(raw_scores[r.shop.name])
+        s0_tilde = (raw - s0_mean) / s0_scale
+        phi_m = _model_phi(r.shop, ctx, phase_b_context)
+        mu_phi = float(np.dot(mu_arr, phi_m))
+        s_b = s0_tilde + mu_phi
+        s_eff = raw + s0_scale * mu_phi
+
+        new = RankedShop(
+            shop=r.shop,
+            final_score=s_eff,
+            preference_match_score=r.preference_match_score,
+            rank_note=r.rank_note,
+            is_wildcard=r.is_wildcard,
+            filter_reason=r.filter_reason,
+            top_3_reasons=list(r.top_3_reasons),
+            insider_pick=r.insider_pick,
+        )
+        # keep the B2 score and model feature for B3
+        new._phase_b_score = s_b
+        new._phase_b_phi = phi_m
+        out.append(new)
+
+    out.sort(key=lambda x: getattr(x, "_phase_b_score", -1e18), reverse=True)
+    return out
+
+
 def rerank_by_posterior(
+    ranked: list["RankedShop"],
+    mu: list[float] | tuple[float, ...] | np.ndarray | None,
+    ctx: dict | None = None,
+    phase_b_context: dict[str, object] | None = None,
+) -> list["RankedShop"]:
+    """
+    Backward-compatible wrapper.
+
+    If `phase_b_context` is provided, it performs the exact Phase-B2
+    standardized ranking.  Otherwise it falls back to the legacy raw-score
+    addition (used by older callers).
+    """
+    if phase_b_context is not None:
+        return phase_b_rerank(ranked, mu, phase_b_context, ctx)
+    # legacy fallback for callers that have not migrated to Phase B
+    return _legacy_rerank_by_posterior(ranked, mu, ctx)
+
+
+def _legacy_rerank_by_posterior(
     ranked: list["RankedShop"],
     mu: list[float] | tuple[float, ...] | np.ndarray | None,
     ctx: dict | None = None,
 ) -> list["RankedShop"]:
     """
-    Phase B2: compute S = S0 + muᵀ φ(x, c_s) and reorder `ranked` by S.
-
-    When `mu` is None or all zeros, returns the original order unchanged
-    (exact fallback to the pure S0 ranking).
+    Original implementation kept for non-B callers (should not be used in Phase B).
     """
     if ranked is None or len(ranked) == 0:
         return ranked
@@ -193,9 +299,7 @@ def rerank_by_posterior(
     if mu_arr.ndim != 1 or mu_arr.shape[0] != 6:
         raise ValueError("mu must be a 6-dimensional vector")
     if float(np.max(np.abs(mu_arr))) == 0.0:
-        # μ=0 → must preserve the original engine order exactly
         return ranked
-
     ctx = ctx or {}
     scored = [
         (
@@ -214,17 +318,31 @@ def contender_set(
     mu: list[float] | tuple[float, ...] | np.ndarray | None,
     Sigma: list[list[float]] | np.ndarray,
     ctx: dict | None = None,
+    phase_b_context: dict[str, object] | None = None,
 ) -> tuple[list["RankedShop"], dict[str, object]]:
     """
     Phase B3: compute the contender set C̃(s) using the 2·σ_pred margin filter.
 
+    The function expects that each RankedShop in `ranked` has already been
+    decorated with `_phase_b_score` (the standardized S_B) and `_phase_b_phi`
+    (the model feature vector).  If those attributes are absent, it falls back
+    to recomputing them using `phase_b_context`.
+
     Returns (contender_list, meta) where meta contains:
-        size    : len(C̃)
-        mc_calls: 0 when |C̃| == 1 (short-circuit), otherwise None
-        L_j     : per-feature std of φ within C̃ (6 floats)
+        size               : len(C̃)
+        gate_short_circuit : True iff |C̃| == 1
+        mc_calls           : 0 when gate_short_circuit, otherwise None
+        L_j                : per-feature std of φ_model within C̃ (6 floats)
     """
     if not ranked:
-        return [], {"size": 0, "mc_calls": None, "L_j": [0.0] * 6}
+        meta = {
+            "size": 0,
+            "gate_short_circuit": False,
+            "mc_calls": None,
+            "L_j": [0.0] * 6,
+        }
+        return [], meta
+
     mu_arr = np.asarray(mu if mu is not None else [0.0] * 6, dtype=float).reshape(-1)
     if mu_arr.ndim != 1 or len(mu_arr) != 6:
         raise ValueError("mu must be a 6-dimensional vector")
@@ -232,29 +350,50 @@ def contender_set(
     if Sigma_arr.shape != (6, 6):
         raise ValueError("Sigma must be a 6x6 matrix")
     ctx = ctx or {}
+
+    if phase_b_context is None:
+        raise ValueError("phase_b_context is required for Phase B3")
+
+    def _score_of(r: RankedShop) -> float:
+        if hasattr(r, "_phase_b_score"):
+            return float(getattr(r, "_phase_b_score"))
+        raw = float(phase_b_context["s0_by_candidate"][r.shop.name])
+        raw_tilde = (raw - float(phase_b_context["s0_mean"])) / float(phase_b_context["s0_scale"])
+        phi_m = _model_phi(r.shop, ctx, phase_b_context)
+        mu_phi = float(np.dot(mu_arr, phi_m))
+        return raw_tilde + mu_phi
+
+    def _phi_of(r: RankedShop) -> np.ndarray:
+        if hasattr(r, "_phase_b_phi"):
+            return np.asarray(getattr(r, "_phase_b_phi"), dtype=float)
+        return _model_phi(r.shop, ctx, phase_b_context)
+
     best = ranked[0]
-    best_phi = np.asarray(phi(best.shop, ctx), dtype=float)
-    best_score = float(best.final_score) + float(np.dot(mu_arr, best_phi))
+    best_s_b = _score_of(best)
+    best_phi = _phi_of(best)
 
     contender: list[RankedShop] = []
     for r in ranked:
-        r_phi = np.asarray(phi(r.shop, ctx), dtype=float)
-        r_score = float(r.final_score) + float(np.dot(mu_arr, r_phi))
-        diff = best_score - r_score
-        pred = np.sqrt(float(np.dot(r_phi - best_phi, Sigma_arr.dot(r_phi - best_phi))))
-        if diff <= 2.0 * pred:
+        r_s_b = _score_of(r)
+        r_phi = _phi_of(r)
+        diff = best_s_b - r_s_b
+        d = r_phi - best_phi
+        var = float(np.dot(d, Sigma_arr.dot(d)))
+        var = max(0.0, var)
+        sig = float(np.sqrt(var))
+        if diff <= 2.0 * sig:
             contender.append(r)
 
+    L_j = [0.0] * 6
     if contender:
-        phi_matrix = np.array([phi(x.shop, ctx) for x in contender], dtype=float)
+        phi_matrix = np.array([_phi_of(x) for x in contender], dtype=float)
         L_j = np.std(phi_matrix, axis=0).tolist()
-    else:
-        L_j = [0.0] * 6
 
-    mc_calls = 0 if len(contender) == 1 else None
+    short_circuit = len(contender) == 1
     meta = {
         "size": len(contender),
-        "mc_calls": mc_calls,
+        "gate_short_circuit": short_circuit,
+        "mc_calls": 0 if short_circuit else None,
         "L_j": L_j,
     }
     return contender, meta
@@ -752,6 +891,7 @@ class RankingEngine:
         taste_max_blacklist: set[str] | None = None,
         appetite_light_mode: bool = False,
         underdog_mode: bool | None = None,
+        return_full: bool = False,
     ) -> tuple[list[RankedShop], list[RejectedShop]]:
         profile = weight_profile or WeightProfile.trust_first()
         nearby_counts = nearby_counts or {}
@@ -918,6 +1058,20 @@ class RankingEngine:
             )
 
         scored.sort(key=lambda x: x.final_score, reverse=True)
+        if return_full:
+            # Build rejected list identically to the legacy path below.
+            rejected_full: list[RejectedShop] = []
+            for name, reason in dropped:
+                score, _ = pre_scored.get(name, (0.0, 0.0))
+                if "賄賂送禮" in reason:
+                    reason_text = "偵測到關鍵字『賄賂送禮』"
+                else:
+                    reason_text = reason
+                rejected_full.append(
+                    RejectedShop(shop_name=name, estimated_score=score, reason=reason_text)
+                )
+            rejected_full.sort(key=lambda x: x.estimated_score, reverse=True)
+            return scored, rejected_full
         top = scored[:5]
 
         # Ensure 1 wildcard exists in top results.

@@ -25,18 +25,44 @@ def _ranked(name: str, score: float) -> RankedShop:
     return RankedShop(shop=_shop(name), final_score=score)
 
 
+def _phase_b_context(items):
+    raw = {r.shop.name: r.final_score for r in items}
+    vals = list(raw.values())
+    mean = float(np.mean(vals))
+    std = float(np.std(vals))
+    scale = std if std > 1e-12 else 1.0
+    means = np.zeros(6)
+    stds = np.ones(6)
+    return {
+        "candidate_names": [r.shop.name for r in items],
+        "s0_by_candidate": raw,
+        "s0_mean": mean,
+        "s0_std": std,
+        "s0_scale": scale,
+        "feature_means": means.tolist(),
+        "feature_stds": stds.tolist(),
+    }
+
+
 def test_mu_zero_returns_same_order():
     items = [_ranked("A", 100), _ranked("B", 80), _ranked("C", 60)]
     mu = [0.0] * 6
-    out = rerank_by_posterior(items, mu, {})
-    assert out == items
+    ctx = _phase_b_context(items)
+    out = rerank_by_posterior(items, mu, {}, ctx)
+    assert [r.shop.name for r in out] == ["A", "B", "C"]
+    # exact S_eff == S0
+    for r, orig in zip(out, items):
+        assert r.final_score == pytest.approx(orig.final_score)
 
 
 def test_mu_zero_with_numpy_array():
     items = [_ranked("A", 50), _ranked("B", 40)]
     mu = np.zeros(6)
-    out = rerank_by_posterior(items, mu, {})
-    assert out == items
+    ctx = _phase_b_context(items)
+    out = rerank_by_posterior(items, mu, {}, ctx)
+    assert [r.shop.name for r in out] == ["A", "B"]
+    assert out[0].final_score == pytest.approx(50.0)
+    assert out[1].final_score == pytest.approx(40.0)
 
 
 def test_nonzero_mu_can_rerank():
@@ -47,7 +73,10 @@ def test_nonzero_mu_can_rerank():
     ]
     # Make B the only shop matching 'ramen', so cuisine_match >0
     items[1].shop.tags = ["ramen"]
-    mu = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    items[0].shop.tags = ["cafe"]
+    items[2].shop.tags = ["sushi"]
     ctx = {"preferred_tags": ["ramen"]}
-    out = rerank_by_posterior(items, mu, ctx)
+    ctx_b = _phase_b_context(items)
+    mu = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    out = rerank_by_posterior(items, mu, ctx, ctx_b)
     assert out[0].shop.name == "B"

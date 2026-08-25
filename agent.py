@@ -74,6 +74,8 @@ from decision_engine import (
     freeze_candidate_scaling,
     contender_set,
     rerank_by_posterior,
+    freeze_phase_b_turn_context,
+    phase_b_rerank,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -167,6 +169,13 @@ from shop_profile_utils import (
 _RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph
 
 class AgentState(TypedDict):
+    # Phase B state (frozen B-turn Context)
+    phase_a_posterior_mu: list[float]
+    phase_a_posterior_sigma: list[list[float]]
+    phase_b_turn_context: dict | None
+    phase_b_contender_size: int | None
+    phase_b_contender_meta: dict | None
+    phase_b_gate_skipped: bool
     """LangGraph state; ``intent`` matches ``Intent.as_dict()`` from ``intent_parser``.
 
     ``intent`` is ``None`` until ``node_route_intent`` runs; each snapshot is a plain dict
@@ -232,6 +241,14 @@ class AgentState(TypedDict):
 
 
 class AgentStateModel(BaseModel):
+    phase_a_posterior_mu: list[float] = Field(default_factory=lambda: [0.0] * 6)
+    phase_a_posterior_sigma: list[list[float]] = Field(
+        default_factory=lambda: [ [1.0 if i == j else 0.0 for j in range(6)] for i in range(6) ]
+    )
+    phase_b_turn_context: dict | None = None
+    phase_b_contender_size: int | None = None
+    phase_b_contender_meta: dict | None = None
+    phase_b_gate_skipped: bool = False
     query: str
     research_log: list[str] = Field(default_factory=list)
     transit_audit: list[str] = Field(default_factory=list)
@@ -1429,32 +1446,45 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         max_budget_impact=0.75,
     )
     minefield = UserMinefield()
-    ranked, rejected = RankingEngine.rank(candidate_pool, preference, minefield)
 
-    # ---------- B2: combine S0 with posterior muᵀφ ----------
     mu_vec = state.get("phase_a_posterior_mu")
     if mu_vec is None:
         mu_vec = [0.0] * 6
     else:
         mu_vec = [float(x) for x in mu_vec]
     ctx_features = {"preferred_tags": list(intent_dict.get("category_tags") or [])}
-    ranked = rerank_by_posterior(ranked, mu_vec, ctx_features)
 
-    # ---------- B3: contender set (2σ_pred margin filter) ----------
-    if intent_dict.get("is_revision") and state.get("phase_b_frozen_scaling") is not None:
+    if intent_dict.get("is_revision"):
+        # ---- B1: full C0(s) scoring ---- #
+        full_ranked, _ = RankingEngine.generate_top_picks(
+            candidate_pool, preference, minefield, return_full=True
+        )
+        # ---- B1: freeze S0 scaling and feature scaling for this turn ---- #
+        turn_id = state.get("agent_run_id") or uuid.uuid4().hex
+        rev_op = intent_dict.get("revision_op") or {}
+        slot_id = rev_op.get("slot_id")
+        phase_b_context = freeze_phase_b_turn_context(
+            full_ranked, ctx_features, slot_id=slot_id, turn_id=turn_id
+        )
+        state["phase_b_turn_context"] = phase_b_context
+
+        # ---- B2: posterior rerank on full C0(s), then top-M ---- #
+        M = 5
+        reranked_full = phase_b_rerank(full_ranked, mu_vec, phase_b_context, ctx_features)
+        ranked = reranked_full[:M]
+
+        # ---- B3: contender set on top-M ---- #
         _sigma_default = np.eye(6).tolist()
         Sigma_mat = state.get("phase_a_posterior_sigma", _sigma_default)
         if Sigma_mat is None:
             Sigma_mat = _sigma_default
-        _contender, _meta = contender_set(ranked, mu_vec, Sigma_mat, ctx_features)
+        _contender, _meta = contender_set(
+            ranked, mu_vec, Sigma_mat, ctx_features, phase_b_context
+        )
         state["phase_b_contender_size"] = int(_meta["size"])
         state["phase_b_contender_meta"] = _meta
-        if int(_meta["size"]) == 1:
-            state["phase_b_gate_skipped"] = True
-            state["phase_b_mc_calls"] = 0
-        else:
-            state["phase_b_gate_skipped"] = False
-            state["phase_b_mc_calls"] = None
+        state["phase_b_gate_skipped"] = bool(_meta["gate_short_circuit"])
+        state["phase_b_mc_calls"] = _meta["mc_calls"]
         state.setdefault("transit_audit", []).append(
             _dj(
                 "B3_contender_set",
@@ -1465,6 +1495,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 L_j=_meta.get("L_j"),
             )
         )
+    else:
+        ranked, rejected = RankingEngine.rank(candidate_pool, preference, minefield)
 
     if not ranked:
         state.setdefault("transit_audit", []).append(

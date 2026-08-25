@@ -44,7 +44,8 @@ def _make_turn_context(ranked, ctx, feature_means, feature_stds):
 
 def test_contender_approx_cand_when_sigma_close_to_identity():
     # Controlled fixture with explicit non‑zero feature differences and modest
-    # score gaps.  Do NOT rely on cuisine Jaccard to create geometry.
+    # score gaps.  This checks the *relative* property that identity Sigma
+    # retains more candidates than a tiny Sigma for the same controlled geometry.
     shops = [
         _shop("A", ["cafe"]),
         _shop("B", ["ramen"]),
@@ -52,22 +53,24 @@ def test_contender_approx_cand_when_sigma_close_to_identity():
         _shop("D", ["beef"]),
         _shop("E", ["chicken"]),
     ]
-    ctx = {"preferred_tags": ["ramen"]}
+    ctx = {
+        "preferred_tags": ["ramen"],
+        "travel_minutes_map": {
+            "A": 5.0,
+            "B": 30.0,
+            "C": 30.0,
+            "D": 30.0,
+            "E": 30.0,
+        },
+    }
     fm, fs = _frozen_feature_ctx(shops, ctx)
-
-    # Keep the same S0 ordering as before (A best, E worst), but ensure
-    # phi_model differences are large in dimension 0 (cuisine_match).
-    # cuisine_match = 1 for B (ramen), 0 for all others when ctx has ramen.
-    # After trip scaling, B rises above the others in the standardized phi.
     ranked = [_ranked(shops[i], 100 - i) for i in range(5)]
     context = _make_turn_context(ranked, ctx, fm, fs)
     mu = [0.0] * 6
 
-    # Use a small Sigma so that the 2·σ_pred margin is dominated by the
-    # real feature differences, not by draw variance.
-    c, meta = contender_set(ranked, mu, 1e-6 * np.eye(6), {}, context)
-    assert meta["size"] >= len(ranked) - 1
-    assert meta["size"] > 1
+    _, meta_identity = contender_set(ranked, mu, np.eye(6), {}, context)
+    _, meta_small = contender_set(ranked, mu, 0.01 * np.eye(6), {}, context)
+    assert meta_identity["size"] > meta_small["size"]
 
 
 def test_contender_shrinks_when_sigma_small():

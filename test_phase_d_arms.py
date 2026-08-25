@@ -74,12 +74,22 @@ def _run_pipeline(arm: str, force_ask: bool):
             seed=123,
             ctx=ctx,
         )
+    policy_by_arm = {
+        "C0": "implicit_only",
+        "C1": "always_ask",
+        "C2": "evoi_gated",
+        "C3": "evoi_gated",
+        "C4": "evoi_gated",
+    }
+    policy = policy_by_arm.get(arm, "evoi_gated")
     gate = evaluate_gate(
         ask_eligible=ask_eligible,
         evoi_results=evoi_results,
         asked_this_turn=False,
         contender_size=meta["size"],
         attribution_already_given=False,
+        policy=policy,
+        force_ask=force_ask,
     )
     return {
         "phase_b_context": phase_b_context,

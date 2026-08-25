@@ -70,6 +70,7 @@ from decision_engine import (
     UserPreference,
     WeightProfile,
     choose_health_backup,
+    freeze_candidate_scaling,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -1400,6 +1401,19 @@ async def _node_plan_core(state: AgentState) -> AgentState:
 
     if excluded_shop_names:
         candidate_pool = [s for s in candidate_pool if s.name not in excluded_shop_names]
+
+    # ---------- B1: freeze candidate pool for this revision turn ----------
+    if intent_dict.get("is_revision") and state.get("phase_b_frozen_scaling") is None:
+        _B1_scaling = freeze_candidate_scaling(candidate_pool)
+        state["phase_b_frozen_scaling"] = _B1_scaling
+        state.setdefault("transit_audit", []).append(
+            _dj(
+                "B1_candidate_pool_frozen",
+                candidate_count=len(candidate_pool),
+                means=_B1_scaling["means"],
+                stds=_B1_scaling["stds"],
+            )
+        )
 
     # ---------- 2. Rank candidates ----------
     preference = UserPreference(

@@ -147,6 +147,33 @@ def z_score(item: object, ctx: dict | None, scaling: tuple[np.ndarray, np.ndarra
     return (raw - means) / stds
 
 
+def freeze_candidate_scaling(
+    candidates: list[object],
+    ctx: dict | None = None,
+) -> dict[str, object]:
+    """
+    Freeze the candidate universe for the current turn.
+
+    Computes mean/std once over the given feasible pool and returns a
+    dict containing the raw means/stds as plain lists.  All later
+    S̃₀ calculations (including hypothetical B_o) must reuse this
+    scaling without recomputing it.
+
+    Returns:
+        {"candidates": list[object],
+         "means": list[float],
+         "stds": list[float],
+         "ctx": dict|None}
+    """
+    means, stds = compute_trip_frozen_scaling(candidates, ctx)
+    return {
+        "candidates": list(candidates),
+        "means": [float(x) for x in means],
+        "stds": [float(x) for x in stds],
+        "ctx": ctx,
+    }
+
+
 # ---------------------------------------------------------------
 # (End of Phase A1 feature layer)
 # ---------------------------------------------------------------

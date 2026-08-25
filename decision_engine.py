@@ -18,6 +18,7 @@ from shop_planning import (
     predict_wait_time,
 )
 from evidence import EvidenceRecord
+from likelihood import refit_laplace, prob_prompted
 
 # ---------------------------------------------------------------
 # Phase A1: feature registry, phi(), and trip-frozen z-scoring

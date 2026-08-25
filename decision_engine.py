@@ -19,6 +19,7 @@ from shop_planning import (
 )
 from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
+from config import LAMBDA, TAU, KAPPA, M, C1_ETA, C_INT, MC_DRAWS
 
 # ---------------------------------------------------------------
 # Phase A1: feature registry, phi(), and trip-frozen z-scoring
@@ -30,8 +31,6 @@ from preference_features import (
     TASTE_INDICES as TASTE_INDICES,
     CONTEXT_INDICES as CONTEXT_INDICES,
 )
-
-C1_ETA = 0.25
 
 BLOCK_INDEX = {
     "taste": TASTE_INDICES,
@@ -190,21 +189,27 @@ def freeze_phase_b_turn_context(
     ctx: dict | None,
     slot_id: str | None,
     turn_id: str,
+    feature_means: list[float] | None = None,
+    feature_stds: list[float] | None = None,
 ) -> dict[str, object]:
     """
     Freeze the B-turn candidate universe and S0 scaling.
 
     Stores only JSON-serialisable primitives (no Python objects).
+    Uses the caller-provided trip feature scaling (A1) — never recomputes it.
     """
     raw_scores = {r.shop.name: float(r.final_score) for r in ranked_full}
     vals = list(raw_scores.values()) if raw_scores else [0.0]
     s0_mean = float(np.mean(vals))
     s0_std = float(np.std(vals))
     s0_scale = s0_std if s0_std > 1e-12 else 1.0
-    # A1 feature scaling for the same candidate universe
-    feature_means, feature_stds = compute_trip_frozen_scaling(
-        [r.shop for r in ranked_full], ctx
-    )
+
+    if feature_means is None or feature_stds is None:
+        # Fallback for old callers that haven't migrated to trip-frozen scaling.
+        fm, fs = compute_trip_frozen_scaling([r.shop for r in ranked_full], ctx)
+        feature_means = [float(x) for x in fm]
+        feature_stds = [float(x) for x in fs]
+
     return {
         "turn_id": turn_id,
         "slot_id": slot_id,
@@ -537,14 +542,14 @@ def compute_evoi_for_questions(
         if len(options) != 3 or options[2] != "other":
             continue
 
-        # P(o|E,q) via MC
+        # Draw beta once per question, use the same draws for all three outcomes.
+        beta_draws = rng.multivariate_normal(mu_arr, Sigma_arr, size=mc_draws)
         p_os: list[float] = []
         for o in range(3):
-            draws = rng.multivariate_normal(mu_arr, Sigma_arr, size=mc_draws)
             probs = np.array([
                 prob_prompted(
                     draw, x_arr, j_T, j_C, o,
-                ) for draw in draws
+                ) for draw in beta_draws
             ])
             p_os.append(float(np.mean(probs)))
 
@@ -572,16 +577,14 @@ def compute_evoi_for_questions(
                 ask_eligible=False,
             )
             new_evidences = list(evidences) + [ev_o]
-            try:
-                mu_o, Sigma_o = refit_laplace(new_evidences)
-            except Exception:
-                mu_o, Sigma_o = mu_arr, Sigma_arr
+            mu_o, Sigma_o = refit_laplace(new_evidences)   # no silent fallback
             # U*(B_o)
             U_Bo = max(_s_b(r, mu_o) for r in ranked)
             U_Bo_values.append(U_Bo)
 
-        evoi = sum(p_o * U_Bo for p_o, U_Bo in zip(p_os, U_Bo_values)) - U_B - c_int
-        evoi = max(0.0, evoi)  # numerical floor
+        gross_raw = sum(p_o * U_Bo for p_o, U_Bo in zip(p_os, U_Bo_values)) - U_B
+        gross = max(0.0, gross_raw)   # floor tiny numerical negative only
+        net = gross - c_int           # preserve negative net values
 
         results.append({
             "j_T": j_T,
@@ -591,7 +594,8 @@ def compute_evoi_for_questions(
             "U_B": U_B,
             "U_B_o": U_Bo_values,
             "c_int": c_int,
-            "evoi": evoi,
+            "gross_evoi": gross,
+            "net_evoi": net,
         })
     return results
 
@@ -602,23 +606,33 @@ def evaluate_gate(
     evoi_results: list[dict[str, object]] | None = None,
     asked_this_turn: bool = False,
     contender_size: int | None = None,
+    attribution_already_given: bool = False,
 ) -> dict[str, object]:
     """Phase C3: decide whether to ask or continue.
 
-    Returns:
-        {"action": "ask", "q_star": dict}
-        or {"action": "continue", "reason": str}
+    Priority:
+        1. decision_stable
+        2. attribution_already_given
+        3. not_block_ambiguous
+        4. already_asked_this_turn
+        5. evoi_not_positive
+        6. ASK
     """
-    if not ask_eligible:
-        return {"action": "continue", "reason": "not_block_ambiguous"}
     if contender_size is not None and contender_size == 1:
         return {"action": "continue", "reason": "decision_stable"}
+    if attribution_already_given:
+        return {"action": "continue", "reason": "attribution_already_given"}
+    if not ask_eligible:
+        return {"action": "continue", "reason": "not_block_ambiguous"}
+    if asked_this_turn:
+        return {"action": "continue", "reason": "already_asked_this_turn"}
+
     evoi_results = evoi_results or []
     if evoi_results:
-        best = max(evoi_results, key=lambda q: float(q.get("evoi", -1e18)))
-        if float(best.get("evoi", 0.0)) > 0 and not asked_this_turn:
+        best = max(evoi_results, key=lambda q: float(q.get("net_evoi", q.get("evoi", -1e18))))
+        if float(best.get("net_evoi", best.get("evoi", 0.0))) > 0:
             return {"action": "ask", "q_star": best}
-    return {"action": "continue", "reason": "attribution_already_given"}
+    return {"action": "continue", "reason": "evoi_not_positive"}
 
 
 def c_int_anchor_diagnostics(

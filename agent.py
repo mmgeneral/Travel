@@ -173,9 +173,13 @@ from shop_profile_utils import (
 _RAW_GRAPHBUILDER_BUILD = GraphBuilder.build_graph
 
 class AgentState(TypedDict):
-    # Phase B state (frozen B-turn Context)
+    # Phase A state
     phase_a_posterior_mu: list[float]
     phase_a_posterior_sigma: list[list[float]]
+    phase_a_evidence_log: list[dict]
+    phase_a_trip_feature_scaling: dict | None
+    asked_this_turn: bool
+    # Phase B state (frozen B-turn Context)
     phase_b_turn_context: dict | None
     phase_b_contender_size: int | None
     phase_b_contender_meta: dict | None
@@ -184,6 +188,7 @@ class AgentState(TypedDict):
     phase_c_event_xe: list[float] | None
     phase_c_evoi_values: list[float]
     phase_c_gate: dict | None
+    phase_c_attribution_already_given: bool
     """LangGraph state; ``intent`` matches ``Intent.as_dict()`` from ``intent_parser``.
 
     ``intent`` is ``None`` until ``node_route_intent`` runs; each snapshot is a plain dict
@@ -253,6 +258,9 @@ class AgentStateModel(BaseModel):
     phase_a_posterior_sigma: list[list[float]] = Field(
         default_factory=lambda: [ [1.0 if i == j else 0.0 for j in range(6)] for i in range(6) ]
     )
+    phase_a_evidence_log: list[dict] = Field(default_factory=list)
+    phase_a_trip_feature_scaling: dict | None = None
+    asked_this_turn: bool = False
     phase_b_turn_context: dict | None = None
     phase_b_contender_size: int | None = None
     phase_b_contender_meta: dict | None = None
@@ -260,6 +268,7 @@ class AgentStateModel(BaseModel):
     phase_c_event_xe: list[float] | None = None
     phase_c_evoi_values: list[float] = Field(default_factory=list)
     phase_c_gate: dict | None = None
+    phase_c_attribution_already_given: bool = False
     query: str
     research_log: list[str] = Field(default_factory=list)
     transit_audit: list[str] = Field(default_factory=list)
@@ -1433,16 +1442,19 @@ async def _node_plan_core(state: AgentState) -> AgentState:
     if excluded_shop_names:
         candidate_pool = [s for s in candidate_pool if s.name not in excluded_shop_names]
 
-    # ---------- B1: freeze candidate pool for this revision turn ----------
-    if intent_dict.get("is_revision") and state.get("phase_b_frozen_scaling") is None:
-        _B1_scaling = freeze_candidate_scaling(candidate_pool)
-        state["phase_b_frozen_scaling"] = _B1_scaling
+    # ---------- A1: ensure trip feature scaling exists (initial turn) ----------
+    trip_feat = state.get("phase_a_trip_feature_scaling")
+    if trip_feat is None:
+        ctx_for_scale = {"preferred_tags": list(intent_dict.get("category_tags") or [])}
+        fm, fs = compute_trip_frozen_scaling(candidate_pool, ctx_for_scale)
+        trip_feat = {"means": [float(x) for x in fm], "stds": [float(x) for x in fs]}
+        state["phase_a_trip_feature_scaling"] = trip_feat
         state.setdefault("transit_audit", []).append(
             _dj(
-                "B1_candidate_pool_frozen",
+                "A1_trip_feature_scaling_initialized",
+                feature_means=trip_feat["means"],
+                feature_stds=trip_feat["stds"],
                 candidate_count=len(candidate_pool),
-                means=_B1_scaling["means"],
-                stds=_B1_scaling["stds"],
             )
         )
 
@@ -1474,8 +1486,10 @@ async def _node_plan_core(state: AgentState) -> AgentState:
         turn_id = state.get("agent_run_id") or uuid.uuid4().hex
         rev_op = intent_dict.get("revision_op") or {}
         slot_id = rev_op.get("slot_id")
+        trip_feat = state.get("phase_a_trip_feature_scaling") or {"means": [0.0]*6, "stds": [1.0]*6}
         phase_b_context = freeze_phase_b_turn_context(
-            full_ranked, ctx_features, slot_id=slot_id, turn_id=turn_id
+            full_ranked, ctx_features, slot_id=slot_id, turn_id=turn_id,
+            feature_means=trip_feat["means"], feature_stds=trip_feat["stds"],
         )
         state["phase_b_turn_context"] = phase_b_context
 
@@ -1520,25 +1534,31 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                     Sigma=Sigma_mat,
                     phase_b_context=phase_b_context,
                     x_e=_xe,
-                    evidences=[],
+                    evidences=[
+                        EvidenceRecord(**row) for row in (state.get("phase_a_evidence_log") or [])
+                    ],
                     c_int=C_INT,
                     mc_draws=200,
                     ctx=ctx_features,
                 )
                 state["phase_b_contender_meta"]["c1_evoi"] = _c1_evoi_results
 
-                # ---- EVOI magnitude distribution diagnostic ---- #
+                # ---- EVOI magnitude distribution diagnostic (gross + net) ---- #
                 evoi_values = state.setdefault("phase_c_evoi_values", [])
                 for rec in _c1_evoi_results:
-                    evoi_values.append(float(rec["evoi"]))
+                    evoi_values.append(float(rec.get("gross_evoi", rec.get("evoi", 0.0))))
                 if len(evoi_values) >= 20:
                     import statistics
-                    _min = min(evoi_values)
-                    _max = max(evoi_values)
-                    _med = statistics.median(evoi_values)
-                    print("EVOI_DIAGNOSTICS min={:.6f} max={:.6f} median={:.6f} count={}".format(
-                        _min, _max, _med, len(evoi_values)
-                    ))
+                    gross_vals = [float(x.get("gross_evoi", x.get("evoi", 0.0))) for x in _c1_evoi_results]
+                    net_vals = [float(x.get("net_evoi", x.get("evoi", 0.0))) for x in _c1_evoi_results]
+                    print(
+                        "EVOI_DIAGNOSTICS "
+                        f"gross_min={min(gross_vals):.6f} gross_max={max(gross_vals):.6f} "
+                        f"gross_median={statistics.median(gross_vals):.6f} "
+                        f"net_min={min(net_vals):.6f} net_max={max(net_vals):.6f} "
+                        f"net_median={statistics.median(net_vals):.6f} "
+                        f"c_int={C_INT} count={len(evoi_values)}"
+                    )
                     state["phase_c_evoi_values"] = []
             else:
                 state["phase_b_contender_meta"]["c1_evoi"] = []
@@ -1549,6 +1569,7 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 evoi_results=_c1_evoi_results,
                 asked_this_turn=bool(state.get("asked_this_turn", False)),
                 contender_size=int(_meta["size"]),
+                attribution_already_given=bool(state.get("phase_c_attribution_already_given", False)),
             )
             state["phase_c_gate"] = _gate
         else:
@@ -1557,6 +1578,8 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             state["phase_b_contender_meta"]["c1_evoi"] = []
             if state.get("phase_b_gate_skipped"):
                 state["phase_c_gate"] = {"action": "continue", "reason": "decision_stable"}
+            elif state.get("phase_c_attribution_already_given"):
+                state["phase_c_gate"] = {"action": "continue", "reason": "attribution_already_given"}
             else:
                 state["phase_c_gate"] = {"action": "continue", "reason": "not_block_ambiguous"}
 

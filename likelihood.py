@@ -19,10 +19,7 @@ import numpy as np
 
 from evidence import EvidenceRecord
 from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX
-
-LAMBDA = 0.1
-TAU = 1.0
-KAPPA = 0.0
+from config import LAMBDA, TAU, KAPPA
 
 
 def _sigmoid(x: float) -> float:

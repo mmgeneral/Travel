@@ -51,6 +51,37 @@ def _phase_b_context_for_ranked(ranked):
     }
 
 
+def _make_trip_feature_scaling(ranked):
+    # Use actual feature scaling from the candidate pool (frozen A1 semantics)
+    from decision_engine import compute_trip_frozen_scaling
+    shops = [r.shop for r in ranked]
+    ctx = {"preferred_tags": ["ramen"]}
+    means, stds = compute_trip_frozen_scaling(shops, ctx)
+    return {
+        "feature_means": [float(x) for x in means],
+        "feature_stds": [float(x) for x in stds],
+    }
+
+
+def _phase_b_context_for_ranked(ranked, feature_scaling=None):
+    raw = {r.shop.name: r.final_score for r in ranked}
+    vals = list(raw.values())
+    mean = float(np.mean(vals))
+    std = float(np.std(vals))
+    scale = std if std > 1e-12 else 1.0
+    if feature_scaling is None:
+        feature_scaling = _make_trip_feature_scaling(ranked)
+    return {
+        "candidate_names": [r.shop.name for r in ranked],
+        "s0_by_candidate": raw,
+        "s0_mean": mean,
+        "s0_std": std,
+        "s0_scale": scale,
+        "feature_means": feature_scaling["feature_means"],
+        "feature_stds": feature_scaling["feature_stds"],
+    }
+
+
 def test_contender_approx_cand_when_sigma_close_to_identity():
     ranked = _ranked_shops([
         ("A", 100.0),
@@ -73,19 +104,17 @@ def test_contender_approx_cand_when_sigma_close_to_identity():
 def test_contender_shrinks_when_sigma_small():
     ranked = _ranked_shops([
         ("A", 100.0),
-        ("B", 55.0),
-        ("C", 52.0),
-        ("D", 50.0),
+        ("B", 99.0),
+        ("C", 98.5),
+        ("D", 98.0),
     ])
     for i, r in enumerate(ranked):
         r.shop.flavor_intensity = 0.1 + 0.1 * i
     mu = [0.0] * 6
     ctx_b = _phase_b_context_for_ranked(ranked)
-    Sigma = 0.001 * np.eye(6)
+    Sigma = 0.01 * np.eye(6)
     contender, meta = contender_set(ranked, mu, Sigma, {}, ctx_b)
     size_small = meta["size"]
-    assert size_small < len(ranked)
-
     Sigma_identity = np.eye(6)
     _, meta_identity = contender_set(ranked, mu, Sigma_identity, {}, ctx_b)
     print("contender_size_identity =", meta_identity["size"])

@@ -596,6 +596,31 @@ def compute_evoi_for_questions(
     return results
 
 
+def evaluate_gate(
+    *,
+    ask_eligible: bool,
+    evoi_results: list[dict[str, object]] | None = None,
+    asked_this_turn: bool = False,
+    contender_size: int | None = None,
+) -> dict[str, object]:
+    """Phase C3: decide whether to ask or continue.
+
+    Returns:
+        {"action": "ask", "q_star": dict}
+        or {"action": "continue", "reason": str}
+    """
+    if not ask_eligible:
+        return {"action": "continue", "reason": "not_block_ambiguous"}
+    if contender_size is not None and contender_size == 1:
+        return {"action": "continue", "reason": "decision_stable"}
+    evoi_results = evoi_results or []
+    if evoi_results:
+        best = max(evoi_results, key=lambda q: float(q.get("evoi", -1e18)))
+        if float(best.get("evoi", 0.0)) > 0 and not asked_this_turn:
+            return {"action": "ask", "q_star": best}
+    return {"action": "continue", "reason": "attribution_already_given"}
+
+
 # ---------------------------------------------------------------
 # (End of Phase A1 feature layer)
 # ---------------------------------------------------------------

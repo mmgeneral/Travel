@@ -79,6 +79,7 @@ from decision_engine import (
     phase_b_rerank,
     generate_cross_block_questions,
     compute_evoi_for_questions,
+    evaluate_gate,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -182,6 +183,7 @@ class AgentState(TypedDict):
     # Phase C state
     phase_c_event_xe: list[float] | None
     phase_c_evoi_values: list[float]
+    phase_c_gate: dict | None
     """LangGraph state; ``intent`` matches ``Intent.as_dict()`` from ``intent_parser``.
 
     ``intent`` is ``None`` until ``node_route_intent`` runs; each snapshot is a plain dict
@@ -257,6 +259,7 @@ class AgentStateModel(BaseModel):
     phase_b_gate_skipped: bool = False
     phase_c_event_xe: list[float] | None = None
     phase_c_evoi_values: list[float] = Field(default_factory=list)
+    phase_c_gate: dict | None = None
     query: str
     research_log: list[str] = Field(default_factory=list)
     transit_audit: list[str] = Field(default_factory=list)
@@ -1508,8 +1511,9 @@ async def _node_plan_core(state: AgentState) -> AgentState:
             state["phase_b_contender_meta"]["c1_ask_eligible"] = bool(_ask_eligible)
 
             # ---- C2: compute EVOI for each candidate question (max 3) ---- #
+            _c1_evoi_results: list[dict[str, object]] = []
             if _c1_questions:
-                evoi_results = compute_evoi_for_questions(
+                _c1_evoi_results = compute_evoi_for_questions(
                     questions=_c1_questions,
                     ranked=ranked,
                     mu=mu_vec,
@@ -1521,11 +1525,11 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                     mc_draws=200,
                     ctx=ctx_features,
                 )
-                state["phase_b_contender_meta"]["c1_evoi"] = evoi_results
+                state["phase_b_contender_meta"]["c1_evoi"] = _c1_evoi_results
 
                 # ---- EVOI magnitude distribution diagnostic ---- #
                 evoi_values = state.setdefault("phase_c_evoi_values", [])
-                for rec in evoi_results:
+                for rec in _c1_evoi_results:
                     evoi_values.append(float(rec["evoi"]))
                 if len(evoi_values) >= 20:
                     import statistics
@@ -1538,10 +1542,23 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                     state["phase_c_evoi_values"] = []
             else:
                 state["phase_b_contender_meta"]["c1_evoi"] = []
+
+            # ---- C3: gate decision ---- #
+            _gate = evaluate_gate(
+                ask_eligible=bool(_ask_eligible),
+                evoi_results=_c1_evoi_results,
+                asked_this_turn=bool(state.get("asked_this_turn", False)),
+                contender_size=int(_meta["size"]),
+            )
+            state["phase_c_gate"] = _gate
         else:
             state["phase_b_contender_meta"]["c1_questions"] = []
             state["phase_b_contender_meta"]["c1_ask_eligible"] = False
             state["phase_b_contender_meta"]["c1_evoi"] = []
+            if state.get("phase_b_gate_skipped"):
+                state["phase_c_gate"] = {"action": "continue", "reason": "decision_stable"}
+            else:
+                state["phase_c_gate"] = {"action": "continue", "reason": "not_block_ambiguous"}
 
         state.setdefault("transit_audit", []).append(
             _dj(

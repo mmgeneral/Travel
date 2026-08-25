@@ -5,6 +5,7 @@ Implements the real multi-event trajectory used by the T1 study.
 
 from __future__ import annotations
 
+import hashlib
 import numpy as np
 from dataclasses import dataclass, field
 from typing import Optional
@@ -14,6 +15,14 @@ from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
 from preference_features import FEATURE_NAMES
 from synthetic_user import SyntheticTripWorld
+from decision_engine import (
+    RankedShop,
+    compute_trip_frozen_scaling,
+    freeze_phase_b_turn_context,
+    generate_cross_block_questions,
+    compute_evoi_for_questions,
+    evaluate_gate,
+)
 
 
 def _make_question(x_e):
@@ -50,6 +59,23 @@ def _synthetic_prompted_answer(beta_star, x_e, j_T, j_C, rng):
     if o == 1:
         return FEATURE_NAMES[j_C], o
     return "other", o
+
+
+def _dummy_shop(i: int, event) -> object:
+    """Build a minimal ShopProfile-shaped object from the synthetic event."""
+    from types import SimpleNamespace
+    phi = event.phi[i]
+    return SimpleNamespace(
+        name=f"cand_{i}",
+        tags=[],
+        flavor_intensity=float(phi[0]),
+        portion_strictness=float(phi[1]),
+        review_count=int(abs(phi[2]) * 100),
+        authority_data=SimpleNamespace(review_count=0, tablelog_medal=""),
+        base_wait_minutes=float(abs(phi[3]) * 60),
+        price_level=float(2.0 + phi[4] * 2),
+        default_travel_minutes=float(abs(phi[5]) * 20),
+    )
 
 
 @dataclass
@@ -120,6 +146,7 @@ def run_episode(
             state.evidence_log.append(rec)
 
         # ---- spontaneous critique (same randomness across arms) ----
+        crit_emitted = False
         crit_rng = np.random.default_rng(1000 * event_idx + 7)
         if p_crit > 0 and crit_rng.random() < p_crit:
             contrib = world.beta_star * delta_phi
@@ -144,6 +171,7 @@ def run_episode(
                         attribution_already_given=True,
                     ).model_dump()
                     state.evidence_log.append(rec_crit)
+                crit_emitted = True
 
         # ---- posterior update from any natural learning rows ----
         if arm != "C4":
@@ -154,64 +182,90 @@ def run_episode(
         # ---- regret ----
         state.regret_trace.append(float(u_true[y_true] - u_true[x_sys]))
 
-        # ---- ask policy ----
+        # ---- ask policy (C1,C2 only for clarification; C3 is pairwise) ----
         if arm in ("C0", "C4"):
             continue
 
-        j_T, j_C, opts = _make_question(delta_phi)
-        ask_eligible = True
-        q = {"j_T": j_T, "j_C": j_C, "question_options": opts, "x_e": delta_phi.tolist()}
-        state.question_trace.append(q)
+        if arm == "C3":
+            # C3 goes directly to pairwise block below
+            pass
+        else:
+            # Reuse frozen Phase-C eligibility + EVOI.
+            q_candidates, eligible = generate_cross_block_questions(
+                Sigma=state.Sigma,
+                L_j=[1.0] * len(state.Sigma),
+                x_e=np.asarray(delta_phi, dtype=float).tolist(),
+            )
 
-        net_evoi = 0.0
-        if arm == "C2":
-            hyp_probs = [prob_prompted(world.beta_star, delta_phi.tolist(), j_T, j_C, o,
-                                       lam=LAMBDA, tau=TAU, kappa=KAPPA)
-                         for o in range(3)]
-            gross_evoi = 0.0
-            for o in range(3):
-                answer_option = "other" if o == 2 else opts[o]
-                new_rows = list(state.evidence_log)
-                new_rows.append(EvidenceRecord(
-                    evidence_id=f"hyp_evoi_{event_idx}_{o}",
-                    thread_id="hyp",
-                    ts="",
-                    event_type="clarification_answer",
-                    learning=True,
-                    censored_feasibility=False,
-                    x_e=delta_phi.tolist(),
-                    question_options=opts,
-                    answer_option=answer_option,
-                    ask_eligible=True,
-                ).model_dump())
-                rows = [EvidenceRecord(**r) for r in new_rows if r.get("learning")]
-                mu_h, Sig_h = refit_laplace(rows)
-                hyp_ev = _expected_max_utility(event, mu_h, Sig_h, n_draws=evoi_mc_draws, rng=rng)
-                gross_evoi += hyp_probs[o] * hyp_ev
-            cur_ev = _expected_max_utility(event, state.mu, state.Sigma, n_draws=evoi_mc_draws, rng=rng)
-            net_evoi = gross_evoi - cur_ev - c_int
+            ask = False
+            if eligible and not crit_emitted:
+                # Build a ranked list from current candidates (only used for phase-b context).
+                shops = [_dummy_shop(i, event) for i in range(len(event.phi))]
+                ranked = [RankedShop(shop=shops[i], final_score=float(score_sys[i]))
+                          for i in range(len(event.phi))]
+                feature_means, feature_stds = compute_trip_frozen_scaling(shops, ctx={})
+                phase_b_ctx = freeze_phase_b_turn_context(
+                    ranked, {}, slot_id="lunch", turn_id="t",
+                    feature_means=feature_means, feature_stds=feature_stds,
+                )
+                evoi_results = compute_evoi_for_questions(
+                    questions=q_candidates,
+                    ranked=ranked,
+                    mu=state.mu,
+                    Sigma=state.Sigma,
+                    phase_b_context=phase_b_ctx,
+                    x_e=np.asarray(delta_phi, dtype=float).tolist(),
+                    evidences=[EvidenceRecord(**r) for r in state.evidence_log],
+                    c_int=c_int,
+                    mc_draws=evoi_mc_draws,
+                    seed=1234 + event_idx,
+                    ctx={},
+                )
+                ask = evaluate_gate(
+                    ask_eligible=eligible,
+                    evoi_results=evoi_results,
+                    asked_this_turn=False,
+                    attribution_already_given=crit_emitted,
+                    policy="always_ask" if arm == "C1" else "evoi_gated",
+                    force_ask=force_ask,
+                )
+            else:
+                # Not eligible or attribution already given -> do not ask.
+                ask = False
 
-        if (arm == "C1" and ask_eligible) or (arm == "C2" and net_evoi > 0) or force_ask:
-            ans_rng = np.random.default_rng(1000 * event_idx + 3)
-            answer_option, _ = _synthetic_prompted_answer(world.beta_star, delta_phi.tolist(), j_T, j_C, ans_rng)
-            state.answer_trace.append(answer_option)
-            if arm != "C4":
-                rec_ans = EvidenceRecord(
-                    evidence_id=f"ans_{arm}_{event_idx}",
-                    thread_id="world",
-                    ts="",
-                    event_type="clarification_answer",
-                    learning=True,
-                    censored_feasibility=False,
-                    x_e=delta_phi.tolist(),
-                    question_options=opts,
-                    answer_option=answer_option,
-                    ask_eligible=True,
-                ).model_dump()
-                state.evidence_log.append(rec_ans)
-                state.clarification_count += 1
-                rows = [EvidenceRecord(**r) for r in state.evidence_log if r.get("learning")]
-                state.mu, state.Sigma = refit_laplace(rows)
+            if ask and q_candidates:
+                chosen_q = q_candidates[0]
+                j_T = chosen_q["j_T"]
+                j_C = chosen_q["j_C"]
+                opts = chosen_q["question_options"]
+                state.question_trace.append({
+                    "j_T": j_T,
+                    "j_C": j_C,
+                    "question_options": opts,
+                    "x_e": delta_phi.tolist(),
+                })
+                ans_rng = np.random.default_rng(1000 * event_idx + 3)
+                answer_option, _ = _synthetic_prompted_answer(
+                    world.beta_star, delta_phi.tolist(), j_T, j_C, ans_rng
+                )
+                state.answer_trace.append(answer_option)
+                if arm != "C4":
+                    rec_ans = EvidenceRecord(
+                        evidence_id=f"ans_{arm}_{event_idx}",
+                        thread_id="world",
+                        ts="",
+                        event_type="clarification_answer",
+                        learning=True,
+                        censored_feasibility=False,
+                        x_e=delta_phi.tolist(),
+                        question_options=opts,
+                        answer_option=answer_option,
+                        ask_eligible=True,
+                    ).model_dump()
+                    state.evidence_log.append(rec_ans)
+                    state.clarification_count += 1
+                    rows = [EvidenceRecord(**r) for r in state.evidence_log if r.get("learning")]
+                    state.mu, state.Sigma = refit_laplace(rows)
 
         # ---- C3 pairwise baseline (explicit item-vs-item query) ----
         if arm == "C3":

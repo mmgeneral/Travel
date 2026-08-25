@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import numpy as np
 from typing import Iterable
 
@@ -55,7 +56,7 @@ def run_sweep(
     n_repeats = repeats if repeats is not None else config.SWEEP_REPEATS
 
     all_raw: list[dict] = []
-    all_aggregates: dict[str, dict] = {}
+    all_aggregates: dict[tuple, dict] = {}
     calibration: dict = {}
 
     base_seed = 2026
@@ -77,8 +78,10 @@ def run_sweep(
                         world_seed=world_seed,
                     )
 
-                    for arm_idx, arm in enumerate(config.SWEEP_ARMS):
-                        arm_seed = world_seed * 10 + arm_idx
+                    for arm in config.SWEEP_ARMS:
+                        # Stable seed independent of arm order.
+                        arm_key = f"{world_seed}:{arm}"
+                        arm_seed = int(hashlib.sha1(arm_key.encode()).hexdigest()[:8], 16)
                         rng_arm = np.random.default_rng(arm_seed)
                         st = run_episode(
                             world=world,
@@ -171,8 +174,9 @@ def run_sweep(
                             f"ctx_err={row['context_recovery_error']:.4f}"
                         )
                     agg = _aggregate([{k: v for k, v in r.items() if k != "rep"} for r in rows])
+                    key = (p_crit, sigma_var, c_int, arm)
                     print(f"    aggregate: {agg}")
-                    all_aggregates[arm] = agg
+                    all_aggregates[key] = agg
 
     # calibration based on top-2 S0 gaps from the first generated world.
     # (In a full implementation we would build dedicated calibration pools.)
@@ -201,12 +205,15 @@ def run_sweep(
             q3 = float(np.percentile(arr, 75))
             iqr = q3 - q1
             suggested = [round(median * f, 6) for f in (0.02, 0.10, 0.20)]
+            current_c_int = 0.05
+            percentile_rank = float(np.mean(arr <= current_c_int)) * 100.0
             calibration = {
                 "median_gap": median,
                 "q1_gap": q1,
                 "q3_gap": q3,
                 "iqr_gap": iqr,
-                "current_c_int": 0.05,
+                "current_c_int": current_c_int,
+                "c_int_percentile": percentile_rank,
                 "suggested_grid": suggested,
             }
 

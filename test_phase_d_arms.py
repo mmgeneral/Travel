@@ -43,17 +43,36 @@ def test_c1_c2_trajectories_bit_identical_when_force_ask():
 
     assert st1.proposal_trace == st2.proposal_trace
     assert st1.revision_count == st2.revision_count
-    assert [q["j_T"] for q in st1.question_trace] == [q["j_T"] for q in st2.question_trace]
+    assert st1.question_trace == st2.question_trace
     assert st1.answer_trace == st2.answer_trace
-    assert [r["x_e"] for r in st1.evidence_log if r["learning"]] == [
-        r["x_e"] for r in st2.evidence_log if r["learning"]
-    ]
+    assert st1.evidence_log == st2.evidence_log
     assert len(st1.posterior_trace) == len(st2.posterior_trace)
     for p1, p2 in zip(st1.posterior_trace, st2.posterior_trace):
         assert p1["mu"] == p2["mu"]
-        assert p1["Sigma_diag"] == p2["Sigma_diag"]
+    assert np.allclose(st1.mu, st2.mu)
+    assert np.allclose(st1.Sigma, st2.Sigma)
     assert st1.clarification_count == st2.clarification_count
     assert st1.regret_trace == st2.regret_trace
+
+
+def test_c2_evoi_does_not_depend_on_beta_star():
+    """Anti‑oracle regression: compute_evoi_for_questions is called without any
+    beta_star parameter, hence changing beta_star cannot directly affect C2's
+    EVOI calculation.
+    """
+    import experiment_arms
+    original_fn = experiment_arms.compute_evoi_for_questions
+
+    def wrapper(*args, **kwargs):
+        assert "beta_star" not in kwargs
+        return original_fn(*args, **kwargs)
+
+    experiment_arms.compute_evoi_for_questions = wrapper
+    try:
+        world = _make_world()
+        _run_arm("C2", force_ask=False, world=world, seed=21, p_crit=0.0)
+    finally:
+        experiment_arms.compute_evoi_for_questions = original_fn
 
 
 def test_arm_order_invariance():

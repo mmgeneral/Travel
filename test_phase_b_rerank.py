@@ -1,5 +1,6 @@
 """Phase B2 tests: planner score = S0 + muᵀφ, and μ=0 fallback."""
 import numpy as np
+import pytest
 from types import SimpleNamespace
 
 from decision_engine import RankedShop, rerank_by_posterior

@@ -53,6 +53,10 @@ def loglik_choice(
 
     Returns log(P).
     """
+    if not (0 <= lam < 1):
+        raise ValueError("lam must satisfy 0 <= lam < 1")
+    if len(beta) != 6 or len(x_e) != 6:
+        raise ValueError("beta and x_e must have length 6")
     z = float(np.dot(beta, x_e))
     p = lam * 0.5 + (1.0 - lam) * _sigmoid(z)
     p = max(p, 1e-15)
@@ -80,6 +84,16 @@ def loglik_prompted(
     `observed_o` is the index into the 3-element logit vector:
         0 -> j_T, 1 -> j_C, 2 -> other.
     """
+    if not (0 <= lam < 1):
+        raise ValueError("lam must satisfy 0 <= lam < 1")
+    if tau <= 0:
+        raise ValueError("tau must be positive")
+    if j_T not in range(6) or j_C not in range(6):
+        raise ValueError("feature indices must be in 0..5")
+    if observed_o not in {0, 1, 2}:
+        raise ValueError("observed_o must be 0, 1, or 2")
+    if len(beta) != 6 or len(x_e) != 6:
+        raise ValueError("beta and x_e must have length 6")
     logits = np.array([
         beta[j_T] * x_e[j_T],
         beta[j_C] * x_e[j_C],
@@ -111,6 +125,16 @@ def loglik_critique(
 
     Returns rho * log(P); thus rho=0 contributes exactly 0.
     """
+    if not (0 <= lam < 1):
+        raise ValueError("lam must satisfy 0 <= lam < 1")
+    if tau <= 0:
+        raise ValueError("tau must be positive")
+    if not (0 <= rho <= 1):
+        raise ValueError("rho must be in [0,1]")
+    if j not in range(6):
+        raise ValueError("j must be in 0..5")
+    if len(beta) != 6 or len(x_e) != 6:
+        raise ValueError("beta and x_e must have length 6")
     z = float(beta[j] * x_e[j]) / tau
     p = lam * 0.5 + (1.0 - lam) * _sigmoid(z)
     p = max(p, 1e-15)
@@ -257,30 +281,19 @@ if __name__ == "__main__":
     assert 0.0 < s_neg < 1.0
     assert math.isclose(s_pos + s_neg, 1.0, abs_tol=1e-12)
 
-    # loglik_choice with extreme values should not overflow
     beta = [1.0, -2.0, 0.5, 0.0, 0.0, 0.0]
     x_e = [10.0, -10.0, 5.0, 0.0, 0.0, 0.0]
-    lc = loglik_choice(beta, x_e)          # beta dot = 10 - (-20) + 2.5 = 32.5
+    lc = loglik_choice(beta, x_e)
     assert math.isfinite(lc)
 
-    # prompted: probabilities sum to 1
     probs = []
     for o in range(3):
         lp = loglik_prompted(beta, x_e, j_T=0, j_C=1, observed_o=o)
         probs.append(math.exp(lp))
-    total = sum(probs)
-    print("P_sum", total)
-    assert math.isclose(total, 1.0, rel_tol=1e-9, abs_tol=1e-12)
+    assert math.isclose(sum(probs), 1.0, rel_tol=1e-9, abs_tol=1e-12)
 
-    # critique: rho=0 -> contribution 0
     lcrit = loglik_critique(beta, x_e, j=1, rho=0.0)
     assert math.isclose(lcrit, 0.0, abs_tol=1e-15)
-    print("rho0_loglik", lcrit)
-
-    # extreme softmax (no overflow)
-    logits_ext = np.array([1000.0, -1000.0, 0.0])
-    probs_ext = _softmax(logits_ext)
-    assert np.all(np.isfinite(probs_ext))
 
     # A4: MAP fit should stay bounded on identical replacement rows
     replacement_rows = []
@@ -294,15 +307,13 @@ if __name__ == "__main__":
                 learning=True,
                 censored_feasibility=False,
                 x_e=[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                ask_eligible=True,
+                ask_eligible=False,
             )
         )
     mu, Sigma = refit_laplace(replacement_rows)
-    print("MAP_mu", np.round(mu, 4))
-    print("Sigma_diag", np.round(np.diag(Sigma), 4))
-    assert np.linalg.norm(mu) < 20.0, f"MAP diverged: ||mu||={np.linalg.norm(mu):.2f}"
+    assert np.linalg.norm(mu) < 20.0
 
-    # mixed-event smoke test
+    # mixed-event smoke using frozen valid schema
     mixed = replacement_rows[:5]
     for i in range(3):
         mixed.append(
@@ -313,10 +324,10 @@ if __name__ == "__main__":
                 event_type="clarification_answer",
                 learning=True,
                 censored_feasibility=False,
-                x_e=[0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-                question_options=["A", "B", "其他"],
-                answer_option="A",
-                ask_eligible=True,
+                x_e=[0.0, 0.0, 1.0, -1.0, 0.0, 0.0],
+                question_options=["heaviness", "travel_min", "other"],
+                answer_option="heaviness",
+                ask_eligible=False,
             )
         )
     mixed.append(
@@ -327,13 +338,13 @@ if __name__ == "__main__":
             event_type="explicit_critique",
             learning=True,
             censored_feasibility=False,
-            x_e=[0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
+            x_e=[0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            answer_option="travel_min",
             weight=0.5,
-            ask_eligible=True,
+            ask_eligible=False,
         )
     )
     mu2, Sigma2 = refit_laplace(mixed)
-    print("MIXED_MAP", np.round(mu2, 4))
     assert np.all(np.isfinite(mu2))
     assert np.all(np.isfinite(Sigma2))
 

@@ -45,13 +45,20 @@ def test_registry():
 
 
 def test_fame_uses_authority_review_count():
-    item = _shop(
-        "A",
+    zero_review_shop = _shop(
+        "Zero",
+        tags=["ramen"],
+        authority_data=SimpleNamespace(review_count=0, tablelog_medal=""),
+    )
+    high_review_shop = _shop(
+        "High",
         tags=["ramen"],
         authority_data=SimpleNamespace(review_count=150, tablelog_medal=""),
     )
-    feat = phi(item, {})
-    assert feat[1] > pytest.approx(0.5)
+    low = phi(zero_review_shop, {})[1]
+    high = phi(high_review_shop, {})[1]
+    assert high > low
+    assert high == pytest.approx(0.5)
 
 
 def test_travel_min_candidate_specific():

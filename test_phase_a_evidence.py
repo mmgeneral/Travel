@@ -67,3 +67,62 @@ def test_critique_valid_feature_name_ok():
         "weight": 0.7,
     }))
     assert rec.answer_option == "travel_min"
+
+
+def test_replacement_learning_without_x_e_rejected():
+    with pytest.raises(ValidationError):
+        EvidenceRecord(**_base({"x_e": None}))
+
+
+def test_clarification_learning_without_x_e_rejected():
+    with pytest.raises(ValidationError):
+        EvidenceRecord(**_base({
+            "event_type": "clarification_answer",
+            "question_options": ["heaviness", "travel_min", "other"],
+            "answer_option": "heaviness",
+            "x_e": None,
+        }))
+
+
+def test_explicit_critique_learning_without_x_e_rejected():
+    with pytest.raises(ValidationError):
+        EvidenceRecord(**_base({
+            "event_type": "explicit_critique",
+            "answer_option": "travel_min",
+            "x_e": None,
+        }))
+
+
+def test_censored_feasibility_learning_true_rejected():
+    with pytest.raises(ValidationError):
+        EvidenceRecord(**_base({"censored_feasibility": True}))
+
+
+def test_valid_clarification_order_ok():
+    rec = EvidenceRecord(**_base({
+        "event_type": "clarification_answer",
+        "question_options": ["heaviness", "travel_min", "other"],
+        "answer_option": "heaviness",
+        "x_e": [0.0, 0.0, 1.0, -1.0, 0.0, 0.0],
+    }))
+    assert rec.question_options[0] == "heaviness"
+
+
+def test_reversed_clarification_order_rejected():
+    with pytest.raises(ValidationError):
+        EvidenceRecord(**_base({
+            "event_type": "clarification_answer",
+            "question_options": ["travel_min", "heaviness", "other"],
+            "answer_option": "heaviness",
+            "x_e": [0.0, 0.0, 1.0, -1.0, 0.0, 0.0],
+        }))
+
+
+def test_invalid_third_option_not_other_rejected():
+    with pytest.raises(ValidationError):
+        EvidenceRecord(**_base({
+            "event_type": "clarification_answer",
+            "question_options": ["heaviness", "travel_min", "something"],
+            "answer_option": "heaviness",
+            "x_e": [0.0, 0.0, 1.0, -1.0, 0.0, 0.0],
+        }))

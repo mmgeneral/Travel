@@ -68,28 +68,24 @@ class EvidenceRecord(BaseModel):
 
     @model_validator(mode="after")
     def _check_event_invariants(self):
-        if self.event_type == "bare_rejection" and self.learning:
-            raise ValueError("bare_rejection must have learning=False")
+        if self.censored_feasibility and self.learning:
+            raise ValueError("censored_feasibility=True implies learning must be False")
+        if self.event_type == "bare_rejection":
+            if self.learning:
+                raise ValueError("bare_rejection must have learning=False")
+            return self
+        if self.learning and self.x_e is None:
+            raise ValueError(f"{self.event_type} learning row requires x_e")
         if self.event_type == "clarification_answer":
             if self.question_options is None or len(self.question_options) != 3:
                 raise ValueError("clarification_answer requires question_options with 3 items")
             opts = list(self.question_options)
-            if "other" not in opts:
-                raise ValueError("question_options must contain 'other'")
-            taste_idx = None
-            context_idx = None
-            for name in opts[:2]:
-                if name not in FEATURE_NAME_TO_INDEX:
-                    raise ValueError(f"Unknown feature {name!r} in question_options")
-                idx = FEATURE_NAME_TO_INDEX[name]
-                if idx in TASTE_INDICES:
-                    taste_idx = idx
-                elif idx in CONTEXT_INDICES:
-                    context_idx = idx
-                else:
-                    raise ValueError(f"Feature {name!r} not allowed in clarification pair")
-            if taste_idx is None or context_idx is None:
-                raise ValueError("clarification question must contain exactly one taste and one context feature")
+            if opts[2] != "other":
+                raise ValueError("question_options must end with 'other'")
+            if FEATURE_NAME_TO_INDEX.get(opts[0]) not in TASTE_INDICES:
+                raise ValueError("question_options[0] must be a taste-oriented feature")
+            if FEATURE_NAME_TO_INDEX.get(opts[1]) not in CONTEXT_INDICES:
+                raise ValueError("question_options[1] must be a situational-cost feature")
             if self.answer_option not in {opts[0], opts[1], "other"}:
                 raise ValueError("answer_option must be one of the two feature names or 'other'")
         if self.event_type == "explicit_critique" and self.learning:
@@ -132,40 +128,42 @@ class PreferenceState(BaseModel):
 
 
 if __name__ == "__main__":
-    # ---- validation for A2 ----
-    examples = [
-        dict(event_type="replacement", learning=True, question_options=None, answer_option=None),
-        dict(event_type="explicit_critique", learning=True, question_options=None, answer_option=None),
-        dict(event_type="clarification_answer", learning=True, question_options=["較清淡", "較重口味"], answer_option="較清淡"),
-        dict(event_type="bare_rejection", learning=False, question_options=None, answer_option=None),
-    ]
-
-    for idx, ex in enumerate(examples, start=1):
-        rec = EvidenceRecord(
-            evidence_id=f"test-{idx}",
-            thread_id="thread-1",
+    # Basic smoke examples using the frozen schema.
+    rows = [
+        EvidenceRecord(
+            evidence_id="r1",
+            thread_id="t1",
             ts="2024-01-01T00:00:00",
-            event_type=ex["event_type"],
-            learning=ex["learning"],
+            event_type="replacement",
+            learning=True,
             censored_feasibility=False,
-            question_options=ex["question_options"],
-            answer_option=ex["answer_option"],
-            ask_eligible=True,
-        )
-        if rec.event_type == "bare_rejection":
-            assert rec.learning is False, "bare_rejection must set learning=False"
-        else:
-            assert rec.learning is True, f"{rec.event_type} must set learning=True"
-        if rec.question_options is None:
-            assert rec.event_type != "clarification_answer", (
-                "clarification_answer must be prompted (question_options non-None)"
-            )
-        else:
-            assert rec.event_type == "clarification_answer", (
-                "only clarification_answer may carry question_options"
-            )
-        print(
-            f"OK  event={rec.event_type:<22} "
-            f"learning={rec.learning} "
-            f"prompted={rec.question_options is not None}"
-        )
+            x_e=[0.1, 0.0, 0.0, 0.0, 0.0, 0.0],
+            ask_eligible=False,
+        ),
+        EvidenceRecord(
+            evidence_id="c1",
+            thread_id="t1",
+            ts="2024-01-01T00:00:00",
+            event_type="clarification_answer",
+            learning=True,
+            censored_feasibility=False,
+            x_e=[0.0, 0.0, 1.0, -1.0, 0.0, 0.0],
+            question_options=["heaviness", "travel_min", "other"],
+            answer_option="heaviness",
+            ask_eligible=False,
+        ),
+        EvidenceRecord(
+            evidence_id="k1",
+            thread_id="t1",
+            ts="2024-01-01T00:00:00",
+            event_type="explicit_critique",
+            learning=True,
+            censored_feasibility=False,
+            x_e=[0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            answer_option="travel_min",
+            weight=0.6,
+            ask_eligible=False,
+        ),
+    ]
+    for rec in rows:
+        print(rec.evidence_id, rec.event_type, "OK")

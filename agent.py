@@ -186,9 +186,6 @@ class AgentState(TypedDict):
     asked_this_turn: bool
     # Phase D state (DV 度量用)
     edits_count: int
-    _revision_evidence_id: str | None
-    _last_processed_revision_id: str | None
-    phase_c_attribution_already_given: bool
     # Phase B state (frozen B-turn Context)
     phase_b_turn_context: dict | None
     phase_b_contender_size: int | None
@@ -267,9 +264,6 @@ class AgentState(TypedDict):
 
 
 class AgentStateModel(BaseModel):
-    _last_processed_revision_id: str | None = None
-    _revision_evidence_id: str | None = None
-    phase_c_attribution_already_given: bool = False
     phase_a_posterior_mu: list[float] = Field(default_factory=lambda: [0.0] * 6)
     phase_a_posterior_sigma: list[list[float]] = Field(
         default_factory=lambda: [ [1.0 if i == j else 0.0 for j in range(6)] for i in range(6) ]
@@ -278,9 +272,6 @@ class AgentStateModel(BaseModel):
     phase_a_trip_feature_scaling: dict | None = None
     asked_this_turn: bool = False
     edits_count: int = Field(default_factory=lambda: 0)
-    _revision_evidence_id: str | None = None
-    _last_processed_revision_id: str | None = None
-    phase_c_attribution_already_given: bool = False
     phase_b_turn_context: dict | None = None
     phase_b_contender_size: int | None = None
     phase_b_contender_meta: dict | None = None

@@ -72,7 +72,6 @@ from decision_engine import (
     UserPreference,
     WeightProfile,
     choose_health_backup,
-    freeze_candidate_scaling,
     contender_set,
     rerank_by_posterior,
     freeze_phase_b_turn_context,

@@ -5,11 +5,15 @@ from types import SimpleNamespace
 
 from decision_engine import (
     RankedShop,
+    compute_trip_frozen_scaling,
+    freeze_phase_b_turn_context,
     contender_set,
 )
 
 
-def _shop(name, tags, review_count=0, base_wait=0, flavor=0.5, price=2.5):
+def _shop(name, tags=None, review_count=0, base_wait=0,
+          flavor=0.5, price=2.5):
+    tags = tags or []
     return SimpleNamespace(
         name=name,
         tags=tags,
@@ -22,142 +26,106 @@ def _shop(name, tags, review_count=0, base_wait=0, flavor=0.5, price=2.5):
     )
 
 
-def _ranked_shops(names_scores):
-    ranked = []
-    for name, score in names_scores:
-        shop = _shop(name, tags=["ramen"])
-        ranked.append(RankedShop(shop=shop, final_score=score))
-    # 確保最高分在第一個
-    ranked.sort(key=lambda r: r.final_score, reverse=True)
-    return ranked
+def _ranked(shop, score):
+    return RankedShop(shop=shop, final_score=float(score))
 
 
-def _phase_b_context_for_ranked(ranked):
-    raw = {r.shop.name: r.final_score for r in ranked}
-    vals = list(raw.values())
-    mean = float(np.mean(vals))
-    std = float(np.std(vals))
-    scale = std if std > 1e-12 else 1.0
-    means = np.zeros(6)
-    stds = np.ones(6)
-    return {
-        "candidate_names": [r.shop.name for r in ranked],
-        "s0_by_candidate": raw,
-        "s0_mean": mean,
-        "s0_std": std,
-        "s0_scale": scale,
-        "feature_means": means.tolist(),
-        "feature_stds": stds.tolist(),
-    }
-
-
-def _make_trip_feature_scaling(ranked):
-    # Use actual feature scaling from the candidate pool (frozen A1 semantics)
-    from decision_engine import compute_trip_frozen_scaling
-    shops = [r.shop for r in ranked]
-    ctx = {"preferred_tags": ["ramen"]}
+def _frozen_feature_ctx(shops, ctx):
     means, stds = compute_trip_frozen_scaling(shops, ctx)
-    return {
-        "feature_means": [float(x) for x in means],
-        "feature_stds": [float(x) for x in stds],
-    }
+    return [float(x) for x in means], [float(x) for x in stds]
 
 
-def _phase_b_context_for_ranked(ranked, feature_scaling=None):
-    raw = {r.shop.name: r.final_score for r in ranked}
-    vals = list(raw.values())
-    mean = float(np.mean(vals))
-    std = float(np.std(vals))
-    scale = std if std > 1e-12 else 1.0
-    if feature_scaling is None:
-        feature_scaling = _make_trip_feature_scaling(ranked)
-    return {
-        "candidate_names": [r.shop.name for r in ranked],
-        "s0_by_candidate": raw,
-        "s0_mean": mean,
-        "s0_std": std,
-        "s0_scale": scale,
-        "feature_means": feature_scaling["feature_means"],
-        "feature_stds": feature_scaling["feature_stds"],
-    }
+def _make_turn_context(ranked, ctx, feature_means, feature_stds):
+    return freeze_phase_b_turn_context(
+        ranked, ctx, slot_id="lunch", turn_id="t",
+        feature_means=feature_means, feature_stds=feature_stds,
+    )
 
 
 def test_contender_approx_cand_when_sigma_close_to_identity():
-    ranked = _ranked_shops([
-        ("A", 100.0),
-        ("B", 99.8),
-        ("C", 99.6),
-        ("D", 99.4),
-        ("E", 99.2),
-    ])
-    # give each shop a distinct simple feature to make φ differences non-zero
-    for i, r in enumerate(ranked):
-        r.shop.flavor_intensity = 0.1 + 0.1 * i
+    shops = [
+        _shop("A", ["cafe"]),
+        _shop("B", ["ramen"]),
+        _shop("C", ["sushi"]),
+        _shop("D", ["beef"]),
+        _shop("E", ["chicken"]),
+    ]
+    ctx = {"preferred_tags": ["ramen"]}
+    fm, fs = _frozen_feature_ctx(shops, ctx)
+    ranked = [_ranked(shops[i], 100 - i) for i in range(5)]
+    context = _make_turn_context(ranked, ctx, fm, fs)
     mu = [0.0] * 6
-    Sigma = np.eye(6)
-    ctx_b = _phase_b_context_for_ranked(ranked)
-    contender, meta = contender_set(ranked, mu, Sigma, {}, ctx_b)
-    # Σ ≈ I 時 margin 較寬鬆，應保留絕大多數候選
+    c, meta = contender_set(ranked, mu, np.eye(6), {}, context)
     assert meta["size"] >= len(ranked) - 1
 
 
 def test_contender_shrinks_when_sigma_small():
-    ranked = _ranked_shops([
-        ("A", 100.0),
-        ("B", 99.0),
-        ("C", 98.5),
-        ("D", 98.0),
-    ])
-    for i, r in enumerate(ranked):
-        r.shop.flavor_intensity = 0.1 + 0.1 * i
+    shops = [
+        _shop("A", ["cafe"]),
+        _shop("B", ["ramen"]),
+        _shop("C", ["sushi"]),
+        _shop("D", ["beef"]),
+    ]
+    ctx = {"preferred_tags": ["ramen"]}
+    fm, fs = _frozen_feature_ctx(shops, ctx)
+    ranked = [_ranked(shops[i], 100 - i) for i in range(4)]
+    context = _make_turn_context(ranked, ctx, fm, fs)
     mu = [0.0] * 6
-    ctx_b = _phase_b_context_for_ranked(ranked)
-    Sigma = 0.01 * np.eye(6)
-    contender, meta = contender_set(ranked, mu, Sigma, {}, ctx_b)
-    size_small = meta["size"]
-    Sigma_identity = np.eye(6)
-    _, meta_identity = contender_set(ranked, mu, Sigma_identity, {}, ctx_b)
-    print("contender_size_identity =", meta_identity["size"])
-    print("contender_size_small_sigma =", size_small)
-    assert meta_identity["size"] > size_small
+    c_small, meta_small = contender_set(ranked, mu, 0.001 * np.eye(6), {}, context)
+    c_identity, meta_identity = contender_set(ranked, mu, np.eye(6), {}, context)
+    assert meta_identity["size"] > meta_small["size"]
 
 
 def test_contender_short_circuit_when_singleton():
-    ranked = _ranked_shops([
-        ("A", 1000.0),
-        ("B", 10.0),
-    ])
-    for i, r in enumerate(ranked):
-        r.shop.flavor_intensity = 0.1 + 0.1 * i
+    shops = [_shop("A", ["cafe"]), _shop("B", ["ramen"])]
+    ctx = {"preferred_tags": ["ramen"]}
+    fm, fs = _frozen_feature_ctx(shops, ctx)
+    ranked = [_ranked(shops[0], 100.0), _ranked(shops[1], 1.0)]
+    context = _make_turn_context(ranked, ctx, fm, fs)
     mu = [0.0] * 6
-    ctx_b = _phase_b_context_for_ranked(ranked)
-    Sigma = 1e-8 * np.eye(6)
-    contender, meta = contender_set(ranked, mu, Sigma, {}, ctx_b)
+    c, meta = contender_set(ranked, mu, 1e-8 * np.eye(6), {}, context)
     assert meta["size"] == 1
     assert meta["mc_calls"] == 0
     assert meta["gate_short_circuit"] is True
-    assert contender[0].shop.name == "A"
-    # fake MC should not be called
-    mc_calls = 0
-    def fake_mc():
-        nonlocal mc_calls
-        mc_calls += 1
-    if not meta["gate_short_circuit"]:
-        fake_mc()
-    assert mc_calls == 0
+    assert c[0].shop.name == "A"
 
 
 def test_L_j_provided():
-    ranked = _ranked_shops([
-        ("A", 100.0),
-        ("B", 90.0),
-        ("C", 80.0),
-    ])
-    for i, r in enumerate(ranked):
-        r.shop.flavor_intensity = 0.1 + 0.1 * i
+    shops = [
+        _shop("A", ["cafe"]),
+        _shop("B", ["ramen"]),
+        _shop("C", ["sushi"]),
+    ]
+    ctx = {"preferred_tags": ["ramen"]}
+    fm, fs = _frozen_feature_ctx(shops, ctx)
+    ranked = [_ranked(shops[i], 100 - i) for i in range(3)]
+    context = _make_turn_context(ranked, ctx, fm, fs)
     mu = [0.0] * 6
-    ctx_b = _phase_b_context_for_ranked(ranked)
-    Sigma = np.eye(6)
-    _, meta = contender_set(ranked, mu, Sigma, {}, ctx_b)
+    _, meta = contender_set(ranked, mu, np.eye(6), {}, context)
     assert "L_j" in meta
     assert len(meta["L_j"]) == 6
+
+
+def test_identical_feature_worse_score_excluded():
+    shops = [
+        _shop("A", ["cafe"]),
+        _shop("B", ["cafe"]),
+    ]
+    ctx = {"preferred_tags": ["ramen"]}
+    fm, fs = _frozen_feature_ctx(shops, ctx)
+    ranked = [_ranked(shops[0], 100.0), _ranked(shops[1], 90.0)]
+    context = _make_turn_context(ranked, ctx, fm, fs)
+    mu = [0.0] * 6
+    c, meta = contender_set(ranked, mu, np.eye(6), {}, context)
+    assert [r.shop.name for r in c] == ["A"]
+
+
+def test_best_retained():
+    shops = [_shop("A", ["cafe"]), _shop("B", ["ramen"])]
+    ctx = {"preferred_tags": ["ramen"]}
+    fm, fs = _frozen_feature_ctx(shops, ctx)
+    ranked = [_ranked(shops[0], 100.0), _ranked(shops[1], 50.0)]
+    context = _make_turn_context(ranked, ctx, fm, fs)
+    mu = [0.0] * 6
+    c, meta = contender_set(ranked, mu, np.eye(6), {}, context)
+    assert c[0].shop.name == "A"

@@ -178,6 +178,8 @@ class AgentState(TypedDict):
     phase_a_evidence_log: list[dict]
     phase_a_trip_feature_scaling: dict | None
     asked_this_turn: bool
+    # Phase D state (DV 度量用)
+    edits_count: int
     # Phase B state (frozen B-turn Context)
     phase_b_turn_context: dict | None
     phase_b_contender_size: int | None
@@ -260,6 +262,7 @@ class AgentStateModel(BaseModel):
     phase_a_evidence_log: list[dict] = Field(default_factory=list)
     phase_a_trip_feature_scaling: dict | None = None
     asked_this_turn: bool = False
+    edits_count: int = Field(default_factory=lambda: 0)
     phase_b_turn_context: dict | None = None
     phase_b_contender_size: int | None = None
     phase_b_contender_meta: dict | None = None

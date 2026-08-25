@@ -66,6 +66,7 @@ def generate_synthetic_user(
         else:
             critique_dim = None
 
+    delta_phi = feature_vectors[chosen_index] - feature_vectors[current_index]
     return {
         "beta_star": beta_star,
         "chosen_index": chosen_index,
@@ -73,4 +74,5 @@ def generate_synthetic_user(
         "epsilon": epsilon,
         "critique_emitted": critique_emitted,
         "critique_dim": critique_dim,
+        "delta_phi": delta_phi.tolist(),
     }

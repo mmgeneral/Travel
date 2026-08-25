@@ -17,6 +17,7 @@ from shop_planning import (
     TasteAuthorityEngine,
     predict_wait_time,
 )
+from evidence import EvidenceRecord
 
 # ---------------------------------------------------------------
 # Phase A1: feature registry, phi(), and trip-frozen z-scoring
@@ -466,6 +467,132 @@ def generate_cross_block_questions(
             }
         )
     return questions, True
+
+
+def compute_evoi_for_questions(
+    *,
+    questions: list[dict[str, object]],
+    ranked: list["RankedShop"],
+    mu: list[float] | tuple[float, ...] | np.ndarray,
+    Sigma: list[list[float]] | np.ndarray,
+    phase_b_context: dict[str, object],
+    x_e: list[float] | np.ndarray,
+    evidences: list[EvidenceRecord] | None = None,
+    c_int: float = 0.25,
+    mc_draws: int = 200,
+    seed: int = 0,
+    ctx: dict | None = None,
+) -> list[dict[str, object]]:
+    """
+    Phase C2 — EVOI for cross-block clarification candidates.
+
+    For each question q = (j_T,j_C), compute
+
+        EVOI(q) = Σ_o P(o|E,q)·U*(B_o) − U*(B) − c_int
+
+    with expectation over β ~ N(μ,Σ) via `mc_draws` Monte-Carlo draws,
+    and B_o obtained by adding a 5.3a row for outcome o to `evidences`
+    and refitting MAP/Laplace.
+
+    All scores use the frozen B1 S0 normalisation (phase_b_context).
+    Candidate φ vectors use the same standardised model features as Phase A.
+    """
+    if not questions:
+        return []
+    ctx = ctx or {}
+    mu_arr = np.asarray(mu, dtype=float).reshape(-1)
+    Sigma_arr = np.asarray(Sigma, dtype=float)
+    if mu_arr.ndim != 1 or len(mu_arr) != 6:
+        raise ValueError("mu must be a 6-dimensional vector")
+    if Sigma_arr.shape != (6, 6):
+        raise ValueError("Sigma must be a 6x6 matrix")
+    x_arr = np.asarray(x_e, dtype=float).reshape(-1)
+    if x_arr.size != 6:
+        raise ValueError("x_e must have length 6")
+    if evidences is None:
+        evidences = []
+
+    rng = np.random.default_rng(seed)
+
+    def _s_b(r: RankedShop, m: np.ndarray) -> float:
+        raw = float(phase_b_context["s0_by_candidate"][r.shop.name])
+        s0_tilde = (raw - float(phase_b_context["s0_mean"])) / float(phase_b_context["s0_scale"])
+        phi_m = getattr(r, "_phase_b_phi", None)
+        if phi_m is None:
+            phi_m = z_score(r.shop, ctx, (
+                np.asarray(phase_b_context["feature_means"], dtype=float),
+                np.asarray(phase_b_context["feature_stds"], dtype=float),
+            ))
+        return s0_tilde + float(np.dot(m, np.asarray(phi_m, dtype=float)))
+
+    # U*(B)
+    U_B = max(_s_b(r, mu_arr) for r in ranked)
+
+    results: list[dict[str, object]] = []
+    for q in questions:
+        j_T = int(q["j_T"])
+        j_C = int(q["j_C"])
+        options = list(q["question_options"])
+        if len(options) != 3 or options[2] != "other":
+            continue
+
+        # P(o|E,q) via MC
+        p_os: list[float] = []
+        for o in range(3):
+            draws = rng.multivariate_normal(mu_arr, Sigma_arr, size=mc_draws)
+            probs = np.array([
+                prob_prompted(
+                    draw, x_arr, j_T, j_C, o,
+                ) for draw in draws
+            ])
+            p_os.append(float(np.mean(probs)))
+
+        U_Bo_values: list[float] = []
+        for o, p_o in enumerate(p_os):
+            if p_o <= 0.0:
+                U_Bo_values.append(U_B)  # no effect if zero probability
+                continue
+            if o == 0:
+                answer = options[0]
+            elif o == 1:
+                answer = options[1]
+            else:
+                answer = "other"
+            ev_o = EvidenceRecord(
+                evidence_id=f"evoi_{q.get('j_T')}_{q.get('j_C')}_{o}",
+                thread_id="phase_c_evoi",
+                ts="2024-01-01T00:00:00",
+                event_type="clarification_answer",
+                learning=True,
+                censored_feasibility=False,
+                x_e=x_arr.tolist(),
+                question_options=options,
+                answer_option=answer,
+                ask_eligible=False,
+            )
+            new_evidences = list(evidences) + [ev_o]
+            try:
+                mu_o, Sigma_o = refit_laplace(new_evidences)
+            except Exception:
+                mu_o, Sigma_o = mu_arr, Sigma_arr
+            # U*(B_o)
+            U_Bo = max(_s_b(r, mu_o) for r in ranked)
+            U_Bo_values.append(U_Bo)
+
+        evoi = sum(p_o * U_Bo for p_o, U_Bo in zip(p_os, U_Bo_values)) - U_B - c_int
+        evoi = max(0.0, evoi)  # numerical floor
+
+        results.append({
+            "j_T": j_T,
+            "j_C": j_C,
+            "question_options": options,
+            "p_o": p_os,
+            "U_B": U_B,
+            "U_B_o": U_Bo_values,
+            "c_int": c_int,
+            "evoi": evoi,
+        })
+    return results
 
 
 # ---------------------------------------------------------------

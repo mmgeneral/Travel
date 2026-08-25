@@ -105,6 +105,34 @@ def loglik_prompted(
     return math.log(p)
 
 
+def prob_prompted(
+    beta: Sequence[float],
+    x_e: Sequence[float],
+    j_T: int,
+    j_C: int,
+    observed_o: int,
+    lam: float = LAMBDA,
+    tau: float = TAU,
+    kappa: float = KAPPA,
+) -> float:
+    """
+    Return the probability P(o | beta, e, q) for the prompted 5.3a likelihood.
+
+    o ∈ {0,1,2} with 0 -> j_T, 1 -> j_C, 2 -> "other".
+    """
+    if j_T not in range(6) or j_C not in range(6):
+        raise ValueError("feature indices must be in 0..5")
+    if observed_o not in {0, 1, 2}:
+        raise ValueError("observed_o must be 0, 1, or 2")
+    logits = np.array([
+        beta[j_T] * x_e[j_T],
+        beta[j_C] * x_e[j_C],
+        kappa,
+    ], dtype=float)
+    probs = _softmax(logits / tau)
+    return float(lam / 3.0 + (1.0 - lam) * probs[observed_o])
+
+
 def loglik_critique(
     beta: Sequence[float],
     x_e: Sequence[float],

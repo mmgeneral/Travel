@@ -30,6 +30,7 @@ from duffel import DuffelService
 from openai_completion_client import OpenAIChatCompletionClient
 from saga import SagaEngine, SagaStep
 from shop_catalog_io import load_shop_catalog
+from config import C_INT
 from shop_planning import (
     AuthorityData,
     BookingType,
@@ -77,6 +78,7 @@ from decision_engine import (
     freeze_phase_b_turn_context,
     phase_b_rerank,
     generate_cross_block_questions,
+    compute_evoi_for_questions,
 )
 
 from intent_parser import intent_from_snapshot_dict as _intent_from_snapshot_dict
@@ -177,6 +179,9 @@ class AgentState(TypedDict):
     phase_b_contender_size: int | None
     phase_b_contender_meta: dict | None
     phase_b_gate_skipped: bool
+    # Phase C state
+    phase_c_event_xe: list[float] | None
+    phase_c_evoi_values: list[float]
     """LangGraph state; ``intent`` matches ``Intent.as_dict()`` from ``intent_parser``.
 
     ``intent`` is ``None`` until ``node_route_intent`` runs; each snapshot is a plain dict
@@ -250,6 +255,8 @@ class AgentStateModel(BaseModel):
     phase_b_contender_size: int | None = None
     phase_b_contender_meta: dict | None = None
     phase_b_gate_skipped: bool = False
+    phase_c_event_xe: list[float] | None = None
+    phase_c_evoi_values: list[float] = Field(default_factory=list)
     query: str
     research_log: list[str] = Field(default_factory=list)
     transit_audit: list[str] = Field(default_factory=list)
@@ -1499,9 +1506,42 @@ async def _node_plan_core(state: AgentState) -> AgentState:
                 _c1_questions = []
             state["phase_b_contender_meta"]["c1_questions"] = _c1_questions
             state["phase_b_contender_meta"]["c1_ask_eligible"] = bool(_ask_eligible)
+
+            # ---- C2: compute EVOI for each candidate question (max 3) ---- #
+            if _c1_questions:
+                evoi_results = compute_evoi_for_questions(
+                    questions=_c1_questions,
+                    ranked=ranked,
+                    mu=mu_vec,
+                    Sigma=Sigma_mat,
+                    phase_b_context=phase_b_context,
+                    x_e=_xe,
+                    evidences=[],
+                    c_int=C_INT,
+                    mc_draws=200,
+                    ctx=ctx_features,
+                )
+                state["phase_b_contender_meta"]["c1_evoi"] = evoi_results
+
+                # ---- EVOI magnitude distribution diagnostic ---- #
+                evoi_values = state.setdefault("phase_c_evoi_values", [])
+                for rec in evoi_results:
+                    evoi_values.append(float(rec["evoi"]))
+                if len(evoi_values) >= 20:
+                    import statistics
+                    _min = min(evoi_values)
+                    _max = max(evoi_values)
+                    _med = statistics.median(evoi_values)
+                    print("EVOI_DIAGNOSTICS min={:.6f} max={:.6f} median={:.6f} count={}".format(
+                        _min, _max, _med, len(evoi_values)
+                    ))
+                    state["phase_c_evoi_values"] = []
+            else:
+                state["phase_b_contender_meta"]["c1_evoi"] = []
         else:
             state["phase_b_contender_meta"]["c1_questions"] = []
             state["phase_b_contender_meta"]["c1_ask_eligible"] = False
+            state["phase_b_contender_meta"]["c1_evoi"] = []
 
         state.setdefault("transit_audit", []).append(
             _dj(

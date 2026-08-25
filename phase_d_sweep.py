@@ -1,9 +1,4 @@
-"""Phase D.4 sweep runner.
-
-Runs the synthetic user generator over the specified axes
-(p_crit, sigma_item_variance, c_int) and prints per-repetition raw
-data for every experiment arm, followed by per-arm aggregates.
-"""
+"""Phase D.4 sweep runner using real episode trajectories."""
 
 from __future__ import annotations
 
@@ -11,65 +6,9 @@ import numpy as np
 from typing import Iterable
 
 import config
-from synthetic_user import generate_synthetic_user
+from synthetic_user import generate_trip_world
+from experiment_arms import run_episode
 import phase_d_metrics as metrics
-
-
-def _default_candidate_features() -> np.ndarray:
-    """Return a small fixed candidate-feature matrix (6-D features)."""
-    # Use identity rows so each candidate has one dominant feature.
-    return np.eye(6)[:5]
-
-
-def _compute_metrics_for_arm(
-    *,
-    delta_phi: np.ndarray,
-    utilities: np.ndarray,
-    chosen_index: int,
-    beta_star: np.ndarray,
-    mu_est: np.ndarray,
-    arm: str,
-) -> dict:
-    """Compute DV metrics that depend on the arm only via explicit burden.
-
-    The placeholder burden logic here is intentionally simple:
-       - C0: never asks
-       - C1: always asks one clarification
-       - C2/C3/C4: currently treated as "no ask" until the full EVOI
-         pipeline is plugged into this runner.
-    This is sufficient to verify the sweep execution path.
-    """
-    if arm == "C0":
-        clarify = 0
-        pairwise = 0
-    elif arm == "C1":
-        clarify = 1
-        pairwise = 0
-    else:  # C2, C3, C4 placeholder (same as C0 until EVOI is integrated)
-        clarify = 0
-        pairwise = 0
-
-    burden = metrics.total_explicit_burden(clarify, pairwise)
-    block_err = metrics.contribution_errors(delta_phi, mu_est, beta_star)
-    dom = metrics.dominant_block_accuracy(
-        delta_phi, mu_est, beta_star, config.DOMINANT_BLOCK_DELTA
-    )
-    rec = metrics.per_block_recovery(mu_est, beta_star)
-    reg = metrics.regret_from_utilities(utilities, chosen_index)
-
-    return {
-        "arm": arm,
-        "burden_total": burden["total_burden"],
-        "burden_clarification": burden["clarification_questions"],
-        "burden_pairwise": burden["pairwise_extra"],
-        "taste_norm": rec["taste_norm"],
-        "context_norm": rec["context_norm"],
-        "taste_error": block_err["taste_error"],
-        "context_error": block_err["context_error"],
-        "regret": reg,
-        "dominant_block": dom,
-        "chosen_index": int(chosen_index),
-    }
 
 
 def _aggregate(repeats: list[dict]) -> dict:
@@ -79,7 +18,7 @@ def _aggregate(repeats: list[dict]) -> dict:
     keys = [
         k
         for k in repeats[0].keys()
-        if k not in ("arm", "dominant_block", "chosen_index")
+        if k not in ("arm", "rep", "final_mu", "final_sigma_diag")
     ]
     agg = {"arm": repeats[0]["arm"]}
     for k in keys:
@@ -102,9 +41,9 @@ def run_sweep(
 ) -> dict:
     """Perform the sweep and return raw_rows, aggregates and calibration.
 
-    No oracle access: the synthetic world is generated once per
-    (parameter, repetition) and all arms are run over the same world.
-    Each arm's posterior mu must come from ``refit_laplace``.
+    The synthetic world is generated once per (parameter, repetition).
+    All arms run the same world, each with its own independent learner.
+    No oracle values are used outside the synthetic-user response generator.
     """
     p_vals = list(p_crit_values) if p_crit_values is not None else list(config.P_CRIT_GRID)
     sig_vals = (
@@ -115,81 +54,161 @@ def run_sweep(
     c_vals = list(c_int_values) if c_int_values is not None else list(config.SWEEP_C_INT_GRID)
     n_repeats = repeats if repeats is not None else config.SWEEP_REPEATS
 
-    rng = np.random.default_rng(2026)
-
     all_raw: list[dict] = []
     all_aggregates: dict[str, dict] = {}
     calibration: dict = {}
 
+    base_seed = 2026
     for p_crit in p_vals:
         for sigma_var in sig_vals:
             for c_int in c_vals:
                 print(f"\n=== p_crit={p_crit} sigma_var={sigma_var} c_int={c_int} ===")
-                features = _default_candidate_features()
-                current_idx = 0
-
                 arm_data = {arm: [] for arm in config.SWEEP_ARMS}
 
                 for rep in range(n_repeats):
-                    beta_star = rng.normal(size=6)
-                    user = generate_synthetic_user(
-                        features,
-                        current_idx,
-                        beta_star=beta_star,
-                        sigma_item_variance=sigma_var,
-                        p_crit=p_crit,
-                        rng=rng,
+                    world_seed = base_seed * 1000 + int(p_crit * 100) + int(sigma_var * 100) + rep
+                    rng_world = np.random.default_rng(world_seed)
+                    world = generate_trip_world(
+                        n_events=5,
+                        n_candidates=8,
+                        beta_star=None,
+                        residual_multiplier=sigma_var,
+                        rng=rng_world,
+                        world_seed=world_seed,
                     )
-                    utils = np.asarray(user["utilities"])
-                    delta_phi = np.asarray(user["delta_phi"])
-                    chosen = user["chosen_index"]
-                    # The sweep runner without an experiment runner cannot
-                    # refit Laplace; for the smoke test we still need per-arm
-                    # mu.  Use zeros (prior) as placeholder — this is NOT
-                    # used by any learner, only for aggregate printing.
-                    mu_est = np.zeros(6)
 
-                    for arm in config.SWEEP_ARMS:
-                        m = _compute_metrics_for_arm(
-                            delta_phi=delta_phi,
-                            utilities=utils,
-                            chosen_index=chosen,
-                            beta_star=beta_star,
-                            mu_est=mu_est,
+                    for arm_idx, arm in enumerate(config.SWEEP_ARMS):
+                        arm_seed = world_seed * 10 + arm_idx
+                        rng_arm = np.random.default_rng(arm_seed)
+                        st = run_episode(
+                            world=world,
                             arm=arm,
+                            p_crit=p_crit,
+                            c_int=c_int,
+                            rng=rng_arm,
+                            force_ask=False,
+                            evoi_mc_draws=40,
                         )
-                        m["rep"] = rep
-                        arm_data[arm].append(m)
+
+                        # ---- compute DV metrics from actual terminal state ----
+                        rec = metrics.per_block_recovery(st.mu, world.beta_star)
+                        cross = metrics.cross_block_cov_shrinkage(st.Sigma)
+
+                        # contribution errors averaged over revision events
+                        taste_errs: list[float] = []
+                        context_errs: list[float] = []
+                        eligible_true: list[bool] = []
+                        eligible_correct: list[bool] = []
+                        for ei, event in enumerate(world.events):
+                            if ei >= len(st.proposal_trace):
+                                break
+                            x_sys = st.proposal_trace[ei]
+                            y_true = event.true_best_index
+                            delta_phi = event.phi[y_true] - event.phi[x_sys]
+                            c_err = metrics.contribution_errors(delta_phi, st.mu, world.beta_star)
+                            taste_errs.append(c_err["taste_error"])
+                            context_errs.append(c_err["context_error"])
+
+                            dom = metrics.dominant_block_accuracy(
+                                delta_phi, st.mu, world.beta_star,
+                                config.DOMINANT_BLOCK_DELTA,
+                            )
+                            if dom["eligible"]:
+                                eligible_true.append(True)
+                                eligible_correct.append(bool(dom["correct"]))
+
+                        mean_taste_err = float(np.mean(taste_errs)) if taste_errs else 0.0
+                        mean_ctx_err = float(np.mean(context_errs)) if context_errs else 0.0
+                        eligible_count = len(eligible_true)
+                        correct_count = sum(eligible_correct) if eligible_count else 0
+
+                        burden = metrics.total_explicit_burden(
+                            st.clarification_count, st.pairwise_count
+                        )
+                        mean_regret = float(np.mean(st.regret_trace)) if st.regret_trace else 0.0
+                        cum_regret = float(np.sum(st.regret_trace))
+
+                        row = {
+                            "rep": rep,
+                            "seed": world_seed,
+                            "p_crit": p_crit,
+                            "residual_multiplier": sigma_var,
+                            "realized_sigma2_item": float(np.var(
+                                np.concatenate([e.item_residual for e in world.events])
+                            )),
+                            "c_int": c_int,
+                            "arm": arm,
+                            "clarification_count": st.clarification_count,
+                            "pairwise_count": st.pairwise_count,
+                            "total_explicit_burden": burden["total_burden"],
+                            "taste_recovery_error": rec["taste_norm"],
+                            "context_recovery_error": rec["context_norm"],
+                            "cross_block_cov_norm": cross["cross_block_cov_norm"],
+                            "cross_block_cov_fraction": cross["cross_block_cov_fraction"],
+                            "taste_contribution_error": mean_taste_err,
+                            "context_contribution_error": mean_ctx_err,
+                            "dominant_block_correct": correct_count,
+                            "dominant_block_eligible_count": eligible_count,
+                            "mean_regret": mean_regret,
+                            "cumulative_regret": cum_regret,
+                            "revision_count": st.revision_count,
+                            "final_mu": st.mu.tolist(),
+                            "final_sigma_diag": np.diag(st.Sigma).tolist(),
+                        }
+                        arm_data[arm].append(row)
+                        all_raw.append(dict(row))
 
                 for arm, rows in arm_data.items():
                     print(f"  Arm {arm} — raw:")
                     for row in rows:
                         print(
                             f"    rep {row['rep']}: "
-                            f"chosen={row['chosen_index']} "
-                            f"taste_err={row['taste_error']:.4f} "
-                            f"ctx_err={row['context_error']:.4f} "
-                            f"regret={row['regret']:.4f} "
-                            f"burden={row['burden_total']}"
+                            f"clarify={row['clarification_count']} "
+                            f"pairwise={row['pairwise_count']} "
+                            f"regret={row['mean_regret']:.4f} "
+                            f"rev={row['revision_count']} "
+                            f"taste_err={row['taste_recovery_error']:.4f} "
+                            f"ctx_err={row['context_recovery_error']:.4f}"
                         )
                     agg = _aggregate([{k: v for k, v in r.items() if k != "rep"} for r in rows])
                     print(f"    aggregate: {agg}")
                     all_aggregates[arm] = agg
 
-                for arm, rows in arm_data.items():
-                    for r in rows:
-                        all_raw.append(dict(r))
-
-    # Minimal calibration (placeholder).  In the real runner this is computed
-    # from the median top‑2 S_B gap of a calibration pool.
-    calibration = {
-        "median_gap": 0.0,
-        "q1_gap": 0.0,
-        "q3_gap": 0.0,
-        "iqr_gap": 0.0,
-        "current_c_int": 0.05,
-        "suggested_grid": [0.02, 0.10, 0.20],
-    }
+    # calibration based on top-2 S0 gaps from the first generated world.
+    # (In a full implementation we would build dedicated calibration pools.)
+    if n_repeats > 0 and p_vals and sig_vals:
+        gap_list: list[float] = []
+        for rep in range(n_repeats):
+            seed_cal = base_seed * 1000 + 7 + rep
+            world_seed_cal = seed_cal
+            rng_cal = np.random.default_rng(world_seed_cal)
+            world_cal = generate_trip_world(
+                n_events=5,
+                n_candidates=8,
+                beta_star=None,
+                residual_multiplier=0.0,
+                rng=rng_cal,
+                world_seed=world_seed_cal,
+            )
+            for ev in world_cal.events:
+                s = np.sort(ev.s0_tilde)[::-1]
+                if len(s) >= 2:
+                    gap_list.append(float(s[0] - s[1]))
+        if gap_list:
+            arr = np.asarray(gap_list)
+            median = float(np.median(arr))
+            q1 = float(np.percentile(arr, 25))
+            q3 = float(np.percentile(arr, 75))
+            iqr = q3 - q1
+            suggested = [round(median * f, 6) for f in (0.02, 0.10, 0.20)]
+            calibration = {
+                "median_gap": median,
+                "q1_gap": q1,
+                "q3_gap": q3,
+                "iqr_gap": iqr,
+                "current_c_int": 0.05,
+                "suggested_grid": suggested,
+            }
 
     return {
         "raw_rows": all_raw,

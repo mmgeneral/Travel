@@ -28,6 +28,7 @@ class SyntheticDecisionEvent:
 class SyntheticTripWorld:
     beta_star: np.ndarray          # (6,)
     events: list[SyntheticDecisionEvent]
+    seed: int = 0
 
     def get_event(self, idx: int) -> SyntheticDecisionEvent:
         return self.events[idx]
@@ -40,6 +41,7 @@ def generate_trip_world(
     beta_star: Optional[np.ndarray],
     residual_multiplier: float,
     rng: np.random.Generator,
+    world_seed: int = 0,
 ) -> SyntheticTripWorld:
     """Create a multi-event synthetic world shared across arms.
 
@@ -79,7 +81,7 @@ def generate_trip_world(
                 current_index=current_index,
             )
         )
-    return SyntheticTripWorld(beta_star=beta_star, events=events)
+    return SyntheticTripWorld(beta_star=beta_star, events=events, seed=world_seed)
 
 
 def generate_synthetic_user(

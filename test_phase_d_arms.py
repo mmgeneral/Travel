@@ -1,110 +1,91 @@
-"""Phase D.2 regression: C1 and C2 must be bit-identical when gate is forced to ASK."""
+"""Phase D.2 regression: real C1/C2 trajectory equivalence and arm-order invariance."""
 import numpy as np
 import pytest
 import config
 from types import SimpleNamespace
 
-import decision_engine
+from synthetic_user import generate_trip_world
+from experiment_arms import run_episode
 
 
-def _shop(name, tags):
-    return SimpleNamespace(
-        name=name,
-        tags=tags,
-        flavor_intensity=0.5,
-        portion_strictness=0.5,
-        review_count=0,
-        authority_data=SimpleNamespace(review_count=0, tablelog_medal=""),
-        base_wait_minutes=0,
-        price_level=2.5,
+def _make_world():
+    rng = np.random.default_rng(2026)
+    return generate_trip_world(
+        n_events=3,
+        n_candidates=8,
+        beta_star=None,
+        residual_multiplier=0.0,
+        rng=rng,
+        world_seed=2026,
     )
 
 
-def _ranked(shop, score):
-    from decision_engine import RankedShop
-    return RankedShop(shop=shop, final_score=float(score))
-
-
-def _run_pipeline(arm: str, force_ask: bool):
-    from decision_engine import (
-        compute_trip_frozen_scaling,
-        freeze_phase_b_turn_context,
-        phase_b_rerank,
-        contender_set,
-        generate_cross_block_questions,
-        compute_evoi_for_questions,
-        evaluate_gate,
-    )
-
-    shops = [
-        _shop("A", ["cafe"]),
-        _shop("B", ["ramen"]),
-        _shop("C", ["sushi"]),
-        _shop("D", ["beef"]),
-        _shop("E", ["chicken"]),
-    ]
-    ctx = {"preferred_tags": ["ramen"]}
-    fm, fs = compute_trip_frozen_scaling(shops, ctx)
-    ranked = [_ranked(shops[i], 100 - i) for i in range(5)]
-    phase_b_context = freeze_phase_b_turn_context(
-        ranked, ctx, slot_id="lunch", turn_id="t",
-        feature_means=[float(x) for x in fm],
-        feature_stds=[float(x) for x in fs],
-    )
-    mu = [0.0] * 6
-    Sigma = np.eye(6)
-    reranked = phase_b_rerank(ranked, mu, phase_b_context, ctx)
-    contender, meta = contender_set(reranked, mu, Sigma, ctx, phase_b_context)
-    x_e = [0.5, 0.5, 0.0, 0.5, 0.0, 0.0]
-    questions, ask_eligible = generate_cross_block_questions(
-        Sigma=Sigma, L_j=meta["L_j"], x_e=x_e,
-    )
-    evoi_results = []
-    if ask_eligible and questions:
-        evoi_results = compute_evoi_for_questions(
-            questions=questions,
-            ranked=reranked,
-            mu=mu,
-            Sigma=Sigma,
-            phase_b_context=phase_b_context,
-            x_e=x_e,
-            evidences=[],
-            c_int=0.05,
-            mc_draws=40,
-            seed=123,
-            ctx=ctx,
-        )
-    policy_by_arm = {
-        "C0": "implicit_only",
-        "C1": "always_ask",
-        "C2": "evoi_gated",
-        "C3": "evoi_gated",
-        "C4": "evoi_gated",
-    }
-    policy = policy_by_arm.get(arm, "evoi_gated")
-    gate = evaluate_gate(
-        ask_eligible=ask_eligible,
-        evoi_results=evoi_results,
-        asked_this_turn=False,
-        contender_size=meta["size"],
-        attribution_already_given=False,
-        policy=policy,
+def _run_arm(arm, *, force_ask=False, p_crit=0.0, c_int=0.05, world=None, seed=0):
+    if world is None:
+        world = _make_world()
+    arm_rng = np.random.default_rng(seed)
+    st = run_episode(
+        world=world,
+        arm=arm,
+        p_crit=p_crit,
+        c_int=c_int,
+        rng=arm_rng,
         force_ask=force_ask,
+        evoi_mc_draws=20,
     )
-    return {
-        "phase_b_context": phase_b_context,
-        "contender_names": [r.shop.name for r in contender],
-        "meta": meta,
-        "questions": questions,
-        "evoi_results": evoi_results,
-        "gate": gate,
-    }
+    return st
 
 
-def test_c1_c2_bit_identical_when_force_ask():
-    # Use explicit policy/force_ask arguments (no global mutation).
-    out1 = _run_pipeline("C1", force_ask=True)
-    out2 = _run_pipeline("C2", force_ask=True)
+def test_c1_c2_trajectories_bit_identical_when_force_ask():
+    world = _make_world()
+    st1 = _run_arm("C1", force_ask=True, world=world, seed=11)
+    st2 = _run_arm("C2", force_ask=True, world=world, seed=11)
 
-    assert out1 == out2
-    assert out1["gate"]["action"] == "ask"
+    assert st1.proposal_trace == st2.proposal_trace
+    assert st1.revision_count == st2.revision_count
+    assert [q["j_T"] for q in st1.question_trace] == [q["j_T"] for q in st2.question_trace]
+    assert st1.answer_trace == st2.answer_trace
+    assert [r["x_e"] for r in st1.evidence_log if r["learning"]] == [
+        r["x_e"] for r in st2.evidence_log if r["learning"]
+    ]
+    assert len(st1.posterior_trace) == len(st2.posterior_trace)
+    for p1, p2 in zip(st1.posterior_trace, st2.posterior_trace):
+        assert p1["mu"] == p2["mu"]
+        assert p1["Sigma_diag"] == p2["Sigma_diag"]
+    assert st1.clarification_count == st2.clarification_count
+    assert st1.regret_trace == st2.regret_trace
+
+
+def test_arm_order_invariance():
+    world = _make_world()
+    order1 = run_episode(world=world, arm="C0", p_crit=0.0, c_int=0.05,
+                         rng=np.random.default_rng(1), evoi_mc_draws=20)
+    order2 = run_episode(world=world, arm="C2", p_crit=0.0, c_int=0.05,
+                         rng=np.random.default_rng(2), evoi_mc_draws=20)
+    # run reverse order
+    world2 = _make_world()
+    order1b = run_episode(world=world2, arm="C2", p_crit=0.0, c_int=0.05,
+                          rng=np.random.default_rng(2), evoi_mc_draws=20)
+    world3 = _make_world()
+    order0b = run_episode(world=world3, arm="C0", p_crit=0.0, c_int=0.05,
+                          rng=np.random.default_rng(1), evoi_mc_draws=20)
+    assert order1.proposal_trace == order0b.proposal_trace
+    assert order2.proposal_trace == order1b.proposal_trace
+    assert order1.evidence_log == order0b.evidence_log
+    assert order2.evidence_log == order1b.evidence_log
+
+
+def test_c3_actually_pairs():
+    world = _make_world()
+    st = run_episode(world=world, arm="C3", p_crit=0.0, c_int=0.05,
+                     rng=np.random.default_rng(4), evoi_mc_draws=20)
+    assert st.pairwise_count >= 1
+
+
+def test_c4_stays_prior():
+    world = _make_world()
+    st = run_episode(world=world, arm="C4", p_crit=0.0, c_int=0.05,
+                     rng=np.random.default_rng(4), evoi_mc_draws=20)
+    assert np.allclose(st.mu, np.zeros(6))
+    assert np.allclose(st.Sigma, np.eye(6))
+    assert len(st.evidence_log) == 0

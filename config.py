@@ -37,3 +37,19 @@ SIGMA_ITEM_GRID = (0.0, 0.25, 1.0, 4.0)
 
 # critique emission probabilities for spontaneous critique frequency.
 P_CRIT_GRID = (0.0, 0.3, 0.6)
+
+# ----------------------------------------------------------------------
+# Phase D2 — experiment arms & gate switch
+# ----------------------------------------------------------------------
+# Current arm controlling the ask decision:
+#   C0 = implicit-only  (gate always continue)
+#   C1 = always-ask-on-eligible
+#   C2 = EVOI-gated (current production behavior)
+#   C3 = explicit pairwise baseline (EVOI-gated, same ask rule as C2)
+#   C4 = no-learning control (EVOI-gated, same ask rule as C2)
+EXPERIMENT_ARM = "C2"
+
+# When True, evaluate_gate always returns ASK (if eligible). Used for the
+# regression test that proves C1/C2 trajectories are bit-identical when
+# the ask decision is forced.
+FORCE_ASK = False

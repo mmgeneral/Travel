@@ -20,6 +20,7 @@ from shop_planning import (
 from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
 from config import LAMBDA, TAU, KAPPA, M, C1_ETA, C_INT, MC_DRAWS
+import config as _cfg
 
 # ---------------------------------------------------------------
 # Phase A1: feature registry, phi(), and trip-frozen z-scoring
@@ -582,15 +583,25 @@ def evaluate_gate(
     contender_size: int | None = None,
     attribution_already_given: bool = False,
 ) -> dict[str, object]:
-    """Phase C3: decide whether to ask or continue.
+    """Phase C3 + D2: decide whether to ask or continue.
 
-    Priority:
+    Priority (before arm-specific logic):
         1. decision_stable
         2. attribution_already_given
         3. not_block_ambiguous
         4. already_asked_this_turn
-        5. evoi_not_positive
-        6. ASK
+
+    After those, the arm selected in ``config.EXPERIMENT_ARM`` decides:
+
+        C0 -> always continue (implicit-only)
+        C1 -> always ask, provided a question exists
+        C2 -> ask iff best net_evoi > 0 (EVOI-gated)
+        C3 -> same as C2 (pairwise baseline)
+        C4 -> same as C2 (no-learning control, ask rule unchanged)
+
+    When ``config.FORCE_ASK`` is True, the arm-specific block is skipped and
+    any eligible event yields ASK.  This is used by the Phase-D regression
+    test that proves C1/C2 trajectories are bit-identical under that condition.
     """
     if contender_size is not None and contender_size == 1:
         return {"action": "continue", "reason": "decision_stable"}
@@ -601,11 +612,24 @@ def evaluate_gate(
     if asked_this_turn:
         return {"action": "continue", "reason": "already_asked_this_turn"}
 
-    evoi_results = evoi_results or []
-    if evoi_results:
-        best = max(evoi_results, key=lambda q: float(q.get("net_evoi", q.get("evoi", -1e18))))
-        if float(best.get("net_evoi", best.get("evoi", 0.0))) > 0:
+    evoi_list = list(evoi_results or [])
+    best = None
+    if evoi_list:
+        best = max(evoi_list, key=lambda q: float(q.get("net_evoi", q.get("evoi", -1e18))))
+
+    if _cfg.FORCE_ASK and best is not None:
+        return {"action": "ask", "q_star": best}
+
+    arm = _cfg.EXPERIMENT_ARM
+    if arm == "C0":
+        return {"action": "continue", "reason": "implicit_only"}
+    if arm == "C1":
+        if best is not None:
             return {"action": "ask", "q_star": best}
+        return {"action": "continue", "reason": "evoi_not_positive"}
+    # C2, C3, C4 (and any unknown fallback) use the current EVOI-gated rule.
+    if best is not None and float(best.get("net_evoi", best.get("evoi", 0.0))) > 0:
+        return {"action": "ask", "q_star": best}
     return {"action": "continue", "reason": "evoi_not_positive"}
 
 

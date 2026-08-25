@@ -18,6 +18,7 @@ from typing import Sequence
 import numpy as np
 
 from evidence import EvidenceRecord
+from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX
 
 LAMBDA = 0.1
 TAU = 1.0
@@ -121,7 +122,7 @@ def _neg_log_posterior(beta, evidences, lam=LAMBDA, tau=TAU, kappa=KAPPA):
     beta_arr = np.asarray(beta, dtype=float)
     loglik_sum = 0.0
     for ev in evidences:
-        if not ev.learning:
+        if not ev.learning or ev.censored_feasibility:
             continue
         if ev.event_type == "replacement":
             if ev.x_e is None:
@@ -130,27 +131,28 @@ def _neg_log_posterior(beta, evidences, lam=LAMBDA, tau=TAU, kappa=KAPPA):
         elif ev.event_type == "clarification_answer":
             options = ev.question_options or []
             ans = ev.answer_option or ""
-            if len(options) >= 3:
-                if ans == options[0]:
-                    observed = 0
-                elif ans == options[1]:
-                    observed = 1
-                elif ans == options[2]:
-                    observed = 2
-                else:
-                    observed = 2
-            elif len(options) == 2:
-                observed = 0 if ans == options[0] else 1 if ans == options[1] else 2
-            else:
+            if len(options) != 3:
+                continue
+            if ans == "other":
                 observed = 2
-            j_T, j_C = 0, 1
+            elif ans == options[0]:
+                observed = 0
+            elif ans == options[1]:
+                observed = 1
+            else:
+                continue
+            j_T = FEATURE_NAME_TO_INDEX.get(options[0])
+            j_C = FEATURE_NAME_TO_INDEX.get(options[1])
+            if j_T is None or j_C is None:
+                continue
             loglik_sum += loglik_prompted(beta_arr, ev.x_e, j_T, j_C,
                                           observed, lam, tau, kappa)
         elif ev.event_type == "explicit_critique":
-            if ev.x_e is None:
+            if ev.x_e is None or not ev.answer_option:
                 continue
-            x_arr = np.asarray(ev.x_e, dtype=float)
-            j = int(np.argmax(np.abs(x_arr)))
+            if ev.answer_option not in FEATURE_NAME_TO_INDEX:
+                continue
+            j = FEATURE_NAME_TO_INDEX[ev.answer_option]
             rho = ev.weight if ev.weight is not None else 1.0
             loglik_sum += loglik_critique(beta_arr, ev.x_e, j, rho, lam, tau)
         # bare_rejection excluded via learning=False
@@ -248,7 +250,7 @@ def refit_laplace(
 
 if __name__ == "__main__":
     # Basic numerical sanity checks
-    big = 50.0
+    big = 1.0
     s_pos = _sigmoid(big)
     s_neg = _sigmoid(-big)
     assert 0.0 < s_pos < 1.0

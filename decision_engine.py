@@ -22,18 +22,16 @@ from shop_planning import (
 # Phase A1: feature registry, phi(), and trip-frozen z-scoring
 # ---------------------------------------------------------------
 
-FEATURE_NAMES = [
-    "cuisine_match",
-    "fame_touristy",
-    "heaviness",
-    "travel_min",
-    "price_level",
-    "queue_wait",
-]
+from preference_features import (
+    FEATURE_NAMES as FEATURE_NAMES,
+    FEATURE_NAME_TO_INDEX as FEATURE_NAME_TO_INDEX,
+    TASTE_INDICES as TASTE_INDICES,
+    CONTEXT_INDICES as CONTEXT_INDICES,
+)
 
 BLOCK_INDEX = {
-    "taste": [0, 1, 2],
-    "context": [3, 4, 5],
+    "taste": TASTE_INDICES,
+    "context": CONTEXT_INDICES,
 }
 
 
@@ -79,10 +77,15 @@ def phi(item: object, ctx: dict | None = None) -> np.ndarray:
         cuisine_match = inter / union if union else 0.0
 
     # 2) fame_touristy: rises with review count and authority medal presence
-    review_count = _safe_float(getattr(item, "review_count", None))
     auth = getattr(item, "authority_data", None)
+    review_count_raw = None
+    if auth is not None and getattr(auth, "review_count", None) is not None:
+        review_count_raw = float(auth.review_count)
+    else:
+        review_count_raw = getattr(item, "review_count", None)
+    review_count = 0.0 if review_count_raw is None else max(0.0, float(review_count_raw))
     medal = str(getattr(auth, "tablelog_medal", "") or "")
-    fame = min(1.0, review_count / 300.0) if review_count >= 0 else 0.0
+    fame = min(1.0, review_count / 300.0)
     if medal:
         fame = min(1.0, fame + 0.3)
 
@@ -92,11 +95,15 @@ def phi(item: object, ctx: dict | None = None) -> np.ndarray:
     heaviness = min(1.0, flavor * 0.6 + portion * 0.4)
 
     # ---- situational-cost block (θ) ----
-    # 4) travel_min: context-provided travel estimate
-    travel_min = float(ctx.get("travel_minutes", getattr(item, "default_travel_minutes", 15)))
+    # 4) travel_min: candidate-specific or scalar fallback
+    travel_map = ctx.get("travel_minutes_map") or {}
+    travel_default = ctx.get("travel_minutes", getattr(item, "default_travel_minutes", 15))
+    travel_min = float(travel_map.get(str(getattr(item, "name", "")), travel_default))
 
     # 5) price_level: direct attribute if present, otherwise contextual default
-    price_level = _safe_float(getattr(item, "price_level", None), 2.5)
+    price_map = ctx.get("price_level_map") or {}
+    price_default = ctx.get("price_level", getattr(item, "price_level", 2.5))
+    price_level = _safe_float(price_map.get(str(getattr(item, "name", "")), price_default), 2.5)
 
     # 6) queue_wait: typical queue length in minutes
     queue_wait = _safe_float(getattr(item, "base_wait_minutes", None))

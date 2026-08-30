@@ -32,7 +32,7 @@ def test_sweep_returns_payload():
             "taste_contribution_error", "context_contribution_error",
             "dominant_block_correct", "dominant_block_eligible_count",
             "mean_regret", "cumulative_regret", "revision_count",
-            "final_mu", "final_sigma_diag",
+            "final_mu", "final_sigma_diag", "heldout_delta_phi_hash",
         }:
             assert key in row, f"Missing key {key} in row {row}"
 

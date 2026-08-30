@@ -28,14 +28,18 @@ def _aggregate(repeats: list[dict]) -> dict:
     """Return mean/std/min/max for numeric fields of a list of metric dicts."""
     if not repeats:
         return {}
-    keys = [
-        k
-        for k in repeats[0].keys()
-        if k not in ("arm", "rep", "final_mu", "final_sigma_diag")
-    ]
+    excluded = {"arm", "rep", "final_mu", "final_sigma_diag"}
+    keys = [k for k in repeats[0].keys() if k not in excluded]
     agg = {"arm": repeats[0]["arm"]}
     for k in keys:
-        vals = [float(r[k]) for r in repeats if r[k] is not None]
+        vals: list[float] = []
+        for r in repeats:
+            v = r.get(k)
+            if v is None:
+                continue
+            # aggregate only real numeric scalar values; skip bool, strings, arrays, etc.
+            if isinstance(v, (int, float, np.integer, np.floating)) and not isinstance(v, bool):
+                vals.append(float(v))
         if vals:
             arr = np.asarray(vals)
             agg[f"{k}_mean"] = float(np.mean(arr))

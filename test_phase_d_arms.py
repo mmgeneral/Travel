@@ -165,22 +165,39 @@ def test_c4_stays_prior():
     assert len(st.evidence_log) == 0
 
 
+def test_satisfied_event_posterior_trace_unchanged():
+    world = _make_world()
+    # force the first event to be satisfied: system proposal == user true best
+    for ev in world.events:
+        ev.s0_tilde = ev.phi @ world.beta_star + ev.item_residual
+    st = _run_arm("C0", world=world, seed=9)
+    assert len(st.posterior_trace) == len(world.events)
+    snap0 = st.posterior_trace[0]
+    ev0 = world.events[0]
+    assert snap0["event_idx"] == 0
+    assert snap0["proposal"] == ev0.true_best_index
+    assert snap0["true_best"] == ev0.true_best_index
+    assert snap0["revision"] is False
+    assert np.allclose(snap0["mu"], np.zeros_like(snap0["mu"]))
+    assert np.allclose(snap0["Sigma_diag"], np.ones_like(snap0["Sigma_diag"]))
+
+
 def test_s0_does_not_change_user_true_best():
-    from synthetic_user import generate_trip_world
-    world = generate_trip_world(
-        n_events=2,
-        n_candidates=5,
-        beta_star=None,
-        residual_multiplier=0.0,
-        rng=np.random.default_rng(31),
-        world_seed=31,
-    )
-    original_true = [ev.true_best_index for ev in world.events]
-    modified = copy.deepcopy(world)
-    for ev in modified.events:
-        ev.s0_tilde = np.full_like(ev.s0_tilde, 100.0)
-    modified_true = [ev.true_best_index for ev in modified.events]
-    assert original_true == modified_true
+    world = _make_world()
+    for ev in world.events:
+        user_util = ev.phi @ world.beta_star + ev.item_residual
+        true_idx = int(np.argmax(user_util))
+        rival_idx = (true_idx + 1) % len(user_util)
+        original = ev.s0_tilde.copy()
+        ev.s0_tilde = np.zeros_like(original)
+        ev.s0_tilde[rival_idx] = 1000.0
+        ev.s0_tilde[true_idx] = -1000.0
+        # user truth must still be the original true_idx
+        assert ev.true_best_index == true_idx
+        # system proposal (mu=0) at this event is the argmax of s0_tilde
+        system_top = int(np.argmax(ev.s0_tilde))
+        assert system_top == rival_idx
+        assert system_top != true_idx
 
 
 def test_episode_true_best_ignores_s0():

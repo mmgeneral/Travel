@@ -631,15 +631,21 @@ def evaluate_gate(
     if evoi_list:
         best = max(evoi_list, key=lambda q: float(q.get("net_evoi", q.get("evoi", -1e18))))
 
-    if force_ask and best is not None:
-        return {"action": "ask", "q_star": best}
+    if force_ask:
+        # force_ask must ask whenever there is an eligible question,
+        # independent of EVOI.
+        if evoi_list:
+            return {"action": "ask", "q_star": best}
+        return {"action": "ask"}
 
     if policy == "implicit_only":
         return {"action": "continue", "reason": "implicit_only"}
     if policy == "always_ask":
-        if best is not None:
+        # always_ask asks whenever an eligible question exists,
+        # even if evoi_results is None/empty.
+        if evoi_list:
             return {"action": "ask", "q_star": best}
-        return {"action": "continue", "reason": "evoi_not_positive"}
+        return {"action": "ask"}
     # fallback (default) = evoi_gated
     if best is not None and float(best.get("net_evoi", best.get("evoi", 0.0))) > 0:
         return {"action": "ask", "q_star": best}

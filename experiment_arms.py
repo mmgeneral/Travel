@@ -46,22 +46,21 @@ def _expected_max_utility(event, mu, Sigma, n_draws=200, rng=None):
 
 
 def _compute_contender(event, mu, Sigma, score_sys, M=5, n_draws=200, rng=None):
-    """Return (contender_indices, L_j)."""
-    if rng is None:
-        rng = np.random.default_rng()
+    """Return (contender_indices, L_j) using the frozen Phase-B3 2·σ_pred rule."""
     top = np.argsort(score_sys)[::-1][:M]
     if len(top) == 0:
         return np.array([], dtype=int), np.zeros(6)
-    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
-    utils = event.s0_tilde[None, :] + draws @ event.phi.T
-    std_util = utils.std(axis=0)
     best_idx = top[0]
-    contender = [best_idx]
     best_score = score_sys[best_idx]
+    best_phi = event.phi[best_idx]
+    contender = [best_idx]
     for idx in top[1:]:
         gap = best_score - score_sys[idx]
-        threshold = 2.0 * std_util[idx]
-        if gap <= threshold:
+        dphi = event.phi[idx] - best_phi
+        var = float(dphi @ Sigma @ dphi)
+        var = max(0.0, var)
+        sigma_pred = np.sqrt(var)
+        if gap <= 2.0 * sigma_pred:
             contender.append(idx)
     contender = np.asarray(contender, dtype=int)
     phi_c = event.phi[contender]
@@ -71,33 +70,48 @@ def _compute_contender(event, mu, Sigma, score_sys, M=5, n_draws=200, rng=None):
     return contender, L_j
 
 
-def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, c_int, n_draws=100, rng=None):
-    """Monte-Carlo EVOI using the arm's current posterior (no beta_star)."""
+def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, x_e, c_int, n_draws=100, rng=None):
+    """EVSI for one cross-block question (frozen Phase-C definition).
+
+    The decision value is deterministic: max_x (s0_tilde[x] + mu^T phi[x]).
+    Monte-Carlo draws are used only to estimate answer probabilities.
+    """
     if rng is None:
         rng = np.random.default_rng()
-    j_T = q["j_T"]
-    j_C = q["j_C"]
+    j_T = int(q["j_T"])
+    j_C = int(q["j_C"])
     opts = q["question_options"]
-    x_e = q["x_e"]
 
-    # p_o averaged over posterior draws
-    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
+    mu_arr = np.asarray(mu, dtype=float).reshape(-1)
+    Sigma_arr = np.asarray(Sigma, dtype=float)
+
+    U_B = float(np.max(event.s0_tilde + event.phi @ mu_arr))
+
+    beta_draws = rng.multivariate_normal(mu_arr, Sigma_arr, size=n_draws)
+
     p_o = np.zeros(3)
     for o in range(3):
         probs = np.array([
             prob_prompted(beta, x_e, j_T, j_C, o, lam=LAMBDA, tau=TAU, kappa=KAPPA)
-            for beta in draws
+            for beta in beta_draws
         ])
-        p_o[o] = probs.mean()
+        p_o[o] = float(probs.mean())
 
-    # current expected max utility
-    cur = _expected_max_utility(event, mu, Sigma, n_draws=n_draws, rng=rng)
+    # Normalize for numerical safety
+    p_sum = float(p_o.sum())
+    if p_sum <= 0.0:
+        p_o = np.ones(3) / 3.0
+    else:
+        p_o = p_o / p_sum
 
-    net = 0.0
+    U_Bo = np.zeros(3)
     for o in range(3):
+        if p_o[o] <= 0.0:
+            U_Bo[o] = U_B
+            continue
         answer_option = "other" if o == 2 else opts[o]
         hyp_ev = EvidenceRecord(
-            evidence_id="hyp_evoi",
+            evidence_id="hyp_evsi",
             thread_id="hyp",
             ts="",
             event_type="clarification_answer",
@@ -110,12 +124,12 @@ def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, c_int, n_draws=1
         ).model_dump()
         rows = list(evidence_log) + [hyp_ev]
         ev_rows = [EvidenceRecord(**r) if isinstance(r, dict) else r for r in rows]
-        mu_h, Sig_h = refit_laplace(ev_rows)
-        hyp_util = _expected_max_utility(event, mu_h, Sig_h, n_draws=n_draws, rng=rng)
-        net += p_o[o] * hyp_util
-    net -= cur
-    net -= c_int
-    return float(net), p_o
+        mu_o, _ = refit_laplace(ev_rows)
+        U_Bo[o] = float(np.max(event.s0_tilde + event.phi @ mu_o))
+
+    gross_evsi = float(np.dot(p_o, U_Bo)) - U_B
+    net_evsi = gross_evsi - c_int
+    return net_evsi, p_o.tolist()
 
 
 @dataclass
@@ -181,7 +195,6 @@ def run_episode(
                 ask_eligible=False,
                 question_options=None,
                 answer_option=None,
-                attribution_already_given=False,
             ).model_dump()
             state.evidence_log.append(rec)
 
@@ -208,7 +221,6 @@ def run_episode(
                         question_options=None,
                         answer_option=FEATURE_NAMES[j],
                         weight=1.0,
-                        attribution_already_given=True,
                     ).model_dump()
                     state.evidence_log.append(rec_crit)
                 crit_emitted = True
@@ -283,6 +295,7 @@ def run_episode(
                                     state.Sigma,
                                     state.evidence_log,
                                     q,
+                                    delta_phi.tolist(),
                                     c_int,
                                     n_draws=evoi_mc_draws,
                                     rng=np.random.default_rng(500 + event_idx * 10 + qi),
@@ -367,7 +380,6 @@ def run_episode(
                 ask_eligible=False,
                 question_options=None,
                 answer_option=None,
-                attribution_already_given=False,
             ).model_dump()
             state.evidence_log.append(rec_pair)
             state.pairwise_count += 1

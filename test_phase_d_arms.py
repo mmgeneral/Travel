@@ -183,6 +183,24 @@ def test_s0_does_not_change_user_true_best():
     assert original_true == modified_true
 
 
+def test_episode_true_best_ignores_s0():
+    world = _make_world()
+    modified = copy.deepcopy(world)
+    for ev in modified.events:
+        ev.s0_tilde = -np.arange(ev.s0_tilde.size, dtype=float)
+
+    st_orig = _run_arm("C0", world=world, seed=0)
+    st_mod = _run_arm("C0", world=modified, seed=0)
+
+    orig_true = [p["true_best"] for p in st_orig.posterior_trace]
+    mod_true = [p["true_best"] for p in st_mod.posterior_trace]
+    assert orig_true == mod_true
+
+    orig_proposal = [p["proposal"] for p in st_orig.posterior_trace]
+    mod_proposal = [p["proposal"] for p in st_mod.posterior_trace]
+    assert any(o != m for o, m in zip(orig_proposal, mod_proposal))
+
+
 def test_posterior_trace_one_entry_per_event():
     world = _make_world()
     for arm in ["C0", "C1", "C2", "C3", "C4"]:

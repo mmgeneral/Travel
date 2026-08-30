@@ -108,3 +108,14 @@ def test_heldout_delta_phi_independent_of_beta_star():
     world2.beta_star = np.zeros_like(world.beta_star)
     h2 = _heldout_delta_phi(world2)
     assert np.allclose(h1, h2)
+
+
+def test_heldout_delta_phi_hash_same_across_arms():
+    res = run_sweep(
+        p_crit_values=[0.0],
+        sigma_item_values=[0.0],
+        c_int_values=[0.05],
+        repeats=1,
+    )
+    hashes = {row["heldout_delta_phi_hash"] for row in res["raw_rows"]}
+    assert len(hashes) == 1

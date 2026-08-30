@@ -37,14 +37,6 @@ def _synthetic_prompted_answer(beta_star, x_e, j_T, j_C, rng):
     return "other", o
 
 
-def _expected_max_utility(event, mu, Sigma, n_draws=200, rng=None):
-    if rng is None:
-        rng = np.random.default_rng(0)
-    draws = rng.multivariate_normal(mu, Sigma, size=n_draws)
-    utils = event.s0_tilde[None, :] + draws @ event.phi.T
-    return float(utils.max(axis=1).mean())
-
-
 def _compute_contender(event, mu, Sigma, score_sys, M=5, n_draws=200, rng=None):
     """Return (contender_indices, L_j) using the frozen Phase-B3 2·σ_pred rule."""
     top = np.argsort(score_sys)[::-1][:M]

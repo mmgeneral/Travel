@@ -90,7 +90,7 @@ def run_sweep(
                             c_int=c_int,
                             rng=rng_arm,
                             force_ask=False,
-                            evoi_mc_draws=40,
+                            evoi_mc_draws=200,
                         )
 
                         # ---- compute DV metrics from actual terminal state ----

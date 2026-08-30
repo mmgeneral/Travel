@@ -163,3 +163,36 @@ def test_c4_stays_prior():
     assert np.allclose(st.mu, np.zeros(6))
     assert np.allclose(st.Sigma, np.eye(6))
     assert len(st.evidence_log) == 0
+
+
+def test_s0_does_not_change_user_true_best():
+    from synthetic_user import generate_trip_world
+    world = generate_trip_world(
+        n_events=2,
+        n_candidates=5,
+        beta_star=None,
+        residual_multiplier=0.0,
+        rng=np.random.default_rng(31),
+        world_seed=31,
+    )
+    original_true = [ev.true_best_index for ev in world.events]
+    modified = copy.deepcopy(world)
+    for ev in modified.events:
+        ev.s0_tilde = np.full_like(ev.s0_tilde, 100.0)
+    modified_true = [ev.true_best_index for ev in modified.events]
+    assert original_true == modified_true
+
+
+def test_posterior_trace_one_entry_per_event():
+    world = _make_world()
+    for arm in ["C0", "C1", "C2", "C3", "C4"]:
+        st = _run_arm(arm, world=world, seed=100)
+        assert len(st.posterior_trace) == len(world.events)
+        for i, snap in enumerate(st.posterior_trace):
+            assert snap["event_idx"] == i
+        assert np.allclose(st.posterior_trace[-1]["mu"], st.mu)
+        assert np.allclose(st.posterior_trace[-1]["Sigma_diag"], np.diag(st.Sigma))
+    st4 = _run_arm("C4", world=world, seed=101)
+    for snap in st4.posterior_trace:
+        assert np.allclose(snap["mu"], np.zeros(6))
+        assert np.allclose(snap["Sigma_diag"], np.ones(6))

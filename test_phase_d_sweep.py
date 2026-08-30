@@ -1,9 +1,11 @@
 """Phase D.4 sweep runner smoke test."""
+import copy
+
 import numpy as np
 import pytest
 
 import config
-from phase_d_sweep import run_sweep
+from phase_d_sweep import run_sweep, _heldout_delta_phi
 
 
 def test_sweep_returns_payload():
@@ -89,3 +91,20 @@ def test_calibration_includes_percentile():
     assert "c_int_percentile" in cal
     assert "suggested_grid" in cal
     assert len(cal["suggested_grid"]) == 3
+
+
+def test_heldout_delta_phi_independent_of_beta_star():
+    from synthetic_user import generate_trip_world
+    world = generate_trip_world(
+        n_events=2,
+        n_candidates=5,
+        beta_star=None,
+        residual_multiplier=0.0,
+        rng=np.random.default_rng(123),
+        world_seed=123,
+    )
+    h1 = _heldout_delta_phi(world)
+    world2 = copy.deepcopy(world)
+    world2.beta_star = np.zeros_like(world.beta_star)
+    h2 = _heldout_delta_phi(world2)
+    assert np.allclose(h1, h2)

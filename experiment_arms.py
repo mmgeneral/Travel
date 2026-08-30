@@ -162,7 +162,7 @@ def run_episode(
         state.proposal_trace.append(x_sys)
 
         # ---- true optimum ----
-        u_true = event.s0_tilde + event.phi @ world.beta_star + event.item_residual
+        u_true = event.phi @ world.beta_star + event.item_residual
         y_true = int(np.argmax(u_true))
 
         if x_sys == y_true:

@@ -61,13 +61,14 @@ def generate_trip_world(
         s0_tilde = rng.normal(size=N)
 
         # signal scale for residual multiplier
-        systematic = s0_tilde + phi @ beta_star
+        systematic = phi @ beta_star
         v_signal = float(np.var(systematic))
         sigma2_item = residual_multiplier * v_signal
         residual = rng.normal(scale=np.sqrt(sigma2_item), size=N)
 
-        utilities = systematic + residual
-        true_best = int(np.argmax(utilities))
+        # USER utility = beta_star^T phi + item residual  (S0 NOT part of user)
+        user_utilities = systematic + residual
+        true_best = int(np.argmax(user_utilities))
         # system choice uses only S0_tilde (μ=0 placeholder)
         system_choice = int(np.argmax(s0_tilde))
         current_index = system_choice

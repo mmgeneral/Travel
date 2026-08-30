@@ -12,6 +12,18 @@ from experiment_arms import run_episode
 import phase_d_metrics as metrics
 
 
+def _heldout_delta_phi(world):
+    """Deterministic held-out feature-difference vectors, independent of beta_star, mu, and arm."""
+    rng = np.random.default_rng(world.seed + 9999)
+    deltas = []
+    for ev in world.events:
+        n = ev.phi.shape[0]
+        for _ in range(3):
+            idx = rng.choice(n, size=2, replace=False)
+            deltas.append(ev.phi[idx[0]] - ev.phi[idx[1]])
+    return np.asarray(deltas)
+
+
 def _aggregate(repeats: list[dict]) -> dict:
     """Return mean/std/min/max for numeric fields of a list of metric dicts."""
     if not repeats:
@@ -78,6 +90,11 @@ def run_sweep(
                         world_seed=world_seed,
                     )
 
+                    heldout_delta_phi = _heldout_delta_phi(world)
+                    heldout_hash = hashlib.sha256(
+                        heldout_delta_phi.tobytes()
+                    ).hexdigest()[:12]
+
                     for arm in config.SWEEP_ARMS:
                         # Stable seed independent of arm order.
                         arm_key = f"{world_seed}:{arm}"
@@ -97,17 +114,11 @@ def run_sweep(
                         rec = metrics.per_block_recovery(st.mu, world.beta_star)
                         cross = metrics.cross_block_cov_shrinkage(st.Sigma)
 
-                        # contribution errors averaged over revision events
+                        # contribution errors evaluated on common held-out delta-phi set
                         taste_errs: list[float] = []
                         context_errs: list[float] = []
-                        eligible_true: list[bool] = []
                         eligible_correct: list[bool] = []
-                        for ei, event in enumerate(world.events):
-                            if ei >= len(st.proposal_trace):
-                                break
-                            x_sys = st.proposal_trace[ei]
-                            y_true = event.true_best_index
-                            delta_phi = event.phi[y_true] - event.phi[x_sys]
+                        for delta_phi in heldout_delta_phi:
                             c_err = metrics.contribution_errors(delta_phi, st.mu, world.beta_star)
                             taste_errs.append(c_err["taste_error"])
                             context_errs.append(c_err["context_error"])
@@ -117,12 +128,11 @@ def run_sweep(
                                 config.DOMINANT_BLOCK_DELTA,
                             )
                             if dom["eligible"]:
-                                eligible_true.append(True)
                                 eligible_correct.append(bool(dom["correct"]))
 
                         mean_taste_err = float(np.mean(taste_errs)) if taste_errs else 0.0
                         mean_ctx_err = float(np.mean(context_errs)) if context_errs else 0.0
-                        eligible_count = len(eligible_true)
+                        eligible_count = len(eligible_correct)
                         correct_count = sum(eligible_correct) if eligible_count else 0
 
                         burden = metrics.total_explicit_burden(
@@ -154,6 +164,7 @@ def run_sweep(
                             "dominant_block_eligible_count": eligible_count,
                             "mean_regret": mean_regret,
                             "cumulative_regret": cum_regret,
+                            "heldout_delta_phi_hash": heldout_hash,
                             "revision_count": st.revision_count,
                             "final_mu": st.mu.tolist(),
                             "final_sigma_diag": np.diag(st.Sigma).tolist(),

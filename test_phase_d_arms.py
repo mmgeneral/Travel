@@ -56,6 +56,7 @@ def test_c1_c2_trajectories_bit_identical_when_force_ask():
 
 def test_gate_continue_no_ask(monkeypatch):
     import experiment_arms
+    from preference_features import FEATURE_NAMES
     calls = []
 
     def fake_gate(**kwargs):
@@ -69,11 +70,19 @@ def test_gate_continue_no_ask(monkeypatch):
         return [{
             "j_T": 0,
             "j_C": 3,
-            "question_options": ["taste", "context", "other"],
-            "x_e": list(x_e),
+            "question_options": [
+                FEATURE_NAMES[0],
+                FEATURE_NAMES[3],
+                "other",
+            ],
         }], True
 
     monkeypatch.setattr(experiment_arms, "generate_cross_block_questions", fake_generate)
+
+    # ensure the contender set is larger than 1 so evaluate_gate is reached
+    def fake_contender(*args, **kwargs):
+        return np.array([0, 1], dtype=int), np.ones(6)
+    monkeypatch.setattr(experiment_arms, "_compute_contender", fake_contender)
 
     world = _make_world()
     st = _run_arm("C2", force_ask=False, world=world, seed=51)

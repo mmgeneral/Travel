@@ -149,3 +149,12 @@ def test_sigma_bounded_by_identity_choice_only():
     _, Sigma = refit_laplace(evs)
     max_eig = np.max(np.linalg.eigvalsh(Sigma))
     assert max_eig <= 1.0 + 1e-6
+
+
+def test_hessian_min_eigen_ge_one():
+    rng = np.random.default_rng(101)
+    evs = [_record(rng.normal(size=6)) for _ in range(20)]
+    mu, _ = refit_laplace(evs)
+    H_exact = _exact_hess(mu, evs)
+    min_eig = np.min(np.linalg.eigvalsh(H_exact))
+    assert min_eig >= 1.0 - 1e-6

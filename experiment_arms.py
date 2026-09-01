@@ -10,7 +10,7 @@ import numpy as np
 from dataclasses import dataclass, field
 from typing import Optional
 
-from config import LAMBDA_CHOICE, LAMBDA_REPORT, TAU, KAPPA
+from config import LAMBDA_REPORT, TAU, KAPPA
 from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
 from preference_features import FEATURE_NAMES
@@ -349,7 +349,7 @@ def run_episode(
                 a, b = int(order[0]), int(order[1])
                 phi_a = event.phi[a]
                 phi_b = event.phi[b]
-                p_b_over_a = LAMBDA_CHOICE * 0.5 + (1.0 - LAMBDA_CHOICE) * (1.0 / (1.0 + np.exp(-world.beta_star.dot(phi_b - phi_a))))
+                p_b_over_a = 1.0 / (1.0 + np.exp(-world.beta_star.dot(phi_b - phi_a)))
                 pair_rng = np.random.default_rng(1000 * event_idx + 5)
                 if pair_rng.random() < p_b_over_a:
                     rejected, accepted, x_e_pair = a, b, phi_b - phi_a

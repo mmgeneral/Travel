@@ -12,6 +12,7 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel, field_validator, model_validator
 
 from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX, TASTE_INDICES, CONTEXT_INDICES
+from research_architecture import Provenance, EvidenceKind
 
 
 class EvidenceRecord(BaseModel):
@@ -43,6 +44,12 @@ class EvidenceRecord(BaseModel):
     question_options: Optional[List[str]] = None
     answer_option: Optional[str] = None
     weight: float = 1.0                        # spontaneous critique's ρ
+    provenance: Optional[str] = None
+    evidence_kind: Optional[str] = None
+    source_turn_id: Optional[str] = None
+    parser_version: Optional[str] = None
+    support_text: Optional[str] = None
+    attributed_dims: Optional[List[str]] = None
     anchor_evidence_id: Optional[str] = None
     utterance_excerpt: str = ""
     ask_eligible: bool = False
@@ -65,6 +72,26 @@ class EvidenceRecord(BaseModel):
         if not (0.0 <= w <= 1.0):
             raise ValueError("weight must be in [0,1]")
         return w
+
+    @field_validator("provenance")
+    @classmethod
+    def _validate_provenance(cls, v):
+        if v is None:
+            return v
+        allowed = {p.value for p in Provenance}
+        if v not in allowed:
+            raise ValueError(f"Unknown provenance {v!r}")
+        return v
+
+    @field_validator("evidence_kind")
+    @classmethod
+    def _validate_evidence_kind(cls, v):
+        if v is None:
+            return v
+        allowed = {k.value for k in EvidenceKind}
+        if v not in allowed:
+            raise ValueError(f"Unknown evidence_kind {v!r}")
+        return v
 
     @model_validator(mode="after")
     def _check_event_invariants(self):

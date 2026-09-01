@@ -16,6 +16,12 @@ from likelihood import refit_laplace, prob_prompted
 from preference_features import FEATURE_NAMES
 from synthetic_user import SyntheticTripWorld
 from decision_engine import generate_cross_block_questions, evaluate_gate
+from research_architecture import (
+    attach_evidence_meta,
+    Provenance,
+    EvidenceKind,
+    validate_structured_evidence,
+)
 
 
 def _sample_from_prob(probs, rng):
@@ -172,7 +178,7 @@ def run_episode(
             state.revision_count += 1
 
             if arm != "C4":
-                rec = EvidenceRecord(
+                rec_raw = EvidenceRecord(
                     evidence_id=f"repl_{event_idx}",
                     thread_id="world",
                     ts="",
@@ -185,7 +191,15 @@ def run_episode(
                     ask_eligible=False,
                     question_options=None,
                     answer_option=None,
-                ).model_dump()
+                )
+                attach_evidence_meta(
+                    rec_raw,
+                    provenance=Provenance.USER_EXPLICIT,
+                    evidence_kind=EvidenceKind.PREFERENCE,
+                    support_text="explicit user replacement A->B",
+                    attributed_dims=None,
+                )
+                rec = rec_raw.model_dump()
                 state.evidence_log.append(rec)
 
             # ---- spontaneous critique (same randomness across arms) ----
@@ -197,7 +211,7 @@ def run_episode(
                 if np.any(pos):
                     j = int(np.argmax(np.where(pos, contrib, -np.inf)))
                     if arm != "C4":
-                        rec_crit = EvidenceRecord(
+                        crit_raw = EvidenceRecord(
                             evidence_id=f"crit_{event_idx}",
                             thread_id="world",
                             ts="",
@@ -211,7 +225,15 @@ def run_episode(
                             question_options=None,
                             answer_option=FEATURE_NAMES[j],
                             weight=1.0,
-                        ).model_dump()
+                        )
+                        attach_evidence_meta(
+                            crit_raw,
+                            provenance=Provenance.LLM_PARSED_EXPLICIT,
+                            evidence_kind=EvidenceKind.PREFERENCE,
+                            support_text="explicit critique dimension",
+                            attributed_dims=[FEATURE_NAMES[j]],
+                        )
+                        rec_crit = crit_raw.model_dump()
                         state.evidence_log.append(rec_crit)
                     crit_emitted = True
 
@@ -326,7 +348,7 @@ def run_episode(
                     )
                     state.answer_trace.append(answer_option)
                     if arm != "C4":
-                        rec_ans = EvidenceRecord(
+                        ans_raw = EvidenceRecord(
                             evidence_id=f"ans_{event_idx}",
                             thread_id="world",
                             ts="",
@@ -337,7 +359,15 @@ def run_episode(
                             question_options=opts,
                             answer_option=answer_option,
                             ask_eligible=True,
-                        ).model_dump()
+                        )
+                        attach_evidence_meta(
+                            ans_raw,
+                            provenance=Provenance.USER_EXPLICIT,
+                            evidence_kind=EvidenceKind.PREFERENCE,
+                            support_text="user selected offered option",
+                            attributed_dims=[a for a in opts if a in FEATURE_NAMES],
+                        )
+                        rec_ans = ans_raw.model_dump()
                         state.evidence_log.append(rec_ans)
                         state.clarification_count += 1
                         rows = [EvidenceRecord(**r) for r in state.evidence_log if r.get("learning")]
@@ -355,7 +385,7 @@ def run_episode(
                     rejected, accepted, x_e_pair = a, b, phi_b - phi_a
                 else:
                     rejected, accepted, x_e_pair = b, a, phi_a - phi_b
-                rec_pair = EvidenceRecord(
+                pair_raw = EvidenceRecord(
                     evidence_id=f"pair_{event_idx}",
                     thread_id="world",
                     ts="",
@@ -368,7 +398,15 @@ def run_episode(
                     ask_eligible=False,
                     question_options=None,
                     answer_option=None,
-                ).model_dump()
+                )
+                attach_evidence_meta(
+                    pair_raw,
+                    provenance=Provenance.USER_EXPLICIT,
+                    evidence_kind=EvidenceKind.PREFERENCE,
+                    support_text="explicit pairwise choice",
+                    attributed_dims=None,
+                )
+                rec_pair = pair_raw.model_dump()
                 state.evidence_log.append(rec_pair)
                 state.pairwise_count += 1
                 if arm != "C4":

@@ -21,6 +21,9 @@ import numpy as np
 from evidence import EvidenceRecord
 from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX
 from config import TAU, KAPPA, LAMBDA_REPORT
+from research_architecture import classify_evidence, EvidenceKind
+
+LAMBDA_CHOICE = 0.0
 
 
 
@@ -183,7 +186,7 @@ def _neg_log_posterior(
     beta_arr = np.asarray(beta, dtype=float)
     loglik_sum = 0.0
     for ev in evidences:
-        if not ev.learning or ev.censored_feasibility:
+        if classify_evidence(ev) != EvidenceKind.PREFERENCE:
             continue
         if ev.event_type == "replacement":
             if ev.x_e is None:
@@ -262,7 +265,7 @@ def refit_laplace(
     Fit MAP via damped Newton with backtracking line search,
     then return (mu, Sigma) where Sigma = inv(Hessian at MAP).
     """
-    learning_rows = [e for e in evidences if e.learning and not e.censored_feasibility]
+    learning_rows = [e for e in evidences if classify_evidence(e) == EvidenceKind.PREFERENCE]
     if not learning_rows:
         return np.zeros(6), np.eye(6)
 

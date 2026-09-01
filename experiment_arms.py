@@ -10,7 +10,7 @@ import numpy as np
 from dataclasses import dataclass, field
 from typing import Optional
 
-from config import LAMBDA, TAU, KAPPA
+from config import LAMBDA_CHOICE, LAMBDA_REPORT, TAU, KAPPA
 from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
 from preference_features import FEATURE_NAMES
@@ -27,7 +27,7 @@ def _sample_from_prob(probs, rng):
 
 
 def _synthetic_prompted_answer(beta_star, x_e, j_T, j_C, rng):
-    probs = [prob_prompted(beta_star, x_e, j_T, j_C, o, lam=LAMBDA, tau=TAU, kappa=KAPPA)
+    probs = [prob_prompted(beta_star, x_e, j_T, j_C, o, lam=LAMBDA_REPORT, tau=TAU, kappa=KAPPA)
              for o in range(3)]
     o = _sample_from_prob(np.asarray(probs), rng)
     if o == 0:
@@ -84,7 +84,7 @@ def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, x_e, c_int, n_dr
     p_o = np.zeros(3)
     for o in range(3):
         probs = np.array([
-            prob_prompted(beta, x_e, j_T, j_C, o, lam=LAMBDA, tau=TAU, kappa=KAPPA)
+            prob_prompted(beta, x_e, j_T, j_C, o, lam=LAMBDA_REPORT, tau=TAU, kappa=KAPPA)
             for beta in beta_draws
         ])
         p_o[o] = float(probs.mean())
@@ -349,7 +349,7 @@ def run_episode(
                 a, b = int(order[0]), int(order[1])
                 phi_a = event.phi[a]
                 phi_b = event.phi[b]
-                p_b_over_a = LAMBDA * 0.5 + (1.0 - LAMBDA) * (1.0 / (1.0 + np.exp(-world.beta_star.dot(phi_b - phi_a))))
+                p_b_over_a = LAMBDA_CHOICE * 0.5 + (1.0 - LAMBDA_CHOICE) * (1.0 / (1.0 + np.exp(-world.beta_star.dot(phi_b - phi_a))))
                 pair_rng = np.random.default_rng(1000 * event_idx + 5)
                 if pair_rng.random() < p_b_over_a:
                     rejected, accepted, x_e_pair = a, b, phi_b - phi_a

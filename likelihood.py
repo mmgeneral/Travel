@@ -19,7 +19,13 @@ import numpy as np
 
 from evidence import EvidenceRecord
 from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX
-from config import LAMBDA, TAU, KAPPA
+from config import TAU, KAPPA
+
+# Phase 1: channel-specific lapse probabilities.
+# Choice / implicit pairwise likelihood has no lapse (freeze).
+# Prompted / critique / report channels keep their report-noise semantics.
+LAMBDA_CHOICE = 0.0
+LAMBDA_REPORT = 0.1
 
 
 def _sigmoid(x: float) -> float:
@@ -41,7 +47,7 @@ def _softmax(logits: np.ndarray) -> np.ndarray:
 def loglik_choice(
     beta: Sequence[float],
     x_e: Sequence[float],
-    lam: float = LAMBDA,
+    lam: float = LAMBDA_CHOICE,
 ) -> float:
     """
     5.2 replacement / choice likelihood.
@@ -66,7 +72,7 @@ def loglik_prompted(
     j_T: int,
     j_C: int,
     observed_o: int,
-    lam: float = LAMBDA,
+    lam: float = LAMBDA_REPORT,
     tau: float = TAU,
     kappa: float = KAPPA,
 ) -> float:
@@ -108,7 +114,7 @@ def prob_prompted(
     j_T: int,
     j_C: int,
     observed_o: int,
-    lam: float = LAMBDA,
+    lam: float = LAMBDA_REPORT,
     tau: float = TAU,
     kappa: float = KAPPA,
 ) -> float:
@@ -135,7 +141,7 @@ def loglik_critique(
     x_e: Sequence[float],
     j: int,
     rho: float,
-    lam: float = LAMBDA,
+    lam: float = LAMBDA_REPORT,
     tau: float = TAU,
 ) -> float:
     """
@@ -166,7 +172,14 @@ def loglik_critique(
     return rho * math.log(p)
 
 
-def _neg_log_posterior(beta, evidences, lam=LAMBDA, tau=TAU, kappa=KAPPA):
+def _neg_log_posterior(
+    beta,
+    evidences,
+    lam_choice=LAMBDA_CHOICE,
+    lam_report=LAMBDA_REPORT,
+    tau=TAU,
+    kappa=KAPPA,
+):
     """Negative log posterior: -Σ loglik + 0.5||β||² (prior N(0,I))."""
     beta_arr = np.asarray(beta, dtype=float)
     loglik_sum = 0.0
@@ -176,7 +189,7 @@ def _neg_log_posterior(beta, evidences, lam=LAMBDA, tau=TAU, kappa=KAPPA):
         if ev.event_type == "replacement":
             if ev.x_e is None:
                 continue
-            loglik_sum += loglik_choice(beta_arr, ev.x_e, lam)
+            loglik_sum += loglik_choice(beta_arr, ev.x_e, lam_choice)
         elif ev.event_type == "clarification_answer":
             options = ev.question_options or []
             ans = ev.answer_option or ""
@@ -195,7 +208,7 @@ def _neg_log_posterior(beta, evidences, lam=LAMBDA, tau=TAU, kappa=KAPPA):
             if j_T is None or j_C is None:
                 continue
             loglik_sum += loglik_prompted(beta_arr, ev.x_e, j_T, j_C,
-                                          observed, lam, tau, kappa)
+                                          observed, lam_report, tau, kappa)
         elif ev.event_type == "explicit_critique":
             if ev.x_e is None or not ev.answer_option:
                 continue
@@ -203,7 +216,7 @@ def _neg_log_posterior(beta, evidences, lam=LAMBDA, tau=TAU, kappa=KAPPA):
                 continue
             j = FEATURE_NAME_TO_INDEX[ev.answer_option]
             rho = ev.weight if ev.weight is not None else 1.0
-            loglik_sum += loglik_critique(beta_arr, ev.x_e, j, rho, lam, tau)
+            loglik_sum += loglik_critique(beta_arr, ev.x_e, j, rho, lam_report, tau)
         # bare_rejection excluded via learning=False
 
     return -loglik_sum + 0.5 * float(np.dot(beta_arr, beta_arr))
@@ -240,7 +253,7 @@ def _numeric_hessian(f, beta, eps=1e-4):
 def refit_laplace(
     evidences,
     *,
-    lam: float = LAMBDA,
+    lam: float = LAMBDA_REPORT,
     tau: float = TAU,
     kappa: float = KAPPA,
     max_iter: int = 50,
@@ -259,7 +272,14 @@ def refit_laplace(
         event_counts[e.event_type] = event_counts.get(e.event_type, 0) + 1
 
     def f(b):
-        return _neg_log_posterior(b, learning_rows, lam, tau, kappa)
+        return _neg_log_posterior(
+            b,
+            learning_rows,
+            lam_choice=LAMBDA_CHOICE,
+            lam_report=lam,
+            tau=tau,
+            kappa=kappa,
+        )
 
     beta = np.zeros(6, dtype=float)
 

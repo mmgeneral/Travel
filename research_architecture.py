@@ -57,70 +57,109 @@ def attach_evidence_meta(
     support_text: Optional[str] = None,
     attributed_dims: Optional[Sequence[str]] = None,
 ):
-    """Attach metadata to a record without requiring EvidenceRecord changes.
-
-    Uses __dict__ to avoid Pydantic-like model restrictions.
-    """
-    record.__dict__["provenance"] = provenance.value
-    record.__dict__["evidence_kind"] = evidence_kind.value
-    record.__dict__["source_turn_id"] = source_turn_id
-    record.__dict__["parser_version"] = parser_version
-    record.__dict__["support_text"] = support_text
-    record.__dict__["attributed_dims"] = list(attributed_dims or [])
+    """Attach metadata to a record without bypassing Pydantic validators."""
+    record.provenance = provenance.value
+    record.evidence_kind = evidence_kind.value
+    record.source_turn_id = source_turn_id
+    record.parser_version = parser_version
+    record.support_text = support_text
+    record.attributed_dims = list(attributed_dims or [])
     return record
 
 
 def classify_evidence(record) -> EvidenceKind:
-    """Architectural classification based on current fields + metadata.
+    """Semantic classification.
 
-    If evidence has provenance SYSTEM_GENERATED it is NON_LEARNING even if
-    it has learning=True and not censored_feasibility.
+    SYSTEM_GENERATED provenance is never learning, unless the record
+    explicitly preserved a feasibility event.
+
+    If an explicit evidence_kind is present, it is authoritative.
+
+    Otherwise legacy fallback is used:
+      - censored_feasibility -> FEASIBILITY
+      - learning=False -> NON_LEARNING
+      - replacement / clarification_answer / explicit_critique -> PREFERENCE
     """
-    if not getattr(record, "learning", False):
-        return EvidenceKind.NON_LEARNING
-    if getattr(record, "censored_feasibility", False):
-        return EvidenceKind.FEASIBILITY
     prov = getattr(record, "provenance", None)
     if prov is not None and prov == Provenance.SYSTEM_GENERATED.value:
+        explicit_kind = getattr(record, "evidence_kind", None)
+        if explicit_kind == EvidenceKind.FEASIBILITY.value and not getattr(record, "learning", False):
+            return EvidenceKind.FEASIBILITY
+        return EvidenceKind.NON_LEARNING
+
+    explicit_kind = getattr(record, "evidence_kind", None)
+    if explicit_kind is not None:
+        try:
+            return EvidenceKind(explicit_kind)
+        except ValueError:
+            pass
+
+    if getattr(record, "censored_feasibility", False):
+        return EvidenceKind.FEASIBILITY
+    if not getattr(record, "learning", False):
         return EvidenceKind.NON_LEARNING
     if record.event_type in {"replacement", "clarification_answer", "explicit_critique"}:
         return EvidenceKind.PREFERENCE
     return EvidenceKind.NON_LEARNING
 
 
+def is_learning_evidence(record) -> bool:
+    """True only if the record may enter the likelihood.
+
+    Requires:
+      - semantic kind == PREFERENCE
+      - learning == True
+      - censored_feasibility == False
+      - provenance != SYSTEM_GENERATED
+    """
+    if classify_evidence(record) != EvidenceKind.PREFERENCE:
+        return False
+    if not getattr(record, "learning", False):
+        return False
+    if getattr(record, "censored_feasibility", False):
+        return False
+    if getattr(record, "provenance", None) == Provenance.SYSTEM_GENERATED.value:
+        return False
+    return True
+
+
 def validate_structured_evidence(
     *,
     attributes: Sequence[str],
     source_text: Optional[str] = None,
+    support_text: Optional[str] = None,
     available_entities: Optional[Sequence[str]] = None,
     offered_options: Optional[Sequence[str]] = None,
 ) -> tuple[bool, Optional[str], Optional[Provenance]]:
-    """Closed-vocabulary validation.
+    """Closed-vocabulary validation with explicit grounding checks.
 
     Returns (ok, reason_or_None, downgraded_provenance).
-    - If all attrs are in FIXED_FEATURE_DIMENSIONS and at least one has
-      textual support, OK.
-    - If an attr is not in fixed registry -> reject preference evidence.
-    - If attr in registry but no support -> downgrade to LLM_INFERRED and
-      note that T1 should keep it NON_LEARNING.
+    - Reject dimensions outside FIXED_FEATURE_DIMENSIONS.
+    - If an attribute is an offered clarification option, that option itself
+      provides grounding.
+    - Otherwise require a nonempty `support_text` that appears verbatim
+      (after case/whitespace normalisation) inside `source_text`.  Without
+      a grounded span we downgrade to LLM_INFERRED / NON_LEARNING for T1.
     """
     unknown = [a for a in attributes if a not in FIXED_FEATURE_DIMENSIONS]
     if unknown:
         return False, f"Unsupported dimension(s): {unknown}", None
 
     supported = False
-    if source_text:
-        supported = True
     if offered_options:
         for a in attributes:
             if a in offered_options:
                 supported = True
-    if available_entities:
-        pass  # entity presence does not by itself prove dimension attribution
+
+    if not supported and source_text and support_text:
+        norm_source = source_text.strip().casefold()
+        norm_support = support_text.strip().casefold()
+        if norm_support in norm_source:
+            supported = True
 
     if not supported:
         return False, (
-            "No textual support or offered option for dimension attribution; "
+            "No grounded support span or offered option for dimension attribution; "
             "downgrade to LLM_INFERRED / NON_LEARNING for T1"
         ), Provenance.LLM_INFERRED
 
@@ -205,7 +244,7 @@ def compute_posterior_design_identifiability(
         "eig_raw_Gram": eig_g,
         "numerical_rank_X": num_rank,
         "posterior_variance_ratio": ratios,
-        "weakly_informed_directions": np.where(np.isclose(ratios, 1.0, atol=0.1))[0].tolist(),
+        "weakly_informed_eigenmodes": np.where(np.isclose(ratios, 1.0, atol=0.1))[0].tolist(),
     }
 
 

@@ -228,9 +228,9 @@ def run_episode(
                         )
                         attach_evidence_meta(
                             crit_raw,
-                            provenance=Provenance.LLM_PARSED_EXPLICIT,
+                            provenance=Provenance.USER_EXPLICIT,
                             evidence_kind=EvidenceKind.PREFERENCE,
-                            support_text="explicit critique dimension",
+                            support_text=None,
                             attributed_dims=[FEATURE_NAMES[j]],
                         )
                         rec_crit = crit_raw.model_dump()

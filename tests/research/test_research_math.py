@@ -5,9 +5,8 @@ import numpy as np
 import pytest
 
 from evidence import EvidenceRecord
+from config import LAMBDA_CHOICE, LAMBDA_REPORT
 from likelihood import (
-    LAMBDA_CHOICE,
-    LAMBDA_REPORT,
     _neg_log_posterior,
     _numeric_gradient,
     _numeric_hessian,

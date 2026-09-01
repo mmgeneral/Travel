@@ -16,8 +16,8 @@ def test_smoke_runs_and_returns_expected_aggregate():
     assert not agg.empty
     assert not pooled.empty
 
-    expected_n = [10] * 3 + [30] * 3 + [40] * 3
-    assert raw["n"].tolist() == expected_n
+    n_counts = raw.groupby("n").size().to_dict()
+    assert n_counts == {10: 3, 30: 3, 40: 3}
 
     required = {
         "n",

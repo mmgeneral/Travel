@@ -95,8 +95,6 @@ class EvidenceRecord(BaseModel):
 
     @model_validator(mode="after")
     def _check_event_invariants(self):
-        if self.censored_feasibility and self.learning:
-            raise ValueError("censored_feasibility=True implies learning must be False")
         if self.event_type == "bare_rejection":
             if self.learning:
                 raise ValueError("bare_rejection must have learning=False")

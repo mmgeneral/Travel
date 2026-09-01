@@ -13,7 +13,7 @@ from research_architecture import (
     compute_posterior_design_identifiability,
     ProposalPolicy,
 )
-from likelihood import LAMBDA_CHOICE, LAMBDA_REPORT
+from config import LAMBDA_CHOICE, LAMBDA_REPORT
 from evidence import EvidenceRecord
 
 
@@ -101,22 +101,73 @@ def test_posterior_diag_preserves_sigma():
     assert out["eig_sigma"].shape == (6,)
 
 
-def test_ts_single_beta_per_decision():
-    rng = np.random.default_rng(7)
+def test_ts_same_seed_reproducible():
+    rng1 = np.random.default_rng(7)
+    rng2 = np.random.default_rng(7)
     base = [0.0, 0.0, 0.0]
     phi = np.array([[1.0, 0, 0, 0, 0, 0],
                     [0.0, 1.0, 0, 0, 0, 0],
                     [0.0, 0.0, 1.0, 0, 0, 0]])
     mu = np.zeros(6)
     Sigma = np.eye(6)
-    idx1, b1 = ProposalPolicy.propose(base, mu, Sigma, phi, "thompson", rng)
-    idx2, b2 = ProposalPolicy.propose(base, mu, Sigma, phi, "thompson", rng)
+    idx1, b1 = ProposalPolicy.propose(base, mu, Sigma, phi, "thompson", rng1)
+    idx2, b2 = ProposalPolicy.propose(base, mu, Sigma, phi, "thompson", rng2)
     assert b1 is not None
-    assert np.allclose(b1, b2)  # same seed => same beta
+    assert b2 is not None
+    assert np.allclose(b1, b2)
+    assert idx1 == idx2
 
-    # same beta used for all candidates -> deterministic argmax
-    vals = [base[i] + float(np.dot(b1, phi[i])) for i in range(3)]
-    assert idx1 == int(np.argmax(vals))
+
+class _CountingRng:
+    """Counting wrapper that records how many times multivariate_normal is called."""
+    def __init__(self, inner, beta_value):
+        self.inner = inner
+        self.beta_value = np.asarray(beta_value, dtype=float)
+        self.count = 0
+
+    def multivariate_normal(self, mean, cov):
+        self.count += 1
+        return self.beta_value
+
+
+def test_ts_single_beta_per_decision():
+    base = [0.0, 0.0, 0.0]
+    phi = np.array([[1.0, 0, 0, 0, 0, 0],
+                    [0.0, 1.0, 0, 0, 0, 0],
+                    [0.0, 0.0, 1.0, 0, 0, 0]])
+    mu = np.zeros(6)
+    Sigma = np.eye(6)
+    beta_val = np.array([1.0, -1.0, 0.5, 0.0, 0.0, 0.0])
+    counting = _CountingRng(np.random.default_rng(7), beta_val)
+    idx, returned_beta = ProposalPolicy.propose(base, mu, Sigma, phi, "thompson", counting)
+    assert counting.count == 1
+    assert np.allclose(returned_beta, beta_val)
+    vals = [base[i] + float(np.dot(beta_val, phi[i])) for i in range(3)]
+    assert idx == int(np.argmax(vals))
+
+
+def test_ts_sigma_zero_equals_greedy_preference():
+    base = [1.0, 2.0, 3.0]
+    phi = np.array([[0.1, 0.2, 0.3, 0.0, 0.0, 0.0],
+                    [-0.2, 0.1, 0.0, 0.5, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0, 0.7, 0.1]])
+    mu = np.array([0.3, -0.2, 0.1, 0.4, -0.6, 0.2])
+    Sigma = np.zeros((6, 6))
+    rng = np.random.default_rng(9)
+    idx_ts, _ = ProposalPolicy.propose(base, mu, Sigma, phi, "thompson", rng)
+    idx_greedy, _ = ProposalPolicy.propose(base, mu, Sigma, phi, "greedy")
+    assert idx_ts == idx_greedy
+
+
+def test_ts_does_not_mutate_learner_state():
+    mu = np.array([0.1, 0.2, -0.1, 0.0, 0.0, 0.0])
+    Sigma = np.eye(6)
+    mu_copy = mu.copy()
+    Sigma_copy = Sigma.copy()
+    rng = np.random.default_rng(13)
+    ProposalPolicy.propose([0.0] * 3, mu, Sigma, np.eye(6), "thompson", rng)
+    assert np.allclose(mu, mu_copy)
+    assert np.allclose(Sigma, Sigma_copy)
 
 
 def test_greedy_reproduces_deterministic():

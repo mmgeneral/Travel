@@ -129,6 +129,7 @@ def validate_structured_evidence(
     source_text: Optional[str] = None,
     support_text: Optional[str] = None,
     available_entities: Optional[Sequence[str]] = None,
+    referenced_entities: Optional[Sequence[str]] = None,
     offered_options: Optional[Sequence[str]] = None,
 ) -> tuple[bool, Optional[str], Optional[Provenance]]:
     """Closed-vocabulary validation with explicit grounding checks.
@@ -140,10 +141,18 @@ def validate_structured_evidence(
     - Otherwise require a nonempty `support_text` that appears verbatim
       (after case/whitespace normalisation) inside `source_text`.  Without
       a grounded span we downgrade to LLM_INFERRED / NON_LEARNING for T1.
+    - If `referenced_entities` is provided, every referenced entity must
+      appear inside `available_entities` or `offered_options`.
     """
     unknown = [a for a in attributes if a not in FIXED_FEATURE_DIMENSIONS]
     if unknown:
         return False, f"Unsupported dimension(s): {unknown}", None
+
+    if referenced_entities is not None:
+        allowed_entities = set(available_entities or ()) | set(offered_options or ())
+        missing = [ent for ent in referenced_entities if ent not in allowed_entities]
+        if missing:
+            return False, f"Unknown referenced entity(s): {missing}", None
 
     supported = False
     if offered_options:
@@ -246,6 +255,25 @@ def compute_posterior_design_identifiability(
         "posterior_variance_ratio": ratios,
         "weakly_informed_eigenmodes": np.where(np.isclose(ratios, 1.0, atol=0.1))[0].tolist(),
     }
+
+
+def greedy_reference_best_value(
+    base_scores: Sequence[float],
+    mu: np.ndarray,
+    phi_matrix: np.ndarray,
+) -> float:
+    """Return max_x [S0(x) + muᵀ φ(x)].
+
+    This is the greedy posterior‑mean terminal rule used by EVOI.
+    """
+    mu_arr = np.asarray(mu, dtype=float).reshape(-1)
+    phi_arr = np.asarray(phi_matrix, dtype=float)
+    if phi_arr.ndim != 2 or phi_arr.shape[1] != 6:
+        raise ValueError("phi_matrix must be (n,6)")
+    base_arr = np.asarray(base_scores, dtype=float).reshape(-1)
+    if base_arr.shape[0] != phi_arr.shape[0]:
+        raise ValueError("base_scores and phi_matrix must have same number of rows")
+    return float(np.max(base_arr + phi_arr @ mu_arr))
 
 
 @dataclass

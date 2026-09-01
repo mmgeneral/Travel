@@ -4,11 +4,13 @@ Phase A3 — pure likelihood functions (5.2 / 5.3a / 5.3b).
 These functions compute log-likelihood contributions for three evidence
 types.  They are intentionally pure (no state, no side effects).
 
-Constants:
-    LAMBDA_CHOICE = 0.0
+Constants are imported from `config`:
     LAMBDA_REPORT = 0.1
-    TAU     = 1.0
-    KAPPA   = 0.0
+    TAU           = 1.0
+    KAPPA         = 0.0
+
+`LAMBDA_CHOICE` is fixed at 0.0 and lives only in `config.py`;
+the choice likelihood itself never expects a lapse argument.
 """
 from __future__ import annotations
 

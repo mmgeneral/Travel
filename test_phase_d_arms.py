@@ -98,6 +98,29 @@ def test_c2_can_ask_fewer_than_c1():
     assert st2.clarification_count < st1.clarification_count or st1.clarification_count == 0
 
 
+def test_runner_default_policy_is_greedy():
+    world = _make_world()
+    st1 = run_episode(world=world, arm="C0", p_crit=0.0, c_int=0.05,
+                      rng=np.random.default_rng(1), evoi_mc_draws=20)
+    st2 = run_episode(world=world, arm="C0", p_crit=0.0, c_int=0.05,
+                      rng=np.random.default_rng(1), evoi_mc_draws=20,
+                      proposal_policy="greedy", proposal_rng=None)
+    assert st1.proposal_trace == st2.proposal_trace
+
+
+def test_runner_thompson_same_seed_reproducible():
+    world = _make_world()
+    st1 = run_episode(world=world, arm="C0", p_crit=0.0, c_int=0.05,
+                      rng=np.random.default_rng(2), evoi_mc_draws=20,
+                      proposal_policy="thompson",
+                      proposal_rng=np.random.default_rng(7))
+    st2 = run_episode(world=world, arm="C0", p_crit=0.0, c_int=0.05,
+                      rng=np.random.default_rng(2), evoi_mc_draws=20,
+                      proposal_policy="thompson",
+                      proposal_rng=np.random.default_rng(7))
+    assert st1.proposal_trace == st2.proposal_trace
+
+
 def test_contender_L_j_not_all_ones():
     world = _make_world()
     ev = world.events[0]

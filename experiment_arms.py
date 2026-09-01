@@ -21,6 +21,8 @@ from research_architecture import (
     Provenance,
     EvidenceKind,
     validate_structured_evidence,
+    ProposalPolicy,
+    greedy_reference_best_value,
 )
 
 
@@ -83,7 +85,7 @@ def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, x_e, c_int, n_dr
     mu_arr = np.asarray(mu, dtype=float).reshape(-1)
     Sigma_arr = np.asarray(Sigma, dtype=float)
 
-    U_B = float(np.max(event.s0_tilde + event.phi @ mu_arr))
+    U_B = greedy_reference_best_value(event.s0_tilde, mu_arr, event.phi)
 
     beta_draws = rng.multivariate_normal(mu_arr, Sigma_arr, size=n_draws)
 
@@ -123,7 +125,7 @@ def _array_evoi_for_question(event, mu, Sigma, evidence_log, q, x_e, c_int, n_dr
         rows = list(evidence_log) + [hyp_ev]
         ev_rows = [EvidenceRecord(**r) if isinstance(r, dict) else r for r in rows]
         mu_o, _ = refit_laplace(ev_rows)
-        U_Bo[o] = float(np.max(event.s0_tilde + event.phi @ mu_o))
+        U_Bo[o] = greedy_reference_best_value(event.s0_tilde, mu_o, event.phi)
 
     gross_evsi = float(np.dot(p_o, U_Bo)) - U_B
     net_evsi = gross_evsi - c_int
@@ -155,6 +157,8 @@ def run_episode(
     rng: Optional[np.random.Generator] = None,
     force_ask: bool = False,
     evoi_mc_draws: int = 100,
+    proposal_policy: str = "greedy",
+    proposal_rng: Optional[np.random.Generator] = None,
 ) -> ArmState:
     """Run one arm over the whole episode. Returns its final ArmState."""
     state = ArmState(arm=arm)
@@ -164,7 +168,15 @@ def run_episode(
     for event_idx, event in enumerate(world.events):
         # ---- system choice depends on the arm's current mu ----
         score_sys = event.s0_tilde + event.phi @ state.mu
-        x_sys = int(np.argmax(score_sys))
+        # use the modular ProposalPolicy hook; default remains greedy
+        x_sys, _beta_tilde = ProposalPolicy.propose(
+            event.s0_tilde,
+            state.mu,
+            state.Sigma,
+            event.phi,
+            policy=proposal_policy,
+            rng=proposal_rng,
+        )
         state.proposal_trace.append(x_sys)
 
         # ---- true optimum (USER utility, no S0) ----

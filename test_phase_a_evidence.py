@@ -93,9 +93,20 @@ def test_explicit_critique_learning_without_x_e_rejected():
         }))
 
 
-def test_censored_feasibility_learning_true_rejected():
-    with pytest.raises(ValidationError):
-        EvidenceRecord(**_base({"censored_feasibility": True}))
+def test_censored_feasibility_learning_true_deserializes_but_not_learning():
+    # Legacy inconsistent row is allowed to deserialize.
+    rec = EvidenceRecord(**_base({"censored_feasibility": True}))
+    assert rec.learning is True
+    assert rec.censored_feasibility is True
+    # But is_learning_evidence must return False.
+    from research_architecture import is_learning_evidence
+    assert is_learning_evidence(rec) is False
+    # And a Laplace refit with only that row must return the prior.
+    from likelihood import refit_laplace
+    mu, Sigma = refit_laplace([rec])
+    import numpy as np
+    assert np.allclose(mu, np.zeros(6))
+    assert np.allclose(Sigma, np.eye(6))
 
 
 def test_valid_clarification_order_ok():

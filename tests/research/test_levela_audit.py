@@ -12,6 +12,7 @@ from research_architecture import (
     compute_pool_identifiability_diagnostics,
     compute_posterior_design_identifiability,
     ProposalPolicy,
+    greedy_reference_best_value,
 )
 from config import LAMBDA_CHOICE, LAMBDA_REPORT
 from evidence import EvidenceRecord
@@ -73,7 +74,66 @@ def test_unknown_dim_rejected():
 def test_supported_explicit_dim_accepted():
     ok, _, prov = validate_structured_evidence(
         attributes=["travel_min"],
-        source_text="because it is closer",
+        source_text="because it is much closer",
+        support_text="much closer",
+    )
+    assert ok
+    assert prov == Provenance.LLM_PARSED_EXPLICIT
+
+
+def test_explicit_dim_without_support_downgraded():
+    ok, reason, prov = validate_structured_evidence(
+        attributes=["travel_min"],
+        source_text="I prefer B.",
+        support_text=None,
+    )
+    assert not ok
+    assert prov == Provenance.LLM_INFERRED
+    assert "downgrade" in reason
+
+
+def test_explicit_dim_with_unsupported_span_rejected():
+    ok, _, prov = validate_structured_evidence(
+        attributes=["travel_min"],
+        source_text="B is closer",
+        support_text="too expensive",
+    )
+    assert not ok
+    assert prov == Provenance.LLM_INFERRED
+
+
+def test_referenced_entities_allowed():
+    ok, _, prov = validate_structured_evidence(
+        attributes=["travel_min"],
+        source_text="A is better because it is closer",
+        support_text="closer",
+        available_entities=["A", "B"],
+        referenced_entities=["A", "B"],
+    )
+    assert ok
+    assert prov == Provenance.LLM_PARSED_EXPLICIT
+
+
+def test_referenced_entities_rejected():
+    ok, reason, _ = validate_structured_evidence(
+        attributes=["travel_min"],
+        source_text="A is better because it is closer",
+        support_text="closer",
+        available_entities=["A", "B"],
+        referenced_entities=["A", "C"],
+    )
+    assert not ok
+    assert "Unknown referenced entity" in reason
+
+
+def test_referenced_entities_allowed_through_offered_options():
+    ok, _, prov = validate_structured_evidence(
+        attributes=["travel_min"],
+        source_text="A is better",
+        support_text=None,
+        available_entities=["A", "B"],
+        referenced_entities=["A"],
+        offered_options=["travel_min"],
     )
     assert ok
     assert prov == Provenance.LLM_PARSED_EXPLICIT
@@ -168,6 +228,15 @@ def test_ts_does_not_mutate_learner_state():
     ProposalPolicy.propose([0.0] * 3, mu, Sigma, np.eye(6), "thompson", rng)
     assert np.allclose(mu, mu_copy)
     assert np.allclose(Sigma, Sigma_copy)
+
+
+def test_greedy_reference_best_value_uses_posterior_mean():
+    base = np.array([0.0, 0.0])
+    mu = np.array([1.0, -1.0, 0.0, 0.0, 0.0, 0.0])
+    phi = np.array([[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]])
+    val = greedy_reference_best_value(base, mu, phi)
+    assert val == 1.0  # max(0+1, 0-1)
 
 
 def test_greedy_reproduces_deterministic():

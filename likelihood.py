@@ -20,7 +20,7 @@ import numpy as np
 
 from evidence import EvidenceRecord
 from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX
-from config import TAU, KAPPA, LAMBDA_CHOICE, LAMBDA_REPORT
+from config import TAU, KAPPA, LAMBDA_REPORT
 
 
 

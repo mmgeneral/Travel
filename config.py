@@ -6,7 +6,11 @@ Phase A/B/C constants live here so they are not scattered across modules.
 # ----------------------------------------------------------------------
 # Phase A (frozen)
 # ----------------------------------------------------------------------
-LAMBDA = 0.1
+# Phase 1: channel-specific lapse probabilities.
+# Choice / implicit pairwise likelihood has no lapse (freeze).
+# Prompted / critique / report channels keep their report-noise semantics.
+LAMBDA_CHOICE = 0.0
+LAMBDA_REPORT = 0.1
 TAU = 1.0
 KAPPA = 0.0
 

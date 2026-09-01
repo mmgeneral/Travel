@@ -5,7 +5,8 @@ These functions compute log-likelihood contributions for three evidence
 types.  They are intentionally pure (no state, no side effects).
 
 Constants:
-    LAMBDA = 0.1
+    LAMBDA_CHOICE = 0.0
+    LAMBDA_REPORT = 0.1
     TAU     = 1.0
     KAPPA   = 0.0
 """
@@ -19,13 +20,8 @@ import numpy as np
 
 from evidence import EvidenceRecord
 from preference_features import FEATURE_NAMES, FEATURE_NAME_TO_INDEX
-from config import TAU, KAPPA
+from config import TAU, KAPPA, LAMBDA_CHOICE, LAMBDA_REPORT
 
-# Phase 1: channel-specific lapse probabilities.
-# Choice / implicit pairwise likelihood has no lapse (freeze).
-# Prompted / critique / report channels keep their report-noise semantics.
-LAMBDA_CHOICE = 0.0
-LAMBDA_REPORT = 0.1
 
 
 def _sigmoid(x: float) -> float:
@@ -47,23 +43,27 @@ def _softmax(logits: np.ndarray) -> np.ndarray:
 def loglik_choice(
     beta: Sequence[float],
     x_e: Sequence[float],
-    lam: float = LAMBDA_CHOICE,
 ) -> float:
     """
     5.2 replacement / choice likelihood.
 
-    P(replace with item) = lam/2 + (1-lam)*sigmoid(beta @ x_e)
+    P(replace with item) = sigmoid(beta @ x_e)
 
-    Returns log(P).
+    Returns log(P) = -logaddexp(0, -z).
     """
-    if not (0 <= lam < 1):
-        raise ValueError("lam must satisfy 0 <= lam < 1")
     if len(beta) != 6 or len(x_e) != 6:
         raise ValueError("beta and x_e must have length 6")
     z = float(np.dot(beta, x_e))
-    p = lam * 0.5 + (1.0 - lam) * _sigmoid(z)
-    p = max(p, 1e-15)
-    return math.log(p)
+    return -np.logaddexp(0.0, -z)
+
+
+def prob_choice(
+    beta: Sequence[float],
+    x_e: Sequence[float],
+) -> float:
+    """Probability P(B>A|beta) = sigmoid(beta @ x_e)."""
+    z = float(np.dot(beta, x_e))
+    return _sigmoid(z)
 
 
 def loglik_prompted(
@@ -175,7 +175,6 @@ def loglik_critique(
 def _neg_log_posterior(
     beta,
     evidences,
-    lam_choice=LAMBDA_CHOICE,
     lam_report=LAMBDA_REPORT,
     tau=TAU,
     kappa=KAPPA,
@@ -189,7 +188,7 @@ def _neg_log_posterior(
         if ev.event_type == "replacement":
             if ev.x_e is None:
                 continue
-            loglik_sum += loglik_choice(beta_arr, ev.x_e, lam_choice)
+            loglik_sum += loglik_choice(beta_arr, ev.x_e)
         elif ev.event_type == "clarification_answer":
             options = ev.question_options or []
             ans = ev.answer_option or ""
@@ -253,7 +252,7 @@ def _numeric_hessian(f, beta, eps=1e-4):
 def refit_laplace(
     evidences,
     *,
-    lam: float = LAMBDA_REPORT,
+    lam_report: float = LAMBDA_REPORT,
     tau: float = TAU,
     kappa: float = KAPPA,
     max_iter: int = 50,
@@ -263,7 +262,7 @@ def refit_laplace(
     Fit MAP via damped Newton with backtracking line search,
     then return (mu, Sigma) where Sigma = inv(Hessian at MAP).
     """
-    learning_rows = [e for e in evidences if e.learning]
+    learning_rows = [e for e in evidences if e.learning and not e.censored_feasibility]
     if not learning_rows:
         return np.zeros(6), np.eye(6)
 
@@ -275,8 +274,7 @@ def refit_laplace(
         return _neg_log_posterior(
             b,
             learning_rows,
-            lam_choice=LAMBDA_CHOICE,
-            lam_report=lam,
+            lam_report=lam_report,
             tau=tau,
             kappa=kappa,
         )

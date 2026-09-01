@@ -19,7 +19,7 @@ from shop_planning import (
 )
 from evidence import EvidenceRecord
 from likelihood import refit_laplace, prob_prompted
-from config import LAMBDA, TAU, KAPPA, M, C1_ETA, C_INT, MC_DRAWS
+from config import TAU, KAPPA, M, C1_ETA, C_INT, MC_DRAWS
 import config as _cfg
 
 # ---------------------------------------------------------------

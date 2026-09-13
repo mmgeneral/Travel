@@ -1,0 +1,41 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: user_service_api
+    environment:
+      USER_SERVICE_APP_NAME: user-service
+      USER_SERVICE_DATABASE_URL: postgresql+psycopg://user_service:user_service@postgres:5432/user_service
+      USER_SERVICE_SUPABASE_URL: ${USER_SERVICE_SUPABASE_URL:-}
+      USER_SERVICE_SUPABASE_JWT_SECRET: ${USER_SERVICE_SUPABASE_JWT_SECRET:-}
+      USER_SERVICE_SUPABASE_JWT_AUDIENCE: ${USER_SERVICE_SUPABASE_JWT_AUDIENCE:-authenticated}
+      USER_SERVICE_DEV_MODE: ${USER_SERVICE_DEV_MODE:-0}
+      USER_SERVICE_CORS_ORIGINS: ${USER_SERVICE_CORS_ORIGINS:-}
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: user_service_postgres
+    environment:
+      POSTGRES_USER: user_service
+      POSTGRES_PASSWORD: user_service
+      POSTGRES_DB: user_service
+    ports:
+      - "5433:5432"
+    volumes:
+      - user_service_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_service -d user_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  user_service_pgdata:

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Supabase Auth Test (local)</title>
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0; padding: 24px; background: #141418; color: #e8e6f0; line-height: 1.6;
+      font-family: system-ui, -apple-system, "Segoe UI", "Microsoft JhengHei", sans-serif;
+    }
+    .card { max-width: 780px; border: 1px solid #2a2a32; border-radius: 10px; padding: 16px; background: #1a1a1f; }
+    h1 { font-size: 18px; margin: 0 0 4px; color: #a594fa; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    button {
+      background: #7c6af7; border: 0; color: #fff; border-radius: 8px;
+      padding: 9px 14px; font-size: 14px; font-family: inherit; cursor: pointer;
+    }
+    button.secondary { background: #2a2a32; color: #e8e6f0; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    textarea {
+      width: 100%; min-height: 150px; background: #0f0f11; color: #a594fa;
+      border: 1px solid #2a2a32; border-radius: 8px; padding: 10px; font-size: 12px;
+      font-family: ui-monospace, Consolas, monospace; resize: vertical; word-break: break-all;
+    }
+    .kv { font-size: 13px; margin: 2px 0; }
+    .kv b { color: #a594fa; font-weight: 600; }
+    .warn {
+      background: rgba(248, 113, 113, .12); border: 1px solid rgba(248, 113, 113, .45);
+      color: #f8b4b4; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px;
+    }
+    .ok { color: #4ade80; }
+    .err { color: #f87171; }
+    .muted { color: #6b6880; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Supabase Google 登入測試</h1>
+    <p class="muted">唯一用途：登入後取得真正的 Supabase access_token，拿去測 user_service。</p>
+
+    <div id="config-error" class="warn" hidden></div>
+
+    <p class="kv">狀態：<b id="status">初始化中…</b></p>
+    <p class="kv">Email：<b id="email">—</b></p>
+    <p class="kv">User ID：<b id="uid">—</b></p>
+    <p class="kv">Token 過期時間：<b id="expires">—</b></p>
+
+    <div class="row">
+      <button id="sign-in">Sign in with Google</button>
+      <button id="sign-out" class="secondary" disabled>Sign out</button>
+    </div>
+
+    <textarea id="token" readonly placeholder="登入後會在這裡顯示 Supabase access_token"></textarea>
+    <div class="row">
+      <button id="copy" class="secondary" disabled>Copy access token</button>
+      <span id="copy-msg" class="muted"></span>
+    </div>
+    <p class="muted">本頁只使用 public anon / publishable key，不呼叫 user_service、不含任何密鑰。</p>
+  </div>
+
+  <script type="module">
+    const $ = (id) => document.getElementById(id);
+
+    // 與 Supabase Dashboard 的 Redirect URLs 必須一致
+    const AUTH_REDIRECT = `${window.location.origin}/`;
+
+    const CONFIG_HINT =
+      "請先設定 auth_test/config.js：copy auth_test\\config.example.js auth_test\\config.js，再填入 SUPABASE_URL 與 SUPABASE_ANON_KEY。";
+
+    function renderConfigError(msg) {
+      const el = $("config-error");
+      el.hidden = false;
+      el.textContent = msg;
+    }
+
+    function setStatus(text, cls) {
+      const el = $("status");
+      el.textContent = text;
+      el.className = cls || "";
+    }
+
+    function renderSession(session) {
+      $("email").textContent = session?.user?.email || "—";
+      $("uid").textContent = session?.user?.id || "—";
+      $("expires").textContent = session?.expires_at
+        ? new Date(session.expires_at * 1000).toLocaleString()
+        : "—";
+      $("token").value = session?.access_token || "";
+      $("copy").disabled = !session?.access_token;
+      $("sign-out").disabled = !session;
+      setStatus(session ? "已登入" : "未登入", session ? "ok" : "");
+    }
+
+    // 1) 讀本機 config.js（不存在或未填時給出明確提示，而不是整頁白畫面）
+    let cfg;
+    try {
+      cfg = await import("./config.js");
+    } catch (e) {
+      renderConfigError(`${CONFIG_HINT}（載入 ./config.js 失敗：${e.message}）`);
+      setStatus("缺少 config.js", "err");
+      throw e;
+    }
+
+    const SUPABASE_URL = String(cfg.SUPABASE_URL || "").trim();
+    const SUPABASE_ANON_KEY = String(cfg.SUPABASE_ANON_KEY || "").trim();
+    if (
+      !SUPABASE_URL ||
+      !SUPABASE_ANON_KEY ||
+      SUPABASE_URL.includes("YOUR_PROJECT_REF") ||
+      SUPABASE_ANON_KEY.includes("YOUR_PUBLIC")
+    ) {
+      renderConfigError(CONFIG_HINT);
+      setStatus("config.js 尚未填寫", "err");
+      throw new Error("config.js not configured");
+    }
+
+    // 2) 從 CDN 載入 Supabase JS v2（ESM，無 npm / 無 build）
+    let createClient;
+    try {
+      ({ createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"));
+    } catch (e) {
+      renderConfigError(`載入 Supabase JS CDN 失敗：${e.message}`);
+      setStatus("CDN 載入失敗", "err");
+      throw e;
+    }
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        flowType: "implicit", // 導回時 access_token 在 URL hash，detectSessionInUrl 會自動處理
+        detectSessionInUrl: true,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    });
+
+    // 3) 按鈕
+    $("sign-in").addEventListener("click", async () => {
+      setStatus("導向 Google…");
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: AUTH_REDIRECT },
+      });
+      if (error) setStatus(`登入失敗：${error.message}`, "err");
+    });
+
+    $("sign-out").addEventListener("click", async () => {
+      setStatus("登出中…");
+      const { error } = await supabase.auth.signOut();
+      if (error) setStatus(`登出失敗：${error.message}`, "err");
+      else renderSession(null);
+    });
+
+    $("copy").addEventListener("click", async () => {
+      const token = $("token").value;
+      if (!token) return;
+      try {
+        await navigator.clipboard.writeText(token);
+        $("copy-msg").textContent = "已複製";
+      } catch {
+        $("token").select();
+        document.execCommand("copy");
+        $("copy-msg").textContent = "已複製（fallback）";
+      }
+      setTimeout(() => { $("copy-msg").textContent = ""; }, 2000);
+    });
+
+    // 4) 登入 / 登出 / token 更新都會即時反映
+    supabase.auth.onAuthStateChange((_event, session) => renderSession(session));
+
+    // 5) 從 Google 導回 http://localhost:3000/ 後自動取回 session 並顯示 access_token
+    const { data, error } = await supabase.auth.getSession();
+    if (error) setStatus(`取得 session 失敗：${error.message}`, "err");
+    else renderSession(data.session);
+
+    // 清掉網址上的 token，避免留在瀏覽紀錄
+    if (window.location.hash) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  </script>
+</body>
+</html>
